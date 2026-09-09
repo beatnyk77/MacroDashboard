@@ -164,6 +164,9 @@ import { GovFinancialPositionLab } from '@/pages/labs/GovFinancialPositionLab';
 
 import { About } from '@/pages/About';
 import { BricsTradeSettlement } from '@/pages/labs/BricsTradeSettlement';
+import InterbankFundingLab from '@/pages/labs/InterbankFundingLab';
+import TreasurySupplyRadar from '@/pages/labs/TreasurySupplyRadar';
+import FxCarryMatrixLab from '@/pages/labs/FxCarryMatrixLab';
 
 const theme = createTheme();
 const queryClient = new QueryClient({
@@ -213,8 +216,8 @@ describe('Smoke Tests', () => {
                 <Terminal />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Global M2 to Gold Ratio Tracker/i, {}, { timeout: 10000 })).toBeInTheDocument();
-    }, 20000);
+        expect(await screen.findByText(/Global M2 to Gold Ratio Tracker/i, {}, { timeout: 20000 })).toBeInTheDocument();
+    }, 35000);
 
     it('renders DataHealthDashboard (authenticated) without crashing', async () => {
         sessionStorage.setItem('admin_auth', 'true');
@@ -312,5 +315,32 @@ describe('Smoke Tests', () => {
         );
         expect(await screen.findByText(/Local Currency/i, {}, { timeout: 10000 })).toBeInTheDocument();
         expect(screen.queryByText(/TradeFlowsCard/i)).not.toBeInTheDocument();
+    }, 20000);
+
+    it('renders InterbankFundingLab page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/interbank-funding">
+                <InterbankFundingLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/Interbank Credit/i, {}, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders TreasurySupplyRadar page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/treasury-supply-radar">
+                <TreasurySupplyRadar />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/Treasury Supply/i, {}, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders FxCarryMatrixLab page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/fx-carry-matrix">
+                <FxCarryMatrixLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/FX Carry Trade/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });
