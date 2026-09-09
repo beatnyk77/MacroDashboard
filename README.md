@@ -8,22 +8,32 @@ In an era defined by monetary experimentation and supply-side constraints, conve
 
 ---
 
-## Live Modules: What You See Today
+## Live Modules: Institutional Desks & Specialized Hubs
 
-GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence hubs:
+GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence desks:
 
-*   **Macro Observatory** — The homepage terminal layout featuring 17 dedicated separate rows of high-frequency liquidity, sovereign stress, energy, trade, and regional macro telemetry.
-*   **India Intelligence Hub** — Consolidated state-level macro pulse, MoSPI direct ingestion, and sub-national cap-ex/development analytics.
-*   **China Macro Hub** — PBOC liquidity cycles, provincial industrial telemetry, and the 15th Five-Year Plan transition tracker.
-*   **US Macro & Fiscal** — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve monetization monitors.
-*   **De-Dollarization & Gold Anchor Lab** — Mathematical tracking of the G7 vs. BRICS+ fracture and hard-money reserve accumulation.
-*   **Energy Security & Commodities** — Crude import dependency cartography and the **WTI Calendar Spread Monitor (Industry First)** for physical market tightness.
-*   **Global Trade Intelligence** — Real-time tracking of 2-digit HS export flows across 20+ major economies, mapping the manufacturing shifts of the multipolar era.
-*   **Sovereign Stress Lab** — EM credit matrix and the **Bank of Japan (BoJ) Stress Monitor** (Total Assets vs. Monetary Base).
-*   **Shadow System Signals** — Capital flight indicators and illicit trade flow telemetry (restricted access).
-*   **Data Health Dashboard** — Real-time pipeline status, authenticity scores, and data provenance tracking across all modules
+### Flagship Institutional Desks (Bloomberg / CrossBorder Capital Equivalents)
+*   **Treasury Basis Trade & Leverage Fragility Barometer** (`/labs/treasury-basis-trade`) — Real-time surveillance of hedge fund cash-futures basis trade leverage, CFTC 10Y/Ultra futures net short positioning (-$820.5B), SOFR-IORB repo spread pressure, Primary Dealer gross financing ($3.28T), and an interactive stress matrix simulating margin call cascades.
+*   **Global Central Bank Net Liquidity Impulse Engine** (`/labs/global-net-liquidity`) — Synchronized cross-border liquidity impulse tracking the aggregated balance sheets of Fed, ECB, PBOC, and BOJ ($29.4T) adjusted for sovereign cash (TGA) and reverse repo (RRP), with dual 13-week and 26-week momentum velocity gauges and cross-asset transmission lead-lag models.
+*   **Interbank Credit & Funding Stress Desk** (`/labs/interbank-funding`) — Real-time telemetry on Standing Repo Facility (SRF) drawdowns, commercial bank C&I credit growth (H.8), high yield OAS spreads, and a normalized composite interbank credit stress index.
+*   **Treasury Supply & Foreign Custody Radar** (`/labs/treasury-supply-radar`) — Primary dealer net coupon inventory absorption, foreign official custody at the Fed ($B), and auction bid-to-cover tail risk across the Treasury curve.
+*   **FX Carry Trade & Cross-Currency Swap Basis Matrix** (`/labs/fx-carry-matrix`) — G7 real policy rate differentials, 3M EUR/USD and JPY/USD cross-currency basis swaps, and Yen carry unwind fragility scoring.
+*   **Macro Precedents & T=0 Benchmarking Lab** (`/labs/macro-precedents`) — T=0 trajectory relativization against canonical historical stress regimes (2013 Taper Tantrum, 2018 QT, 2020 COVID M2, 2022 Tightening) and G20 sovereign cohort distributions.
 
-All modules are production-ready, receiving daily automated updates, with no mock or stale data displayed on the live terminal.
+### Thematic Surveillance Labs & Regional Hubs
+*   **Macro Observatory** (`/macro-observatory`) — The terminal overview layout featuring high-frequency liquidity, sovereign stress, energy, trade, and regional macro telemetry.
+*   **India Intelligence Hub** (`/intel/india`) — Consolidated state-level macro pulse, MoSPI direct ingestion, and sub-national cap-ex/development analytics.
+*   **China Macro Hub** (`/intel/china`) — PBOC liquidity cycles, provincial industrial telemetry, and the 15th Five-Year Plan transition tracker (`/labs/china-15th-fyp`).
+*   **US Macro & Fiscal Lab** (`/labs/us-macro-fiscal`) — Sovereign debt maturity walls, Treasury auction dynamics, and Federal Reserve monetization monitors.
+*   **Government Financial Position Lab** (`/labs/gov-financial-position`) — Comprehensive balance sheet surveillance of sovereign financial assets, liabilities, and debt trajectory.
+*   **De-Dollarization & Gold Anchor Lab** (`/labs/de-dollarization-gold`) — Mathematical tracking of the G7 vs. BRICS+ fracture, central bank gold purchases (`/labs/central-bank-gold-purchases`), BRICS trade settlement (`/labs/brics-trade-settlement`), and Petrodollar decay indicators (`/labs/petrodollar-decay-indicators`).
+*   **Energy Security & Commodities Lab** (`/labs/energy-commodities`) — Physical trade flows, refining crack spreads, SPR reserves, and the **WTI Calendar Spread Monitor** for prompt-month tightness.
+*   **Sovereign Stress Lab** (`/labs/sovereign-stress`) — G20 debt sustainability models, sovereign CDS spreads, and Bank of Japan balance sheet stress.
+*   **Africa Macro Pulse Lab** (`/labs/africa-macro`) — Resource flows, bilateral mining royalties, and currency debasement dynamics.
+*   **Corporate Transmission Matrix** (`/corporate-transmission`) — Macro-to-micro transmission channels connecting policy rate changes to corporate interest coverage and debt maturity walls.
+*   **Data Health & Provenance Dashboard** (`/data-health` / `/admin/data-health`) — Real-time pipeline status, authenticity scores, and data provenance tracking across all 270+ metrics.
+
+All modules are production-ready, receiving automated updates with `api_live` provenance and zero mock or stale numbers on the main experience.
 
 ---
 
@@ -151,9 +161,73 @@ GraphiQuestor is engineered to meet the exacting standards of sovereign wealth f
 *   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-1 stimulus perfectly for reliable Z-score calculation.
 *   **Data Hub Orchestration Pattern:** A centralized telemetry orchestrator (`useGlossaryDataHub`) consolidates 20+ specialized hooks into a single, memoized data resolver, ensuring sub-millisecond dashboard performance across the entire intelligence suite.
 *   **Institutional-Grade Data Health & Provenance:** Every data point is tagged with a `provenance` certificate (`api_live`, `fallback_snapshot`), providing full transparency on data origin. Our **Authenticity Score** provides a real-time "trust percentage" for all active dashboards.
-*   **Materialized Performance Layer:** High-frequency metrics are served via a **trigger-synchronized materialization layer**, ensuring sub-millisecond dashboard responsiveness even during massive volatility spikes.
+*   **Materialized Performance Layer:** High-frequency metrics are served via a **trigger-synchronized materialization layer** (`vw_latest_metrics`), ensuring sub-millisecond dashboard responsiveness even during massive volatility spikes.
 *   **Resilient, Self-Healing Operations:** Automatic schema drift detection and API rate limit management. If source structures change, the system gracefully logs discrepancies and maintains operational continuity via granular telemetry (`status_code`, `api_latency_ms`).
 *   **Secure Infrastructure & High Availability:** Row-Level Security (RLS) policies, parameterized queries to prevent injection attacks, redundant database replicas, and global CDN distribution ensure robust security, fast load times, and reliable uptime during periods of acute market stress.
+
+### Technology Stack
+
+```
+Frontend Architecture:
+├── Framework: Vite 8 + React 18 + TypeScript (SPA deployed to Netlify)
+├── Design System: Stitch MCP Dark Glassmorphic Institutional Terminal
+├── UI Primitives: Tailwind CSS + MUI v5 + shadcn/ui (Radix primitives)
+├── Data Fetching: TanStack Query v5 (stale-while-revalidate, 30m staleTime)
+├── Charts & Visuals: Recharts, @nivo/sankey, react-simple-maps, Leaflet
+└── Routing: React Router v7 (lazy-loaded named export chunks)
+
+Backend & Ingestion Engine:
+├── Database: Supabase Postgres (time-series engine + materialized views)
+├── Serverless Workers: Deno Edge Functions (automated via pg_cron)
+├── Data Feeds: FRED, RBI DBIE, MoSPI, EIA, CFTC, PBOC, BOJ, ECB, BIS
+└── API Delivery: Cloudflare Workers MCP Server + REST Endpoints
+```
+
+### Data Flow Pipeline
+
+```
+Official Data Feeds (FRED, RBI, MoSPI, EIA, CFTC, PBOC, BOJ, ECB)
+   │
+   ▼
+Deno Edge Functions (Ingestion & Normalization)
+   │
+   ▼
+Supabase Postgres: `metric_observations` (Raw Time-Series)
+   │
+   ▼
+Postgres View: `vw_latest_metrics` (Staleness Flags + Current Value + History)
+   │
+   ▼
+TanStack Query Hooks: `useLatestMetric(metricId)`
+   │
+   ▼
+Institutional Terminal Desks & Surveillance Labs (React Components)
+```
+
+### Local Development & Verification Commands
+
+```bash
+# Install dependencies
+npm install
+
+# Start Vite dev server with hot reload
+npm run dev
+
+# Run full TypeScript validation and production build (prerenders 270+ routes)
+npm run build
+
+# Run ESLint with zero-warning gate (strict institutional standard)
+npm run lint
+
+# Run Vitest smoke & unit tests
+npm run test
+
+# Run a single test file
+npx vitest run src/smoke.test.tsx
+
+# Preview the production build locally
+npm run preview
+```
 
 ---
 
