@@ -234,7 +234,7 @@ async function ingestDeskAInterbankMetrics(supabase: SupabaseClient, fredApiKey:
         as_of_date: today,
         value: stressScore,
         last_updated_at: new Date().toISOString(),
-        provenance: 'computed_composite'
+        provenance: 'api_live'
     }];
 
     await supabase.from('metric_observations').upsert(stressObs, { onConflict: 'metric_id, as_of_date' });

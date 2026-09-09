@@ -22,8 +22,8 @@ async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Pr
   const bidToCover = 2.48;
 
   const seriesMap = [
-    { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'WDFBAL', divisor: 1000 },
-    { id: 'PRIMARY_DEALER_UST_INVENTORY_BN', fredId: 'PDINTT', divisor: 1000 },
+    { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'H0RESH4CGNWW', divisor: 1000 },
+    { id: 'PRIMARY_DEALER_UST_INVENTORY_BN', fredId: 'TREAST', divisor: 1 },
   ];
 
   for (const s of seriesMap) {
