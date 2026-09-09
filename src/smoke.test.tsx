@@ -8,21 +8,21 @@ import { ThemeProvider, createTheme } from '@mui/material/styles';
 import { HelmetProvider } from 'react-helmet-async';
 
 // Components to test
-import Terminal from '@/pages/Terminal';
-import DataHealthDashboard from '@/pages/DataHealthDashboard';
-import MacroObservatory from '@/pages/MacroObservatory';
-import { AdminDashboard } from '@/pages/AdminDashboard';
-import USMacroFiscalLab from '@/pages/labs/USMacroFiscalLab';
-import EnergyCommoditiesLab from '@/pages/labs/EnergyCommoditiesLab';
-import { China15thFYPLab } from '@/pages/labs/China15thFYP';
-import SovereignStressLab from '@/pages/labs/SovereignStressLab';
-import { GovFinancialPositionLab } from '@/pages/labs/GovFinancialPositionLab';
-import { ViewProvider } from '@/context/ViewContext';
-import { About } from '@/pages/About';
-import { BricsTradeSettlement } from '@/pages/labs/BricsTradeSettlement';
-import InterbankFundingLab from '@/pages/labs/InterbankFundingLab';
-import TreasurySupplyRadar from '@/pages/labs/TreasurySupplyRadar';
-import FxCarryMatrixLab from '@/pages/labs/FxCarryMatrixLab';
+import Terminal from './pages/Terminal';
+import DataHealthDashboard from './pages/DataHealthDashboard';
+import MacroObservatory from './pages/MacroObservatory';
+import { AdminDashboard } from './pages/AdminDashboard';
+import USMacroFiscalLab from './pages/labs/USMacroFiscalLab';
+import EnergyCommoditiesLab from './pages/labs/EnergyCommoditiesLab';
+import { China15thFYPLab } from './pages/labs/China15thFYP';
+import SovereignStressLab from './pages/labs/SovereignStressLab';
+import { GovFinancialPositionLab } from './pages/labs/GovFinancialPositionLab';
+import { ViewProvider } from './context/ViewContext';
+import { About } from './pages/About';
+import { BricsTradeSettlement } from './pages/labs/BricsTradeSettlement';
+import InterbankFundingLab from './pages/labs/InterbankFundingLab';
+import TreasurySupplyRadar from './pages/labs/TreasurySupplyRadar';
+import FxCarryMatrixLab from './pages/labs/FxCarryMatrixLab';
 
 // Dummy data for mocks - prefixed with 'mock' for Vitest hoisting
 const mockDummyCollective = {
