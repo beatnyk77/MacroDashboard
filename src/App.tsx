@@ -82,6 +82,9 @@ const ShadowSystemLab = lazy(() => import('@/pages/labs/ShadowSystemLab').then(m
 const China15thFYPLab = lazy(() => import('@/pages/labs/China15thFYP').then(module => ({ default: module.China15thFYPLab })));
 const AfricaMacroPulseLab = lazy(() => import('@/pages/labs/AfricaMacroPulse').then(module => ({ default: module.AfricaMacroPulseLab })));
 const MacroPrecedentsLab = lazy(() => import('@/pages/labs/MacroPrecedentsLab').then(module => ({ default: module.MacroPrecedentsLab })));
+const InterbankFundingLab = lazy(() => import('@/pages/labs/InterbankFundingLab').then(module => ({ default: module.InterbankFundingLab })));
+const TreasurySupplyRadar = lazy(() => import('@/pages/labs/TreasurySupplyRadar').then(module => ({ default: module.TreasurySupplyRadar })));
+const FxCarryMatrixLab = lazy(() => import('@/pages/labs/FxCarryMatrixLab').then(module => ({ default: module.FxCarryMatrixLab })));
 
 const LoadingFallback = () => (
     <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -178,6 +181,9 @@ function App() {
                                         <Route path={trailRoute('/labs/energy-commodities')} element={<EnergyCommoditiesLab />} />
                                         <Route path={trailRoute('/labs/sovereign-stress')} element={<SovereignStressLab />} />
                                         <Route path={trailRoute('/labs/shadow-system')} element={<ShadowSystemLab />} />
+                                        <Route path={trailRoute('/labs/interbank-funding')} element={<InterbankFundingLab />} />
+                                        <Route path={trailRoute('/labs/treasury-supply-radar')} element={<TreasurySupplyRadar />} />
+                                        <Route path={trailRoute('/labs/fx-carry-matrix')} element={<FxCarryMatrixLab />} />
                                         <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
                                         <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
                                         <Route path={trailRoute('/labs/macro-precedents')} element={<MacroPrecedentsLab />} />

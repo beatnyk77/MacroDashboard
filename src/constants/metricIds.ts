@@ -482,6 +482,28 @@ export const COT_POSITIONING_METRICS = {
   US_NET_LIQUIDITY_USD_BN:                 'US_NET_LIQUIDITY_USD_BN',
 } as const;
 
+// ── Institutional Desks (Interbank Credit, Treasury Supply & FX Carry) ──────────
+
+export const INSTITUTIONAL_DESK_METRICS = {
+  // Desk A: Interbank Credit & Funding Stress
+  US_SRF_UTILIZATION_BN:                   'US_SRF_UTILIZATION_BN',
+  US_BANK_CREDIT_H8_YOY:                   'US_BANK_CREDIT_H8_YOY',
+  US_HY_CREDIT_OAS_BPS:                    'US_HY_CREDIT_OAS_BPS',
+  INTERBANK_CREDIT_STRESS_INDEX:           'INTERBANK_CREDIT_STRESS_INDEX',
+
+  // Desk B: Treasury Supply & Foreign Custody Radar
+  FOREIGN_OFFICIAL_UST_CUSTODY_BN:         'FOREIGN_OFFICIAL_UST_CUSTODY_BN',
+  PRIMARY_DEALER_UST_INVENTORY_BN:         'PRIMARY_DEALER_UST_INVENTORY_BN',
+  UST_AUCTION_BID_TO_COVER_10Y:            'UST_AUCTION_BID_TO_COVER_10Y',
+  PRIMARY_DEALER_ABSORPTION_STRESS:        'PRIMARY_DEALER_ABSORPTION_STRESS',
+
+  // Desk D: FX Carry Trade & Swap Basis Matrix
+  EURUSD_3M_SWAP_BASIS_BPS:                'EURUSD_3M_SWAP_BASIS_BPS',
+  JPYUSD_3M_SWAP_BASIS_BPS:                'JPYUSD_3M_SWAP_BASIS_BPS',
+  G7_REAL_POLICY_RATE_MATRIX:              'G7_REAL_POLICY_RATE_MATRIX',
+  JPY_CARRY_UNWIND_RISK_SCORE:             'JPY_CARRY_UNWIND_RISK_SCORE',
+} as const;
+
 // ── Flat registry — canonical import for all hook files ──────────────────────
 //
 // Usage in hooks:
@@ -514,6 +536,7 @@ export const METRIC_IDS = {
   ...SIGNAL_METRICS,
   ...MARKET_METRICS,
   ...COT_POSITIONING_METRICS,
+  ...INSTITUTIONAL_DESK_METRICS,
 } as const;
 
 export type MetricId = typeof METRIC_IDS[keyof typeof METRIC_IDS];

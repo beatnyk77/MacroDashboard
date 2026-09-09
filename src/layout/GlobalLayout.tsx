@@ -45,6 +45,9 @@ const terminalNavItems = [
     { id: 'brics-trade', label: 'BRICS Trade Settlement', path: '/labs/brics-trade-settlement', icon: <Globe size={18} /> },
     { id: 'us-treasury-holdings', label: 'US Treasury Holdings', path: '/labs/us-treasury-foreign-holdings', icon: <FileText size={18} /> },
     { id: 'petrodollar-decay', label: 'Petrodollar Decay', path: '/labs/petrodollar-decay-indicators', icon: <Anchor size={18} /> },
+    { id: 'interbank-funding', label: 'Interbank Funding Stress', path: '/labs/interbank-funding', icon: <Activity size={18} /> },
+    { id: 'treasury-supply-radar', label: 'Treasury Supply Radar', path: '/labs/treasury-supply-radar', icon: <Database size={18} /> },
+    { id: 'fx-carry-matrix', label: 'FX Carry Matrix', path: '/labs/fx-carry-matrix', icon: <Globe size={18} /> },
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {

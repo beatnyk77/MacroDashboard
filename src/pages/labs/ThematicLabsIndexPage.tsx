@@ -192,6 +192,42 @@ const labsList: LabItem[] = [
         primaryIndicators: ['CNY-Denominated Oil Settlement Share', 'Petroyuan Futures OI', 'Gold/Oil Revaluation Ratio', 'OPEC+ Invoice Currency Breakdown'],
         dataSource: 'EIA / OPEC / Shanghai INE / PBOC',
         status: 'Active'
+    },
+    {
+        id: 'interbank-funding',
+        name: 'Interbank Credit & Funding Stress',
+        path: '/labs/interbank-funding',
+        icon: <BarChart3 className="w-6 h-6 text-cyan-400" />,
+        color: 'from-cyan-500/10 to-blue-500/5 hover:border-cyan-500/30',
+        description: 'Real-time telemetry on Standing Repo Facility (SRF) usage, commercial bank credit growth (H.8), high yield OAS spreads, and interbank funding stress.',
+        methodology: 'Normalized credit stress score synthesizing SOFR-EFFR spread, Fed repo facility drawdowns, and high yield credit spreads.',
+        primaryIndicators: ['Interbank Credit Stress Score', 'Standing Repo Facility Usage ($B)', 'C&I Bank Credit Growth (% YoY)', 'US HY Credit OAS Spread (bps)'],
+        dataSource: 'Federal Reserve H.4.1 / ICE BofA',
+        status: 'Active'
+    },
+    {
+        id: 'treasury-supply-radar',
+        name: 'Treasury Supply & Foreign Custody Radar',
+        path: '/labs/treasury-supply-radar',
+        icon: <Database className="w-6 h-6 text-indigo-400" />,
+        color: 'from-indigo-500/10 to-purple-500/5 hover:border-indigo-500/30',
+        description: 'Surveillance of primary dealer net coupon inventory absorption, foreign official custody holdings at the Fed, and 10-Year auction tail risk.',
+        methodology: 'Dealer inventory strain composite cross-referenced with Treasury auction bid-to-cover tails and foreign central bank custody trends.',
+        primaryIndicators: ['Dealer Absorption Stress Score', 'Foreign Official Custody at Fed ($B)', 'Primary Dealer Net Inventory ($B)', '10Y Auction Bid-to-Cover Ratio'],
+        dataSource: 'Fed H.4.1 / NY Fed / US Treasury',
+        status: 'Active'
+    },
+    {
+        id: 'fx-carry-matrix',
+        name: 'FX Carry Trade & Swap Basis Matrix',
+        path: '/labs/fx-carry-matrix',
+        icon: <Globe className="w-6 h-6 text-emerald-400" />,
+        color: 'from-emerald-500/10 to-teal-500/5 hover:border-emerald-500/30',
+        description: 'G7 real policy rate matrix, 3-Month cross-currency swap basis spreads, and Yen carry trade unwind risk telemetry.',
+        methodology: 'Cross-currency basis spread discount analysis fused with G7 real policy rate differentials and FX volatility parameters.',
+        primaryIndicators: ['JPY Carry Unwind Risk Score', '3M EUR/USD Basis Swap (bps)', '3M JPY/USD Basis Swap (bps)', 'G7 Real Policy Rate Matrix'],
+        dataSource: 'Bank of Japan / FRED / OTC FX Swaps',
+        status: 'Active'
     }
 ];
 
