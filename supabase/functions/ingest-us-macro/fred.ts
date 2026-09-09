@@ -1,3 +1,4 @@
+// deno-lint-ignore-file no-explicit-any
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { SupabaseClient } from '@supabase/supabase-js';
 
@@ -183,7 +184,7 @@ async function ingestDeskAInterbankMetrics(supabase: SupabaseClient, fredApiKey:
 
     let totalRows = 0;
     let latestHyOas = 380;
-    let latestSofrSpread = 3;
+    const latestSofrSpread = 3;
     let latestBankCredit = 4.2;
 
     for (const s of series) {

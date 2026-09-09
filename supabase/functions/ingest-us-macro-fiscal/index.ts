@@ -19,7 +19,7 @@ async function fetchTipsYield(fredApiKey: string): Promise<{ date: string; value
 async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Promise<number> {
   let count = 0;
   let dealerInventoryBn = 285;
-  let bidToCover = 2.48;
+  const bidToCover = 2.48;
 
   const seriesMap = [
     { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'WDFBAL', divisor: 1000 },

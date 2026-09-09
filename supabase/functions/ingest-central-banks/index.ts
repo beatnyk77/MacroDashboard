@@ -323,7 +323,7 @@ async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string
   }
 }
 
-async function ingestFxCarryAndBasis(supabase: any, fredApiKey: string): Promise<number> {
+async function ingestFxCarryAndBasis(supabase: any, _fredApiKey: string): Promise<number> {
   try {
     const today = new Date().toISOString().split('T')[0];
     const eurSwapBasis = -18.4;
