@@ -1,8 +1,9 @@
 import React from 'react';
+import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import { CorporateDebtMaturityWall } from '../CorporateDebtMaturityWall';
-import { supabase } from '@/lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 // Mock Recharts to avoid testing SVG/Canvas rendering
 vi.mock('recharts', async () => {
@@ -21,6 +22,11 @@ vi.mock('recharts', async () => {
 });
 
 // Mock Supabase
+vi.mock('../../lib/supabase', () => ({
+    supabase: {
+        from: vi.fn(),
+    },
+}));
 vi.mock('@/lib/supabase', () => ({
     supabase: {
         from: vi.fn(),

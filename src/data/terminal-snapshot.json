@@ -1,7 +1,80 @@
 {
-  "generatedAt": "2026-09-08T12:34:53.192Z",
-  "source": "build-time",
-  "available": false,
-  "reason": "Supabase env not set at build time — UI hydrates live client-side",
-  "metrics": []
+  "generatedAt": "2026-09-08T19:37:06.126Z",
+  "source": "vw_latest_metrics",
+  "available": true,
+  "reason": null,
+  "metrics": [
+    {
+      "metricId": "FED_BALANCE_SHEET",
+      "label": "Fed Balance Sheet",
+      "value": 6737204,
+      "display": "6.74T",
+      "asOf": "2026-09-02",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "RRP_BALANCE_BN",
+      "label": "ON RRP",
+      "value": 0.675,
+      "display": "0.68B",
+      "asOf": "2026-09-04",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "TGA_BALANCE_BN",
+      "label": "TGA",
+      "value": 967935,
+      "display": "967.93B",
+      "asOf": "2026-09-02",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "GOLD_PRICE_USD",
+      "label": "Gold",
+      "value": 4478.100098,
+      "display": "$4,478",
+      "asOf": "2026-08-28",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "DXY_INDEX",
+      "label": "DXY",
+      "value": 99.160004,
+      "display": "99.16",
+      "asOf": "2026-08-27",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "UST_10Y_YIELD",
+      "label": "UST 10Y",
+      "value": 4.77,
+      "display": "4.77",
+      "asOf": "2026-09-03",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "VIX_INDEX",
+      "label": "VIX",
+      "value": 14.51,
+      "display": "14.51",
+      "asOf": "2026-08-27",
+      "staleness": null,
+      "unit": null
+    },
+    {
+      "metricId": "BRENT_CRUDE_PRICE",
+      "label": "Brent",
+      "value": 97.35,
+      "display": "$97.3",
+      "asOf": "2026-09-08",
+      "staleness": null,
+      "unit": null
+    }
+  ]
 }
