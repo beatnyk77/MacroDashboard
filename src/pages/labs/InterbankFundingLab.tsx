@@ -26,7 +26,7 @@ export const InterbankFundingLab: React.FC = () => {
   const { data: hyOasMetric } = useLatestMetric(MID.US_HY_CREDIT_OAS_BPS);
 
   const dataFreshness = getStaleness(stressMetric?.lastUpdated, stressMetric?.frequency);
-  const stressScore = stressMetric?.value ?? 38;
+  const stressScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : 38;
 
   const getStressBadge = (score: number) => {
     if (score > 70) return { label: 'SEVERE STRESS', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };

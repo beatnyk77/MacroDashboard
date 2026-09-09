@@ -23,7 +23,7 @@ export const FxCarryMatrixLab: React.FC = () => {
   const { data: usRateMetric } = useLatestMetric(MID.US_POLICY_RATE);
 
   const dataFreshness = getStaleness(unwindMetric?.lastUpdated, unwindMetric?.frequency);
-  const unwindRiskScore = unwindMetric?.value ?? 64;
+  const unwindRiskScore = typeof unwindMetric?.value === 'number' && !isNaN(unwindMetric.value) ? unwindMetric.value : 64;
 
   const getUnwindBadge = (score: number) => {
     if (score > 70) return { label: 'HIGH UNWIND RISK', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };

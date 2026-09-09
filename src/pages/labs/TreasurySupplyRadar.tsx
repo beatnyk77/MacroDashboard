@@ -23,7 +23,7 @@ export const TreasurySupplyRadar: React.FC = () => {
   const { data: bidToCoverMetric } = useLatestMetric(MID.UST_AUCTION_BID_TO_COVER_10Y);
 
   const dataFreshness = getStaleness(stressMetric?.lastUpdated, stressMetric?.frequency);
-  const absorptionScore = stressMetric?.value ?? 42;
+  const absorptionScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : 42;
 
   const getAbsorptionBadge = (score: number) => {
     if (score > 70) return { label: 'CRITICAL CONGESTION', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };

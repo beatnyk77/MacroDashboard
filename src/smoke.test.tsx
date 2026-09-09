@@ -326,7 +326,7 @@ describe('Smoke Tests', () => {
                 <InterbankFundingLab />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Interbank Credit/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/Interbank Funding Desk/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
     it('renders TreasurySupplyRadar page without crashing', async () => {
@@ -335,7 +335,7 @@ describe('Smoke Tests', () => {
                 <TreasurySupplyRadar />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Treasury Supply/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/Treasury Supply Radar/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 
     it('renders FxCarryMatrixLab page without crashing', async () => {
@@ -344,6 +344,6 @@ describe('Smoke Tests', () => {
                 <FxCarryMatrixLab />
             </TestWrapper>
         );
-        expect(await screen.findByText(/FX Carry Trade/i, {}, { timeout: 10000 })).toBeInTheDocument();
+        expect(await screen.findByText(/FX Carry Matrix/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });
