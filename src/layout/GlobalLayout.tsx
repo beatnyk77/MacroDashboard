@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -48,6 +48,8 @@ const terminalNavItems = [
     { id: 'interbank-funding', label: 'Interbank Funding Stress', path: '/labs/interbank-funding', icon: <Activity size={18} /> },
     { id: 'treasury-supply-radar', label: 'Treasury Supply Radar', path: '/labs/treasury-supply-radar', icon: <Database size={18} /> },
     { id: 'fx-carry-matrix', label: 'FX Carry Matrix', path: '/labs/fx-carry-matrix', icon: <Globe size={18} /> },
+    { id: 'treasury-basis-trade', label: 'Treasury Basis Trade', path: '/labs/treasury-basis-trade', icon: <ShieldAlert size={18} /> },
+    { id: 'global-net-liquidity', label: 'Global Net Liquidity', path: '/labs/global-net-liquidity', icon: <Gauge size={18} /> },
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {

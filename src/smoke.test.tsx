@@ -23,6 +23,8 @@ import { BricsTradeSettlement } from './pages/labs/BricsTradeSettlement';
 import InterbankFundingLab from './pages/labs/InterbankFundingLab';
 import TreasurySupplyRadar from './pages/labs/TreasurySupplyRadar';
 import FxCarryMatrixLab from './pages/labs/FxCarryMatrixLab';
+import { TreasuryBasisTradeLab } from './pages/labs/TreasuryBasisTradeLab';
+import { GlobalNetLiquidityLab } from './pages/labs/GlobalNetLiquidityLab';
 
 // Dummy data for mocks - prefixed with 'mock' for Vitest hoisting
 const mockDummyCollective = {
@@ -345,5 +347,23 @@ describe('Smoke Tests', () => {
             </TestWrapper>
         );
         expect(await screen.findByText(/FX Carry Matrix/i, {}, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders TreasuryBasisTradeLab page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/treasury-basis-trade">
+                <TreasuryBasisTradeLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByRole('heading', { name: /Treasury Cash-Futures Basis Trade/i }, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders GlobalNetLiquidityLab page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/global-net-liquidity">
+                <GlobalNetLiquidityLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByRole('heading', { name: /Global Central Bank Net Liquidity/i }, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });

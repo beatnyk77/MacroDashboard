@@ -85,6 +85,8 @@ const MacroPrecedentsLab = lazy(() => import('@/pages/labs/MacroPrecedentsLab').
 const InterbankFundingLab = lazy(() => import('@/pages/labs/InterbankFundingLab').then(module => ({ default: module.InterbankFundingLab })));
 const TreasurySupplyRadar = lazy(() => import('@/pages/labs/TreasurySupplyRadar').then(module => ({ default: module.TreasurySupplyRadar })));
 const FxCarryMatrixLab = lazy(() => import('@/pages/labs/FxCarryMatrixLab').then(module => ({ default: module.FxCarryMatrixLab })));
+const TreasuryBasisTradeLab = lazy(() => import('@/pages/labs/TreasuryBasisTradeLab').then(module => ({ default: module.TreasuryBasisTradeLab })));
+const GlobalNetLiquidityLab = lazy(() => import('@/pages/labs/GlobalNetLiquidityLab').then(module => ({ default: module.GlobalNetLiquidityLab })));
 
 const LoadingFallback = () => (
     <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -184,6 +186,8 @@ function App() {
                                         <Route path={trailRoute('/labs/interbank-funding')} element={<InterbankFundingLab />} />
                                         <Route path={trailRoute('/labs/treasury-supply-radar')} element={<TreasurySupplyRadar />} />
                                         <Route path={trailRoute('/labs/fx-carry-matrix')} element={<FxCarryMatrixLab />} />
+                                        <Route path={trailRoute('/labs/treasury-basis-trade')} element={<TreasuryBasisTradeLab />} />
+                                        <Route path={trailRoute('/labs/global-net-liquidity')} element={<GlobalNetLiquidityLab />} />
                                         <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
                                         <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
                                         <Route path={trailRoute('/labs/macro-precedents')} element={<MacroPrecedentsLab />} />

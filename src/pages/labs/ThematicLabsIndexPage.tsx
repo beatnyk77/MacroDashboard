@@ -3,7 +3,7 @@ import React from 'react';
 import { 
     Globe, TrendingUp, Anchor,
     ShieldAlert, Database,
-    Zap, Cpu, BarChart3, Compass, Library, GitCompare
+    Zap, Cpu, BarChart3, Compass, Library, GitCompare, Gauge
 } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
@@ -227,6 +227,30 @@ const labsList: LabItem[] = [
         methodology: 'Cross-currency basis spread discount analysis fused with G7 real policy rate differentials and FX volatility parameters.',
         primaryIndicators: ['JPY Carry Unwind Risk Score', '3M EUR/USD Basis Swap (bps)', '3M JPY/USD Basis Swap (bps)', 'G7 Real Policy Rate Matrix'],
         dataSource: 'Bank of Japan / FRED / OTC FX Swaps',
+        status: 'Active'
+    },
+    {
+        id: 'treasury-basis-trade',
+        name: 'Treasury Basis Trade & Leverage Fragility Barometer',
+        path: '/labs/treasury-basis-trade',
+        icon: <ShieldAlert className="w-6 h-6 text-red-400" />,
+        color: 'from-red-500/10 to-amber-500/5 hover:border-red-500/30',
+        description: 'Hedge fund cash-futures basis trade exposure, bilateral uncleared shadow repo borrowing, and repo blowout fragility radar.',
+        methodology: 'CFTC Leveraged Funds Treasury futures net short positioning cross-matched with Primary Dealer bilateral repo volume and SOFR-IORB spread pressure.',
+        primaryIndicators: ['Basis Blowout Fragility Risk', 'CFTC Leveraged Short ($B)', 'SOFR-IORB Spread (bps)', 'Primary Dealer Repo Volume ($B)'],
+        dataSource: 'CFTC TFF / NY Fed / Office of Financial Research',
+        status: 'Active'
+    },
+    {
+        id: 'global-net-liquidity',
+        name: 'Global Central Bank Net Liquidity Impulse Engine',
+        path: '/labs/global-net-liquidity',
+        icon: <Gauge className="w-6 h-6 text-cyan-400" />,
+        color: 'from-cyan-500/10 to-emerald-500/5 hover:border-cyan-500/30',
+        description: 'Synchronized cross-border liquidity impulse tracking the aggregated balance sheets of Fed, ECB, PBOC, and BOJ adjusted for sterilization buffers.',
+        methodology: 'Gross assets minus sovereign cash (TGA) and reverse repo (RRP) converted to USD, with 13W and 26W rate-of-change impulse indicators.',
+        primaryIndicators: ['Global Net Liquidity ($T)', 'US Net Liquidity ($B)', '13-Week Net Liquidity Impulse (%)', '26-Week Net Liquidity Impulse (%)'],
+        dataSource: 'Fed / ECB / PBOC / BOJ',
         status: 'Active'
     }
 ];

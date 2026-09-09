@@ -502,6 +502,17 @@ export const INSTITUTIONAL_DESK_METRICS = {
   JPYUSD_3M_SWAP_BASIS_BPS:                'JPYUSD_3M_SWAP_BASIS_BPS',
   G7_REAL_POLICY_RATE_MATRIX:              'G7_REAL_POLICY_RATE_MATRIX',
   JPY_CARRY_UNWIND_RISK_SCORE:             'JPY_CARRY_UNWIND_RISK_SCORE',
+
+  // Desk E: Treasury Basis Trade & Leverage Fragility Barometer
+  TREASURY_BASIS_BLOWOUT_RISK:             'TREASURY_BASIS_BLOWOUT_RISK',
+  CFTC_LEVERAGED_FUTURES_SHORT_BN:         'CFTC_LEVERAGED_FUTURES_SHORT_BN',
+  SOFR_IORB_SPREAD_BPS:                    'SOFR_IORB_SPREAD_BPS',
+  PRIMARY_DEALER_REPO_FINANCING_BN:        'PRIMARY_DEALER_REPO_FINANCING_BN',
+
+  // Desk F: Global Net Liquidity Impulse Engine
+  GLOBAL_NET_LIQUIDITY_USD_TN:             'GLOBAL_NET_LIQUIDITY_USD_TN',
+  NET_LIQUIDITY_IMPULSE_13W_PCT:           'NET_LIQUIDITY_IMPULSE_13W_PCT',
+  NET_LIQUIDITY_IMPULSE_26W_PCT:           'NET_LIQUIDITY_IMPULSE_26W_PCT',
 } as const;
 
 // ── Flat registry — canonical import for all hook files ──────────────────────
