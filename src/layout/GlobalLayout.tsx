@@ -29,6 +29,7 @@ const terminalNavItems = [
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
     { id: 'corporate-transmission', label: 'Corporate Transmission', path: '/corporate-transmission', icon: <FileSearch size={18} />, group: 'INTELLIGENCE' },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
+    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Database size={18} /> },
     { id: 'trackers', label: 'Macro Trackers', path: '/trackers', icon: <Search size={18} /> },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={18} /> },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },

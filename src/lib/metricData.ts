@@ -8,6 +8,8 @@ export interface MetricData {
     history: { date: string; value: number }[];
     status: 'safe' | 'warning' | 'danger' | 'neutral';
     lastUpdated: string;
+    lastIngested?: string;
+    dbStaleness?: string | null;
     zScore?: number;
     percentile?: number;
     source?: string;
@@ -42,6 +44,8 @@ export function mapLatestMetric(
         history: historyRows.map((h) => ({ date: String(h.as_of_date), value: Number(h.value) })).reverse(),
         status: STATUS_MAP[String(latest.staleness_flag ?? '')] ?? 'neutral',
         lastUpdated: String(latest.as_of_date ?? ''),
+        lastIngested: latest.last_updated_at != null ? String(latest.last_updated_at) : undefined,
+        dbStaleness: (latest.staleness_flag as string | null) ?? null,
         zScore: latest.z_score != null ? Number(latest.z_score) : undefined,
         percentile: latest.percentile != null ? Number(latest.percentile) : undefined,
         source: String(latest.source_name ?? 'Internal Analytics'),

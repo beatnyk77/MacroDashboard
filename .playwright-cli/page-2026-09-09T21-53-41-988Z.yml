@@ -1,0 +1,172 @@
+- generic [ref=e3]:
+  - link "Skip to main content" [ref=e4] [cursor=pointer]:
+    - /url: "#main-content"
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - generic [ref=e7]:
+        - generic [ref=e11] [cursor=pointer]:
+          - text: GraphiQuestor
+          - generic [ref=e12]: Macro Observatory · Not Sovereign AI
+        - generic [ref=e14]:
+          - generic [ref=e15]:
+            - generic [ref=e16]: LOCAL TIME
+            - text: 03:23:41 AM
+          - generic [ref=e17]:
+            - generic [ref=e18]: DATE
+            - text: Thu, Sep 10
+      - generic [ref=e19]:
+        - generic:
+          - link "Data feed status":
+            - /url: /data-health/
+        - button "Subscribe" [ref=e20] [cursor=pointer]
+  - generic [ref=e21]:
+    - complementary "Terminal Navigation Sidebar" [ref=e22]:
+      - generic [ref=e23]: Terminal Active
+      - navigation "Main terminal navigation" [ref=e27]:
+        - generic [ref=e28]:
+          - heading "CORE DESK" [level=2] [ref=e29]
+          - list [ref=e30]:
+            - listitem [ref=e31]:
+              - link "View Morning Brief" [ref=e32] [cursor=pointer]:
+                - /url: /macro-brief/
+                - generic [ref=e37]: Morning Brief
+            - listitem [ref=e38]:
+              - link "View Weekly Narrative" [ref=e39] [cursor=pointer]:
+                - /url: /weekly-narrative/
+                - generic [ref=e44]: Weekly Narrative
+            - listitem [ref=e45]:
+              - link "View Global Macro Overview" [ref=e46] [cursor=pointer]:
+                - /url: /
+                - generic [ref=e54]: Global Macro Overview
+            - listitem [ref=e56]:
+              - link "View Regime Digest" [ref=e57] [cursor=pointer]:
+                - /url: /regime-digest/
+                - generic [ref=e62]: Regime Digest
+            - listitem [ref=e63]:
+              - link "View US Macro Pulse" [ref=e64] [cursor=pointer]:
+                - /url: /labs/us-macro-fiscal/
+                - generic [ref=e69]: US Macro Pulse
+            - listitem [ref=e70]:
+              - link "View Gov Financial Position" [ref=e71] [cursor=pointer]:
+                - /url: /labs/gov-financial-position/
+                - generic [ref=e75]: Gov Financial Position
+        - generic [ref=e76]:
+          - heading "REGIONAL" [level=2] [ref=e77]
+          - list [ref=e78]:
+            - listitem [ref=e79]:
+              - link "View China Macro Pulse" [ref=e80] [cursor=pointer]:
+                - /url: /intel/china/
+                - generic [ref=e85]: China Macro Pulse
+            - listitem [ref=e86]:
+              - link "View India Macro Pulse" [ref=e87] [cursor=pointer]:
+                - /url: /intel/india/
+                - generic [ref=e92]: India Macro Pulse
+            - listitem [ref=e93]:
+              - link "View Energy & Commodities" [ref=e94] [cursor=pointer]:
+                - /url: /labs/energy-commodities/
+                - generic [ref=e100]: Energy & Commodities
+            - listitem [ref=e101]:
+              - link "View Africa Macro Pulse" [ref=e102] [cursor=pointer]:
+                - /url: /labs/africa-macro/
+                - generic [ref=e107]: Africa Macro Pulse
+        - generic [ref=e108]:
+          - heading "STRUCTURAL" [level=2] [ref=e109]
+          - list [ref=e110]:
+            - listitem [ref=e111]:
+              - link "View Thematic Labs" [ref=e112] [cursor=pointer]:
+                - /url: /labs/
+                - generic [ref=e116]: Thematic Labs
+            - listitem [ref=e117]:
+              - link "View Sovereign Stress" [ref=e118] [cursor=pointer]:
+                - /url: /labs/sovereign-stress/
+                - generic [ref=e122]: Sovereign Stress
+            - listitem [ref=e123]:
+              - link "View Precedents & Benchmarks" [ref=e124] [cursor=pointer]:
+                - /url: /labs/macro-precedents/
+                - generic [ref=e131]: Precedents & Benchmarks
+            - listitem [ref=e132]:
+              - link "View De-Dollarization & Gold" [ref=e133] [cursor=pointer]:
+                - /url: /labs/de-dollarization-gold/
+                - generic [ref=e138]: De-Dollarization & Gold
+      - generic [ref=e140]:
+        - generic [ref=e141]: System Status
+        - generic [ref=e142]: All Systems Nominal
+    - main [ref=e147]:
+      - status [ref=e149]:
+        - progressbar "Loading terminal page" [ref=e150]
+        - generic [ref=e153]: Loading terminal
+      - generic [ref=e155]:
+        - generic [ref=e156]: "Institutional Grade Security: Row-Level Security (RLS) Active & Verified"
+        - generic [ref=e166]: "Industry-first: Fed Debt Monetization Tracker · De-Dollarization Composite · India Credit Cycle Clock"
+        - generic [ref=e167]:
+          - generic [ref=e168]: Weekly Regime Digest — synthesized from 15+ official sources
+          - generic [ref=e173]:
+            - generic [ref=e174]:
+              - generic [ref=e175]: Work email
+              - textbox "Work email" [ref=e176]:
+                - /placeholder: you@fund.com
+            - textbox [aria-hidden] [ref=e177]
+            - button "Join" [ref=e178] [cursor=pointer]
+        - generic [ref=e179]:
+          - generic [ref=e180]:
+            - heading "Legal Disclaimer" [level=3] [ref=e181]
+            - paragraph [ref=e182]: GraphiQuestor is a macro intelligence platform provided for informational and educational purposes only. The data, analytics, and interpretations presented do not constitute investment advice, financial planning, or solicitation for any financial product. Past performance of macro indicators is not indicative of future market outcomes. Institutional users should conduct independent verification of all data points.
+          - generic [ref=e183]:
+            - heading "Contact & Intelligence" [level=3] [ref=e184]
+            - generic [ref=e185]:
+              - generic [ref=e186]: graphiquestor@gmail.com
+              - generic [ref=e187]: Global Macro Strategy Division
+        - navigation "Dashboard Sections" [ref=e188]:
+          - heading "Dashboard Deep Dives" [level=3] [ref=e189]
+          - generic [ref=e190]:
+            - link "Net Liquidity" [ref=e191] [cursor=pointer]:
+              - /url: /#liquidity-hero
+            - link "Debt Maturity Wall" [ref=e192] [cursor=pointer]:
+              - /url: /#debt-maturity-hero
+            - link "India Macro Pulse" [ref=e193] [cursor=pointer]:
+              - /url: /#india-pulse
+            - link "Thematic Labs" [ref=e194] [cursor=pointer]:
+              - /url: /#thematic-labs
+            - link "Geopolitics" [ref=e195] [cursor=pointer]:
+              - /url: /#policy-geopolitics
+            - link "Sovereign Debt" [ref=e196] [cursor=pointer]:
+              - /url: /#sovereign-debt-stress
+            - link "Country Pulses" [ref=e197] [cursor=pointer]:
+              - /url: /#country-pulses
+            - link "Yield Curves" [ref=e198] [cursor=pointer]:
+              - /url: /#yield-curve-monitor
+        - generic [ref=e199]:
+          - generic [ref=e200]: © 2026 FounderHQ LLP. GraphiQuestor PRO-SERIES TERMINAL.
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - link "Widgets" [ref=e203] [cursor=pointer]:
+                - /url: /tools/
+              - link "API Access" [ref=e204] [cursor=pointer]:
+                - /url: /api-access/
+              - link "API Docs" [ref=e205] [cursor=pointer]:
+                - /url: /api-docs/
+              - link "MCP Server" [ref=e206] [cursor=pointer]:
+                - /url: /mcp/
+              - link "AI & Research" [ref=e207] [cursor=pointer]:
+                - /url: /for-researchers/
+            - generic [ref=e208]:
+              - link "Terms" [ref=e209] [cursor=pointer]:
+                - /url: /terms/
+              - link "Privacy" [ref=e210] [cursor=pointer]:
+                - /url: /privacy/
+            - link "About Team" [ref=e211] [cursor=pointer]:
+              - /url: /about/
+            - link "Intelligence Journal" [ref=e212] [cursor=pointer]:
+              - /url: /blog/
+            - link "Glossary" [ref=e216] [cursor=pointer]:
+              - /url: /glossary/
+            - link "🇮🇳 India Intel" [ref=e220] [cursor=pointer]:
+              - /url: /intel/india/
+            - link "🇨🇳 China Intel" [ref=e224] [cursor=pointer]:
+              - /url: /intel/china/
+            - link "Subscribe via RSS" [ref=e228] [cursor=pointer]:
+              - /url: /rss.xml
+  - button "Clean screenshot view" [ref=e231] [cursor=pointer]
+  - generic [ref=e236]:
+    - generic [ref=e237]: "Terminal Active: Capture Mode"
+    - button "Exit screenshot mode" [ref=e238] [cursor=pointer]

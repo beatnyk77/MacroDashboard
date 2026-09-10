@@ -35,6 +35,7 @@ export const getStaleness = (
 
     if (freq.includes('monthly')) expectedHours = 31 * 24;
     else if (freq.includes('quarterly')) expectedHours = 92 * 24;
+    else if (freq.includes('annual')) expectedHours = 400 * 24;
     else if (freq.includes('weekly')) expectedHours = 7 * 24 + 48; // 7 days + weekend grace
     else if (freq.includes('realtime') || freq.includes('intra')) expectedHours = 4;
 

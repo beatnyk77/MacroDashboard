@@ -21,6 +21,7 @@ const terminalNavItems: NavItem[] = [
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} />, group: 'CORE DESK' },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} />, group: 'CORE DESK' },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} />, group: 'CORE DESK' },
+    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Database size={14} />, group: 'CORE DESK' },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} />, group: 'STRUCTURAL' },
     { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} />, group: 'CORE DESK' },
     { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={14} />, group: 'CORE DESK' },

@@ -43,6 +43,7 @@ const WeeklyNarrativePage = lazy(() => import('@/pages/WeeklyNarrativePage').the
 const DataSourcesPage = lazy(() => import('@/pages/DataSourcesPage').then(module => ({ default: module.DataSourcesPage })));
 const TrackerSeoIndexPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoIndexPage })));
 const TrackerSeoPage = lazy(() => import('@/pages/TrackerSeoPage').then(module => ({ default: module.TrackerSeoPage })));
+const MetricsExplorerPage = lazy(() => import('@/pages/MetricsExplorerPage').then(module => ({ default: module.MetricsExplorerPage })));
 const NetLiquidityZScorePage = lazy(() => import('@/pages/methods/NetLiquidityZScorePage').then(module => ({ default: module.NetLiquidityZScorePage })));
 const DebtGoldZScorePage = lazy(() => import('@/pages/methods/DebtGoldZScorePage').then(module => ({ default: module.DebtGoldZScorePage })));
 const LoanToJobEfficiencyPage = lazy(() => import('@/pages/methods/LoanToJobEfficiencyPage').then(module => ({ default: module.LoanToJobEfficiencyPage })));
@@ -116,6 +117,7 @@ function App() {
                                     <Routes>
                                         <Route path={trailRoute('/')} element={<Terminal />} />
                                         <Route path={trailRoute('/methodology')} element={<MetricsMethodologyPage />} />
+                                        <Route path={trailRoute('/metrics')} element={<MetricsExplorerPage />} />
                                         <Route path={trailRoute('/metrics/:id')} element={<MetricPage />} />
                                         <Route path={trailRoute('/metrics/:id/history/:snapshotId')} element={<MetricPage />} />
                                         <Route path={trailRoute('/corporate-transmission')} element={<CorporateTransmissionPage />} />

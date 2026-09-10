@@ -123,6 +123,12 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ open, setOpen })
                             Metrics Methodology
                         </Item>
                         <Item
+                            onSelect={() => runCommand(() => navigate('/metrics'))}
+                            icon={<BarChart3 className="h-4 w-4" />}
+                        >
+                            Live Metrics Explorer
+                        </Item>
+                        <Item
                             onSelect={() => runCommand(() => navigate('/labs/de-dollarization-gold'))}
                             icon={<Globe className="h-4 w-4 text-amber-500" />}
                         >

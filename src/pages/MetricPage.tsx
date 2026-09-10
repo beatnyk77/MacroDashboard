@@ -1,9 +1,9 @@
 import React from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { useQuery } from '@tanstack/react-query';
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
-import { ChevronRight, Database, BookOpen } from 'lucide-react';
+import { ChevronRight, Database, BookOpen, Activity, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { ShareButton } from '@/components/ShareButton';
@@ -36,6 +36,45 @@ interface SeriesPoint {
     date: string;
     value: number;
 }
+
+interface GenericMetricRow {
+    metric_id: string;
+    metric_name: string | null;
+    category: string | null;
+    tier: string | null;
+    unit: string | null;
+    unit_label: string | null;
+    native_frequency: string | null;
+    display_frequency: string | null;
+    expected_interval_days: number | null;
+    as_of_date: string | null;
+    last_updated_at: string | null;
+    value: number | null;
+    staleness_flag: string | null;
+    source_name: string | null;
+    source_ref: string | null;
+    provenance: string | null;
+    is_provisional: boolean | null;
+}
+
+const dbStatusToChip = (status: string | null) => {
+    if (status === 'fresh') return 'fresh' as const;
+    if (status === 'lagged') return 'lagged' as const;
+    if (status === 'very_lagged') return 'stale' as const;
+    return 'no_data' as const;
+};
+
+const formatMetricValue = (value: number | null | undefined, unitLabel?: string | null) => {
+    if (value == null || !Number.isFinite(Number(value))) return '—';
+    const n = Number(value);
+    const suffix = unitLabel && unitLabel.length <= 10 ? ` ${unitLabel}` : '';
+    if (Math.abs(n) >= 1_000_000_000_000) return `${(n / 1_000_000_000_000).toFixed(2)}T${suffix}`;
+    if (Math.abs(n) >= 1_000_000_000) return `${(n / 1_000_000_000).toFixed(2)}B${suffix}`;
+    if (Math.abs(n) >= 1_000_000) return `${(n / 1_000_000).toFixed(2)}M${suffix}`;
+    if (Math.abs(n) >= 100) return `${n.toLocaleString(undefined, { maximumFractionDigits: 0 })}${suffix}`;
+    if (Math.abs(n) >= 10) return `${n.toFixed(2)}${suffix}`;
+    return `${n.toFixed(3).replace(/\.?0+$/, '')}${suffix}`;
+};
 
 /** Catalog id → live time-series source. Entries without a mapping render the
  *  methodology layout without a chart (never fabricate data). */
@@ -104,6 +143,165 @@ function useMetricSeries(entryId: string | undefined) {
         },
     });
 }
+
+function useGenericMetric(metricId: string | undefined) {
+    return useQuery({
+        queryKey: ['generic-metric-page', metricId],
+        enabled: !!metricId,
+        staleTime: 1000 * 60 * 5,
+        queryFn: async (): Promise<{ latest: GenericMetricRow | null; series: SeriesPoint[] }> => {
+            if (!metricId) return { latest: null, series: [] };
+            const [latestRes, historyRes] = await Promise.all([
+                supabase
+                    .from('vw_latest_metrics')
+                    .select('metric_id, metric_name, category, tier, unit, unit_label, native_frequency, display_frequency, expected_interval_days, as_of_date, last_updated_at, value, staleness_flag, source_name, source_ref, provenance, is_provisional')
+                    .eq('metric_id', metricId)
+                    .maybeSingle(),
+                supabase
+                    .from('metric_observations')
+                    .select('as_of_date, value')
+                    .eq('metric_id', metricId)
+                    .order('as_of_date', { ascending: false })
+                    .limit(365),
+            ]);
+            if (latestRes.error) throw latestRes.error;
+            if (historyRes.error) throw historyRes.error;
+            return {
+                latest: (latestRes.data as GenericMetricRow | null) ?? null,
+                series: (historyRes.data ?? [])
+                    .map((r: any) => ({ date: r.as_of_date as string, value: Number(r.value) }))
+                    .filter((point) => point.date && Number.isFinite(point.value))
+                    .reverse(),
+            };
+        },
+    });
+}
+
+const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
+    const { data, isLoading } = useGenericMetric(metricId);
+    const latest = data?.latest;
+    const series = data?.series ?? [];
+    const observationFreshness = getStaleness(latest?.as_of_date, latest?.native_frequency ?? undefined);
+    const chipStatus = observationFreshness.state === 'fresh'
+        ? dbStatusToChip(latest?.staleness_flag ?? null)
+        : observationFreshness.state;
+    const title = latest?.metric_name ?? metricId;
+
+    if (isLoading) {
+        return (
+            <div className="mx-auto flex min-h-[520px] w-full max-w-4xl items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
+                <Activity size={14} className="animate-pulse" /> Loading metric
+            </div>
+        );
+    }
+
+    if (!latest) {
+        return (
+            <div className="mx-auto w-full max-w-3xl px-4 py-20 text-center">
+                <SEOManager title="Metric Not Found" description={`No live metric found for ${metricId}.`} robots="noindex, follow" />
+                <AlertTriangle className="mx-auto mb-4 text-amber-300" size={28} />
+                <h1 className="text-2xl font-black uppercase tracking-tight text-white">Metric unavailable</h1>
+                <p className="mt-3 text-sm text-muted-foreground">No live `vw_latest_metrics` row exists for `{metricId}`.</p>
+                <Link to="/metrics/" className="mt-6 inline-flex text-sm font-bold text-blue-300 hover:underline">Open metrics explorer</Link>
+            </div>
+        );
+    }
+
+    return (
+        <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6">
+            <SEOManager
+                title={`${title} | Live Metric`}
+                description={`Live GraphiQuestor metric ${metricId}: latest observation, history, source, cadence, and freshness state.`}
+                keywords={[metricId, title, latest.category ?? 'macro metric', 'live metric data']}
+                canonical={`/metrics/${encodeURIComponent(metricId)}/`}
+                jsonLd={{
+                    '@context': 'https://schema.org',
+                    '@type': 'Dataset',
+                    name: `${title} time series`,
+                    description: `Latest and historical observations for ${metricId}.`,
+                    variableMeasured: title,
+                    temporalCoverage: latest.as_of_date ? `../${latest.as_of_date}` : undefined,
+                    creator: { '@type': 'Organization', name: 'GraphiQuestor', url: 'https://graphiquestor.com' },
+                }}
+            />
+            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-white/30">
+                <Link to="/metrics/" className="hover:text-blue-400 transition-colors">Metrics</Link>
+                <ChevronRight size={12} />
+                <span className="text-white/60">{metricId}</span>
+            </nav>
+
+            <header className="mb-8 border-b border-white/10 pb-6">
+                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{latest.category ?? 'Live Metric'}</div>
+                <h1 className="mt-3 text-3xl font-black tracking-tight text-white">{title}</h1>
+                <div className="mt-5 flex flex-wrap items-center gap-3">
+                    <span className="font-mono text-2xl font-black tabular-nums text-white">{formatMetricValue(latest.value, latest.unit_label)}</span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/50">
+                        Observation {latest.as_of_date ?? 'unavailable'}
+                    </span>
+                    <FreshnessChip
+                        status={chipStatus}
+                        lastUpdated={latest.as_of_date ?? undefined}
+                        label={observationFreshness.state !== 'fresh' ? observationFreshness.label : undefined}
+                        isProvisional={latest.is_provisional === true}
+                        sourceRef={latest.source_ref}
+                        provenance={latest.provenance}
+                    />
+                </div>
+            </header>
+
+            <div className="grid gap-4 md:grid-cols-4">
+                <Fact label="Metric ID" value={metricId} mono />
+                <Fact label="Cadence" value={latest.native_frequency ?? '—'} />
+                <Fact label="Source" value={latest.source_name ?? latest.source_ref ?? 'Internal Analytics'} />
+                <Fact label="Pipeline refresh" value={latest.last_updated_at ? new Date(latest.last_updated_at).toLocaleString() : '—'} />
+            </div>
+
+            {series.length > 1 && (
+                <section className="mt-8 rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+                    <div className="mb-3 flex items-center justify-between">
+                        <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Time Series</h2>
+                        <ExportCSVButton data={series} filename={`graphiquestor-${metricId}`} />
+                    </div>
+                    <div className="h-72">
+                        <ResponsiveContainer width="100%" height="100%">
+                            <LineChart data={series} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
+                                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} minTickGap={48} />
+                                <YAxis tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} width={64} domain={['auto', 'auto']} />
+                                <Tooltip
+                                    contentStyle={{ background: '#0b1220', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
+                                    labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+                                />
+                                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                            </LineChart>
+                        </ResponsiveContainer>
+                    </div>
+                </section>
+            )}
+
+            <section className="mt-8 space-y-3 border-t border-white/10 pt-6 text-[12px]">
+                <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Data provenance</h2>
+                <p className="flex items-start gap-1.5 leading-relaxed text-white/50">
+                    <Database size={13} className="mt-0.5 flex-shrink-0 text-white/40" />
+                    <span>
+                        Latest observation from `vw_latest_metrics`; history from `metric_observations`. Freshness above is based on the observation date and native cadence. Pipeline refresh is shown separately to avoid confusing a rerun with a new observation.
+                    </span>
+                </p>
+                <div className="flex flex-wrap items-center gap-x-6 gap-y-3">
+                    <Link to="/metrics/" className="font-bold text-blue-400 hover:underline">All live metrics →</Link>
+                    <Link to="/api-docs/" className="font-bold text-blue-400 hover:underline">Pull via API →</Link>
+                </div>
+            </section>
+        </div>
+    );
+};
+
+const Fact: React.FC<{ label: string; value: string; mono?: boolean }> = ({ label, value, mono }) => (
+    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
+        <div className="text-[9px] font-black uppercase tracking-widest text-white/35">{label}</div>
+        <div className={`mt-2 break-words text-sm font-bold text-white/80 ${mono ? 'font-mono' : ''}`}>{value}</div>
+    </div>
+);
 
 function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string, snapshotId?: string) {
     const url = snapshotId 
@@ -177,7 +375,8 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
 
 export const MetricPage: React.FC = () => {
     const { id, snapshotId } = useParams<{ id: string; snapshotId?: string }>();
-    const entry = METRICS_CATALOG.find(m => m.id === id);
+    const decodedId = id ? decodeURIComponent(id) : undefined;
+    const entry = METRICS_CATALOG.find(m => m.id === decodedId);
     const { data: series } = useMetricSeries(entry?.id);
     const liveMetricId = seriesMetricId(entry?.id);
     const { data: liveMetric } = useLatestMetric(liveMetricId ?? '');
@@ -196,7 +395,7 @@ export const MetricPage: React.FC = () => {
     }, [entry, snapshotId]);
 
     if (!entry) {
-        return <Navigate to="/methodology" replace />;
+        return <GenericMetricPage metricId={decodedId ?? ''} />;
     }
 
     const latest = series && series.length > 0 ? series[series.length - 1] : undefined;
