@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-09T21:59:23.112Z",
+  "generatedAt": "2026-09-10T17:09:36.543Z",
   "source": "build-time",
   "available": false,
   "reason": "Supabase env not set at build time — UI hydrates live client-side",

@@ -39,7 +39,7 @@ export const useFuelSecurityIndia = () => {
       try {
         const { data, error } = await supabase
           .from('fuel_security_clock_india')
-          .select('id, as_of_date, reserves_days_coverage, reserves_days_official, reserves_days_actual, deviation_pct, daily_consumption_mbpd, brent_price_usd, inr_per_barrel, active_tankers_count, geopolitical_risk_score, scenario_baseline_days, scenario_disruption_days, scenario_rationing_days, last_updated_at, metadata')
+          .select('id, as_of_date, reserves_days_coverage, reserves_days_official, reserves_days_actual, deviation_pct, daily_consumption_mbpd, brent_price_usd, inr_per_barrel, active_tankers_count, tanker_pipeline_json, geopolitical_risk_score, scenario_baseline_days, scenario_disruption_days, scenario_rationing_days, last_updated_at, metadata')
           .order('as_of_date', { ascending: false })
           .limit(1)
           .maybeSingle();
@@ -53,7 +53,7 @@ export const useFuelSecurityIndia = () => {
 
         return {
           ...data,
-          tanker_pipeline_json: [],
+          tanker_pipeline_json: Array.isArray(data.tanker_pipeline_json) ? data.tanker_pipeline_json : [],
         } as unknown as FuelSecurityIndia;
       } catch (err) {
         console.error('Unexpected Fuel Security error:', err);

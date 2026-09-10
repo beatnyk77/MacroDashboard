@@ -12,31 +12,6 @@ export type Database = {
   __InternalSupabase: {
     PostgrestVersion: "14.5"
   }
-  graphql_public: {
-    Tables: {
-      [_ in never]: never
-    }
-    Views: {
-      [_ in never]: never
-    }
-    Functions: {
-      graphql: {
-        Args: {
-          extensions?: Json
-          operationName?: string
-          query?: string
-          variables?: Json
-        }
-        Returns: Json
-      }
-    }
-    Enums: {
-      [_ in never]: never
-    }
-    CompositeTypes: {
-      [_ in never]: never
-    }
-  }
   public: {
     Tables: {
       africa_macro_snapshots: {
@@ -2544,6 +2519,7 @@ export type Database = {
           capacity_mbpd: number
           country: string
           created_at: string | null
+          data_provenance: string | null
           facility_name: string
           historical_median_pct: number | null
           id: string
@@ -2561,6 +2537,7 @@ export type Database = {
           capacity_mbpd: number
           country: string
           created_at?: string | null
+          data_provenance?: string | null
           facility_name: string
           historical_median_pct?: number | null
           id?: string
@@ -2578,6 +2555,7 @@ export type Database = {
           capacity_mbpd?: number
           country?: string
           created_at?: string | null
+          data_provenance?: string | null
           facility_name?: string
           historical_median_pct?: number | null
           id?: string
@@ -4798,10 +4776,12 @@ export type Database = {
           date: string
           id: string
           msf_amount: number | null
+          msf_rate: number | null
           net_liquidity_outstanding: number | null
           net_liquidity_today: number | null
           net_liquidity_total: number | null
           sdf_amount: number | null
+          sdf_rate: number | null
           slf_amount: number | null
         }
         Insert: {
@@ -4809,10 +4789,12 @@ export type Database = {
           date: string
           id?: string
           msf_amount?: number | null
+          msf_rate?: number | null
           net_liquidity_outstanding?: number | null
           net_liquidity_today?: number | null
           net_liquidity_total?: number | null
           sdf_amount?: number | null
+          sdf_rate?: number | null
           slf_amount?: number | null
         }
         Update: {
@@ -4820,10 +4802,12 @@ export type Database = {
           date?: string
           id?: string
           msf_amount?: number | null
+          msf_rate?: number | null
           net_liquidity_outstanding?: number | null
           net_liquidity_today?: number | null
           net_liquidity_total?: number | null
           sdf_amount?: number | null
+          sdf_rate?: number | null
           slf_amount?: number | null
         }
         Relationships: []
@@ -7706,9 +7690,6 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
-  graphql_public: {
-    Enums: {},
-  },
   public: {
     Enums: {
       fyp_section: ["pillar", "target", "milestone", "correlation"],

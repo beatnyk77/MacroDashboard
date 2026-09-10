@@ -59,14 +59,14 @@ export function useNetLiquidity() {
                 supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.TGA_BALANCE_BN).maybeSingle(),
                 supabase.from('metric_observations').select('as_of_date, value').eq('metric_id', MID.SOFR_EFFR_SPREAD_BPS).order('as_of_date', { ascending: false }).limit(30),
                 supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FED_BALANCE_SHEET).maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value, as_of_date').eq('metric_id', 'GLOBAL_NET_LIQUIDITY_USD_TR').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'ECB_TOTAL_ASSETS_MEUR').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'BOJ_TOTAL_ASSETS_TRJPY').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'BOE_TOTAL_ASSETS_MN_GBP').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FX_EUR_USD').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FX_USD_JPY').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FX_GBP_USD').maybeSingle(),
-                supabase.from('vw_latest_metrics').select('value').eq('metric_id', 'FX_USD_CNY').maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value, as_of_date').eq('metric_id', MID.GLOBAL_NET_LIQUIDITY_USD_TR).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.ECB_TOTAL_ASSETS_MEUR).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.BOJ_TOTAL_ASSETS_TRJPY).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.BOE_TOTAL_ASSETS_MN_GBP).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FX_EUR_USD).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FX_USD_JPY).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FX_GBP_USD).maybeSingle(),
+                supabase.from('vw_latest_metrics').select('value').eq('metric_id', MID.FX_USD_CNY).maybeSingle(),
             ]);
 
             const eurUsd = Number(eurUsdRes.data?.value) || 1.0872;

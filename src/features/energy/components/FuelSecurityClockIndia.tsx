@@ -92,15 +92,19 @@ const useIndiaImportOrigins = () =>
         queryFn: async (): Promise<{ origin: string; volume: number }[]> => {
             const { data, error } = await supabase
                 .from('oil_imports_by_origin')
-                .select('exporter_country_name, import_volume_mbbl')
+                .select('exporter_country_name, import_volume_mbbl, as_of_date')
                 .eq('importer_country_code', 'IN')
-                .order('import_volume_mbbl', { ascending: false });
+                .neq('exporter_country_name', 'Total Imports')
+                .order('as_of_date', { ascending: false });
 
             if (error) throw error;
             if (!data?.length) return [];
 
+            const latestDate = data[0].as_of_date;
+            const latestRows = data.filter(d => d.as_of_date === latestDate);
+
             const byOrigin = new Map<string, number>();
-            for (const row of data) {
+            for (const row of latestRows) {
                 const origin = row.exporter_country_name || 'Unknown';
                 byOrigin.set(origin, (byOrigin.get(origin) ?? 0) + Number(row.import_volume_mbbl));
             }
@@ -148,16 +152,26 @@ export const FuelSecurityClockIndia: React.FC = () => {
     return (
         <MotionCard className="w-full" delay={0.35}>
             {/* Header */}
-            <div className="mb-8 pl-4 border-l-4 border-amber-500/30">
-                <h3 className="text-2xl font-black text-white uppercase tracking-heading">
-                    Fuel Security Clock – India
-                </h3>
-                <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
-                    Strategic petroleum coverage, import origin concentration, and geopolitical stress scoring.
-                </p>
-                <p className="text-[10px] text-muted-foreground/30 mt-1 uppercase tracking-wide">
-                    Source: EIA International Energy Statistics · PPAC India · FRED
-                </p>
+            <div className="mb-8 pl-4 border-l-4 border-amber-500/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                <div>
+                    <h3 className="text-2xl font-black text-white uppercase tracking-heading">
+                        Fuel Security Clock – India
+                    </h3>
+                    <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        Strategic petroleum coverage, import origin concentration, and geopolitical stress scoring.
+                    </p>
+                    <p className="text-[10px] text-muted-foreground/30 mt-1 uppercase tracking-wide">
+                        Source: PPAC MoPNG · ISPRL · EIA International · FRED
+                    </p>
+                </div>
+                {data.as_of_date && (
+                    <div className="flex items-center gap-2 self-start sm:self-auto bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                        <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
+                        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                            As of: {data.as_of_date}
+                        </span>
+                    </div>
+                )}
             </div>
 
             <div className="space-y-8">
@@ -166,7 +180,7 @@ export const FuelSecurityClockIndia: React.FC = () => {
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                         <div className="p-8 rounded-[2rem] bg-amber-500/[0.03] border border-amber-500/10 backdrop-blur-sm">
                             <h4 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-4">
-                                Reserves Coverage
+                                Strategic Crude Reserves (SPR)
                             </h4>
                             <div className="flex items-end gap-4">
                                 <div className="text-8xl font-black italic tracking-tighter text-white">
@@ -174,45 +188,43 @@ export const FuelSecurityClockIndia: React.FC = () => {
                                 </div>
                                 <div className="text-2xl font-black text-amber-500/60 mb-2">days</div>
                             </div>
-                            <div className="mt-4">
+                            <div className="mt-4 flex flex-wrap items-center gap-3">
                                 <div className={cn(
                                     'px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider inline-block border',
                                     getRiskLevel(data.reserves_days_coverage).colorClass,
                                 )}>
                                     {getRiskLevel(data.reserves_days_coverage).label}
                                 </div>
+                                <span className="text-[11px] font-bold text-muted-foreground/70 uppercase">
+                                    Total Petroleum Buffer: ~{data.reserves_days_actual ? Math.round(data.reserves_days_actual) : 74} Days (OMC + SPR)
+                                </span>
                             </div>
                             <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
-                                * Days of coverage = Total reserves / Daily consumption
+                                * ISPRL Underground Storage: ~39.1M bbl (Visakhapatnam, Mangalore, Padur) = ~9.5 days crude demand. Total OMC commercial + strategic buffer covers ~74 days.
                             </p>
                         </div>
 
                         <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
                             <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">
-                                Official vs Independent Estimate
+                                Strategic Crude vs Total Product Cover
                             </h4>
                             <MacroChartContainer height={CHART_HEIGHTS.standard}>
                                 <BarChart data={[
-                                    { name: 'Official (PPAC)', value: data.reserves_days_official },
-                                    { name: 'Actual (Est.)', value: data.reserves_days_actual },
+                                    { name: 'Crude SPR (ISPRL)', value: data.reserves_days_official ?? 9.5 },
+                                    { name: 'Total Buffer (OMC+SPR)', value: data.reserves_days_actual ?? 74.0 },
                                 ]}>
                                     <Bar dataKey="value" radius={[8, 8, 0, 0]}>
                                         <Cell fill="#3b82f6" />
-                                        <Cell fill="#f59e0b" />
+                                        <Cell fill="#10b981" />
                                     </Bar>
-                                    <XAxis dataKey="name" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} />
+                                    <XAxis dataKey="name" tick={{ fill: '#ffffff60', fontSize: 10 }} axisLine={false} tickLine={false} />
                                     <YAxis tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit="d" />
                                     <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} />
                                 </BarChart>
                             </MacroChartContainer>
-                            {data.deviation_pct !== null && (
-                                <p className="text-xs text-muted-foreground/60 mt-4 text-center">
-                                    Deviation:{' '}
-                                    <span className={cn('font-black', data.deviation_pct > 0 ? 'text-emerald-500' : 'text-rose-500')}>
-                                        {data.deviation_pct > 0 ? '+' : ''}{data.deviation_pct.toFixed(1)}%
-                                    </span>
-                                </p>
-                            )}
+                            <p className="text-xs text-muted-foreground/60 mt-4 text-center font-medium">
+                                Sovereign Mandate Target: <span className="text-emerald-400 font-bold">90 Days (IEA Standard)</span> · Current Total Coverage: <span className="text-amber-400 font-bold">~74 Days</span>
+                            </p>
                         </div>
                     </div>
                 ) : (

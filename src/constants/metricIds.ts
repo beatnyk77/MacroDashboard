@@ -28,12 +28,13 @@ export const BOJ_METRICS = {
   BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY:      'BOJ_CURRENT_ACCOUNT_DEPOSITS_TRJPY',
 } as const;
 
-/** European Central Bank weekly balance sheet */
+/** European Central Bank & Bank of England balance sheets */
 export const ECB_METRICS = {
   ECB_TOTAL_ASSETS_MEUR:                   'ECB_TOTAL_ASSETS_MEUR',
   ECB_MRO_OUTSTANDING_MEUR:                'ECB_MRO_OUTSTANDING_MEUR',
   ECB_DF_OUTSTANDING_MEUR:                 'ECB_DF_OUTSTANDING_MEUR',
   ECB_EXCESS_LIQUIDITY_MEUR:               'ECB_EXCESS_LIQUIDITY_MEUR',
+  BOE_TOTAL_ASSETS_MN_GBP:                 'BOE_TOTAL_ASSETS_MN_GBP',
 } as const;
 
 /** Federal Reserve balance sheet & policy */
@@ -202,6 +203,7 @@ export const OIL_METRICS = {
   OIL_IMPORT_DEPENDENCY_US:                'OIL_IMPORT_DEPENDENCY_US',
   OIL_IMPORTS_CONCENTRATION_US:            'OIL_IMPORTS_CONCENTRATION_US',
   EU_GAS_STORAGE_PCT:                      'EU_GAS_STORAGE_PCT',
+  IN_OIL_IMPORT_COST_INR_BBL:              'IN_OIL_IMPORT_COST_INR_BBL',
 } as const;
 
 // ── India Macro ───────────────────────────────────────────────────────────────
@@ -439,6 +441,10 @@ export const CURRENCY_METRICS = {
   USD_BRL_RATE:                            'USD_BRL_RATE',
   USD_MXN_RATE:                            'USD_MXN_RATE',
   USD_TWD_RATE:                            'USD_TWD_RATE',
+  FX_EUR_USD:                              'FX_EUR_USD',
+  FX_USD_JPY:                              'FX_USD_JPY',
+  FX_GBP_USD:                              'FX_GBP_USD',
+  FX_USD_CNY:                              'FX_USD_CNY',
 } as const;
 
 // ── Computed Signals & Flow Metrics ──────────────────────────────────────────
@@ -511,6 +517,7 @@ export const INSTITUTIONAL_DESK_METRICS = {
 
   // Desk F: Global Net Liquidity Impulse Engine
   GLOBAL_NET_LIQUIDITY_USD_TN:             'GLOBAL_NET_LIQUIDITY_USD_TN',
+  GLOBAL_NET_LIQUIDITY_USD_TR:             'GLOBAL_NET_LIQUIDITY_USD_TR',
   NET_LIQUIDITY_IMPULSE_13W_PCT:           'NET_LIQUIDITY_IMPULSE_13W_PCT',
   NET_LIQUIDITY_IMPULSE_26W_PCT:           'NET_LIQUIDITY_IMPULSE_26W_PCT',
 } as const;
