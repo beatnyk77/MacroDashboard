@@ -31,7 +31,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
         },
         staleTime: 1000 * 60 * 60,
     });
-    const capacityStaleness = useStaleness(capacityFreshness ?? undefined, 'weekly');
+    const capacityStaleness = useStaleness(capacityFreshness ?? undefined, 'annual');
 
     const hasNoData = !apiData?.sprData?.length && !apiData?.capacityData?.length;
 
@@ -59,7 +59,7 @@ export const SovereignEnergySecuritySection: React.FC = () => {
                             Refining Strategic Capacity
                         </h3>
                         <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
-                            Industrial backbone of US energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience.
+                            Industrial backbone of sovereign energy independence. Operable capacity vs. utilization rates indicates system stress and supply-side resilience across US, European, and Asian refining complexes.
                         </p>
                         <div className="mt-2">
                             <FreshnessChip status={capacityStaleness.state} lastUpdated={capacityFreshness ?? undefined} />

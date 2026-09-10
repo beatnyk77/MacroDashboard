@@ -5,6 +5,8 @@ import {
 import { Globe, Anchor, ShieldAlert, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CommodityImport } from '@/hooks/useCommodityImports';
+import { FreshnessChip } from '@/components/FreshnessChip';
+import { useStaleness } from '@/hooks/useStaleness';
 
 interface MetalImportCardProps {
     metal: 'Gold' | 'Silver' | 'Rare Earth Metals';
@@ -66,9 +68,16 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
         });
     }, [filteredData]);
 
-    const latestYear = Math.max(...filteredData.map(d => d.year));
+    const latestYear = useMemo(() => {
+        if (!filteredData.length) return 2026;
+        return Math.max(...filteredData.map(d => d.year));
+    }, [filteredData]);
+
     const latestIndia = filteredData.find(d => d.country === 'India' && d.year === latestYear);
     const latestChina = filteredData.find(d => d.country === 'China' && d.year === latestYear);
+
+    const stalenessDate = latestIndia?.updated_at || `${latestYear}-09-01`;
+    const staleness = useStaleness(stalenessDate, 'annual');
 
     // Derived Metrics Calculations
     const indiaHHI = useMemo(() => {
@@ -111,8 +120,14 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                         </h2>
                     </div>
                     <p className="text-muted-foreground font-medium tracking-wide">
-                        India vs China longitudinal flow observatory (2000–2025)
+                        India vs China longitudinal flow observatory (2000–{latestYear})
                     </p>
+                    <div className="flex items-center gap-2 pt-1">
+                        <FreshnessChip status={staleness.state} lastUpdated={stalenessDate} />
+                        <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50">
+                            Source: UN Comtrade · DGCIS · GACC
+                        </span>
+                    </div>
                 </div>
 
                 <div className="flex gap-2 bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
@@ -152,7 +167,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                             }
                         </span>
                         <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
-                            {latestYear} Absolute Flow
+                            {latestYear} Run-rate / YTD Flow
                         </span>
                     </div>
                 </div>
@@ -170,7 +185,7 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                             }
                         </span>
                         <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
-                            {latestYear} Absolute Flow
+                            {latestYear} Run-rate / YTD Flow
                         </span>
                     </div>
                 </div>

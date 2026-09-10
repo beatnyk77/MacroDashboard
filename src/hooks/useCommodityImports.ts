@@ -15,6 +15,7 @@ export interface CommodityImport {
         value: number;
     }>;
     created_at: string;
+    updated_at?: string | null;
 }
 
 export const useCommodityImports = () => {

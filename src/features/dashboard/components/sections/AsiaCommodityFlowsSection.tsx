@@ -16,7 +16,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
     const queryClient = useQueryClient();
 
     const importFreshness = apiData?.importLastUpdated ?? null;
-    const importStaleness = useStaleness(importFreshness ?? undefined, 'weekly');
+    const importStaleness = useStaleness(importFreshness ?? undefined, 'monthly');
 
     const hasNoData = !apiData?.importData?.length;
 
@@ -26,7 +26,7 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 <PendingDataState
                     height={400}
                     accentColor="amber"
-                    statusText="AWAITING INGESTION — Oil import pipeline sync in progress. UN Comtrade data updates weekly."
+                    statusText="AWAITING INGESTION — Oil import pipeline sync in progress. UN Comtrade & customs data updates monthly."
                     onRetry={() => queryClient.invalidateQueries({ queryKey: ['oil_data'] })}
                 />
             </div>

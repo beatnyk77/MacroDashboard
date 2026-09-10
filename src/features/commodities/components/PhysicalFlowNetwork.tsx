@@ -90,12 +90,17 @@ export const PhysicalFlowNetwork: React.FC = () => {
         queryKey: ['commodity-flows'],
         queryFn: async () => {
             try {
-                const { data, error } = await supabase.from('commodity_flows').select('*');
+                const { data, error } = await supabase
+                    .from('commodity_flows')
+                    .select('*')
+                    .order('as_of_date', { ascending: false });
                 if (error) {
                     console.warn('PhysicalFlowNetwork fetch error:', error);
                     return [];
                 }
-                return data || [];
+                const latestDate = data?.[0]?.as_of_date;
+                if (!latestDate) return data || [];
+                return data.filter(r => r.as_of_date === latestDate);
             } catch (err) {
                 console.warn('PhysicalFlowNetwork fetch execution error:', err);
                 return [];
@@ -183,7 +188,9 @@ export const PhysicalFlowNetwork: React.FC = () => {
                         <div className="flex items-center gap-4 self-end sm:self-auto">
                             <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.5)] animate-pulse" aria-hidden="true" />
-                                <span className="text-xs text-white font-black uppercase tracking-uppercase">LIVE MESH</span>
+                                <span className="text-xs text-white font-black uppercase tracking-uppercase">
+                                    LIVE MESH{rawFlows?.[0]?.as_of_date ? ` · ${rawFlows[0].as_of_date}` : ''}
+                                </span>
                             </div>
                             <TooltipProvider>
                                 <UITooltip>
