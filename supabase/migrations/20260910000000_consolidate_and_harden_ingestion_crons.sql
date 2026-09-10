@@ -11,10 +11,17 @@ ALTER TABLE public.global_refining_capacity
 ADD COLUMN IF NOT EXISTS data_provenance text DEFAULT 'eia_live';
 
 -- 3. Unschedule duplicate ingest-fiscaldata (preserve ingest-fiscaldata-daily at 06:30 UTC)
-SELECT cron.unschedule('ingest-fiscaldata');
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-fiscaldata') THEN
+    PERFORM cron.unschedule('ingest-fiscaldata');
+  END IF;
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-india-inflation-monthly') THEN
+    PERFORM cron.unschedule('ingest-india-inflation-monthly');
+  END IF;
+END $$;
 
 -- 4. Shift ingest-india-inflation-monthly schedule to 13th of month (post-MoSPI CPI release)
-SELECT cron.unschedule('ingest-india-inflation-monthly');
 SELECT cron.schedule(
   'ingest-india-inflation-monthly',
   '0 7 13 * *',
@@ -36,7 +43,12 @@ SELECT cron.schedule(
 );
 
 -- 5. Unschedule redundant legacy ingest-india-liquidity-daily (handled by ingest-rbi-money-market)
-SELECT cron.unschedule('ingest-india-liquidity-daily');
+DO $$
+BEGIN
+  IF EXISTS (SELECT 1 FROM cron.job WHERE jobname = 'ingest-india-liquidity-daily') THEN
+    PERFORM cron.unschedule('ingest-india-liquidity-daily');
+  END IF;
+END $$;
 
 -- 6. Purge historical failure logs for discontinued pipelines
 DELETE FROM public.ingestion_logs 

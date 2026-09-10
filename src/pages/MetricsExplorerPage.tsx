@@ -61,7 +61,7 @@ export const MetricsExplorerPage: React.FC = () => {
         },
     });
 
-    const rows = metrics ?? [];
+    const rows = useMemo(() => metrics ?? [], [metrics]);
     const filtered = useMemo(() => {
         const needle = query.trim().toLowerCase();
         return rows.filter((row) => {
