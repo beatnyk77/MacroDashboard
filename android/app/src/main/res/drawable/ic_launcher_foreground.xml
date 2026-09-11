@@ -1,13 +1,31 @@
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="108"
-    android:viewportHeight="108">
-    <!-- Macro Vector Glyph in Cyan & Emerald -->
-    <path
-        android:fillColor="#38BDF8"
-        android:pathData="M30,70 L54,34 L78,70 L66,70 L54,50 L42,70 Z" />
-    <path
-        android:fillColor="#10B981"
-        android:pathData="M50,72 h8 v8 h-8 z" />
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <!-- GraphiQuestor Official Pulse Waveform (Favicon Vector - Scaled for Adaptive Icon Safe Zone) -->
+    <group
+        android:pivotX="256"
+        android:pivotY="256"
+        android:scaleX="0.75"
+        android:scaleY="0.75">
+        <path
+            android:pathData="M70,256 H180 L230,140 L300,360 L350,256 H442"
+            android:strokeWidth="50"
+            android:strokeLineCap="round"
+            android:strokeLineJoin="round">
+            <aapt:attr name="android:strokeColor">
+                <gradient
+                    android:startX="70"
+                    android:startY="140"
+                    android:endX="442"
+                    android:endY="360"
+                    android:type="linear">
+                    <item android:offset="0.0" android:color="#34D399" />
+                    <item android:offset="1.0" android:color="#2DD4BF" />
+                </gradient>
+            </aapt:attr>
+        </path>
+    </group>
 </vector>

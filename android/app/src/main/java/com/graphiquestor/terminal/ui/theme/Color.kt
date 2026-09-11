@@ -11,6 +11,7 @@ val HairlineBorder = Color(0xFF1E293B)
 val HairlineBorderActive = Color(0xFF2C3A4C)
 
 // Spectral Telemetry Accents
+val ElectricBlue = Color(0xFF3B82F6) // Exact website primary blue (#3b82f6)
 val CyanVector = Color(0xFF38BDF8)
 val CyanGlow = Color(0x3338BDF8)
 val EmeraldNormalcy = Color(0xFF10B981)

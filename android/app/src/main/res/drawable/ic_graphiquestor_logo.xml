@@ -1,0 +1,25 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="48dp"
+    android:height="48dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+    <!-- GraphiQuestor Official Pulse Waveform (Favicon Vector) -->
+    <path
+        android:pathData="M70,256 H180 L230,140 L300,360 L350,256 H442"
+        android:strokeWidth="50"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round">
+        <aapt:attr name="android:strokeColor">
+            <gradient
+                android:startX="70"
+                android:startY="140"
+                android:endX="442"
+                android:endY="360"
+                android:type="linear">
+                <item android:offset="0.0" android:color="#34D399" />
+                <item android:offset="1.0" android:color="#2DD4BF" />
+            </gradient>
+        </aapt:attr>
+    </path>
+</vector>
