@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.GraphiQuestor" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/obsidian_void</item>
+        <item name="android:navigationBarColor">@color/glass_surface</item>
+        <item name="android:windowBackground">@color/obsidian_void</item>
+    </style>
+</resources>
