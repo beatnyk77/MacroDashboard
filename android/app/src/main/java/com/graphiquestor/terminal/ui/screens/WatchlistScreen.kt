@@ -29,6 +29,7 @@ import com.graphiquestor.terminal.ui.viewmodel.TelemetryViewModel
 @Composable
 fun WatchlistScreen(
     viewModel: TelemetryViewModel,
+    onNavigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val pinnedMetrics by viewModel.pinnedMetrics.collectAsState()
@@ -77,7 +78,8 @@ fun WatchlistScreen(
                 items(pinnedMetrics, key = { it.id }) { metric ->
                     MobileMetricCard(
                         metric = metric,
-                        onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) }
+                        onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) },
+                        onCardClick = onNavigateToDetail
                     )
                 }
             }

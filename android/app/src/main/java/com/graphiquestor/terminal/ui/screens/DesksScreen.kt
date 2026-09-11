@@ -42,21 +42,36 @@ import com.graphiquestor.terminal.ui.viewmodel.TelemetryViewModel
 @Composable
 fun DesksScreen(
     viewModel: TelemetryViewModel,
+    onNavigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val allMetrics by viewModel.allMetrics.collectAsState()
     var selectedCategory by remember { mutableStateOf("ALL") }
 
-    val categories = listOf("ALL", "LIQUIDITY", "SOVEREIGN RISK", "RATES", "ENERGY")
+    val categories = listOf(
+        "ALL",
+        "LIQUIDITY",
+        "SOVEREIGN",
+        "RATES",
+        "ENERGY",
+        "CHINA",
+        "INDIA",
+        "DE-DOLLAR",
+        "CREDIT"
+    )
 
     val filteredMetrics = remember(allMetrics, selectedCategory) {
         if (selectedCategory == "ALL") allMetrics
         else allMetrics.filter {
             when (selectedCategory) {
-                "LIQUIDITY" -> it.category == "global_liquidity"
-                "SOVEREIGN RISK" -> it.category == "sovereign_risk"
+                "LIQUIDITY" -> it.category == "liquidity" || it.category == "global_liquidity"
+                "SOVEREIGN" -> it.category == "sovereign" || it.category == "sovereign_risk"
                 "RATES" -> it.category == "rates"
                 "ENERGY" -> it.category == "energy"
+                "CHINA" -> it.category == "china"
+                "INDIA" -> it.category == "india"
+                "DE-DOLLAR" -> it.category == "dedollar"
+                "CREDIT" -> it.category == "credit"
                 else -> true
             }
         }
@@ -78,7 +93,7 @@ fun DesksScreen(
                 letterSpacing = 0.5.sp
             )
             Text(
-                text = "Domain deep-dives across liquidity, sovereign credit, and rates",
+                text = "8 domain deep-dives across liquidity, sovereign credit, rates, energy & trade",
                 fontSize = 11.sp,
                 color = TextMuted
             )
@@ -103,20 +118,21 @@ fun DesksScreen(
                             RoundedCornerShape(4.dp)
                         )
                         .clickable { selectedCategory = cat }
-                        .padding(horizontal = 12.dp, vertical = 6.dp)
+                        .padding(horizontal = 12.dp, vertical = 6.dp),
+                    contentAlignment = Alignment.Center
                 ) {
                     Text(
                         text = cat,
                         fontSize = 10.sp,
-                        fontWeight = if (isSelected) FontWeight.Bold else FontWeight.Medium,
                         fontFamily = FontFamily.Monospace,
-                        color = if (isSelected) CyanVector else TextPrimary
+                        fontWeight = FontWeight.Bold,
+                        color = if (isSelected) CyanVector else TextMuted
                     )
                 }
             }
         }
 
-        // Filtered Metric Cards
+        // Metrics List
         LazyColumn(
             verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier.fillMaxSize()
@@ -124,7 +140,8 @@ fun DesksScreen(
             items(filteredMetrics, key = { it.id }) { metric ->
                 MobileMetricCard(
                     metric = metric,
-                    onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) }
+                    onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) },
+                    onCardClick = onNavigateToDetail
                 )
             }
         }

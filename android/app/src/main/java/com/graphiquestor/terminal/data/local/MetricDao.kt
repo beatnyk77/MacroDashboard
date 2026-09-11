@@ -19,6 +19,9 @@ interface MetricDao {
     @Query("SELECT * FROM metrics WHERE id = :id LIMIT 1")
     suspend fun getMetricById(id: String): MetricEntity?
 
+    @Query("SELECT * FROM metrics WHERE id = :id LIMIT 1")
+    fun observeMetricById(id: String): Flow<MetricEntity?>
+
     @Upsert
     suspend fun upsertMetrics(metrics: List<MetricEntity>)
 

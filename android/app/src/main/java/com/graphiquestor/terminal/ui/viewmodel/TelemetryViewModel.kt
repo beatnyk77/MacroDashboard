@@ -38,4 +38,6 @@ class TelemetryViewModel(
             repository.togglePinMetric(id, currentPinned)
         }
     }
+
+    fun getMetric(id: String) = repository.observeMetric(id)
 }

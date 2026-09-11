@@ -36,6 +36,7 @@ import com.graphiquestor.terminal.ui.viewmodel.TelemetryViewModel
 @Composable
 fun StreamScreen(
     viewModel: TelemetryViewModel,
+    onNavigateToDetail: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val regime by viewModel.currentRegime.collectAsState()
@@ -112,7 +113,8 @@ fun StreamScreen(
             items(metrics, key = { it.id }) { metric ->
                 MobileMetricCard(
                     metric = metric,
-                    onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) }
+                    onTogglePin = { id, pinned -> viewModel.togglePin(id, pinned) },
+                    onCardClick = onNavigateToDetail
                 )
             }
         }

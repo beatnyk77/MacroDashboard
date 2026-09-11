@@ -50,7 +50,8 @@ import com.graphiquestor.terminal.ui.theme.TextWhite
 fun MobileMetricCard(
     metric: MetricEntity,
     onTogglePin: (String, Boolean) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onCardClick: ((String) -> Unit)? = null
 ) {
     var expanded by remember { mutableStateOf(false) }
 
@@ -78,6 +79,7 @@ fun MobileMetricCard(
             .clip(RoundedCornerShape(6.dp))
             .background(GlassSurface)
             .border(1.dp, HairlineBorder, RoundedCornerShape(6.dp))
+            .then(if (onCardClick != null) Modifier.clickable { onCardClick(metric.id) } else Modifier)
             .padding(12.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
