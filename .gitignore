@@ -129,3 +129,13 @@ scripts/.deploy-all-functions.*
 .worktrees/
 tradefx-agent-prompt.md
 .gstack/
+
+# Android & Gradle
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+*.hprof
+
+# Superpowers temporary artifacts
+.superpowers/

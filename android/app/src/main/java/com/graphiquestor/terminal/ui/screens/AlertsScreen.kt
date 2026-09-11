@@ -192,7 +192,7 @@ fun AlertsScreen(
         AlertDialog(
             onDismissRequest = { showAddDialog = false },
             containerColor = GlassSurfaceElevated,
-            titleColor = TextWhite,
+            titleContentColor = TextWhite,
             textContentColor = TextPrimary,
             title = { Text("Configure Institutional Alert") },
             text = {
