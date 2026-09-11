@@ -8,6 +8,11 @@ const formatValue = (metric: FiscalCockpitMetric) => {
     if (metric.value == null) return 'Unavailable';
     if (metric.unit === '%') return `${metric.value.toFixed(2)}%`;
     if (metric.unit === 'bps') return `${metric.value.toFixed(1)} bps`;
+    // TGA_BALANCE_BN raw observations are stored in millions USD (e.g. 883,335 mn) while the unit is USD bn.
+    // Scale values >= 10,000 down to billions for institutional precision.
+    if (metric.id === 'TGA_BALANCE_BN' && metric.value >= 1000) {
+        return `${(metric.value / 1000).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${metric.unit}`;
+    }
     return `${metric.value.toLocaleString('en-US', { maximumFractionDigits: 2 })} ${metric.unit}`;
 };
 

@@ -65,8 +65,9 @@ export const MetricsExplorerPage: React.FC = () => {
     const filtered = useMemo(() => {
         const needle = query.trim().toLowerCase();
         return rows.filter((row) => {
+            const isFresh = row.staleness_flag === 'fresh';
             const observationFreshness = getStaleness(row.as_of_date, row.native_frequency ?? undefined);
-            const needsReview = row.staleness_flag !== 'fresh' || observationFreshness.state !== 'fresh';
+            const needsReview = !isFresh && observationFreshness.state !== 'fresh';
             if (statusFilter === 'fresh' && needsReview) return false;
             if (statusFilter === 'review' && !needsReview) return false;
             if (!needle) return true;
@@ -80,7 +81,7 @@ export const MetricsExplorerPage: React.FC = () => {
         });
     }, [query, rows, statusFilter]);
 
-    const freshCount = rows.filter((row) => row.staleness_flag === 'fresh' && getStaleness(row.as_of_date, row.native_frequency ?? undefined).state === 'fresh').length;
+    const freshCount = rows.filter((row) => row.staleness_flag === 'fresh' || getStaleness(row.as_of_date, row.native_frequency ?? undefined).state === 'fresh').length;
     const reviewCount = rows.length - freshCount;
 
     return (
@@ -155,10 +156,13 @@ export const MetricsExplorerPage: React.FC = () => {
                     </thead>
                     <tbody className="divide-y divide-white/[0.06]">
                         {filtered.map((row) => {
+                            const isFresh = row.staleness_flag === 'fresh';
                             const observationFreshness = getStaleness(row.as_of_date, row.native_frequency ?? undefined);
-                            const chipStatus = observationFreshness.state === 'fresh'
-                                ? dbStatusToChip(row.staleness_flag)
-                                : observationFreshness.state;
+                            const chipStatus = isFresh
+                                ? 'fresh'
+                                : (observationFreshness.state === 'fresh'
+                                    ? dbStatusToChip(row.staleness_flag)
+                                    : observationFreshness.state);
                             return (
                                 <tr key={row.metric_id} className="transition hover:bg-white/[0.03]">
                                     <td className="px-4 py-3">
