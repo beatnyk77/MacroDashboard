@@ -18,6 +18,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
+import { LaymanBrief } from '@/components/LaymanBrief';
 
 export const InterbankFundingLab: React.FC = () => {
   const { data: stressMetric } = useLatestMetric(MID.INTERBANK_CREDIT_STRESS_INDEX);
@@ -113,6 +114,20 @@ export const InterbankFundingLab: React.FC = () => {
           </p>
         </div>
 
+        {/* Layman Brief */}
+        <LaymanBrief
+          title="Bank Lending, Wholesale Funding & Federal Reserve Cash Windows"
+          analogy="Commercial banks and Wall Street firms lend cash to each other overnight through short-term money markets. When banks are nervous about each other's financial health, they stop lending in private markets and rush to the Federal Reserve's emergency cash window (the Standing Repo Facility) to borrow money directly from the Fed."
+          realWorldImpact="If interbank cash pipes freeze (like in September 2019 or March 2020), banks immediately pull back on credit: small businesses can't get credit lines, personal loan approvals grind to a halt, and high-yield corporate bonds drop sharply."
+          signalsToWatch={[
+            "Standing Repo Facility (SRF) > $1B: Banks are experiencing acute cash scarcity",
+            "C&I Bank Credit turns negative: Commercial banks are actively contracting real-economy lending",
+            "High Yield OAS > 500 bps: Corporate debt markets are pricing in recessionary default risks"
+          ]}
+          status={stressScore && stressScore > 70 ? 'danger' : stressScore && stressScore > 40 ? 'caution' : 'normal'}
+          statusLabel={stressScore && stressScore > 70 ? 'SEVERE STRAIN' : stressScore && stressScore > 40 ? 'MODERATE TIGHTENING' : 'BENIGN CONDITIONS'}
+        />
+
         {/* Primary Metric Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* Stress Index Hero Card */}
@@ -137,29 +152,47 @@ export const InterbankFundingLab: React.FC = () => {
 
           {/* SRF Utilization */}
           <MetricCard
+            metric={srfMetric ?? undefined}
             label="Standing Repo Facility (SRF)"
-            value={srfMetric?.value != null ? `$${srfMetric.value.toFixed(1)}B` : 'Unavailable'}
+            value={srfMetric?.value != null ? (srfMetric.value < 1 ? `$${(srfMetric.value * 1000).toFixed(0)}M` : `$${srfMetric.value.toFixed(2)}B`) : undefined}
             history={srfMetric?.history || []}
             source="Federal Reserve H.4.1"
+            sourceRef={srfMetric?.sourceRef || "live_api:fred:WORAL"}
+            provenance={srfMetric?.provenance || "api_live"}
+            frequency={srfMetric?.frequency || "Weekly"}
+            lastUpdated={srfMetric?.lastUpdated}
             sublabel="Emergency overnight repo liquidity drawn by primary dealers"
+            laymanSummary="Emergency cash borrowed by banks from the Fed. Near $0 means banks have plenty of cash. Jumps into billions signal a panic."
           />
 
           {/* Bank Credit H.8 YoY */}
           <MetricCard
+            metric={bankCreditMetric ?? undefined}
             label="C&I Bank Credit Growth (H.8)"
-            value={bankCreditMetric ? `${bankCreditMetric.value.toFixed(1)}%` : '+4.2%'}
+            value={bankCreditMetric?.value != null ? `${bankCreditMetric.value > 0 ? '+' : ''}${bankCreditMetric.value.toFixed(1)}%` : undefined}
             history={bankCreditMetric?.history || []}
             source="Fed H.8 Commercial Bank Credit"
+            sourceRef={bankCreditMetric?.sourceRef || "FRED: BUSLOANS (12M % Change)"}
+            provenance={bankCreditMetric?.provenance || "api_live"}
+            frequency={bankCreditMetric?.frequency || "Monthly"}
+            lastUpdated={bankCreditMetric?.lastUpdated}
             sublabel="Commercial & industrial loan growth year-over-year"
+            laymanSummary="How fast banks are increasing or cutting loans to American businesses. Positive numbers mean businesses can easily borrow and expand."
           />
 
           {/* High Yield OAS Spread */}
           <MetricCard
+            metric={hyOasMetric ?? undefined}
             label="US High Yield OAS Spread"
-            value={hyOasMetric ? `${Math.round(hyOasMetric.value)} bps` : '382 bps'}
+            value={hyOasMetric?.value != null ? `${Math.round(hyOasMetric.value)} bps` : undefined}
             history={hyOasMetric?.history || []}
             source="ICE BofA Credit Index"
+            sourceRef={hyOasMetric?.sourceRef || "FRED: BAMLH0A0HYM2"}
+            provenance={hyOasMetric?.provenance || "api_live"}
+            frequency={hyOasMetric?.frequency || "Daily"}
+            lastUpdated={hyOasMetric?.lastUpdated}
             sublabel="Option-adjusted spread over Treasury spot curve"
+            laymanSummary="The extra risk interest charged to risky companies. Low spreads (under 400 bps) mean investors feel calm; high spreads mean default fears."
           />
         </div>
 

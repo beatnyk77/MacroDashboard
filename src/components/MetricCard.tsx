@@ -14,10 +14,11 @@ import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { DataDiagnosticsDisclosure } from '@/components/DataDiagnosticsDisclosure';
 import { PrecedentBadge } from '@/components/PrecedentBadge';
 import type { MetricData } from '@/types/metric';
+import type { MetricData as LiveMetricData } from '@/lib/metricData';
 
 interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	// Unified data object (preferred)
-	metric?: MetricData;
+	metric?: MetricData | LiveMetricData;
 	// Legacy individual props (kept for backward compatibility)
 	label?: string;
 	metricId?: string;
@@ -53,6 +54,9 @@ interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	zScore?: number;
 	percentile?: number;
 	isStale?: boolean;
+	sourceRef?: string | null;
+	provenance?: string | null;
+	laymanSummary?: string;
 	precedentId?: string;
 	cohortRank?: {
 		cohort: string;
@@ -87,25 +91,39 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 		zScore: propZScore,
 		percentile: propPercentile,
 		isStale: propIsStale,
+		sourceRef: propSourceRef,
+		provenance: propProvenance,
+		laymanSummary,
 		...rest
 	} = props;
 
 	// If metric object is provided, use it as source of truth
-	const label = metric?.name ?? propLabel ?? '';
-	const metricId = metric?.id ?? propMetricId ?? label;
-	const sublabel = metric?.metadata?.description ? undefined : (propSublabel ?? '');
+	const label = (metric as any)?.name ?? propLabel ?? '';
+	const metricId = (metric as any)?.id ?? propMetricId ?? label;
+	const sublabel = (metric as any)?.metadata?.description ? undefined : (propSublabel ?? '');
 	const value = metric?.value ?? propValue;
-	const delta = metric?.delta ?? propDelta;
+	const rawDelta = (metric as any)?.delta;
+	const delta = (typeof rawDelta === 'object' && rawDelta !== null && 'period' in rawDelta)
+		? rawDelta
+		: (typeof rawDelta === 'number'
+			? {
+				value: formatDelta(rawDelta),
+				period: (metric as any)?.deltaPeriod || 'DoD',
+				trend: (metric as any)?.trend || (rawDelta > 0 ? 'up' : rawDelta < 0 ? 'down' : 'neutral'),
+			  }
+			: propDelta);
 	const status = metric?.status ?? propStatus;
 	const history = metric?.history ?? propHistory;
 	const lastUpdated = metric?.lastUpdated ?? propLastUpdated;
 	const zScore = metric?.zScore ?? propZScore;
 	const percentile = metric?.percentile ?? propPercentile;
-	const isStale = metric?.isStale ?? propIsStale;
+	const isStale = (metric as any)?.isStale ?? propIsStale;
 	const frequencyFromMetric = metric?.frequency;
-	const sourceFromMetric = metric?.metadata?.source;
-	const descriptionFromMetric = metric?.metadata?.description;
-	const methodologyFromMetric = metric?.metadata?.methodology;
+	const sourceFromMetric = (metric as any)?.source ?? (metric as any)?.metadata?.source;
+	const descriptionFromMetric = (metric as any)?.description ?? (metric as any)?.metadata?.description;
+	const methodologyFromMetric = (metric as any)?.methodology ?? (metric as any)?.metadata?.methodology;
+	const sourceRef = (metric as any)?.sourceRef ?? (metric as any)?.metadata?.source_ref ?? propSourceRef ?? null;
+	const provenance = (metric as any)?.provenance ?? (metric as any)?.metadata?.provenance ?? propProvenance ?? null;
 
 	const resolvedFrequency = frequencyFromMetric ?? frequency;
 	const resolvedSource = sourceFromMetric ?? source;
@@ -206,11 +224,15 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 								</div>
 							)}
 						</div>
-						{sublabel && (
-							<div className="text-xs font-medium text-muted-foreground/55 truncate max-w-[180px]">
+						{(!isInstitutionalView && laymanSummary) ? (
+							<div className="text-xs font-medium text-cyan-400/90 line-clamp-2 max-w-[260px]" title={laymanSummary}>
+								💡 {laymanSummary}
+							</div>
+						) : sublabel ? (
+							<div className="text-xs font-medium text-muted-foreground/55 truncate max-w-[220px]" title={typeof sublabel === 'string' ? sublabel : undefined}>
 								{sublabel}
 							</div>
-						)}
+						) : null}
 					</div>
 				</div>
 
@@ -325,7 +347,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							)}
 							<div className="flex flex-wrap items-center gap-2">
 								<DataProvenanceBadge source={resolvedSource} methodology={resolvedFrequency} lastVerified={lastUpdated} size="sm" className="max-w-full" />
-								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={metric?.sourceRef} provenance={metric?.provenance} />
+								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={sourceRef} provenance={provenance} />
 								{(precedentId || cohortRank) && (
 									<PrecedentBadge precedentId={precedentId} metricId={metricId} cohortRank={cohortRank} />
 								)}
@@ -371,7 +393,9 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 
 function metricCardPropsAreEqual(prev: MetricCardProps, next: MetricCardProps): boolean {
 	if (prev.isLoading !== next.isLoading) return false;
-	if (prev.metric?.id !== next.metric?.id) return false;
+	const prevId = (prev.metric as any)?.id ?? prev.metricId;
+	const nextId = (next.metric as any)?.id ?? next.metricId;
+	if (prevId !== nextId) return false;
 	if (prev.metric?.value !== next.metric?.value) return false;
 	if (prev.value !== next.value) return false;
 	if (prev.history?.length !== next.history?.length) return false;

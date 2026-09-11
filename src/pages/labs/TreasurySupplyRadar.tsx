@@ -15,6 +15,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
+import { LaymanBrief } from '@/components/LaymanBrief';
 
 export const TreasurySupplyRadar: React.FC = () => {
   const { data: stressMetric } = useLatestMetric(MID.PRIMARY_DEALER_ABSORPTION_STRESS);
@@ -117,6 +118,20 @@ export const TreasurySupplyRadar: React.FC = () => {
           </p>
         </div>
 
+        {/* Layman Brief */}
+        <LaymanBrief
+          title="US Sovereign Debt Issuance, Auction Tails & Dealer Absorption"
+          analogy="Think of Wall Street primary dealers like wholesale car dealerships: they are legally required to buy all the new cars (Treasury bonds) that the factory (US Treasury) pumps out, hoping to resell them to ordinary drivers and investors. If customers buy less, the dealer lots overflow with unsold inventory."
+          realWorldImpact="When dealers are stuck holding too many unsold government bonds (above $300B), they run out of money to finance other loans. To entice buyers, government bond yields must rise — which directly pushes up 30-year mortgage rates and makes government interest bills higher."
+          signalsToWatch={[
+            "Dealer Absorption Stress > 50: Dealer balance sheets are getting congested",
+            "Primary Dealer Inventory > $300B: Regulatory limits start choking auction bidding",
+            "Auction Tails (> +1.0 bps): Bond auctions are struggling to clear without yield concessions"
+          ]}
+          status={absorptionScore && absorptionScore > 70 ? 'danger' : absorptionScore && absorptionScore > 45 ? 'caution' : 'normal'}
+          statusLabel={absorptionScore && absorptionScore > 70 ? 'CRITICAL CONGESTION' : absorptionScore && absorptionScore > 45 ? 'ELEVATED INVENTORY' : 'BALANCED SUPPLY'}
+        />
+
         {/* Metric Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* Dealer Absorption Stress Score */}
@@ -141,29 +156,47 @@ export const TreasurySupplyRadar: React.FC = () => {
 
           {/* Foreign Official Custody */}
           <MetricCard
+            metric={custodyMetric ?? undefined}
             label="Foreign Custody at Fed"
-            value={custodyMetric ? `$${custodyMetric.value.toFixed(0)}B` : '$2,910B'}
+            value={custodyMetric ? `$${custodyMetric.value.toFixed(0)}B` : undefined}
             history={custodyMetric?.history || []}
             source="Fed H.4.1 WDFBAL"
+            sourceRef={custodyMetric?.sourceRef || "FRED: H0RESH4CGNWW"}
+            provenance={custodyMetric?.provenance || "api_live"}
+            frequency={custodyMetric?.frequency || "Weekly"}
+            lastUpdated={custodyMetric?.lastUpdated}
             sublabel="Foreign official & central bank Treasury holdings in Fed custody"
+            laymanSummary="US debt held by foreign governments and central banks. When this drops, foreign countries are reducing their dollar reserves."
           />
 
           {/* Primary Dealer Inventory */}
           <MetricCard
+            metric={inventoryMetric ?? undefined}
             label="Primary Dealer Net Inventory"
-            value={inventoryMetric ? `$${inventoryMetric.value.toFixed(0)}B` : '$285B'}
+            value={inventoryMetric ? `$${inventoryMetric.value.toFixed(0)}B` : undefined}
             history={inventoryMetric?.history || []}
             source="NY Fed Primary Dealer Statistics"
+            sourceRef={inventoryMetric?.sourceRef || "live_api:fred:PDINTT"}
+            provenance={inventoryMetric?.provenance || "api_live"}
+            frequency={inventoryMetric?.frequency || "Weekly"}
+            lastUpdated={inventoryMetric?.lastUpdated}
             sublabel="Net Treasury coupon position held on dealer balance sheets"
+            laymanSummary="Unsold US bonds stuck on Wall Street bank balance sheets. When this gets too high (above $300B), banks struggle to finance new auctions."
           />
 
           {/* 10Y Auction Bid to Cover */}
           <MetricCard
+            metric={bidToCoverMetric ?? undefined}
             label="10Y Auction Bid-to-Cover"
-            value={bidToCoverMetric ? `${bidToCoverMetric.value.toFixed(2)}x` : '2.48x'}
+            value={bidToCoverMetric ? `${bidToCoverMetric.value.toFixed(2)}x` : undefined}
             history={bidToCoverMetric?.history || []}
             source="US Treasury Fiscal Data"
+            sourceRef={bidToCoverMetric?.sourceRef || "US_TREASURY_AUCTION"}
+            provenance={bidToCoverMetric?.provenance || "api_live"}
+            frequency={bidToCoverMetric?.frequency || "Monthly"}
+            lastUpdated={bidToCoverMetric?.lastUpdated}
             sublabel="Ratio of total bid volume submitted to accepted competitive bids"
+            laymanSummary="Buyer demand for 10-year government bonds. 2.5x is normal; below 2.2x means buyers are cautious and demanding higher yields."
           />
         </div>
 

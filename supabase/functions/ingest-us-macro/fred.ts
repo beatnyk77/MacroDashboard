@@ -177,7 +177,7 @@ export async function processFred(supabase: SupabaseClient, fredApiKey: string) 
 
 async function ingestDeskAInterbankMetrics(supabase: SupabaseClient, fredApiKey: string): Promise<number> {
     const series = [
-        { id: 'US_SRF_UTILIZATION_BN', fredId: 'RESPPANWW' },
+        { id: 'US_SRF_UTILIZATION_BN', fredId: 'WORAL' },
         { id: 'US_BANK_CREDIT_H8_YOY', fredId: 'BUSLOANS' },
         { id: 'US_HY_CREDIT_OAS_BPS', fredId: 'BAMLH0A0HYM2' },
     ];
@@ -185,7 +185,7 @@ async function ingestDeskAInterbankMetrics(supabase: SupabaseClient, fredApiKey:
     let totalRows = 0;
     let latestHyOas = 380;
     const latestSofrSpread = 3;
-    let latestBankCredit = 4.2;
+    let latestBankCredit = 8.6;
 
     for (const s of series) {
         try {
@@ -194,18 +194,34 @@ async function ingestDeskAInterbankMetrics(supabase: SupabaseClient, fredApiKey:
             const data = await res.json() as any;
             if (data.observations && data.observations.length > 0) {
                 const observations = data.observations
-                    .map((obs: any) => {
+                    .map((obs: any, idx: number) => {
                         const val = parseFloat(obs.value);
                         if (isNaN(val)) return null;
                         let finalVal = val;
-                        if (s.id === 'US_HY_CREDIT_OAS_BPS') finalVal = Math.round(val * 100); // % to bps
-                        if (s.id === 'US_SRF_UTILIZATION_BN') finalVal = Math.round(val / 1000); // Millions to Billions
+                        let sourceRef = `FRED: ${s.fredId}`;
+
+                        if (s.id === 'US_HY_CREDIT_OAS_BPS') {
+                            finalVal = Math.round(val * 100); // % to bps
+                        }
+                        if (s.id === 'US_SRF_UTILIZATION_BN') {
+                            finalVal = Math.round((val / 1000) * 10000) / 10000; // Millions to Billions
+                            sourceRef = 'live_api:fred:WORAL';
+                        }
+                        if (s.id === 'US_BANK_CREDIT_H8_YOY') {
+                            const prev12mObs = data.observations[idx + 12];
+                            const prevVal = prev12mObs ? parseFloat(prev12mObs.value) : NaN;
+                            if (isNaN(prevVal) || prevVal <= 0) return null;
+                            finalVal = Math.round(((val - prevVal) / prevVal) * 10000) / 100; // 12M YoY %
+                            sourceRef = 'FRED: BUSLOANS (12M % Change)';
+                        }
+
                         return {
                             metric_id: s.id,
                             as_of_date: obs.date,
                             value: finalVal,
                             last_updated_at: new Date().toISOString(),
-                            provenance: 'api_live'
+                            provenance: 'api_live',
+                            source_ref: sourceRef
                         };
                     })
                     .filter((o: any) => o !== null);

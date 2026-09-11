@@ -19,6 +19,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
+import { LaymanBrief } from '@/components/LaymanBrief';
 
 export const GlobalNetLiquidityLab: React.FC = () => {
   const { data: globalLiqMetric } = useLatestMetric(MID.GLOBAL_NET_LIQUIDITY_USD_TN);
@@ -158,35 +159,75 @@ export const GlobalNetLiquidityLab: React.FC = () => {
           </div>
         </div>
 
+        {/* Layman Brief */}
+        <div className="max-w-7xl mx-auto">
+          <LaymanBrief
+            title="Global Central Bank Money Printing, Drainage & Financial Market Tide"
+            analogy="Think of central bank liquidity like the water level in a harbor. When the world's major central banks (US Fed, Europe, Japan, China) inject cash, the tide rises and lifts all boats (stocks, crypto, gold, real estate). When they pull water out via Quantitative Tightening or tax hoarding, the tide recedes, leaving over-leveraged investors stranded."
+            realWorldImpact="Stock and bond markets follow global net liquidity trends with an 8-to-12 week lag. Accelerating liquidity leads to bull runs and cheap corporate borrowing; shrinking liquidity triggers violent market drawdowns, tech valuations contracting, and recession fears."
+            signalsToWatch={[
+              "13-Week Impulse turns positive: Short-term liquidity acceleration favorable for risk assets",
+              "US Net Liquidity drops below $5.5T: Federal Reserve cash buffers enter the danger zone",
+              "Simultaneous Big 4 balance sheet contraction: Coordinated global monetary tightening"
+            ]}
+            status={impulse13w && impulse13w > 0 ? 'normal' : impulse13w && impulse13w < -2 ? 'danger' : 'caution'}
+            statusLabel={impulse13w && impulse13w > 0 ? 'LIQUIDITY EXPANSION' : impulse13w && impulse13w < -2 ? 'CONTRACTIONARY SQUEEZE' : 'MODERATE DRAINAGE'}
+          />
+        </div>
+
         {/* 4 Core Metric Cards */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
+            metric={globalLiqMetric ?? undefined}
             label="Big 4 Global Net Liquidity"
-            value={globalLiqMetric?.value != null ? `$${globalLiqMetric.value.toFixed(1)}T` : 'Unavailable'}
+            value={globalLiqMetric?.value != null ? `$${globalLiqMetric.value.toFixed(1)}T` : undefined}
             history={globalLiqMetric?.history || []}
             source="Fed / ECB / BOJ / PBOC"
+            sourceRef={globalLiqMetric?.sourceRef || "Big 4 Central Bank Aggregate"}
+            provenance={globalLiqMetric?.provenance || "api_live"}
+            frequency={globalLiqMetric?.frequency || "Weekly"}
+            lastUpdated={globalLiqMetric?.lastUpdated}
             sublabel="Aggregate balance sheets of Big 4 central banks converted to USD"
+            laymanSummary="Total usable money supplied by the 4 largest central banks in the world. The primary driver of global bull and bear markets."
           />
           <MetricCard
+            metric={usNetLiqMetric ?? undefined}
             label="US Fed Net Liquidity Buffer"
-            value={usNetLiqMetric?.value != null ? `$${usNetLiqMetric.value.toFixed(0)}B` : 'Unavailable'}
+            value={usNetLiqMetric?.value != null ? `$${usNetLiqMetric.value.toFixed(0)}B` : undefined}
             history={usNetLiqMetric?.history || []}
             source="Federal Reserve H.4.1"
+            sourceRef={usNetLiqMetric?.sourceRef || "WALCL - WTREGEN - RRPONTSYD"}
+            provenance={usNetLiqMetric?.provenance || "api_live"}
+            frequency={usNetLiqMetric?.frequency || "Daily"}
+            lastUpdated={usNetLiqMetric?.lastUpdated}
             sublabel="Total Fed assets minus Treasury General Account (TGA) and Reverse Repo (RRP)"
+            laymanSummary="True usable cash circulating in US financial markets. Rising buffer fuels equity rallies; falling buffer drains market momentum."
           />
           <MetricCard
+            metric={impulse13wMetric ?? undefined}
             label="13W Liquidity Impulse Momentum"
-            value={impulse13wMetric?.value != null ? `${impulse13wMetric.value > 0 ? '+' : ''}${impulse13wMetric.value.toFixed(1)}%` : 'Unavailable'}
+            value={impulse13wMetric?.value != null ? `${impulse13wMetric.value > 0 ? '+' : ''}${impulse13wMetric.value.toFixed(1)}%` : undefined}
             history={impulse13wMetric?.history || []}
             source="Rate of Change Composite"
+            sourceRef={impulse13wMetric?.sourceRef || "13W Momentum Rate of Change"}
+            provenance={impulse13wMetric?.provenance || "api_live"}
+            frequency={impulse13wMetric?.frequency || "Weekly"}
+            lastUpdated={impulse13wMetric?.lastUpdated}
             sublabel="Short-term annualized momentum velocity indicating money market expansion"
+            laymanSummary="Speedometer measuring whether money is flowing into the banking system faster or slower over the last 3 months."
           />
           <MetricCard
+            metric={impulse26wMetric ?? undefined}
             label="26W Medium-Term Trend"
-            value={impulse26wMetric?.value != null ? `${impulse26wMetric.value > 0 ? '+' : ''}${impulse26wMetric.value.toFixed(1)}%` : 'Unavailable'}
+            value={impulse26wMetric?.value != null ? `${impulse26wMetric.value > 0 ? '+' : ''}${impulse26wMetric.value.toFixed(1)}%` : undefined}
             history={impulse26wMetric?.history || []}
             source="Rate of Change Composite"
+            sourceRef={impulse26wMetric?.sourceRef || "26W Momentum Rate of Change"}
+            provenance={impulse26wMetric?.provenance || "api_live"}
+            frequency={impulse26wMetric?.frequency || "Weekly"}
+            lastUpdated={impulse26wMetric?.lastUpdated}
             sublabel="Medium-term structural liquidity trend filtering out quarter-end tax volatility"
+            laymanSummary="The 6-month big-picture direction of global liquidity, filtering out temporary noise and tax season bumps."
           />
         </div>
 

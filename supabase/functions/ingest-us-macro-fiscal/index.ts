@@ -23,7 +23,7 @@ async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Pr
 
   const seriesMap = [
     { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'H0RESH4CGNWW', divisor: 1000 },
-    { id: 'PRIMARY_DEALER_UST_INVENTORY_BN', fredId: 'TREAST', divisor: 1 },
+    { id: 'PRIMARY_DEALER_UST_INVENTORY_BN', fredId: 'PDINTT', divisor: 1000 },
   ];
 
   for (const s of seriesMap) {
