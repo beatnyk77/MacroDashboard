@@ -13,6 +13,7 @@ In an era defined by monetary experimentation and supply-side constraints, conve
 GraphiQuestor operates as a pure data terminal. The moment you arrive, you're presented with live, automatically updating telemetry across these specialized intelligence desks:
 
 ### Flagship Institutional Desks (Bloomberg / CrossBorder Capital Equivalents)
+*   **US SEC Corporate Debt & Transmission Desk** (`/corporate-transmission`) — Macro-to-micro financial transmission surveillance extracting real-time balance sheet signals from authentic **US SEC EDGAR** 10-K/10-Q filings across 37 mega-cap corporate issuers (7,000+ filing evidence entries). Telemetry covers CapEx impulse velocity, corporate liquidity stress & cash-burn, floating-rate interest coverage burdens, and aggregated corporate debt maturity walls with rollover coupon deltas.
 *   **Treasury Basis Trade & Leverage Fragility Barometer** (`/labs/treasury-basis-trade`) — Real-time surveillance of hedge fund cash-futures basis trade leverage, CFTC 10Y/Ultra futures net short positioning (-$820.5B), SOFR-IORB repo spread pressure, Primary Dealer gross financing ($3.28T), and an interactive stress matrix simulating margin call cascades.
 *   **Global Central Bank Net Liquidity Impulse Engine** (`/labs/global-net-liquidity`) — Synchronized cross-border liquidity impulse tracking the aggregated balance sheets of Fed, ECB, PBOC, and BOJ ($29.4T) adjusted for sovereign cash (TGA) and reverse repo (RRP), with dual 13-week and 26-week momentum velocity gauges and cross-asset transmission lead-lag models.
 *   **Interbank Credit & Funding Stress Desk** (`/labs/interbank-funding`) — Real-time telemetry on Standing Repo Facility (SRF) drawdowns, commercial bank C&I credit growth (H.8), high yield OAS spreads, and a normalized composite interbank credit stress index.
@@ -30,10 +31,25 @@ GraphiQuestor operates as a pure data terminal. The moment you arrive, you're pr
 *   **Energy Security & Commodities Lab** (`/labs/energy-commodities`) — Physical trade flows, refining crack spreads, SPR reserves, and the **WTI Calendar Spread Monitor** for prompt-month tightness.
 *   **Sovereign Stress Lab** (`/labs/sovereign-stress`) — G20 debt sustainability models, sovereign CDS spreads, and Bank of Japan balance sheet stress.
 *   **Africa Macro Pulse Lab** (`/labs/africa-macro`) — Resource flows, bilateral mining royalties, and currency debasement dynamics.
-*   **Corporate Transmission Matrix** (`/corporate-transmission`) — Macro-to-micro transmission channels connecting policy rate changes to corporate interest coverage and debt maturity walls.
-*   **Data Health & Provenance Dashboard** (`/data-health` / `/admin/data-health`) — Real-time pipeline status, authenticity scores, and data provenance tracking across all 270+ metrics.
+*   **Data Health & Provenance Dashboard** (`/data-health` / `/admin/data-health`) — Real-time pipeline status, authenticity scores, and data provenance tracking across all 320+ metrics.
 
 All modules are production-ready, receiving automated updates with `api_live` provenance and zero mock or stale numbers on the main experience.
+
+---
+
+## Telemetry Architecture: Core Metric Domains Tracked (320+ Live Series)
+
+| Metric Cluster | Key Telemetry Series | Primary Sources | Cadence |
+| :--- | :--- | :--- | :--- |
+| **Global Central Bank Net Liquidity** | Fed Net Liquidity Buffer (`Assets - TGA - RRP`), Consolidated 4CB (Fed+ECB+PBOC+BOJ), 13W/26W Momentum Impulses | Federal Reserve, ECB, PBOC, BOJ | Daily / Weekly |
+| **Treasury Plumbing & Repo Fragility** | CFTC Leveraged Funds Net Short (10Y/Ultra), SOFR-IORB Repo Spread, Primary Dealer Net Inventory, SRF Drawdowns | FRED, CFTC COT, DTCC GCF | Daily / Weekly |
+| **US SEC Corporate Debt & Transmission** | 37 Mega-Cap Filers: CapEx Impulse Velocity, Floating-Rate Interest Burden, Liquidity Stress, Debt Maturity Buckets (<1Y to >5Y) | US SEC EDGAR (10-K / 10-Q) | Event / Quarterly |
+| **Sovereign Fiscal Trajectory & Benchmarks** | US Public Debt Outstanding, Monthly Net Issuance, Debt/GDP Ratios, Debt/Gold Z-Scores, T=0 Precedent Trajectories | US Treasury, FRED, BIS | Daily / Monthly |
+| **De-Dollarization & Monetary Metals** | Central Bank Gold Accumulation, M2/Gold & Gold/Silver Ratios, IMF COFER Reserve Currency Shares, Petrodollar Settled Volumes | IMF COFER, LBMA, WGC, FRED | Monthly / Quarterly |
+| **Energy Security & Physical Scarcity** | WTI Front-Month Calendar Spread (Scarcity vs Contango), Strategic Petroleum Reserve (SPR) Inventory, Refining Run Rates | US EIA, ICE/NYMEX | Daily / Weekly |
+| **India Macro & Sub-National Telemetry** | State-Level Industrial Output (ASI) & Labor (PLFS), RBI LAF Operations & System Liquidity, NSE FII/DII Institutional Flows | MoSPI, RBI DBIE, NSE India | Daily / Monthly |
+| **China Macro & Provincial Divergence** | PBOC M2 & Aggregate Financing (TSF), MLF & 7-Day Reverse Repo Rates, Provincial Fixed Asset Investment & Land Fiscal Drag | PBOC, NBS China | Weekly / Monthly |
+| **Global FX Carry & Interbank Credit** | G7 Real Rate Spreads, 3M Cross-Currency Basis Swaps (EUR/USD, JPY/USD), High-Yield OAS Spreads, Commercial Paper Spreads | BIS, FRED, Central Banks | Daily |
 
 ---
 
@@ -158,7 +174,7 @@ GraphiQuestor transforms the traditional financial glossary into a **distributed
 
 GraphiQuestor is engineered to meet the exacting standards of sovereign wealth funds and tier-one research teams.
 
-*   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, NDB, MoSPI, FRED, EIA, RBI) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-1 stimulus perfectly for reliable Z-score calculation.
+*   **Autonomous 25-Year Ingestion Pipelines:** Serverless Edge Functions (Supabase/Deno) autonomously harvest data from official sources (BIS, US SEC EDGAR, MoSPI, FRED, EIA, RBI, CFTC) daily. Our time-series metrics span from 2000 to the present, capturing the dot-com crash, the GFC, the QE era, and COVID-19 stimulus perfectly for reliable Z-score calculation.
 *   **Data Hub Orchestration Pattern:** A centralized telemetry orchestrator (`useGlossaryDataHub`) consolidates 20+ specialized hooks into a single, memoized data resolver, ensuring sub-millisecond dashboard performance across the entire intelligence suite.
 *   **Institutional-Grade Data Health & Provenance:** Every data point is tagged with a `provenance` certificate (`api_live`, `fallback_snapshot`), providing full transparency on data origin. Our **Authenticity Score** provides a real-time "trust percentage" for all active dashboards.
 *   **Materialized Performance Layer:** High-frequency metrics are served via a **trigger-synchronized materialization layer** (`vw_latest_metrics`), ensuring sub-millisecond dashboard responsiveness even during massive volatility spikes.
@@ -179,14 +195,14 @@ Frontend Architecture:
 Backend & Ingestion Engine:
 ├── Database: Supabase Postgres (time-series engine + materialized views)
 ├── Serverless Workers: Deno Edge Functions (automated via pg_cron)
-├── Data Feeds: FRED, RBI DBIE, MoSPI, EIA, CFTC, PBOC, BOJ, ECB, BIS
+├── Data Feeds: US SEC EDGAR, FRED, RBI DBIE, MoSPI, EIA, CFTC, PBOC, BOJ, ECB, BIS, UN Comtrade
 └── API Delivery: Cloudflare Workers MCP Server + REST Endpoints
 ```
 
 ### Data Flow Pipeline
 
 ```
-Official Data Feeds (FRED, RBI, MoSPI, EIA, CFTC, PBOC, BOJ, ECB)
+Official Data Feeds (US SEC, FRED, RBI, MoSPI, EIA, CFTC, PBOC, BOJ, ECB, UN Comtrade)
    │
    ▼
 Deno Edge Functions (Ingestion & Normalization)
@@ -213,7 +229,7 @@ npm install
 # Start Vite dev server with hot reload
 npm run dev
 
-# Run full TypeScript validation and production build (prerenders 270+ routes)
+# Run full TypeScript validation and production build (prerenders 560+ routes)
 npm run build
 
 # Run ESLint with zero-warning gate (strict institutional standard)
@@ -237,8 +253,12 @@ GraphiQuestor synthesizes intelligence from the world's most authoritative insti
 
 ### India-Specific Intelligence (Proprietary Edge)
 *   **MoSPI (Ministry of Statistics, Govt. of India):** Direct integration via eSankhyiki-MCP for real-time access to PLFS (labor), CPI, IIP, ASI (industries), NAS, WPI, and Energy Statistics—all with state/UT granularity.
-*   **RBI (Reserve Bank of India):** Daily LAF operations, FX defense interventions, gold reserves, and monetary policy signals.
-*   **Corporate India Engine:** SEC EDGAR equivalents for Indian equities, powered by NSE/BSE data flows and institutional holding disclosures.
+*   **RBI (Reserve Bank of India):** Daily LAF operations, FX defense interventions, gold reserves, system liquidity, and monetary policy signals.
+*   **NSE (National Stock Exchange of India):** Daily institutional FII/FPI and DII equity and derivative flow telemetry, turnover, and cross-border portfolio positioning.
+
+### US Regulatory & Corporate Intelligence (SEC EDGAR)
+*   **US SEC EDGAR (Securities and Exchange Commission):** Automated, primary-source ingestion of 10-K and 10-Q balance sheets, income statements, and debt schedules across 37 mega-cap corporate bellwethers. Provides auditable evidence archives linked directly to `sec.gov`, debt maturity schedules, weighted-average coupons, and macro transmission signals (CapEx velocity, liquidity stress, interest burden).
+*   **CFTC (Commodity Futures Trading Commission):** Commitments of Traders (COT) institutional positioning tracking leveraged fund net short positions across 10-Year, Ultra-10, and 2-Year Treasury futures.
 
 ### China Macro Data
 *   **NBS & PBOC Publications:** Industrial production, retail sales, credit impulse, M2/aggregate financing, and policy rate decisions.
@@ -249,11 +269,12 @@ GraphiQuestor synthesizes intelligence from the world's most authoritative insti
 *   **FRED (Federal Reserve Economic Data):** 25-year US macro series (balance sheets, yields, labor, gold).
 *   **BIS (Bank for International Settlements):** Cross-border banking, reserve metrics, and global liquidity aggregates.
 *   **IMF (International Monetary Fund):** COFER reserve composition, SDR allocations, and World Economic Outlook database.
+*   **LBMA & Official Reserve Repositories:** London Bullion Market Association benchmark fixings and central bank official sector gold acquisition volumes.
 *   **World Bank, AIIB & NDB:** Development financing projects and institutional lending flows across the Global South.
 
 ### Energy, Commodities & Geopolitics
 *   **EIA (U.S. Energy Information Administration):** Global refining capacity, crude import/export flows, SPR dynamics, and oil market balances.
-*   **Real-Time OSINT:** GDELT event feeds, vessel tracking (AIS), and flight telemetry for geopolitical risk mapping.
+*   **Physical Trade & Geopolitics:** UN Comtrade physical commodity flows (Crude, Metals, Agriculture) and GDELT geopolitical risk & conflict event feeds.
 *   **Market Data Feeds:** Alpha Vantage, Finnhub, and trading economics for real-time commodity and volatility metrics.
 
 ---
@@ -264,7 +285,7 @@ GraphiQuestor is designed for seamless integration into existing institutional w
 
 *   **Live Terminal:** [https://graphiquestor.com](https://graphiquestor.com)
 *   **RSS Feed:** [https://graphiquestor.com/rss.xml](https://graphiquestor.com/rss.xml)
-*   **REST API:** [https://graphiquestor.com/api-docs](https://graphiquestor.com/api-docs) — 270+ metrics, regime signals, composite scores
+*   **REST API:** [https://graphiquestor.com/api-docs](https://graphiquestor.com/api-docs) — 320+ metrics, regime signals, composite scores
 *   **MCP Server (AI Agents):** [`mcp/graphiquestor/`](mcp/graphiquestor/) — Smithery registry [`graphiquestor/macro-intelligence`](https://smithery.ai/servers/graphiquestor/macro-intelligence) with 8 tools (`get_regime_current`, `get_india_summary`, `discover_graphiquestor`, etc.). One-command install:
     ```bash
     npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cursor

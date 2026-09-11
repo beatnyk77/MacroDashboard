@@ -4,7 +4,7 @@ import { TrailNavLink } from '@/components/TrailLink';
 import { withoutTrailingSlash } from '@/lib/urlPath';
 import {
     Activity, Globe, TrendingUp, Anchor,
-    ShieldAlert, Database, Radio, FileText, Library, Newspaper, GitCompare
+    ShieldAlert, Database, Radio, FileText, Library, Newspaper, GitCompare, FileSearch
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -20,6 +20,7 @@ const terminalNavItems: NavItem[] = [
     { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} />, group: 'CORE DESK' },
     { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} />, group: 'CORE DESK' },
     { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} />, group: 'CORE DESK' },
+    { id: 'sec-corporate-transmission', label: 'US SEC Transmission', path: '/corporate-transmission', icon: <FileSearch size={14} />, group: 'CORE DESK' },
     { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} />, group: 'CORE DESK' },
     { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Database size={14} />, group: 'CORE DESK' },
     { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} />, group: 'STRUCTURAL' },

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp } from 'lucide-react';
+import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp, ArrowUpRight, FileSearch } from 'lucide-react';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
@@ -218,8 +218,18 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                         </div>
                     </div>
 
-                    {/* Risk Summary Badge */}
-                    <div className="flex-shrink-0">
+                    {/* Actions & Risk Summary Badge */}
+                    <div className="flex flex-wrap items-center gap-2.5">
+                        <a
+                            href="/corporate-transmission"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-white transition-all text-xs font-mono font-bold uppercase tracking-wider group shadow-sm"
+                            title="Open full US SEC Corporate Transmission Desk"
+                        >
+                            <FileSearch className="w-3.5 h-3.5 text-blue-400 group-hover:text-blue-300" />
+                            <span>US SEC Filings Desk</span>
+                            <ArrowUpRight className="w-3.5 h-3.5 text-blue-400/70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                        </a>
+
                         <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
                             (stats.yr1Total / stats.total) > 0.25
                                 ? 'bg-red-500/15 border-red-500/40 text-red-200'
