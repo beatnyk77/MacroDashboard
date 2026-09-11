@@ -23,9 +23,10 @@ export const FxCarryMatrixLab: React.FC = () => {
   const { data: usRateMetric } = useLatestMetric(MID.US_POLICY_RATE);
 
   const dataFreshness = getStaleness(unwindMetric?.lastUpdated, unwindMetric?.frequency);
-  const unwindRiskScore = typeof unwindMetric?.value === 'number' && !isNaN(unwindMetric.value) ? unwindMetric.value : 64;
+  const unwindRiskScore = typeof unwindMetric?.value === 'number' && !isNaN(unwindMetric.value) ? unwindMetric.value : null;
 
-  const getUnwindBadge = (score: number) => {
+  const getUnwindBadge = (score: number | null) => {
+    if (score === null) return { label: 'AWAITING OBSERVATION', bg: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
     if (score > 70) return { label: 'HIGH UNWIND RISK', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
     if (score > 50) return { label: 'ELEVATED VOLATILITY', bg: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
     if (score > 30) return { label: 'STABLE CARRY FLOWS', bg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
@@ -128,12 +129,12 @@ export const FxCarryMatrixLab: React.FC = () => {
               </span>
             </div>
             <div className="text-4xl font-black text-white tracking-tight mb-2">
-              {unwindRiskScore}<span className="text-base text-muted-foreground font-normal"> / 100</span>
+              {unwindRiskScore !== null ? Math.round(unwindRiskScore) : '—'}{unwindRiskScore !== null && <span className="text-base text-muted-foreground font-normal"> / 100</span>}
             </div>
             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-3">
               <div
                 className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-500"
-                style={{ width: `${unwindRiskScore}%` }}
+                style={{ width: `${unwindRiskScore ?? 0}%` }}
               />
             </div>
             <DataProvenanceBadge source="BOJ / FRED / FX" methodology="Risk Score" />

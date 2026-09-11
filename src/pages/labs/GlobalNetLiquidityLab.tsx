@@ -27,8 +27,8 @@ export const GlobalNetLiquidityLab: React.FC = () => {
   const { data: impulse26wMetric } = useLatestMetric(MID.NET_LIQUIDITY_IMPULSE_26W_PCT);
 
   const dataFreshness = getStaleness(globalLiqMetric?.lastUpdated, globalLiqMetric?.frequency);
-  const impulse13w = typeof impulse13wMetric?.value === 'number' && !isNaN(impulse13wMetric.value) ? impulse13wMetric.value : 4.8;
-  const impulse26w = typeof impulse26wMetric?.value === 'number' && !isNaN(impulse26wMetric.value) ? impulse26wMetric.value : -1.2;
+  const impulse13w = typeof impulse13wMetric?.value === 'number' && !isNaN(impulse13wMetric.value) ? impulse13wMetric.value : null;
+  const impulse26w = typeof impulse26wMetric?.value === 'number' && !isNaN(impulse26wMetric.value) ? impulse26wMetric.value : null;
 
   const cbDecomposition = [
     { cb: 'Federal Reserve (Fed)', localBalance: '$6.85T', fxRate: '1.00', usdBalance: '$6.85T', delta30d: '-$38.4B', stance: 'Quantitative Tightening ($60B/mo)', color: 'text-cyan-400' },
@@ -122,11 +122,17 @@ export const GlobalNetLiquidityLab: React.FC = () => {
               <div className="space-y-1 text-center">
                 <span className="text-[11px] text-slate-400 font-mono block">13-WEEK IMPULSE</span>
                 <div className="flex items-center justify-center gap-1">
-                  <ArrowUpRight className="w-4 h-4 text-emerald-400" />
-                  <span className="text-xl font-bold font-mono text-emerald-400">+{impulse13w.toFixed(1)}%</span>
+                  {impulse13w !== null && (impulse13w >= 0 ? <ArrowUpRight className="w-4 h-4 text-emerald-400" /> : <ArrowDownRight className="w-4 h-4 text-rose-400" />)}
+                  <span className={`text-xl font-bold font-mono ${impulse13w !== null ? (impulse13w >= 0 ? 'text-emerald-400' : 'text-rose-400') : 'text-slate-400'}`}>
+                    {impulse13w !== null ? `${impulse13w > 0 ? '+' : ''}${impulse13w.toFixed(1)}%` : '—'}
+                  </span>
                 </div>
-                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono border border-emerald-500/30 bg-emerald-500/10 text-emerald-400">
-                  ACCELERATING
+                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono border ${
+                  impulse13w !== null
+                    ? (impulse13w >= 0 ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-rose-500/30 bg-rose-500/10 text-rose-400')
+                    : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
+                }`}>
+                  {impulse13w !== null ? (impulse13w >= 0 ? 'ACCELERATING' : 'DECELERATING') : 'AWAITING'}
                 </span>
               </div>
 
@@ -135,11 +141,17 @@ export const GlobalNetLiquidityLab: React.FC = () => {
               <div className="space-y-1 text-center">
                 <span className="text-[11px] text-slate-400 font-mono block">26-WEEK IMPULSE</span>
                 <div className="flex items-center justify-center gap-1">
-                  <ArrowDownRight className="w-4 h-4 text-amber-400" />
-                  <span className="text-xl font-bold font-mono text-amber-400">{impulse26w.toFixed(1)}%</span>
+                  {impulse26w !== null && (impulse26w >= 0 ? <ArrowUpRight className="w-4 h-4 text-emerald-400" /> : <ArrowDownRight className="w-4 h-4 text-amber-400" />)}
+                  <span className={`text-xl font-bold font-mono ${impulse26w !== null ? (impulse26w >= 0 ? 'text-emerald-400' : 'text-amber-400') : 'text-slate-400'}`}>
+                    {impulse26w !== null ? `${impulse26w > 0 ? '+' : ''}${impulse26w.toFixed(1)}%` : '—'}
+                  </span>
                 </div>
-                <span className="inline-block px-2 py-0.5 rounded text-[10px] font-mono border border-amber-500/30 bg-amber-500/10 text-amber-400">
-                  LAGGED DRAG
+                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono border ${
+                  impulse26w !== null
+                    ? (impulse26w >= 0 ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-amber-500/30 bg-amber-500/10 text-amber-400')
+                    : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
+                }`}>
+                  {impulse26w !== null ? (impulse26w >= 0 ? 'EXPANSION' : 'LAGGED DRAG') : 'AWAITING'}
                 </span>
               </div>
             </div>
@@ -150,28 +162,28 @@ export const GlobalNetLiquidityLab: React.FC = () => {
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             label="Big 4 Global Net Liquidity"
-            value={globalLiqMetric ? `$${globalLiqMetric.value.toFixed(1)}T` : '$29.4T'}
+            value={globalLiqMetric?.value != null ? `$${globalLiqMetric.value.toFixed(1)}T` : 'Unavailable'}
             history={globalLiqMetric?.history || []}
             source="Fed / ECB / BOJ / PBOC"
             sublabel="Aggregate balance sheets of Big 4 central banks converted to USD"
           />
           <MetricCard
             label="US Fed Net Liquidity Buffer"
-            value={usNetLiqMetric ? `$${usNetLiqMetric.value.toFixed(0)}B` : '$6,140B'}
+            value={usNetLiqMetric?.value != null ? `$${usNetLiqMetric.value.toFixed(0)}B` : 'Unavailable'}
             history={usNetLiqMetric?.history || []}
             source="Federal Reserve H.4.1"
             sublabel="Total Fed assets minus Treasury General Account (TGA) and Reverse Repo (RRP)"
           />
           <MetricCard
             label="13W Liquidity Impulse Momentum"
-            value={impulse13wMetric ? `${impulse13wMetric.value > 0 ? '+' : ''}${impulse13wMetric.value.toFixed(1)}%` : '+3.4%'}
+            value={impulse13wMetric?.value != null ? `${impulse13wMetric.value > 0 ? '+' : ''}${impulse13wMetric.value.toFixed(1)}%` : 'Unavailable'}
             history={impulse13wMetric?.history || []}
             source="Rate of Change Composite"
             sublabel="Short-term annualized momentum velocity indicating money market expansion"
           />
           <MetricCard
             label="26W Medium-Term Trend"
-            value={impulse26wMetric ? `${impulse26wMetric.value > 0 ? '+' : ''}${impulse26wMetric.value.toFixed(1)}%` : '-1.8%'}
+            value={impulse26wMetric?.value != null ? `${impulse26wMetric.value > 0 ? '+' : ''}${impulse26wMetric.value.toFixed(1)}%` : 'Unavailable'}
             history={impulse26wMetric?.history || []}
             source="Rate of Change Composite"
             sublabel="Medium-term structural liquidity trend filtering out quarter-end tax volatility"

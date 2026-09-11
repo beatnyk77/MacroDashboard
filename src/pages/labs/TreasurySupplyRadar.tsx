@@ -23,9 +23,10 @@ export const TreasurySupplyRadar: React.FC = () => {
   const { data: bidToCoverMetric } = useLatestMetric(MID.UST_AUCTION_BID_TO_COVER_10Y);
 
   const dataFreshness = getStaleness(stressMetric?.lastUpdated, stressMetric?.frequency);
-  const absorptionScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : 42;
+  const absorptionScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : null;
 
-  const getAbsorptionBadge = (score: number) => {
+  const getAbsorptionBadge = (score: number | null) => {
+    if (score === null) return { label: 'AWAITING OBSERVATION', bg: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
     if (score > 70) return { label: 'CRITICAL CONGESTION', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
     if (score > 50) return { label: 'ELEVATED INVENTORY', bg: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
     if (score > 30) return { label: 'BALANCED SUPPLY', bg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
@@ -127,12 +128,12 @@ export const TreasurySupplyRadar: React.FC = () => {
               </span>
             </div>
             <div className="text-4xl font-black text-white tracking-tight mb-2">
-              {absorptionScore}<span className="text-base text-muted-foreground font-normal"> / 100</span>
+              {absorptionScore !== null ? Math.round(absorptionScore) : '—'}{absorptionScore !== null && <span className="text-base text-muted-foreground font-normal"> / 100</span>}
             </div>
             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-3">
               <div
                 className="h-full bg-gradient-to-r from-cyan-500 via-amber-500 to-rose-500 transition-all duration-500"
-                style={{ width: `${absorptionScore}%` }}
+                style={{ width: `${absorptionScore ?? 0}%` }}
               />
             </div>
             <DataProvenanceBadge source="Fed H.4.1 / Treasury" methodology="Composite Score" />

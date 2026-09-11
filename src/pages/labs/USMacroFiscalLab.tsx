@@ -146,7 +146,9 @@ export const USMacroFiscalLab: React.FC = () => {
                 </p>
             </div>
 
-            <FiscalCockpit />
+            <SectionErrorBoundary name="Fiscal Cockpit">
+                <FiscalCockpit />
+            </SectionErrorBoundary>
 
             <div className="mt-20 space-y-24">
                 {/* Section 0.5: FOMC Minutes Intelligence */}

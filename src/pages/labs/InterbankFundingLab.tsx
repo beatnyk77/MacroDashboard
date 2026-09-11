@@ -26,9 +26,10 @@ export const InterbankFundingLab: React.FC = () => {
   const { data: hyOasMetric } = useLatestMetric(MID.US_HY_CREDIT_OAS_BPS);
 
   const dataFreshness = getStaleness(stressMetric?.lastUpdated, stressMetric?.frequency);
-  const stressScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : 38;
+  const stressScore = typeof stressMetric?.value === 'number' && !isNaN(stressMetric.value) ? stressMetric.value : null;
 
-  const getStressBadge = (score: number) => {
+  const getStressBadge = (score: number | null) => {
+    if (score === null) return { label: 'AWAITING OBSERVATION', bg: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
     if (score > 70) return { label: 'SEVERE STRESS', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
     if (score > 50) return { label: 'ELEVATED STRAIN', bg: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
     if (score > 30) return { label: 'MODERATE TIGHTENING', bg: 'bg-emerald-500/20 text-emerald-400 border-emerald-500/30' };
@@ -123,12 +124,12 @@ export const InterbankFundingLab: React.FC = () => {
               </span>
             </div>
             <div className="text-4xl font-black text-white tracking-tight mb-2">
-              {stressScore}<span className="text-base text-muted-foreground font-normal"> / 100</span>
+              {stressScore !== null ? Math.round(stressScore) : '—'}{stressScore !== null && <span className="text-base text-muted-foreground font-normal"> / 100</span>}
             </div>
             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-3">
               <div
                 className="h-full bg-gradient-to-r from-emerald-500 via-amber-500 to-rose-500 transition-all duration-500"
-                style={{ width: `${stressScore}%` }}
+                style={{ width: `${stressScore ?? 0}%` }}
               />
             </div>
             <DataProvenanceBadge source="Fed / ICE BofA" methodology="Composite Index" />
@@ -137,7 +138,7 @@ export const InterbankFundingLab: React.FC = () => {
           {/* SRF Utilization */}
           <MetricCard
             label="Standing Repo Facility (SRF)"
-            value={srfMetric ? `$${srfMetric.value.toFixed(1)}B` : '$0.0B'}
+            value={srfMetric?.value != null ? `$${srfMetric.value.toFixed(1)}B` : 'Unavailable'}
             history={srfMetric?.history || []}
             source="Federal Reserve H.4.1"
             sublabel="Emergency overnight repo liquidity drawn by primary dealers"

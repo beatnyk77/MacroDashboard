@@ -26,9 +26,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
   const { data: repoVolumeMetric } = useLatestMetric(MID.PRIMARY_DEALER_REPO_FINANCING_BN);
 
   const dataFreshness = getStaleness(riskMetric?.lastUpdated, riskMetric?.frequency);
-  const riskScore = typeof riskMetric?.value === 'number' && !isNaN(riskMetric.value) ? riskMetric.value : 74;
+  const riskScore = typeof riskMetric?.value === 'number' && !isNaN(riskMetric.value) ? riskMetric.value : null;
 
-  const getRiskBadge = (score: number) => {
+  const getRiskBadge = (score: number | null) => {
+    if (score === null) return { label: 'AWAITING OBSERVATION', bg: 'bg-slate-500/20 text-slate-400 border-slate-500/30' };
     if (score > 75) return { label: 'CRITICAL SQUEEZE RISK', bg: 'bg-rose-500/20 text-rose-400 border-rose-500/30' };
     if (score > 55) return { label: 'ELEVATED UNWIND RISK', bg: 'bg-amber-500/20 text-amber-400 border-amber-500/30' };
     if (score > 35) return { label: 'MONITORED VOLATILITY', bg: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' };
@@ -162,7 +163,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                   />
                   <path
                     className="text-rose-500 transition-all duration-1000 ease-out"
-                    strokeDasharray={`${riskScore}, 100`}
+                    strokeDasharray={`${riskScore ?? 0}, 100`}
                     strokeWidth="3.5"
                     strokeLinecap="round"
                     stroke="currentColor"
@@ -171,8 +172,8 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                   />
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
-                  <span className="text-2xl font-bold font-mono text-white">{riskScore}</span>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-400">SCORE</span>
+                  <span className="text-2xl font-bold font-mono text-white">{riskScore !== null ? Math.round(riskScore) : '—'}</span>
+                  <span className="text-[9px] uppercase tracking-wider text-slate-400">{riskScore !== null ? 'SCORE' : 'N/A'}</span>
                 </div>
               </div>
 
@@ -181,7 +182,9 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-semibold font-mono border ${badge.bg}`}>
                   {badge.label}
                 </span>
-                <span className="text-[11px] text-slate-400 block">High Repo Friction</span>
+                <span className="text-[11px] text-slate-400 block">
+                  {riskScore !== null ? (riskScore > 50 ? 'High Repo Friction' : 'Low Repo Friction') : 'Awaiting Model Output'}
+                </span>
               </div>
             </div>
           </div>

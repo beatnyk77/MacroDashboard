@@ -27,16 +27,6 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
     const chartData = useMemo(() => {
         const dateMap = new Map<string, { date: string; brentSum: number; brentCount: number; cost_inr?: number; cost_cny?: number }>();
 
-        // Approximate historical FX benchmarks for composite calculation if explicit DB rates are missing
-        const FX_IN: Record<string, number> = {
-            '2018': 68.4, '2019': 70.4, '2020': 74.1, '2021': 73.9,
-            '2022': 78.6, '2023': 82.6, '2024': 83.5, '2025': 85.2, '2026': 87.4
-        };
-        const FX_CN: Record<string, number> = {
-            '2018': 6.62, '2019': 6.91, '2020': 6.90, '2021': 6.45,
-            '2022': 6.73, '2023': 7.08, '2024': 7.23, '2025': 7.28, '2026': 7.32
-        };
-
         brentPriceData.forEach(d => {
             const year = d.date.substring(0, 4);
             if (!dateMap.has(year)) {
@@ -54,7 +44,8 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
         };
 
         importData.forEach(d => {
-            const year = d.as_of_date.substring(0, 4);
+            const year = d.as_of_date ? d.as_of_date.substring(0, 4) : '';
+            if (!year) return;
             const country = d.importer_country_code === 'IN' || d.importer_country_code === 'IND' ? 'IN' :
                             d.importer_country_code === 'CN' || d.importer_country_code === 'CHN' ? 'CN' : null;
             if (!country) return;
@@ -64,12 +55,16 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             }
 
             const vol = Number(d.import_volume_mbbl) || 1;
-            const brentRef = d.brent_price_usd ? Number(d.brent_price_usd) : 80;
-            const fxRef = d.exchange_rate ? Number(d.exchange_rate) : (country === 'IN' ? (FX_IN[year] || 85) : (FX_CN[year] || 7.2));
-            const costPerBbl = d.import_cost_local_currency ? Number(d.import_cost_local_currency) : (brentRef * fxRef);
+            const brentRef = d.brent_price_usd ? Number(d.brent_price_usd) : null;
+            const fxRef = d.exchange_rate ? Number(d.exchange_rate) : null;
+            const costPerBbl = d.import_cost_local_currency 
+                ? Number(d.import_cost_local_currency) 
+                : (brentRef && fxRef ? brentRef * fxRef : null);
 
-            importCostByYear[country][year].totalCost += costPerBbl * vol;
-            importCostByYear[country][year].totalVol += vol;
+            if (costPerBbl != null && !isNaN(costPerBbl)) {
+                importCostByYear[country][year].totalCost += costPerBbl * vol;
+                importCostByYear[country][year].totalVol += vol;
+            }
         });
 
         const result: OilData[] = [];
@@ -77,10 +72,10 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             const avgBrent = val.brentCount > 0 ? val.brentSum / val.brentCount : undefined;
             const inCost = importCostByYear.IN[year]?.totalVol > 0
                 ? importCostByYear.IN[year].totalCost / importCostByYear.IN[year].totalVol
-                : (avgBrent ? avgBrent * (FX_IN[year] || 85) : undefined);
+                : undefined;
             const cnCost = importCostByYear.CN[year]?.totalVol > 0
                 ? importCostByYear.CN[year].totalCost / importCostByYear.CN[year].totalVol
-                : (avgBrent ? avgBrent * (FX_CN[year] || 7.25) : undefined);
+                : undefined;
 
             result.push({
                 date: year,
@@ -101,7 +96,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                     if (avgCost) {
                         result.push({
                             date: year,
-                            brent: country === 'IN' ? avgCost / (FX_IN[year] || 85) : avgCost / (FX_CN[year] || 7.25),
+                            brent: undefined,
                             cost_inr: country === 'IN' ? Math.round(avgCost) : undefined,
                             cost_cny: country === 'CN' ? Math.round(avgCost) : undefined
                         });
@@ -128,7 +123,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             yoyDelta = ((currentVal - prevVal) / prevVal) * 100;
         }
 
-        const brentVal = latest.brent || (activeCountry === 'IN' ? currentVal / 85 : currentVal / 7.25);
+        const brentVal = typeof latest.brent === 'number' ? latest.brent : null;
 
         return {
             currentVal,
@@ -237,7 +232,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                                 <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Brent Benchmark</span>
                                             </div>
                                             <div className="flex items-baseline gap-2">
-                                                <p className="text-xl sm:text-2xl font-black text-white">${stats.brentVal.toFixed(2)}</p>
+                                                <p className="text-xl sm:text-2xl font-black text-white">{stats.brentVal != null ? `$${stats.brentVal.toFixed(2)}` : '—'}</p>
                                                 <span className="text-xs font-bold text-muted-foreground/30">AVG</span>
                                             </div>
                                         </div>
