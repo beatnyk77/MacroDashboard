@@ -18,7 +18,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
-import { LaymanBrief } from '@/components/LaymanBrief';
+import { DeskConceptPill } from '@/components/DeskConceptPill';
 
 export const TreasuryBasisTradeLab: React.FC = () => {
   const { data: riskMetric } = useLatestMetric(MID.TREASURY_BASIS_BLOWOUT_RISK);
@@ -149,6 +149,17 @@ export const TreasuryBasisTradeLab: React.FC = () => {
               <p className="text-sm text-slate-300 leading-relaxed">
                 Institutional telemetry monitoring hedge fund cash-futures basis trade leverage, CFTC speculative net short positioning in 10Y/Ultra Treasury contracts, and repo collateral financing friction.
               </p>
+              <DeskConceptPill
+                title="How the Treasury Basis Trade Works"
+                readingTime="40-sec brief"
+                analogy="Hedge funds borrow $98 from banks to buy $100 of government bonds while selling futures contracts to pocket tiny basis spreads. They borrow up to 50x to 80x their equity in repo markets to magnify returns."
+                mainStreetImpact="If overnight borrowing costs spike, funds are forced to dump Treasuries simultaneously. This can freeze bond liquidity, spike mortgage rates, and cause sudden market flash crashes."
+                whatToWatch={[
+                  { label: "Blowout Score", status: riskScore && riskScore > 70 ? 'critical' : riskScore && riskScore > 40 ? 'caution' : 'normal', detail: "> 70 indicates high risk of forced liquidations" },
+                  { label: "SOFR-IORB", status: "caution", detail: "Positive spread signals overnight repo cash shortage" },
+                  { label: "CFTC Short", status: "normal", detail: "> $800B indicates extreme hedge fund leverage concentration" },
+                ]}
+              />
             </div>
 
             {/* Composite Dial Box */}
@@ -191,21 +202,6 @@ export const TreasuryBasisTradeLab: React.FC = () => {
           </div>
         </div>
 
-        {/* Layman Brief */}
-        <div className="max-w-7xl mx-auto">
-          <LaymanBrief
-            title="Treasury Cash-Futures Basis Trade & Forced Unwind Risk"
-            analogy="Imagine borrowing $98 from a bank to buy $100 worth of US government bonds, while simultaneously selling futures contracts to pocket tiny 10-cent profit margins. Because profits are razor thin, hedge funds borrow up to 50x or 80x their own cash in repo markets to magnify returns."
-            realWorldImpact="If short-term borrowing costs suddenly spike or lenders demand more cash collateral, hedge funds are forced to fire-sell Treasuries all at once. This freezes market liquidity, spikes borrowing costs across the economy (mortgages, car loans), and triggers sudden sell-offs in stocks and bonds."
-            signalsToWatch={[
-              "Basis Blowout Score > 70: Critical warning of cascading deleveraging",
-              "SOFR-IORB Spread turns positive: Cash in overnight repo markets is drying up",
-              "CFTC Net Short > $800B: Extreme hedge fund leverage concentration"
-            ]}
-            status={riskScore && riskScore > 70 ? 'danger' : riskScore && riskScore > 40 ? 'caution' : 'normal'}
-            statusLabel={riskScore && riskScore > 70 ? 'HIGH DELEVERAGING RISK' : riskScore && riskScore > 40 ? 'ELEVATED LEVERAGE STRAIN' : 'CONTROLLED SPREADS'}
-          />
-        </div>
 
         {/* 4 Core Metric Cards */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
@@ -220,7 +216,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
             frequency={riskMetric?.frequency || "Daily"}
             lastUpdated={riskMetric?.lastUpdated}
             sublabel="Normalized vulnerability barometer combining leveraged positioning and repo spreads"
-            laymanSummary="A 0-100 gauge measuring whether hedge fund leverage and repo borrowing conditions are safe or nearing a sudden crash."
+            takeaway="Measures whether hedge fund leverage and repo borrowing are stable or nearing forced liquidations."
+            conceptAnalogy="Like checking the structural stress on a dam: combines how much water (leverage) is building up with how narrow the spillway (repo liquidity) is."
+            mainStreetImpact="When this gauge blows out, hedge funds dump Treasuries, freezing market liquidity and abruptly pushing mortgage rates and business loan costs higher."
+            thresholds="Normal < 40 | Elevated 40–70 | Critical Unwind > 70"
           />
           <MetricCard
             metric={cftcMetric ?? undefined}
@@ -233,7 +232,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
             frequency={cftcMetric?.frequency || "Weekly"}
             lastUpdated={cftcMetric?.lastUpdated}
             sublabel="Hedge fund net short notional in 10Y and Ultra Treasury futures"
-            laymanSummary="The total dollar bet that hedge funds have taken using Treasury futures. Large negative numbers show massive short leverage."
+            takeaway="Total short futures contracts hedge funds hold to hedge physical bond purchases."
+            conceptAnalogy="Like pre-selling harvest contracts at a locked price before harvesting crops to guarantee a tiny profit margin."
+            mainStreetImpact="Indicates the raw fuel for potential market flash crashes if funds are forced to buy back shorts in a squeeze."
+            thresholds="Moderate < $500B | Heavy $500B–$800B | Extreme Concentration > $800B"
           />
           <MetricCard
             metric={sofrSpreadMetric ?? undefined}
@@ -246,7 +248,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
             frequency={sofrSpreadMetric?.frequency || "Daily"}
             lastUpdated={sofrSpreadMetric?.lastUpdated}
             sublabel="Spread between Secured Overnight Financing Rate and Interest on Reserve Balances"
-            laymanSummary="The extra price banks pay to borrow cash overnight versus leaving it at the Fed. Above 0 means cash is getting scarce."
+            takeaway="The extra interest premium banks pay to borrow cash overnight vs keeping reserves at the Fed."
+            conceptAnalogy="Like an overnight pawnshop fee for financial institutions. When cash is scarce, dealers pay higher premiums to borrow."
+            mainStreetImpact="When this spread spikes above zero, bank funding costs rise, making banks more reluctant to lend to businesses and consumers."
+            thresholds="Abundant < -5 bps | Neutral -5 to 0 bps | Cash Scarcity > 0 bps"
           />
           <MetricCard
             metric={repoVolumeMetric ?? undefined}
@@ -259,7 +264,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
             frequency={repoVolumeMetric?.frequency || "Weekly"}
             lastUpdated={repoVolumeMetric?.lastUpdated}
             sublabel="Aggregate gross financing volume absorbed by primary dealers in repo markets"
-            laymanSummary="The total trillion-dollar volume of overnight loans Wall Street dealers are handling to finance the bond market."
+            takeaway="Total gross overnight loan volume Wall Street dealers facilitate to finance government debt."
+            conceptAnalogy="The diameter of Wall Street's short-term plumbing pipe: how much money flows each night to keep markets lubricated."
+            mainStreetImpact="Ensures the US government can smoothly issue trillions in debt without yields jumping unexpectedly."
+            thresholds="Normal $3.0T–$4.5T | Congestion > $4.5T"
           />
         </div>
 

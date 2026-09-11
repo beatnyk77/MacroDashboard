@@ -15,7 +15,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
-import { LaymanBrief } from '@/components/LaymanBrief';
+import { DeskConceptPill } from '@/components/DeskConceptPill';
 
 export const TreasurySupplyRadar: React.FC = () => {
   const { data: stressMetric } = useLatestMetric(MID.PRIMARY_DEALER_ABSORPTION_STRESS);
@@ -116,21 +116,18 @@ export const TreasurySupplyRadar: React.FC = () => {
           <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
             Surveillance of primary dealer net coupon inventory, foreign central bank custody at the Fed, and Treasury auction bid-to-cover tail telemetry.
           </p>
+          <DeskConceptPill
+            title="How US Treasury Supply & Dealer Absorption Works"
+            readingTime="45-sec brief"
+            analogy="Primary dealers are like wholesale car dealerships: legally required to buy all new cars (bonds) the US Treasury produces, hoping to resell them. When investor appetite cools, dealer lots overflow with unsold inventory."
+            mainStreetImpact="When dealers hold > $300B in unsold Treasuries, their capacity to finance business and consumer loans dries up. Bond yields must rise to attract buyers, directly increasing 30-year mortgage rates."
+            whatToWatch={[
+              { label: "Absorption Stress", status: absorptionScore && absorptionScore > 70 ? 'critical' : absorptionScore && absorptionScore > 45 ? 'caution' : 'normal', detail: "> 50 indicates dealer balance sheets are becoming congested" },
+              { label: "Dealer Inventory", status: "caution", detail: "> $300B chokes dealer capacity to bid at auctions" },
+              { label: "Auction Tails", status: "normal", detail: "> +1.0 bps indicates Treasury had to offer yield discounts to sell debt" },
+            ]}
+          />
         </div>
-
-        {/* Layman Brief */}
-        <LaymanBrief
-          title="US Sovereign Debt Issuance, Auction Tails & Dealer Absorption"
-          analogy="Think of Wall Street primary dealers like wholesale car dealerships: they are legally required to buy all the new cars (Treasury bonds) that the factory (US Treasury) pumps out, hoping to resell them to ordinary drivers and investors. If customers buy less, the dealer lots overflow with unsold inventory."
-          realWorldImpact="When dealers are stuck holding too many unsold government bonds (above $300B), they run out of money to finance other loans. To entice buyers, government bond yields must rise — which directly pushes up 30-year mortgage rates and makes government interest bills higher."
-          signalsToWatch={[
-            "Dealer Absorption Stress > 50: Dealer balance sheets are getting congested",
-            "Primary Dealer Inventory > $300B: Regulatory limits start choking auction bidding",
-            "Auction Tails (> +1.0 bps): Bond auctions are struggling to clear without yield concessions"
-          ]}
-          status={absorptionScore && absorptionScore > 70 ? 'danger' : absorptionScore && absorptionScore > 45 ? 'caution' : 'normal'}
-          statusLabel={absorptionScore && absorptionScore > 70 ? 'CRITICAL CONGESTION' : absorptionScore && absorptionScore > 45 ? 'ELEVATED INVENTORY' : 'BALANCED SUPPLY'}
-        />
 
         {/* Metric Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -151,6 +148,9 @@ export const TreasurySupplyRadar: React.FC = () => {
                 style={{ width: `${absorptionScore ?? 0}%` }}
               />
             </div>
+            <p className="text-[11px] text-slate-400 font-normal leading-tight mb-3">
+              Composite gauge of Wall Street balance sheet capacity to absorb new Treasury debt.
+            </p>
             <DataProvenanceBadge source="Fed H.4.1 / Treasury" methodology="Composite Score" />
           </div>
 
@@ -166,7 +166,10 @@ export const TreasurySupplyRadar: React.FC = () => {
             frequency={custodyMetric?.frequency || "Weekly"}
             lastUpdated={custodyMetric?.lastUpdated}
             sublabel="Foreign official & central bank Treasury holdings in Fed custody"
-            laymanSummary="US debt held by foreign governments and central banks. When this drops, foreign countries are reducing their dollar reserves."
+            takeaway="Total US debt held in custody for foreign central banks and sovereign wealth funds."
+            conceptAnalogy="Like the sovereign vault at the Fed where foreign governments stash US Treasuries as their currency reserves."
+            mainStreetImpact="When foreign governments sell reserves (custody drops), domestic buyers must step in, causing US yields to rise."
+            thresholds="Stable > $2,900B | Moderate Outflow $2,700B–$2,900B | Sharp Liquidation < $2,700B"
           />
 
           {/* Primary Dealer Inventory */}
@@ -181,7 +184,10 @@ export const TreasurySupplyRadar: React.FC = () => {
             frequency={inventoryMetric?.frequency || "Weekly"}
             lastUpdated={inventoryMetric?.lastUpdated}
             sublabel="Net Treasury coupon position held on dealer balance sheets"
-            laymanSummary="Unsold US bonds stuck on Wall Street bank balance sheets. When this gets too high (above $300B), banks struggle to finance new auctions."
+            takeaway="Unsold Treasury coupon bonds currently sitting on Wall Street dealer books."
+            conceptAnalogy="Like unsold cars parked on dealer lots. Above $300B, dealers run out of space and cash to take on more."
+            mainStreetImpact="Excess inventory forces dealers to widen bid-ask spreads, making sovereign debt issuance more costly."
+            thresholds="Balanced < $200B | Elevated $200B–$300B | Saturated > $300B"
           />
 
           {/* 10Y Auction Bid to Cover */}
@@ -196,7 +202,10 @@ export const TreasurySupplyRadar: React.FC = () => {
             frequency={bidToCoverMetric?.frequency || "Monthly"}
             lastUpdated={bidToCoverMetric?.lastUpdated}
             sublabel="Ratio of total bid volume submitted to accepted competitive bids"
-            laymanSummary="Buyer demand for 10-year government bonds. 2.5x is normal; below 2.2x means buyers are cautious and demanding higher yields."
+            takeaway="Institutional demand ratio for benchmark 10-year US Treasury debt."
+            conceptAnalogy="For every $1 of bonds the government auctioned, how many dollars of bids competed to buy them."
+            mainStreetImpact="Weak auction demand (below 2.2x) forces yields higher immediately, nudging 30-year consumer mortgage rates upward."
+            thresholds="Soft Demand < 2.3x | Healthy 2.3x–2.6x | Strong Demand > 2.6x"
           />
         </div>
 

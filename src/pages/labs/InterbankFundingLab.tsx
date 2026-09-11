@@ -18,7 +18,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
-import { LaymanBrief } from '@/components/LaymanBrief';
+import { DeskConceptPill } from '@/components/DeskConceptPill';
 
 export const InterbankFundingLab: React.FC = () => {
   const { data: stressMetric } = useLatestMetric(MID.INTERBANK_CREDIT_STRESS_INDEX);
@@ -112,21 +112,18 @@ export const InterbankFundingLab: React.FC = () => {
           <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
             Surveillance of bank credit expansion, Standing Repo Facility (SRF) drawdown, High Yield credit spreads, and short-term interbank funding bottlenecks.
           </p>
+          <DeskConceptPill
+            title="How Bank Lending & Wholesale Funding Plumbing Works"
+            readingTime="40-sec brief"
+            analogy="Banks lend cash to each other overnight in money markets. When banks mistrust counterparties, private lending freezes and they rush to the Fed's emergency cash window (Standing Repo Facility) to borrow against Treasuries."
+            mainStreetImpact="When interbank funding freezes, commercial banks ration credit: small businesses cannot renew credit lines, mortgage rates spike, and loan approvals grind to a halt."
+            whatToWatch={[
+              { label: "Standing Repo (SRF)", status: srfMetric && srfMetric.value > 1 ? 'critical' : 'normal', detail: "> $1B indicates acute wholesale cash scarcity" },
+              { label: "Bank Credit (H.8)", status: bankCreditMetric && bankCreditMetric.value < 0 ? 'critical' : 'normal', detail: "Negative YoY growth signals real-economy credit contraction" },
+              { label: "High Yield OAS", status: hyOasMetric && hyOasMetric.value > 500 ? 'critical' : 'normal', detail: "> 500 bps signals recessionary corporate default distress" },
+            ]}
+          />
         </div>
-
-        {/* Layman Brief */}
-        <LaymanBrief
-          title="Bank Lending, Wholesale Funding & Federal Reserve Cash Windows"
-          analogy="Commercial banks and Wall Street firms lend cash to each other overnight through short-term money markets. When banks are nervous about each other's financial health, they stop lending in private markets and rush to the Federal Reserve's emergency cash window (the Standing Repo Facility) to borrow money directly from the Fed."
-          realWorldImpact="If interbank cash pipes freeze (like in September 2019 or March 2020), banks immediately pull back on credit: small businesses can't get credit lines, personal loan approvals grind to a halt, and high-yield corporate bonds drop sharply."
-          signalsToWatch={[
-            "Standing Repo Facility (SRF) > $1B: Banks are experiencing acute cash scarcity",
-            "C&I Bank Credit turns negative: Commercial banks are actively contracting real-economy lending",
-            "High Yield OAS > 500 bps: Corporate debt markets are pricing in recessionary default risks"
-          ]}
-          status={stressScore && stressScore > 70 ? 'danger' : stressScore && stressScore > 40 ? 'caution' : 'normal'}
-          statusLabel={stressScore && stressScore > 70 ? 'SEVERE STRAIN' : stressScore && stressScore > 40 ? 'MODERATE TIGHTENING' : 'BENIGN CONDITIONS'}
-        />
 
         {/* Primary Metric Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
@@ -147,6 +144,9 @@ export const InterbankFundingLab: React.FC = () => {
                 style={{ width: `${stressScore ?? 0}%` }}
               />
             </div>
+            <p className="text-[11px] text-slate-400 font-normal leading-tight mb-3">
+              Normalized gauge synthesizing overnight money market spreads, SRF drawing, and credit risk.
+            </p>
             <DataProvenanceBadge source="Fed / ICE BofA" methodology="Composite Index" />
           </div>
 
@@ -162,7 +162,10 @@ export const InterbankFundingLab: React.FC = () => {
             frequency={srfMetric?.frequency || "Weekly"}
             lastUpdated={srfMetric?.lastUpdated}
             sublabel="Emergency overnight repo liquidity drawn by primary dealers"
-            laymanSummary="Emergency cash borrowed by banks from the Fed. Near $0 means banks have plenty of cash. Jumps into billions signal a panic."
+            takeaway="Emergency overnight cash drawn by primary dealers directly from the Fed."
+            conceptAnalogy="Like an emergency overdraft line for primary dealers. Near $0 means plenty of cash; jumps into billions indicate market distress."
+            mainStreetImpact="Spikes in SRF usage mean private lenders refuse to lend cash to each other, often preceding market-wide liquidity crunches."
+            thresholds="Benign < $500M | Watch $500M–$2B | Acute Liquidity Stress > $2B"
           />
 
           {/* Bank Credit H.8 YoY */}
@@ -177,7 +180,10 @@ export const InterbankFundingLab: React.FC = () => {
             frequency={bankCreditMetric?.frequency || "Monthly"}
             lastUpdated={bankCreditMetric?.lastUpdated}
             sublabel="Commercial & industrial loan growth year-over-year"
-            laymanSummary="How fast banks are increasing or cutting loans to American businesses. Positive numbers mean businesses can easily borrow and expand."
+            takeaway="Year-over-year rate at which US commercial banks are expanding business loans."
+            conceptAnalogy="The oxygen supply to the real economy: tracks whether Main Street companies can get credit to hire and expand."
+            mainStreetImpact="When credit growth drops below zero, businesses struggle to refinance debt, leading to hiring freezes and recessionary layoffs."
+            thresholds="Contraction < 0% | Moderate 0%–5% | Healthy Expansion > 5%"
           />
 
           {/* High Yield OAS Spread */}
@@ -192,7 +198,10 @@ export const InterbankFundingLab: React.FC = () => {
             frequency={hyOasMetric?.frequency || "Daily"}
             lastUpdated={hyOasMetric?.lastUpdated}
             sublabel="Option-adjusted spread over Treasury spot curve"
-            laymanSummary="The extra risk interest charged to risky companies. Low spreads (under 400 bps) mean investors feel calm; high spreads mean default fears."
+            takeaway="Risk premium investors demand to hold junk bonds over risk-free US Treasuries."
+            conceptAnalogy="The market's default insurance premium. Widening spreads mean corporate bankruptcy risk is climbing."
+            mainStreetImpact="When junk spreads widen above 500 bps, corporate borrowing costs soar, triggering capital expenditure cuts and restructuring."
+            thresholds="Tight < 350 bps | Neutral 350–500 bps | Distress > 500 bps"
           />
         </div>
 

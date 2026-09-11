@@ -19,7 +19,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
-import { LaymanBrief } from '@/components/LaymanBrief';
+import { DeskConceptPill } from '@/components/DeskConceptPill';
 
 export const GlobalNetLiquidityLab: React.FC = () => {
   const { data: globalLiqMetric } = useLatestMetric(MID.GLOBAL_NET_LIQUIDITY_USD_TN);
@@ -116,6 +116,17 @@ export const GlobalNetLiquidityLab: React.FC = () => {
               <p className="text-sm text-slate-300 leading-relaxed">
                 Decomposing the Big 4 central banks (Fed, ECB, BoJ, PBoC) converted to US Dollars, adjusted for Treasury General Account cash accumulation and Reverse Repo sterilization.
               </p>
+              <DeskConceptPill
+                title="How Global Central Bank Net Liquidity Works"
+                readingTime="45-sec brief"
+                analogy="Like the tide in a harbor: when major central banks inject cash, the water rises and lifts all boats (stocks, gold, real estate). When they drain cash via Quantitative Tightening or tax accumulation, the water recedes."
+                mainStreetImpact="Asset markets follow global net liquidity with an 8-to-12 week lag. Accelerating liquidity drives economic growth and easy credit; contracting liquidity drives market sell-offs and recessionary pressure."
+                whatToWatch={[
+                  { label: "13W Impulse", status: impulse13w && impulse13w > 0 ? 'normal' : impulse13w && impulse13w < -2 ? 'critical' : 'caution', detail: "Positive indicates short-term cash acceleration" },
+                  { label: "US Net Buffer", status: "normal", detail: "< $5,500B indicates Fed cash reserves entering the squeeze zone" },
+                  { label: "Big 4 Aggregate", status: "caution", detail: "Global synchronized balance sheet contraction" },
+                ]}
+              />
             </div>
 
             {/* Dual Impulse Gauge Box */}
@@ -159,22 +170,6 @@ export const GlobalNetLiquidityLab: React.FC = () => {
           </div>
         </div>
 
-        {/* Layman Brief */}
-        <div className="max-w-7xl mx-auto">
-          <LaymanBrief
-            title="Global Central Bank Money Printing, Drainage & Financial Market Tide"
-            analogy="Think of central bank liquidity like the water level in a harbor. When the world's major central banks (US Fed, Europe, Japan, China) inject cash, the tide rises and lifts all boats (stocks, crypto, gold, real estate). When they pull water out via Quantitative Tightening or tax hoarding, the tide recedes, leaving over-leveraged investors stranded."
-            realWorldImpact="Stock and bond markets follow global net liquidity trends with an 8-to-12 week lag. Accelerating liquidity leads to bull runs and cheap corporate borrowing; shrinking liquidity triggers violent market drawdowns, tech valuations contracting, and recession fears."
-            signalsToWatch={[
-              "13-Week Impulse turns positive: Short-term liquidity acceleration favorable for risk assets",
-              "US Net Liquidity drops below $5.5T: Federal Reserve cash buffers enter the danger zone",
-              "Simultaneous Big 4 balance sheet contraction: Coordinated global monetary tightening"
-            ]}
-            status={impulse13w && impulse13w > 0 ? 'normal' : impulse13w && impulse13w < -2 ? 'danger' : 'caution'}
-            statusLabel={impulse13w && impulse13w > 0 ? 'LIQUIDITY EXPANSION' : impulse13w && impulse13w < -2 ? 'CONTRACTIONARY SQUEEZE' : 'MODERATE DRAINAGE'}
-          />
-        </div>
-
         {/* 4 Core Metric Cards */}
         <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
@@ -188,7 +183,10 @@ export const GlobalNetLiquidityLab: React.FC = () => {
             frequency={globalLiqMetric?.frequency || "Weekly"}
             lastUpdated={globalLiqMetric?.lastUpdated}
             sublabel="Aggregate balance sheets of Big 4 central banks converted to USD"
-            laymanSummary="Total usable money supplied by the 4 largest central banks in the world. The primary driver of global bull and bear markets."
+            takeaway="Total usable fiat liquidity provided by the world's 4 largest central banks."
+            conceptAnalogy="The global reservoir of central bank money powering worldwide capital markets."
+            mainStreetImpact="When this rises, companies can borrow cheaply and asset markets rally; when it shrinks, global borrowing costs rise."
+            thresholds="Contracting < $28.0T | Neutral $28.0T–$30.0T | Expanding > $30.0T"
           />
           <MetricCard
             metric={usNetLiqMetric ?? undefined}
@@ -201,7 +199,10 @@ export const GlobalNetLiquidityLab: React.FC = () => {
             frequency={usNetLiqMetric?.frequency || "Daily"}
             lastUpdated={usNetLiqMetric?.lastUpdated}
             sublabel="Total Fed assets minus Treasury General Account (TGA) and Reverse Repo (RRP)"
-            laymanSummary="True usable cash circulating in US financial markets. Rising buffer fuels equity rallies; falling buffer drains market momentum."
+            takeaway="Fed balance sheet assets minus Treasury General Account cash and Reverse Repo sterilization."
+            conceptAnalogy="Like the net checking account cash of the US financial system, after setting aside government cash and idle overnight funds."
+            mainStreetImpact="Historically has a 0.85 correlation with the S&P 500. Expansions lubricate commercial bank lending to households."
+            thresholds="Liquidity Stress < $5,500B | Neutral $5,500B–$6,200B | Ample > $6,200B"
           />
           <MetricCard
             metric={impulse13wMetric ?? undefined}
@@ -214,7 +215,10 @@ export const GlobalNetLiquidityLab: React.FC = () => {
             frequency={impulse13wMetric?.frequency || "Weekly"}
             lastUpdated={impulse13wMetric?.lastUpdated}
             sublabel="Short-term annualized momentum velocity indicating money market expansion"
-            laymanSummary="Speedometer measuring whether money is flowing into the banking system faster or slower over the last 3 months."
+            takeaway="3-month annualized velocity of change in global central bank money supply."
+            conceptAnalogy="A speedometer: tells you whether the financial accelerator or brake is currently pressed."
+            mainStreetImpact="Turns positive ahead of economic expansions; turns negative ahead of manufacturing slowdowns."
+            thresholds="Decelerating < -2% | Neutral -2% to +2% | Accelerating > +2%"
           />
           <MetricCard
             metric={impulse26wMetric ?? undefined}
@@ -227,7 +231,10 @@ export const GlobalNetLiquidityLab: React.FC = () => {
             frequency={impulse26wMetric?.frequency || "Weekly"}
             lastUpdated={impulse26wMetric?.lastUpdated}
             sublabel="Medium-term structural liquidity trend filtering out quarter-end tax volatility"
-            laymanSummary="The 6-month big-picture direction of global liquidity, filtering out temporary noise and tax season bumps."
+            takeaway="6-month smoothed rate of change filtering out temporary tax and holiday fluctuations."
+            conceptAnalogy="The deep ocean current: confirms whether surface waves are a fluke or a sustained shift in tide."
+            mainStreetImpact="Sustained negative trends signal persistent tightening and reduced bank willingness to lend."
+            thresholds="Structural Drag < -1% | Neutral -1% to +3% | Sustained Expansion > +3%"
           />
         </div>
 

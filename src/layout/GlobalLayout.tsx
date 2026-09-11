@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge, GraduationCap, Lightbulb } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
 import { withoutTrailingSlash } from '@/lib/urlPath';
 import { SEOManager } from '@/components/SEOManager';
 import { useRegime } from '@/hooks/useRegime';
-import { useViewContext } from '@/context/ViewContext';
 import { SocialShareMode } from '@/components/SocialShareMode';
 import { MobileNav } from '@/components/MobileNav';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
@@ -55,7 +54,6 @@ const terminalNavItems = [
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
-    const { isInstitutionalView, setInstitutionalView } = useViewContext();
     const { data: regime } = useRegime();
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
@@ -150,29 +148,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             <DataHealthHeaderChip />
                         </div>
 
-                        <button
-                            type="button"
-                            onClick={() => setInstitutionalView(!isInstitutionalView)}
-                            className={cn(
-                                "flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-black uppercase tracking-wider border transition-all h-7 select-none",
-                                isInstitutionalView
-                                    ? "bg-slate-800/80 hover:bg-slate-700 text-slate-300 border-white/10"
-                                    : "bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border-cyan-500/40 shadow-sm shadow-cyan-500/20"
-                            )}
-                            title={isInstitutionalView ? "Switch to Plain English mode (Layman guides enabled)" : "Switch to Institutional Pro mode"}
-                        >
-                            {isInstitutionalView ? (
-                                <>
-                                    <GraduationCap size={12} className="text-slate-400" />
-                                    <span>PRO MODE</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Lightbulb size={12} className="text-cyan-400" />
-                                    <span>PLAIN ENGLISH</span>
-                                </>
-                            )}
-                        </button>
 
                         {regime && (
                             <div className={cn(

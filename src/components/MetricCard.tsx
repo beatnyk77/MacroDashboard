@@ -57,6 +57,10 @@ interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	sourceRef?: string | null;
 	provenance?: string | null;
 	laymanSummary?: string;
+	conceptAnalogy?: string;
+	mainStreetImpact?: string;
+	thresholds?: string;
+	takeaway?: string;
 	precedentId?: string;
 	cohortRank?: {
 		cohort: string;
@@ -93,7 +97,11 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 		isStale: propIsStale,
 		sourceRef: propSourceRef,
 		provenance: propProvenance,
-		laymanSummary,
+		laymanSummary: propLaymanSummary,
+		takeaway: propTakeaway,
+		conceptAnalogy: propConceptAnalogy,
+		mainStreetImpact: propMainStreetImpact,
+		thresholds: propThresholds,
 		...rest
 	} = props;
 
@@ -129,6 +137,11 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 	const resolvedSource = sourceFromMetric ?? source;
 	const resolvedDescription = descriptionFromMetric ?? description;
 	const resolvedMethodology = methodologyFromMetric ?? methodology;
+
+	const resolvedTakeaway = propTakeaway ?? propLaymanSummary ?? (metric as any)?.metadata?.takeaway ?? (metric as any)?.metadata?.laymanSummary ?? null;
+	const resolvedAnalogy = propConceptAnalogy ?? propLaymanSummary ?? (metric as any)?.metadata?.analogy ?? null;
+	const resolvedMainStreetImpact = propMainStreetImpact ?? (metric as any)?.metadata?.mainStreetImpact ?? null;
+	const resolvedThresholds = propThresholds ?? (metric as any)?.metadata?.thresholds ?? null;
 
 	const { isInstitutionalView } = useViewContext();
 	const [isHighlighted, setIsHighlighted] = React.useState(false);
@@ -224,11 +237,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 								</div>
 							)}
 						</div>
-						{(!isInstitutionalView && laymanSummary) ? (
-							<div className="text-xs font-medium text-cyan-400/90 line-clamp-2 max-w-[260px]" title={laymanSummary}>
-								💡 {laymanSummary}
-							</div>
-						) : sublabel ? (
+						{sublabel ? (
 							<div className="text-xs font-medium text-muted-foreground/55 truncate max-w-[220px]" title={typeof sublabel === 'string' ? sublabel : undefined}>
 								{sublabel}
 							</div>
@@ -323,6 +332,12 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 									</div>
 								)}
 							</div>
+
+							{resolvedTakeaway && (
+								<p className="text-[11px] text-slate-400/90 font-normal leading-relaxed tracking-tight border-l-2 border-sky-500/40 pl-2 mt-1 line-clamp-2">
+									{resolvedTakeaway}
+								</p>
+							)}
 						</div>
 					)}
 				</div>
@@ -347,7 +362,18 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							)}
 							<div className="flex flex-wrap items-center gap-2">
 								<DataProvenanceBadge source={resolvedSource} methodology={resolvedFrequency} lastVerified={lastUpdated} size="sm" className="max-w-full" />
-								<DataDiagnosticsDisclosure source={resolvedSource} frequency={resolvedFrequency} lastUpdated={lastUpdated} status={staleness.state} sourceRef={sourceRef} provenance={provenance} />
+								<DataDiagnosticsDisclosure
+									source={resolvedSource}
+									frequency={resolvedFrequency}
+									lastUpdated={lastUpdated}
+									status={staleness.state}
+									sourceRef={sourceRef}
+									provenance={provenance}
+									laymanSummary={resolvedTakeaway || undefined}
+									analogy={resolvedAnalogy || undefined}
+									mainStreetImpact={resolvedMainStreetImpact || undefined}
+									thresholds={resolvedThresholds || undefined}
+								/>
 								{(precedentId || cohortRank) && (
 									<PrecedentBadge precedentId={precedentId} metricId={metricId} cohortRank={cohortRank} />
 								)}
