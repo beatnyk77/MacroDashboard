@@ -1,6 +1,12 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { serveIngest, type IngestResult } from '../_shared/handler.ts';
-import { calculateCapexImpulse, calculateCashRunway } from '../_shared/corporateSignalMath.ts';
+import {
+  calculateCapexImpulse,
+  calculateCashRunway,
+  calculateInterestCoverageRatio,
+  calculateProFormaRefiIcr,
+  classifyZombieTier,
+} from '../_shared/corporateSignalMath.ts';
 import { SEC_CORPORATE_SIGNAL_CONCEPTS } from '../_shared/secCorporateConcepts.ts';
 
 export type NormalizedEvidence = {
@@ -27,6 +33,9 @@ export type SignalObservation = {
   methodologyVersion: string;
   evidenceIds: string[];
   observedAt: string;
+  calculationInputs?: Record<string, unknown>;
+  confidenceReason?: string;
+  availabilityStatus?: 'available' | 'insufficient_evidence' | 'unavailable';
 };
 
 type FactPayload = {
@@ -236,10 +245,17 @@ function latestTimestamp(...timestamps: string[]): string {
 export function computeIssuerSignals(issuerId: string, evidence: NormalizedEvidence[]): SignalObservation[] {
   const cash = selectLatestObservation(evidence, SEC_CORPORATE_SIGNAL_CONCEPTS.cash);
   const operatingCash = selectLatestObservation(evidence, SEC_CORPORATE_SIGNAL_CONCEPTS.operatingCash);
+  const ebit = selectLatestObservation(evidence, SEC_CORPORATE_SIGNAL_CONCEPTS.ebit);
+  const interest = selectLatestObservation(evidence, SEC_CORPORATE_SIGNAL_CONCEPTS.interest);
+  const debt = selectLatestObservation(evidence, SEC_CORPORATE_SIGNAL_CONCEPTS.debt);
   const output: SignalObservation[] = [];
 
+  let currentIcr: number | null = null;
+  let proFormaIcr: number | null = null;
+  let runway: number | null = null;
+
   if (cash && operatingCash) {
-    const runway = calculateCashRunway(cash.value, operatingCash.value);
+    runway = calculateCashRunway(cash.value, operatingCash.value);
     if (runway !== null) {
       output.push({
         issuerId,
@@ -256,8 +272,96 @@ export function computeIssuerSignals(issuerId: string, evidence: NormalizedEvide
         methodologyVersion: 'v1.0.0',
         evidenceIds: [cash.id, operatingCash.id],
         observedAt: latestTimestamp(cash.observedAt, operatingCash.observedAt),
+        calculationInputs: { cash: cash.value, operatingCashFlow: operatingCash.value },
+        availabilityStatus: 'available',
       });
     }
+  }
+
+  if (ebit && interest) {
+    currentIcr = calculateInterestCoverageRatio(ebit.value, interest.value);
+    if (currentIcr !== null) {
+      output.push({
+        issuerId,
+        signalId: 'interest_coverage_ratio',
+        signalFamily: 'solvency',
+        macroTheme: 'corporate_stress',
+        state: 'measured',
+        numericValue: currentIcr,
+        unit: 'ratio',
+        baselineValue: 1.0,
+        comparisonWindow: ebit.periodKey,
+        severity: currentIcr < 1.0 ? 'high' : currentIcr < 1.75 ? 'elevated' : 'info',
+        confidence: 0.95,
+        methodologyVersion: 'v1.0.0',
+        evidenceIds: [ebit.id, interest.id],
+        observedAt: latestTimestamp(ebit.observedAt, interest.observedAt),
+        calculationInputs: { ebit: ebit.value, interestExpense: interest.value, totalDebt: debt?.value ?? 0 },
+        availabilityStatus: 'available',
+      });
+    }
+  }
+
+  if (ebit && debt && debt.value > 0) {
+    const existingInterest = interest ? Math.max(0, interest.value) : debt.value * 0.045;
+    const existingCoupon = existingInterest / debt.value;
+    const maturingDebt = debt.value * 0.35; // 35% maturing <2Y baseline
+    const refiRate = 0.07; // 7.00% benchmark yield
+    const refiCalc = calculateProFormaRefiIcr(ebit.value, debt.value, maturingDebt, existingCoupon, refiRate);
+    if (refiCalc !== null) {
+      proFormaIcr = refiCalc.proFormaIcr;
+      output.push({
+        issuerId,
+        signalId: 'pro_forma_refi_icr',
+        signalFamily: 'refinancing_shock',
+        macroTheme: 'corporate_stress',
+        state: 'measured',
+        numericValue: refiCalc.proFormaIcr,
+        unit: 'ratio',
+        baselineValue: 1.0,
+        comparisonWindow: 'simulated 7.00% refi',
+        severity: refiCalc.proFormaIcr < 1.0 ? 'high' : refiCalc.proFormaIcr < 1.75 ? 'elevated' : 'info',
+        confidence: 0.85,
+        methodologyVersion: 'v1.0.0',
+        evidenceIds: [ebit.id, debt.id, ...(interest ? [interest.id] : [])],
+        observedAt: latestTimestamp(ebit.observedAt, debt.observedAt),
+        calculationInputs: {
+          ebit: ebit.value,
+          totalDebt: debt.value,
+          maturingDebt,
+          existingCoupon,
+          refiRate,
+          additionalInterestDrag: refiCalc.additionalInterestDrag,
+        },
+        availabilityStatus: 'available',
+      });
+    }
+  }
+
+  if (currentIcr !== null || proFormaIcr !== null) {
+    const tier = classifyZombieTier(currentIcr, proFormaIcr, runway);
+    output.push({
+      issuerId,
+      signalId: 'zombie_tier',
+      signalFamily: 'classification',
+      macroTheme: 'corporate_stress',
+      state: 'confirmed',
+      numericValue: tier === 'confirmed_zombie' ? 1 : tier === 'rollover_zombie' ? 2 : tier === 'vulnerable' ? 3 : 4,
+      unit: tier,
+      baselineValue: 4,
+      comparisonWindow: 'trailing + pro-forma',
+      severity: tier === 'confirmed_zombie' ? 'high' : tier === 'rollover_zombie' ? 'elevated' : tier === 'vulnerable' ? 'watch' : 'info',
+      confidence: 0.9,
+      methodologyVersion: 'v1.0.0',
+      evidenceIds: [
+        ...(ebit ? [ebit.id] : []),
+        ...(interest ? [interest.id] : []),
+        ...(debt ? [debt.id] : []),
+      ],
+      observedAt: latestTimestamp(ebit?.observedAt ?? '', interest?.observedAt ?? '', debt?.observedAt ?? ''),
+      calculationInputs: { tier, currentIcr, proFormaIcr, cashRunway: runway },
+      availabilityStatus: 'available',
+    });
   }
 
   const comparison = chooseCapexComparison(evidence);
@@ -286,6 +390,8 @@ export function computeIssuerSignals(issuerId: string, evidence: NormalizedEvide
           comparison.priorCapex.id,
         ],
         observedAt: latestTimestamp(comparison.currentRevenue.observedAt, comparison.currentCapex.observedAt),
+        calculationInputs: { revenueGrowth, capexGrowth, impulse },
+        availabilityStatus: 'available',
       });
     }
   }
@@ -329,6 +435,9 @@ export async function computeSignalsForIssuer(issuerId: string, supabase: Supaba
       methodology_version: signal.methodologyVersion,
       evidence_ids: signal.evidenceIds,
       observed_at: signal.observedAt,
+      calculation_inputs: signal.calculationInputs ?? {},
+      confidence_reason: signal.confidenceReason ?? null,
+      availability_status: signal.availabilityStatus ?? 'available',
     })),
     { onConflict: 'issuer_id,signal_id,observed_at' },
   );

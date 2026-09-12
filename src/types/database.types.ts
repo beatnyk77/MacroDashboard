@@ -6545,6 +6545,20 @@ export type Database = {
         }
         Relationships: []
       }
+      vw_corporate_zombie_stress_summary: {
+        Row: {
+          total_active_issuers: number | null
+          scanned_issuers: number | null
+          confirmed_zombies_count: number | null
+          confirmed_zombies_pct: number | null
+          rollover_zombies_count: number | null
+          rollover_zombies_pct: number | null
+          total_debt_at_risk_usd: number | null
+          median_distress_cash_runway: number | null
+          latest_observed_at: string | null
+        }
+        Relationships: []
+      }
       vw_country_terminal: {
         Row: {
           budget_deficit_gdp_pct: number | null

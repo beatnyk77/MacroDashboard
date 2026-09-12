@@ -16,6 +16,24 @@ export const SEC_CORPORATE_SIGNAL_CONCEPTS = {
     'PaymentsToAcquirePropertyPlantAndEquipmentAndOtherProductiveAssets',
     'PropertyPlantAndEquipmentAdditions',
   ],
+  ebit: [
+    'OperatingIncomeLoss',
+    'OperatingProfitLoss',
+  ],
+  interest: [
+    'InterestExpense',
+    'InterestAndDebtExpense',
+    'InterestExpenseDebt',
+    'FinanceCosts',
+  ],
+  debt: [
+    'LongTermDebtNoncurrent',
+    'DebtCurrent',
+    'LongTermDebtCurrent',
+    'LongTermDebtAndCapitalLeaseObligations',
+    'LongtermBorrowings',
+    'CurrentPortionOfLongTermBorrowings',
+  ],
 } as const;
 
 export const SEC_CORPORATE_TARGET_CONCEPTS = new Set(
