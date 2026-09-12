@@ -28,6 +28,7 @@ export const SEC_CORPORATE_SIGNAL_CONCEPTS = {
   ],
   debt: [
     'LongTermDebtNoncurrent',
+    'LongTermDebt',
     'DebtCurrent',
     'LongTermDebtCurrent',
     'LongTermDebtAndCapitalLeaseObligations',

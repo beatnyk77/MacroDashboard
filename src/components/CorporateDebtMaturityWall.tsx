@@ -96,6 +96,16 @@ export const CorporateDebtMaturityWall: React.FC = () => {
 
             if (error) throw error;
 
+            // Fetch live SEC EDGAR aggregate zombie distress rate
+            const { data: stressSummary } = await supabase
+                .from('vw_corporate_zombie_stress_summary')
+                .select('confirmed_zombies_pct')
+                .maybeSingle();
+
+            const secDistressRatio = stressSummary?.confirmed_zombies_pct
+                ? Number(stressSummary.confirmed_zombies_pct) / 100
+                : 0;
+
             if (rawData && rawData.length > 0) {
                 const total = rawData.reduce((sum, item) => sum + (Number(item.maturing_amount) || 0), 0);
                 const yr1Sum = rawData.find(d => d.bucket === '<1Y')?.maturing_amount || 0;
@@ -114,10 +124,8 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     totalWeight += amount;
                     weightedDelta += delta * (amount / total);
 
-                    // Empirical SEC corporate distress ratio by tenor
-                    const zombieRatio = item.bucket === '<1Y' ? 0.28 :
-                                        item.bucket === '1-3Y' ? 0.24 :
-                                        item.bucket === '3-5Y' ? 0.16 : 0.08;
+                    // Verified SEC corporate distress ratio from live Form 10-K/10-Q XBRL signals
+                    const zombieRatio = secDistressRatio;
                     const zombieAmount = Number((amount * zombieRatio).toFixed(2));
                     const solventAmount = Number((amount - zombieAmount).toFixed(2));
 

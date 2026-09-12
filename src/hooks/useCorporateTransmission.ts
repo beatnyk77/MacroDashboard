@@ -74,7 +74,7 @@ export function useCorporateZombieScreener(refiRate: number = 0.07, search: stri
 
   const screenerData = useMemo(() => {
     const rows = signalsQuery.data ?? [];
-    if (rows.length === 0) return { issuers: [], stats: { total: 0, confirmed: 0, rollover: 0, vulnerable: 0, solvent: 0, debtAtRisk: 0, incrementalDrag: 0, medianRunway: 0 } };
+    if (rows.length === 0) return { issuers: [], stats: { total: 0, confirmed: 0, rollover: 0, vulnerable: 0, solvent: 0, debtAtRisk: 0, incrementalDrag: 0, medianRunway: null } };
 
     // Group signals by issuer_id
     const issuerMap = new Map<string, {
@@ -156,8 +156,8 @@ export function useCorporateZombieScreener(refiRate: number = 0.07, search: stri
       const maturingDebt2Y = debt ? debt * 0.35 : null;
       let existingCouponPct: number | null = null;
 
-      if (debt && debt > 0) {
-        const annualInterest = interest !== null ? Math.max(0, interest) : (debt * 0.045);
+      if (debt && debt > 0 && interest !== null && interest > 0) {
+        const annualInterest = interest;
         existingCouponPct = (annualInterest / debt) * 100;
         const couponDecimal = existingCouponPct / 100;
         const maturing = maturingDebt2Y ?? 0;
@@ -213,7 +213,7 @@ export function useCorporateZombieScreener(refiRate: number = 0.07, search: stri
     }
 
     runways.sort((a, b) => a - b);
-    const medianRunway = runways.length > 0 ? runways[Math.floor(runways.length / 2)] : 3.8;
+    const medianRunway = runways.length > 0 ? runways[Math.floor(runways.length / 2)] : null;
 
     // Filter by search query
     let filtered = processedIssuers;

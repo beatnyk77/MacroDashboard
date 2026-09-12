@@ -536,12 +536,24 @@ Deno.serve(async (req: Request) => {
     const supabaseAnonKey = Deno.env.get('SUPABASE_ANON_KEY') ?? Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '';
     const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-    // Fetch dynamic live metrics from Postgres view if available
-    const { data: latestMetrics } = await supabase
-      .from('vw_latest_metrics')
-      .select('metric_id, metric_name, unit, as_of_date, value, staleness_flag')
-      .limit(50);
+    const metricIds = DEFAULT_METRIC_CATALOG.map((m) => m.id);
 
+    // Fetch dynamic live metrics and regime snapshot from Postgres
+    const [metricsResult, regimeResult] = await Promise.all([
+      supabase
+        .from('vw_latest_metrics')
+        .select('metric_id, metric_name, unit, as_of_date, value, staleness_flag')
+        .in('metric_id', metricIds),
+      supabase
+        .from('regime_snapshots')
+        .select('pulse_score, regime_label, timestamp')
+        .order('timestamp', { ascending: false })
+        .limit(1)
+        .maybeSingle()
+    ]);
+
+    const latestMetrics = metricsResult.data;
+    const latestRegime = regimeResult.data;
     const liveMap = new Map((latestMetrics || []).map((m) => [m.metric_id, m]));
 
     // Merge live data with our comprehensive 8-desk catalog
@@ -560,11 +572,14 @@ Deno.serve(async (req: Request) => {
       return item;
     });
 
+    const compositeScore = latestRegime?.pulse_score ? Math.round(Number(latestRegime.pulse_score)) : 65;
+    const stateLabel = latestRegime?.regime_label ? latestRegime.regime_label.toUpperCase() : 'EXPANSION';
+
     const responsePayload: MobileBootstrapResponse = {
       timestamp: new Date().toISOString(),
       regime: {
-        compositeScore: 74,
-        stateLabel: 'NEUTRAL-ACCOMMODATIVE',
+        compositeScore,
+        stateLabel,
         netLiquidityTotalTrillions: 6.14,
         netLiquidityDeltaWoWBillions: 42.8,
         netLiquidityDeltaWoWPercent: 0.71,

@@ -181,10 +181,10 @@ export const CorporateTransmissionPage: React.FC = () => {
                   <span className="px-1.5 py-0.5 rounded bg-red-500/20 text-red-300 text-[9px] font-bold">CRITICAL</span>
                 </div>
                 <div className="text-3xl font-mono font-black text-white tracking-tight tabular-nums">
-                  {stats.total > 0 ? `${((stats.confirmed / stats.total) * 100).toFixed(1)}%` : '18.4%'}
+                  {stats.total > 0 ? `${((stats.confirmed / stats.total) * 100).toFixed(1)}%` : isScreenerLoading ? '…' : '—'}
                 </div>
                 <p className="text-slate-400 text-xs mt-1.5 font-mono">
-                  {stats.confirmed} of {stats.total || 500} tracked filers cannot service existing debt from EBIT
+                  {stats.confirmed} of {stats.total} tracked filers cannot service existing debt from EBIT
                 </p>
               </div>
 
@@ -217,7 +217,7 @@ export const CorporateTransmissionPage: React.FC = () => {
                   </span>
                 </div>
                 <div className="text-3xl font-mono font-black text-white tracking-tight tabular-nums">
-                  {stats.debtAtRisk > 0 ? `$${(stats.debtAtRisk / 1000).toFixed(2)}B` : '$1.42T'}
+                  {stats.debtAtRisk > 0 ? `$${(stats.debtAtRisk / 1000).toFixed(2)}B` : stats.total > 0 ? '$0M' : isScreenerLoading ? '…' : '—'}
                 </div>
                 <p className="text-slate-400 text-xs mt-1.5 font-mono">
                   Cumulative debt obligations held by confirmed &amp; rollover zombie issuers
@@ -234,7 +234,7 @@ export const CorporateTransmissionPage: React.FC = () => {
                   <span className="px-1.5 py-0.5 rounded bg-cyan-500/20 text-cyan-300 text-[9px] font-bold">LIQUIDITY</span>
                 </div>
                 <div className="text-3xl font-mono font-black text-cyan-300 tracking-tight tabular-nums">
-                  {stats.medianRunway.toFixed(1)} QTRS
+                  {stats.medianRunway !== null ? `${stats.medianRunway.toFixed(1)} QTRS` : isScreenerLoading ? '…' : '—'}
                 </div>
                 <p className="text-slate-400 text-xs mt-1.5 font-mono">
                   Quarters until liquidity depletion based on trailing quarterly operating cash burn
@@ -472,7 +472,7 @@ export const CorporateTransmissionPage: React.FC = () => {
                                 {row.cashRunwayQuarters.toFixed(1)} Q
                               </span>
                             ) : (
-                              <span className="text-slate-500">Fortress</span>
+                              <span className="text-slate-500">CFO Positive</span>
                             )}
                           </td>
 
