@@ -16,9 +16,10 @@
     @kotlinx.serialization.Serializable class *;
 }
 
-# Keep Ktor CIO client
+# Keep Ktor CIO client & suppress slf4j optional logger warning
 -keep class io.ktor.** { *; }
 -dontwarn io.ktor.**
+-dontwarn org.slf4j.**
 
 # Keep Glance AppWidget
 -keep class androidx.glance.** { *; }
