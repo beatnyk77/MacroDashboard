@@ -1,6 +1,112 @@
 import Foundation
 import SwiftData
 
+// MARK: - Macro Desks
+public enum MacroDeskType: String, CaseIterable, Codable {
+    case liquidity = "LIQUIDITY"
+    case usMacro = "US_MACRO"
+    case chinaAsia = "CHINA_ASIA"
+    case energyCommodities = "ENERGY"
+    case deDollarization = "DE_DOLLARIZATION"
+    case edgarCorporate = "CORPORATE_STRESS"
+    case precedentsLabs = "PRECEDENTS_LABS"
+
+    public var displayName: String {
+        switch self {
+        case .liquidity: return "⚡ Global Liquidity"
+        case .usMacro: return "🏛️ US & Sovereign Risk"
+        case .chinaAsia: return "🌏 China & EM Pulse"
+        case .energyCommodities: return "🛢️ Energy Security"
+        case .deDollarization: return "🪙 De-Dollar & Gold"
+        case .edgarCorporate: return "💀 SEC EDGAR Radar"
+        case .precedentsLabs: return "🔬 Precedents & Labs"
+        }
+    }
+
+    public var shortTitle: String {
+        switch self {
+        case .liquidity: return "Liquidity"
+        case .usMacro: return "Sovereign"
+        case .chinaAsia: return "China/EM"
+        case .energyCommodities: return "Energy"
+        case .deDollarization: return "Gold/FX"
+        case .edgarCorporate: return "Zombies"
+        case .precedentsLabs: return "Labs"
+        }
+    }
+}
+
+// MARK: - Full Macro Metric Observation
+@Model
+public final class MacroMetricEntity {
+    @Attribute(.unique) public var metricId: String
+    public var name: String
+    public var deskTypeRaw: String
+    public var currentValue: Double
+    public var displayFormattedValue: String
+    public var unit: String
+    public var deltaValue: String
+    public var deltaPercent: Double
+    public var deltaDirection: String // "UP", "DOWN", "FLAT"
+    public var deltaSignificance: String // "STIMULATIVE", "RESTRICTIVE", "NEUTRAL", "STRESS"
+    public var stalenessFlag: String // "fresh", "lagged", "very_lagged"
+    public var sourceName: String // "FRED", "EIA", "RBI", "PBoC", "SEC EDGAR", "U.S. Treasury"
+    public var observationDate: String
+    public var conceptSummary: String
+    public var institutionalSignificance: String
+    public var sparklineCSV: String // e.g. "12.4,12.8,13.1,12.9,13.4"
+    public var isPinnedToWatchlist: Bool
+    public var orderIndex: Int
+
+    public var deskType: MacroDeskType {
+        MacroDeskType(rawValue: deskTypeRaw) ?? .liquidity
+    }
+
+    public init(
+        metricId: String,
+        name: String,
+        deskType: MacroDeskType,
+        currentValue: Double,
+        displayFormattedValue: String,
+        unit: String,
+        deltaValue: String,
+        deltaPercent: Double,
+        deltaDirection: String,
+        deltaSignificance: String,
+        stalenessFlag: String,
+        sourceName: String,
+        observationDate: String,
+        conceptSummary: String,
+        institutionalSignificance: String,
+        sparklineCSV: String,
+        isPinnedToWatchlist: Bool = false,
+        orderIndex: Int = 0
+    ) {
+        self.metricId = metricId
+        self.name = name
+        self.deskTypeRaw = deskType.rawValue
+        self.currentValue = currentValue
+        self.displayFormattedValue = displayFormattedValue
+        self.unit = unit
+        self.deltaValue = deltaValue
+        self.deltaPercent = deltaPercent
+        self.deltaDirection = deltaDirection
+        self.deltaSignificance = deltaSignificance
+        self.stalenessFlag = stalenessFlag
+        self.sourceName = sourceName
+        self.observationDate = observationDate
+        self.conceptSummary = conceptSummary
+        self.institutionalSignificance = institutionalSignificance
+        self.sparklineCSV = sparklineCSV
+        self.isPinnedToWatchlist = isPinnedToWatchlist
+        self.orderIndex = orderIndex
+    }
+
+    public var sparklinePoints: [Double] {
+        sparklineCSV.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+    }
+}
+
 // MARK: - Macro Regime Model
 @Model
 public final class MacroRegimeEntity {
@@ -47,8 +153,8 @@ public final class TickerRateEntity {
     public var name: String
     public var displayValue: String
     public var deltaValue: String
-    public var deltaType: String // "POSITIVE", "NEGATIVE", "NEUTRAL"
-    public var category: String  // "RATES", "FX", "COMMODITY", "LIQUIDITY"
+    public var deltaType: String
+    public var category: String
     public var orderIndex: Int
 
     public init(
@@ -81,7 +187,7 @@ public final class EdgarDistressEntity {
     public var debtMaturityWallUSD: Double
     public var maturityQuarter: String
     public var spreadToSOFRBps: Int
-    public var latestFilingType: String // e.g. "8-K Item 2.04", "10-Q"
+    public var latestFilingType: String
     public var distressAlertTriggered: Bool
     public var filingSummary: String
     public var filedAt: Date
