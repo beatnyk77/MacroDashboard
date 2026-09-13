@@ -113,23 +113,23 @@ const USFiscalComparisonChart: React.FC = () => {
     }
 
     return (
-        <div className="w-full bg-[#0A0A0A] border border-white/12 rounded-xl p-6 glass-morphism overflow-hidden">
+        <div className="w-full bg-card border border-border rounded-xl p-6 shadow-sm dark:shadow-2xl overflow-hidden">
             <div className="flex flex-col gap-4 mb-6">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                     <div>
-                        <h3 className="text-xl font-bold text-white tracking-heading">
+                        <h3 className="text-xl font-bold text-foreground tracking-heading">
                             US Defense Spending vs Federal Debt Interest
                         </h3>
-                        <p className="text-white/50 text-sm font-mono mt-1">
+                        <p className="text-muted-foreground text-sm font-mono mt-1">
                             Historical Comparison ($ Billions, Monthly)
-                            <span className="text-white/30 ml-2">
+                            <span className="text-muted-foreground/60 ml-2">
                                 • Latest: {latestValues ? format(new Date(latestValues.date), 'MMM yyyy') : 'N/A'}
                             </span>
                         </p>
                     </div>
                     {interestExceedsDefense && (
                         <div className="px-4 py-2 bg-red-500/10 border border-red-500/20 rounded-lg shrink-0">
-                            <span className="text-red-400 text-sm font-bold">
+                            <span className="text-rose-600 dark:text-red-400 text-sm font-bold">
                                 OBSERVED: latest overlapping interest value exceeds defense
                             </span>
                         </div>
@@ -141,8 +141,8 @@ const USFiscalComparisonChart: React.FC = () => {
                     <div className="flex flex-wrap gap-6 text-sm">
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-indigo-500"></div>
-                            <span className="text-white/60">Defense:</span>
-                            <span className="text-indigo-400 font-mono font-bold">
+                            <span className="text-muted-foreground">Defense:</span>
+                            <span className="text-indigo-600 dark:text-indigo-400 font-mono font-bold">
                                 {latestValues.defense !== undefined && latestValues.defense !== null
                                     ? `$${(latestValues.defense / 1e3).toFixed(2)}T`
                                     : '--'}
@@ -150,8 +150,8 @@ const USFiscalComparisonChart: React.FC = () => {
                         </div>
                         <div className="flex items-center gap-2">
                             <div className="w-3 h-3 rounded-full bg-rose-500"></div>
-                            <span className="text-white/60">Interest:</span>
-                            <span className="text-rose-400 font-mono font-bold">
+                            <span className="text-muted-foreground">Interest:</span>
+                            <span className="text-rose-600 dark:text-rose-400 font-mono font-bold">
                                 {latestValues.interest !== undefined && latestValues.interest !== null
                                     ? `$${(latestValues.interest / 1e3).toFixed(2)}T`
                                     : '--'}
@@ -169,7 +169,7 @@ const USFiscalComparisonChart: React.FC = () => {
                             dataKey="date"
                             tickFormatter={(str: string) => format(new Date(str), 'yyyy')}
                             ticks={xAxisTicks}
-                            stroke="#ffffff40"
+                            stroke="hsl(var(--muted-foreground))"
                             fontSize={12}
                             tickLine={false}
                             axisLine={false}
@@ -195,7 +195,7 @@ const USFiscalComparisonChart: React.FC = () => {
                         <Tooltip
                             contentStyle={DEFAULT_TOOLTIP_STYLE}
                             itemStyle={{ fontSize: '12px' }}
-                            labelStyle={{ color: '#94a3b8', marginBottom: '4px' }}
+                            labelStyle={{ color: 'hsl(var(--muted-foreground))', marginBottom: '4px' }}
                             labelFormatter={(label: string) => {
                                 try {
                                     return format(new Date(label), 'MMMM yyyy');
@@ -211,7 +211,7 @@ const USFiscalComparisonChart: React.FC = () => {
                             iconType="circle"
                             wrapperStyle={{
                                 ...DEFAULT_LEGEND_PROPS.wrapperStyle,
-                                color: '#ffffff80',
+                                color: 'hsl(var(--muted-foreground))',
                                 textAlign: 'right',
                             }}
                         />
@@ -221,8 +221,8 @@ const USFiscalComparisonChart: React.FC = () => {
                                 key={i}
                                 x1={r.start}
                                 x2={r.end}
-                                fill="#ffffff"
-                                fillOpacity={0.05}
+                                fill="hsl(var(--muted-foreground))"
+                                fillOpacity={0.06}
                                 yAxisId="left"
                             />
                         ))}
@@ -235,7 +235,7 @@ const USFiscalComparisonChart: React.FC = () => {
                             stroke="#6366f1"
                             strokeWidth={2}
                             dot={false}
-                            activeDot={{ r: 4, stroke: '#6366f1', strokeWidth: 2, fill: '#0f172a' }}
+                            activeDot={{ r: 4, stroke: '#6366f1', strokeWidth: 2, fill: 'hsl(var(--card))' }}
                         />
                         <Line
                             yAxisId="right"
@@ -245,23 +245,23 @@ const USFiscalComparisonChart: React.FC = () => {
                             stroke="#f43f5e"
                             strokeWidth={2}
                             dot={false}
-                            activeDot={{ r: 4, stroke: '#f43f5e', strokeWidth: 2, fill: '#0f172a' }}
+                            activeDot={{ r: 4, stroke: '#f43f5e', strokeWidth: 2, fill: 'hsl(var(--card))' }}
                         />
                     </LineChart>
                 </MacroChartContainer>
             </div>
 
-            <div className="mt-6 flex flex-wrap gap-6 border-t border-white/5 pt-6">
+            <div className="mt-6 flex flex-wrap gap-6 border-t border-border pt-6">
                 <div className="flex-1 min-w-[200px]">
-                    <span className="text-white/30 text-xs font-mono uppercase tracking-uppercase block mb-2">Sources</span>
+                    <span className="text-muted-foreground text-xs font-mono uppercase tracking-uppercase block mb-2">Sources</span>
                     <div className="flex gap-4">
-                        <span className="text-white/60 text-sm">BEA (National Defense)</span>
-                        <span className="text-white/60 text-sm">Treasury (Interest)</span>
+                        <span className="text-foreground text-sm">BEA (National Defense)</span>
+                        <span className="text-foreground text-sm">Treasury (Interest)</span>
                     </div>
                 </div>
                 <div className="flex-1 min-w-[200px]">
-                    <span className="text-white/30 text-xs font-mono uppercase tracking-uppercase block mb-2">Note</span>
-                    <p className="text-white/50 text-xs leading-relaxed">
+                    <span className="text-muted-foreground text-xs font-mono uppercase tracking-uppercase block mb-2">Note</span>
+                    <p className="text-muted-foreground text-xs leading-relaxed">
                         Data shown in nominal USD billions. Federal debt interest encompasses all payments on public debt securities.
                         Defense spending includes gross investment and consumption expenditures.
                     </p>

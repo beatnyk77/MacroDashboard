@@ -26,33 +26,33 @@ const getTheme = (mode: 'light' | 'dark') => {
         palette: {
             mode,
             background: {
-                default: mode === 'dark' ? '#0B101A' : '#f8fafc', // Dark Slate
-                paper: mode === 'dark' ? '#131825' : '#ffffff',   // Deep Slate Paper
+                default: mode === 'dark' ? '#0B101A' : '#FDF6E3', // Ivory Cream #FDF6E3
+                paper: mode === 'dark' ? '#131825' : '#FFFFFF',   // Crisp Paper White
             },
             text: {
-                primary: mode === 'dark' ? '#f8fafc' : '#0f172a',
-                secondary: mode === 'dark' ? '#94a3b8' : '#64748b',
+                primary: mode === 'dark' ? '#f8fafc' : '#233038', // Gunmetal #233038 (11.8:1 contrast on Ivory Cream)
+                secondary: mode === 'dark' ? '#94a3b8' : '#075056', // Midnight Green #075056 (7.5:1 contrast)
             },
             primary: {
-                main: '#3b82f6', // Bright blue
-                light: '#60a5fa',
-                dark: '#2563eb',
+                main: '#FF5B04', // Orange (Pantone) #FF5B04
+                light: '#FF7E38',
+                dark: '#CC4600',
             },
             secondary: {
-                main: '#10b981', // Emerald
+                main: '#075056', // Midnight Green #075056
             },
-            divider: mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : 'rgba(0, 0, 0, 0.08)',
+            divider: mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#D3DBDD', // Light Silver #D3DBDD
             error: {
-                main: '#f43f5e', // Rose 500
+                main: '#EF4444', // Crimson
             },
             warning: {
-                main: '#f59e0b', // Amber 500
+                main: '#F4D47C', // Sand Yellow #F4D47C
             },
             success: {
-                main: '#10b981', // Emerald 500
+                main: '#075056', // Midnight Green
             },
             action: {
-                hover: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(0, 0, 0, 0.04)',
+                hover: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(35, 48, 56, 0.04)',
             }
         },
         typography: {

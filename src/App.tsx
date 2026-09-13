@@ -5,7 +5,7 @@ import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
 import getTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
-import { ViewProvider } from '@/context/ViewContext';
+import { ViewProvider, useViewContext } from '@/context/ViewContext';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TrailingSlashRedirect } from '@/components/TrailingSlashRedirect';
@@ -100,19 +100,16 @@ const LoadingFallback = () => (
 
 
 
-function App() {
-    const theme = useMemo(() => getTheme('dark'), []);
+function AppRoutes() {
+    const { themeMode } = useViewContext();
+    const theme = useMemo(() => getTheme(themeMode === 'lively' ? 'light' : 'dark'), [themeMode]);
 
     return (
-        <GlobalErrorBoundary>
-            <LazyMotion features={domAnimation} strict>
-            <QueryClientProvider client={queryClient}>
-                <ViewProvider>
-                    <ThemeProvider theme={theme}>
-                        <CssBaseline />
-                        <BrowserRouter>
-                            <TrailingSlashRedirect />
-                            <GlobalLayout>
+        <ThemeProvider theme={theme}>
+            <CssBaseline />
+            <BrowserRouter>
+                <TrailingSlashRedirect />
+                <GlobalLayout>
                                 <Suspense fallback={<LoadingFallback />}>
                                     <Routes>
                                         <Route path={trailRoute('/')} element={<Terminal />} />
@@ -209,8 +206,18 @@ function App() {
                             </GlobalLayout>
                         </BrowserRouter>
                     </ThemeProvider>
-                </ViewProvider>
-            </QueryClientProvider>
+    );
+}
+
+function App() {
+    return (
+        <GlobalErrorBoundary>
+            <LazyMotion features={domAnimation} strict>
+                <QueryClientProvider client={queryClient}>
+                    <ViewProvider>
+                        <AppRoutes />
+                    </ViewProvider>
+                </QueryClientProvider>
             </LazyMotion>
         </GlobalErrorBoundary>
     );

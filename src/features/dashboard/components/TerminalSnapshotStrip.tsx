@@ -49,10 +49,10 @@ function SnapshotCell({ m }: { m: SnapshotMetric }) {
     const asOf = live?.lastUpdated ?? m.asOf;
 
     return (
-        <div className="min-w-[7.5rem] flex-1 rounded-lg border border-white/10 bg-black/30 px-3 py-2.5">
-            <div className="mb-1 text-[9px] font-black uppercase tracking-[0.15em] text-white/35">{m.label}</div>
-            <div className="font-mono text-sm font-black tabular-nums text-white">{display}</div>
-            <div className="mt-1 flex items-center gap-1.5 text-[9px] text-white/30">
+        <div className="min-w-[7.5rem] flex-1 rounded-lg border border-border bg-card dark:bg-black/30 px-3 py-2.5 shadow-sm">
+            <div className="mb-1 text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">{m.label}</div>
+            <div className="font-mono text-sm font-black tabular-nums text-foreground">{display}</div>
+            <div className="mt-1 flex items-center gap-1.5 text-[9px] text-muted-foreground">
                 {asOf && <span className="truncate">{String(asOf).slice(0, 10)}</span>}
                 {freshness && (
                     <FreshnessChip
@@ -66,18 +66,22 @@ function SnapshotCell({ m }: { m: SnapshotMetric }) {
     );
 }
 
+export interface TerminalSnapshotStripProps {
+    className?: string;
+}
+
 /**
  * E4 — crawlable key telemetry strip.
  * Build embeds snapshot JSON; client hydrates fresher values when Supabase is available.
  */
-export const TerminalSnapshotStrip: React.FC<{ className?: string }> = ({ className }) => {
-    const buildAsOf = snapshot.generatedAt?.slice(0, 10);
+export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ className }) => {
+    const buildAsOf = snapshot.generatedAt?.slice(0, 10) ?? 'recent';
     const metrics = snapshot.metrics ?? [];
 
     return (
         <section
             className={cn(
-                'mb-8 rounded-2xl border border-white/10 bg-slate-900/40 p-4 sm:p-5 backdrop-blur-xl',
+                'mb-8 rounded-2xl border border-border bg-card dark:bg-slate-900/40 p-4 sm:p-5 shadow-sm dark:shadow-2xl backdrop-blur-xl',
                 className
             )}
             aria-label="Terminal telemetry snapshot"
@@ -85,22 +89,22 @@ export const TerminalSnapshotStrip: React.FC<{ className?: string }> = ({ classN
         >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <Activity size={14} className="text-emerald-400" />
-                    <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-white/70">
+                    <Activity size={14} className="text-emerald-500 dark:text-emerald-400" />
+                    <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground">
                         Key telemetry
                     </h2>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/35">
+                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
                     <Clock size={12} />
                     {snapshot.available ? (
                         <span>
                             Build snapshot {buildAsOf}
-                            <span className="ml-1 text-white/25">· live hydrate when available</span>
+                            <span className="ml-1 text-muted-foreground/80">· live hydrate when available</span>
                         </span>
                     ) : (
                         <span title={snapshot.reason ?? undefined}>Snapshot unavailable at build</span>
                     )}
-                    <Link to="/api-docs/" className="text-blue-400/80 hover:text-blue-300">
+                    <Link to="/api-docs/" className="text-primary hover:underline font-bold">
                         API →
                     </Link>
                 </div>

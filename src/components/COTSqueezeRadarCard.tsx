@@ -26,18 +26,18 @@ export const COTSqueezeRadarCard: React.FC = () => {
     : items.filter((item) => item.category === activeTab);
 
   return (
-    <Card className="w-full bg-[#0d0f14]/90 border border-slate-800/80 backdrop-blur-md rounded-none shadow-2xl overflow-hidden">
+    <Card className="w-full bg-card dark:bg-[#0d0f14]/90 border border-border dark:border-slate-800/80 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
       {/* Header */}
-      <CardHeader className="p-5 border-b border-slate-800/60 bg-gradient-to-r from-slate-950/60 to-slate-900/30">
+      <CardHeader className="p-5 border-b border-border dark:border-slate-800/60 bg-muted/40 dark:bg-gradient-to-r dark:from-slate-950/60 dark:to-slate-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2.5">
-              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
-            <CardTitle className="font-mono text-base md:text-lg font-bold text-slate-100 uppercase tracking-tight">
+              <div className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
+            <CardTitle className="font-mono text-base md:text-lg font-bold text-foreground uppercase tracking-tight">
                 CFTC Commitments of Traders (COT) Positioning
               </CardTitle>
             </div>
-            <p className="text-xs text-slate-400 font-mono mt-1">
+            <p className="text-xs text-muted-foreground font-mono mt-1">
               Speculator net positioning and stored-window squeeze telemetry
             </p>
           </div>
@@ -55,10 +55,10 @@ export const COTSqueezeRadarCard: React.FC = () => {
               <button
                 key={tab}
                 onClick={() => setActiveTab(tab)}
-                className={`px-3 py-1 text-xs font-mono tracking-wider uppercase transition-all whitespace-nowrap ${
+                className={`px-3 py-1 text-xs font-mono tracking-wider uppercase transition-all whitespace-nowrap rounded-md ${
                   isActive
-                    ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-[0_0_10px_rgba(6,182,212,0.15)]'
-                    : 'text-slate-400 bg-slate-900/50 hover:bg-slate-800 hover:text-slate-200 border border-slate-800/40'
+                    ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm'
+                    : 'text-muted-foreground bg-card hover:bg-muted hover:text-foreground border border-border'
                 }`}
               >
                 {tab}
@@ -71,13 +71,13 @@ export const COTSqueezeRadarCard: React.FC = () => {
       {/* Content Body */}
       <CardContent className="p-0">
         {isLoading ? (
-          <div className="p-8 text-center text-xs font-mono text-slate-500 animate-pulse">
+          <div className="p-8 text-center text-xs font-mono text-muted-foreground animate-pulse">
             LOADING COT TELEMETRY MATRIX...
           </div>
         ) : (
-          <div className="divide-y divide-slate-800/50">
+          <div className="divide-y divide-border">
             {/* Desktop Table Header */}
-              <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-slate-950/40 text-[10px] font-mono text-slate-400 uppercase tracking-wider">
+              <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-muted/40 text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
                 <div className="col-span-3">Asset & Exchange</div>
                 <div className="col-span-2 text-right">Net Speculator</div>
                 <div className="col-span-2 text-right">1W Delta</div>
@@ -93,9 +93,9 @@ export const COTSqueezeRadarCard: React.FC = () => {
         )}
 
         {/* Footer */}
-        <div className="p-4 bg-slate-950/70 border-t border-slate-800/60 flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] font-mono text-slate-400">
+        <div className="p-4 bg-muted/30 border-t border-border flex flex-col md:flex-row justify-between items-center gap-2 text-[11px] font-mono text-muted-foreground">
           <div className="flex items-center space-x-2">
-            <span className="text-slate-400">METHODOLOGY:</span>
+            <span className="text-foreground font-bold">METHODOLOGY:</span>
             <span>Signals require at least 52 official weekly observations per contract.</span>
           </div>
           <DataProvenanceBadge
@@ -118,85 +118,85 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
   const isDeltaPositive = item.delta1wContracts !== null && item.delta1wContracts >= 0;
 
   return (
-    <div className="px-5 py-4 hover:bg-slate-900/40 transition-colors">
+    <div className="px-5 py-4 hover:bg-muted/40 transition-colors">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-3 items-center">
         {/* Asset & Category */}
         <div className="col-span-3">
-          <div className="font-mono text-sm font-semibold text-slate-100">{item.assetName}</div>
+          <div className="font-mono text-sm font-semibold text-foreground">{item.assetName}</div>
           <div className="flex items-center space-x-2 mt-0.5">
-            <span className="text-[10px] font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.2 border border-cyan-900/40">
+            <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-950/40 px-1.5 py-0.5 border border-cyan-500/30 rounded">
               {item.symbol}
             </span>
             {item.asOfDate ? (
-              <span className="text-[10px] font-mono text-slate-400">As of {item.asOfDate}</span>
+              <span className="text-[10px] font-mono text-muted-foreground">As of {item.asOfDate}</span>
             ) : (
-          <span className="text-[10px] font-mono text-slate-400">Awaiting CFTC ingest</span>
+              <span className="text-[10px] font-mono text-muted-foreground">Awaiting CFTC ingest</span>
             )}
           </div>
         </div>
 
         {/* Net Speculator */}
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center">
-          <span className="text-[11px] font-mono text-slate-400 lg:hidden">Net Spec:</span>
+          <span className="text-[11px] font-mono text-muted-foreground lg:hidden">Net Spec:</span>
           {item.netSpecContracts !== null ? (
             <span
               className={`font-mono text-sm font-bold ${
-                isNetLong ? 'text-emerald-400' : 'text-rose-400'
+                isNetLong ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
               }`}
             >
               {isNetLong ? '+' : ''}
               {item.netSpecContracts.toLocaleString()}
-              <span className="text-[10px] font-normal text-slate-400 ml-1">ctr</span>
+              <span className="text-[10px] font-normal text-muted-foreground ml-1">ctr</span>
             </span>
           ) : (
-            <span className="font-mono text-xs text-slate-400">Awaiting Ingest</span>
+            <span className="font-mono text-xs text-muted-foreground">Awaiting Ingest</span>
           )}
         </div>
 
         {/* 1W Delta */}
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center">
-          <span className="text-[11px] font-mono text-slate-400 lg:hidden">1W Delta:</span>
+          <span className="text-[11px] font-mono text-muted-foreground lg:hidden">1W Delta:</span>
           {item.delta1wContracts !== null ? (
             <span
               className={`font-mono text-xs font-semibold ${
-                isDeltaPositive ? 'text-cyan-400' : 'text-amber-400'
+                isDeltaPositive ? 'text-cyan-600 dark:text-cyan-400' : 'text-amber-600 dark:text-amber-400'
               }`}
             >
               {isDeltaPositive ? '▲ +' : '▼ '}
               {item.delta1wContracts.toLocaleString()}
             </span>
           ) : (
-            <span className="font-mono text-xs text-slate-400">—</span>
+            <span className="font-mono text-xs text-muted-foreground">—</span>
           )}
         </div>
 
         {/* 3Y Percentile Bar */}
         <div className="col-span-3">
           <div className="flex justify-between text-[11px] font-mono mb-1">
-            <span className="text-slate-400">Percentile:</span>
-            <span className="font-bold text-slate-200">
+            <span className="text-muted-foreground">Percentile:</span>
+            <span className="font-bold text-foreground">
               {item.percentile3y !== null ? `${item.percentile3y.toFixed(1)}%` : '—'}
             </span>
           </div>
           {item.percentile3y !== null ? (
-            <div className="w-full h-2 bg-slate-950 border border-slate-800 relative overflow-hidden">
+            <div className="w-full h-2 bg-muted border border-border relative overflow-hidden rounded-full">
               <div className="absolute left-0 top-0 bottom-0 w-[5%] bg-rose-500/20 border-r border-rose-500/40" />
               <div className="absolute right-0 top-0 bottom-0 w-[5%] bg-amber-500/20 border-l border-amber-500/40" />
               <div
                 className={`h-full transition-all duration-500 ${
                   item.percentile3y <= 5
-                    ? 'bg-rose-500 shadow-[0_0_8px_rgba(244,63,94,0.7)]'
+                    ? 'bg-rose-500'
                     : item.percentile3y >= 95
-                    ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.7)]'
+                    ? 'bg-amber-500'
                     : item.percentile3y > 50
-                    ? 'bg-emerald-400'
-                    : 'bg-cyan-400'
+                    ? 'bg-emerald-500'
+                    : 'bg-cyan-500'
                 }`}
                 style={{ width: `${Math.min(Math.max(item.percentile3y, 2), 100)}%` }}
               />
             </div>
           ) : (
-            <div className="w-full h-2 bg-slate-950 border border-slate-800" />
+            <div className="w-full h-2 bg-muted border border-border rounded-full" />
           )}
         </div>
 
@@ -213,37 +213,37 @@ const SignalPill: React.FC<{ signal: COTAssetPositioning['squeezeSignal'] }> = (
   switch (signal) {
     case 'BULL_SQUEEZE_RISK':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-950/80 text-rose-300 border border-rose-600/80 shadow-[0_0_10px_rgba(244,63,94,0.3)] animate-pulse">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/40 rounded animate-pulse">
           BULL SQUEEZE RISK
         </span>
       );
     case 'CROWDED_LONG':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-950/80 text-amber-300 border border-amber-500/80 shadow-[0_0_10px_rgba(251,191,36,0.25)]">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40 rounded">
           CROWDED LONG
         </span>
       );
     case 'MODERATE_LONG':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-emerald-950/50 text-emerald-300 border border-emerald-800/50">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 rounded">
           MODERATE LONG
         </span>
       );
     case 'MODERATE_SHORT':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-cyan-950/50 text-cyan-300 border border-cyan-800/50">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 rounded">
           SHORT BIAS
         </span>
       );
     case 'NEUTRAL_RANGE':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-400 bg-slate-900 border border-slate-800">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted border border-border rounded">
           NEUTRAL RANGE
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-slate-500 bg-slate-950 border border-slate-800">
+        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-muted-foreground/60 bg-muted/60 border border-border rounded">
           DATA UNAVAILABLE
         </span>
       );

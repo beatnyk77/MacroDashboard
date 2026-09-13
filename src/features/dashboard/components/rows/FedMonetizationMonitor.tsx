@@ -53,40 +53,40 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     if (data.fedBalanceT !== undefined) {
       rows.push(
         <div key="fed" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">Fed Balance Sheet</span>
-          <span className="text-cyan-400 text-xs font-mono">${data.fedBalanceT.toFixed(2)}T</span>
+          <span className="text-muted-foreground text-xs">Fed Balance Sheet</span>
+          <span className="text-cyan-600 dark:text-cyan-400 text-xs font-mono">${data.fedBalanceT.toFixed(2)}T</span>
         </div>
       );
     }
     if (data.debtT !== undefined) {
       rows.push(
         <div key="debt" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">US Marketable Debt</span>
-          <span className="text-white text-xs font-mono">${data.debtT.toFixed(2)}T</span>
+          <span className="text-muted-foreground text-xs">US Marketable Debt</span>
+          <span className="text-foreground text-xs font-mono">${data.debtT.toFixed(2)}T</span>
         </div>
       );
     }
     if (data.ratioPct !== undefined) {
       rows.push(
         <div key="ratio" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">Monetization Ratio</span>
-          <span className="text-emerald-400 text-xs font-mono">{data.ratioPct.toFixed(2)}%</span>
+          <span className="text-muted-foreground text-xs">Monetization Ratio</span>
+          <span className="text-emerald-600 dark:text-emerald-400 text-xs font-mono">{data.ratioPct.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.yield10Y !== undefined) {
       rows.push(
         <div key="yield" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">10Y Treasury Yield</span>
-          <span className="text-amber-400 text-xs font-mono">{data.yield10Y.toFixed(2)}%</span>
+          <span className="text-muted-foreground text-xs">10Y Treasury Yield</span>
+          <span className="text-amber-600 dark:text-amber-400 text-xs font-mono">{data.yield10Y.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.m2GrowthYoY !== undefined) {
       rows.push(
         <div key="m2" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">M2 Money Growth</span>
-          <span className={cn('text-xs font-mono', data.m2GrowthYoY >= 0 ? 'text-blue-400' : 'text-rose-500')}>
+          <span className="text-muted-foreground text-xs">M2 Money Growth</span>
+          <span className={cn('text-xs font-mono', data.m2GrowthYoY >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-500')}>
             {data.m2GrowthYoY.toFixed(2)}%
           </span>
         </div>
@@ -95,16 +95,16 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     if (data.cpiYoY !== undefined) {
       rows.push(
         <div key="cpi" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">CPI Inflation</span>
-          <span className="text-rose-500 text-xs font-mono">{data.cpiYoY.toFixed(2)}%</span>
+          <span className="text-muted-foreground text-xs">CPI Inflation</span>
+          <span className="text-rose-600 dark:text-rose-500 text-xs font-mono">{data.cpiYoY.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.realYield !== undefined) {
       rows.push(
         <div key="real" className="flex justify-between gap-8">
-          <span className="text-slate-400 text-xs">Real Yield (est.)</span>
-          <span className={cn('text-xs font-mono', data.realYield >= 0 ? 'text-emerald-400' : 'text-rose-500')}>
+          <span className="text-muted-foreground text-xs">Real Yield (est.)</span>
+          <span className={cn('text-xs font-mono', data.realYield >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-500')}>
             {data.realYield >= 0 ? '+' : ''}{data.realYield.toFixed(2)}%
           </span>
         </div>
@@ -112,8 +112,8 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     }
 
     return (
-      <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50 min-w-[160px]">
-        <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1 text-xs uppercase tracking-wide">
+      <div className="bg-popover/95 text-popover-foreground backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl z-50 min-w-[160px]">
+        <p className="text-foreground font-semibold mb-2 border-b border-border pb-1 text-xs uppercase tracking-wide">
           {date}
         </p>
         <div className="space-y-1.5">{rows}</div>
@@ -126,8 +126,8 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
 // ── Chart Shared Styles ─────────────────────────────────────────────
 
 const chartCommon = {
-  tick: { fontSize: 11, fill: '#94a3b8' },
-  stroke: '#64748b',
+  tick: { fontSize: 11, fill: 'hsl(var(--muted-foreground))' },
+  stroke: 'hsl(var(--border))',
 } as const;
 
 // ── Chart 1: Monetization Gauge ────────────────────────────────────
@@ -139,26 +139,26 @@ const MonetizationGauge: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
           <div className="w-1 h-5 bg-cyan-400 rounded-full" />
           Monetization Gauge
         </h4>
         {latestRatio !== undefined && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black text-slate-500 uppercase tracking-uppercase">
+            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
               Fed owns
             </span>
-            <span className="text-lg font-black text-cyan-400 tabular-nums">
+            <span className="text-lg font-black text-cyan-600 dark:text-cyan-400 tabular-nums">
               {latestRatio.toFixed(2)}%
             </span>
           </div>
         )}
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -184,8 +184,8 @@ const MonetizationGauge: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center mt-2">
-        <span className="font-semibold text-slate-400">Formula:</span> Fed Assets (FRED: WALCL) ÷ Total Marketable Debt (FRED: GFDEBTN)
+      <p className="text-muted-foreground text-xs italic text-center mt-2">
+        <span className="font-semibold text-foreground">Formula:</span> Fed Assets (FRED: WALCL) ÷ Total Marketable Debt (FRED: GFDEBTN)
       </p>
     </div>
   );
@@ -197,16 +197,16 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
           <div className="w-1 h-5 bg-amber-400 rounded-full" />
           Yield Suppression
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -255,8 +255,8 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center mt-2">
-        <span className="font-semibold text-slate-400">Data:</span> Fed Assets (FRED: WALCL) vs 10Y Yield (FRED: DGS10)
+      <p className="text-muted-foreground text-xs italic text-center mt-2">
+        <span className="font-semibold text-foreground">Data:</span> Fed Assets (FRED: WALCL) vs 10Y Yield (FRED: DGS10)
       </p>
     </div>
   );
@@ -268,16 +268,16 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
           <div className="w-1 h-5 bg-rose-400 rounded-full" />
           Inflation Transmission
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -312,8 +312,8 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center mt-2">
-        <span className="font-semibold text-slate-400">Data:</span> M2 YoY (FRED: WM2NS or M2SL) vs Headline CPI YoY (FRED: CPIAUCSL)
+      <p className="text-muted-foreground text-xs italic text-center mt-2">
+        <span className="font-semibold text-foreground">Data:</span> M2 YoY (FRED: WM2NS or M2SL) vs Headline CPI YoY (FRED: CPIAUCSL)
       </p>
     </div>
   );
@@ -327,16 +327,16 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
           <div className="w-1 h-5 bg-emerald-400 rounded-full" />
           Real Yield & QE/QT
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30 relative">
+      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 relative shadow-sm">
         {!hasRealYieldData ? (
           <div className="h-full flex items-center justify-center">
-            <p className="text-xs font-black text-slate-500 uppercase tracking-uppercase">
+            <p className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
               TIPS real-yield data pending ingestion (FRED: T10YIE)
             </p>
           </div>
@@ -354,7 +354,7 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
 
               <XAxis
                 dataKey="date"
@@ -373,7 +373,7 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               <Tooltip content={<ChartTooltip />} />
 
               {/* Zero-line reference */}
-              <ReferenceLine y={0} stroke="#94a3b8" strokeDasharray="4 4" strokeOpacity={0.6} />
+              <ReferenceLine y={0} stroke="hsl(var(--border))" strokeDasharray="4 4" strokeOpacity={0.8} />
 
               {/* Real yield line */}
               <Line
@@ -398,8 +398,8 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         )}
       </div>
 
-      <p className="text-slate-500 text-xs italic text-center mt-2">
-        <span className="font-semibold text-slate-400">Formula:</span> Real Yield = 10Y Yield (DGS10) − CPI YoY. QE/QT shading: SOMA cumulative changes.
+      <p className="text-muted-foreground text-xs italic text-center mt-2">
+        <span className="font-semibold text-foreground">Formula:</span> Real Yield = 10Y Yield (DGS10) − CPI YoY. QE/QT shading: SOMA cumulative changes.
       </p>
     </div>
   );
@@ -417,24 +417,24 @@ const MetricCard: React.FC<{
   <m.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 hover:border-cyan-500/30 transition-colors"
+    className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700/50 rounded-xl p-4 hover:border-primary/40 transition-colors shadow-sm"
   >
     <div className="flex items-center justify-between gap-2 mb-1">
-      <div className="flex items-center gap-2 text-slate-400 text-xs">{icon}</div>
+      <div className="flex items-center gap-2 text-muted-foreground text-xs">{icon}</div>
       {trend && (
         <span
           className={cn(
             'text-[10px] font-black uppercase px-1.5 py-0.5 rounded',
-            trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-500'
+            trend === 'up' ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 font-bold' : 'bg-rose-500/20 text-rose-800 dark:text-rose-500 font-bold'
           )}
         >
           {trend}
         </span>
       )}
     </div>
-    <div className="text-xl font-bold text-white tabular-nums">{value}</div>
-    <div className="text-xs text-slate-500 mt-0.5">{label}</div>
-    {sub && <div className="text-[10px] text-slate-600 mt-1">{sub}</div>}
+    <div className="text-xl font-bold text-foreground tabular-nums">{value}</div>
+    <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+    {sub && <div className="text-[10px] text-muted-foreground/80 mt-1">{sub}</div>}
   </m.div>
 );
 
@@ -643,25 +643,25 @@ export const FedMonetizationMonitor: React.FC = () => {
   const isDebtRatioUp = chartData.length > 1 && (latest?.ratioPct ?? 0) > (chartData[1]?.ratioPct ?? 0);
 
   return (
-    <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
+    <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-700/50">
       {/* Header */}
-      <div className="p-6 md:p-8 border-b border-slate-700/50">
+      <div className="p-6 md:p-8 border-b border-border dark:border-slate-700/50">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
-              <Activity className="w-7 h-7 text-cyan-400" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
+              <Activity className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
               FED Debt Monetization & Yield Control
               <GQSignalBadge
                 tooltip="Proprietary composite: Fed balance sheet dynamics, SOMA weekly flows, real yield suppression, and M2-CPI spread — not available from any single public source."
                 href="/methods/fiscal-dominance-meter/"
               />
             </h2>
-            <p className="text-slate-400 text-sm md:text-base max-w-2xl">
+            <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
               Federal Reserve balance sheet dynamics · Yield suppression transmission · Real rates
             </p>
           </div>
           {latest && (
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground text-sm">
               <span>Updated: {new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
           )}
@@ -669,7 +669,7 @@ export const FedMonetizationMonitor: React.FC = () => {
       </div>
 
       {/* Quick Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-slate-800/20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-muted/40 dark:bg-slate-800/20">
         <MetricCard
           icon={<DollarSign className="w-5 h-5 text-cyan-400" />}
           label="Fed Assets"
@@ -733,8 +733,8 @@ export const FedMonetizationMonitor: React.FC = () => {
 
       {/* Source footer */}
       <div className="flex justify-center pb-6">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700/30">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-uppercase">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-uppercase">
             Sources: FRED · Federal Reserve (H.4.1) · BLS · U.S. Treasury
           </span>
         </div>

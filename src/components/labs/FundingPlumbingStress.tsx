@@ -59,22 +59,22 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                         )}>
                             <Icon className="w-4 h-4" />
                         </div>
-                        <h4 className="text-sm font-black text-white uppercase tracking-tighter">{title}</h4>
+                        <h4 className="text-sm font-black text-foreground uppercase tracking-tighter">{title}</h4>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/50 font-medium uppercase tracking-widest">{subtitle}</p>
+                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">{subtitle}</p>
                 </div>
                 
                 {/* Status indicator */}
                 <div className="flex flex-col items-end gap-1.5">
                     <div className={cn(
-                        "w-2 h-2 rounded-full shadow-[0_0_12px_rgba(0,0,0,0.5)]",
-                        isRed ? "bg-rose-500 shadow-rose-500" :
-                        isAmber ? "bg-amber-500 shadow-amber-500" :
-                        "bg-emerald-500 shadow-emerald-500"
+                        "w-2 h-2 rounded-full shadow-sm",
+                        isRed ? "bg-rose-500 shadow-rose-500/50" :
+                        isAmber ? "bg-amber-500 shadow-amber-500/50" :
+                        "bg-emerald-500 shadow-emerald-500/50"
                     )} />
                     <span className={cn(
                         "text-[10px] font-black uppercase tracking-heading",
-                        isRed ? "text-rose-500" : isAmber ? "text-amber-500" : "text-emerald-500"
+                        isRed ? "text-rose-600 dark:text-rose-500" : isAmber ? "text-amber-600 dark:text-amber-500" : "text-emerald-600 dark:text-emerald-500"
                     )}>
                         {isRed ? 'High Stress' : isAmber ? 'Caution' : 'Optimal'}
                     </span>
@@ -83,13 +83,13 @@ const MetricModule: React.FC<MetricModuleProps> = ({
 
             {/* Value Section */}
             <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-3xl font-black text-white tracking-tighter tabular-nums">
+                <span className="text-3xl font-black text-foreground tracking-tighter tabular-nums">
                     {data.current_value >= 1000 
                         ? (data.current_value / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })
                         : data.current_value.toLocaleString(undefined, { maximumFractionDigits: 1 })
                     }
                 </span>
-                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
+                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
                     {data.current_value >= 1000 ? unitLabel.replace('mn', 'bn') : unitLabel}
                 </span>
             </div>
@@ -115,7 +115,7 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                         />
                     </AreaChart>
                 </MacroChartContainer>
-                <div className="absolute -bottom-2 right-0 text-[8px] font-black text-white/5 uppercase tracking-widest pointer-events-none">Liquidity Context</div>
+                <div className="absolute -bottom-2 right-0 text-[8px] font-black text-muted-foreground/30 uppercase tracking-widest pointer-events-none">Liquidity Context</div>
             </div>
         </div>
     );
@@ -159,25 +159,23 @@ export const FundingPlumbingStress: React.FC = () => {
     }
 
     return (
-        <Card className="w-full bg-black/60 backdrop-blur-3xl border-white/5 shadow-2xl rounded-[2.5rem] overflow-hidden relative group">
+        <Card className="w-full bg-card border border-border shadow-sm dark:shadow-2xl rounded-2xl overflow-hidden relative group">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
-            <div className="absolute -bottom-24 -right-24 w-64 h-64 bg-blue-500/5 rounded-full blur-[100px]" />
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-emerald-500/5 rounded-full blur-[100px]" />
 
             <div className="relative z-10">
                 {/* Header Row */}
-                <div className="px-8 pt-8 pb-4 flex items-center justify-between border-b border-white/5">
+                <div className="px-8 pt-8 pb-4 flex items-center justify-between border-b border-border">
                     <div className="flex items-center gap-4">
                         <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
                             <Zap className="w-5 h-5 text-blue-500" />
                         </div>
                         <div>
-                            <h3 className="text-xl font-light text-white flex items-center gap-3">
+                            <h3 className="text-xl font-bold text-foreground flex items-center gap-3">
                                 <span className="w-8 h-px bg-blue-500" />
                                 Funding Plumbing Stress
                             </h3>
-                            <p className="text-[10px] text-muted-foreground/50 font-black uppercase tracking-widest mt-0.5">
+                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5">
                                 Real-time Systemic Liquidity Telemetry • Federal Reserve Facilities
                             </p>
                         </div>
@@ -185,15 +183,15 @@ export const FundingPlumbingStress: React.FC = () => {
                     <div className="hidden md:flex items-center gap-6">
                         <div className="flex items-center gap-2">
                             <Activity className="w-3 h-3 text-emerald-500" />
-                                <span className="text-[10px] font-black text-emerald-500 uppercase tracking-widest">Published feed</span>
+                                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Published feed</span>
                         </div>
-                        <div className="h-4 w-px bg-white/10" />
-                        <span className="text-[10px] font-black text-white/20 uppercase tracking-widest">Threshold: Institutional</span>
+                        <div className="h-4 w-px bg-border" />
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Threshold: Institutional</span>
                     </div>
                 </div>
 
                 {/* Modules Grid */}
-                <div className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-white/5">
+                <div className="flex flex-col lg:flex-row divide-y lg:divide-y-0 lg:divide-x divide-border">
                     <MetricModule 
                         data={metrics.rrp}
                         title="Net Liquidity Buffer"
@@ -246,16 +244,16 @@ export const FundingPlumbingStress: React.FC = () => {
                 </div>
 
                 {/* Insights Footer */}
-                <div className="px-8 py-4 bg-white/[0.02] border-t border-white/5 flex flex-wrap items-center gap-x-8 gap-y-2">
+                <div className="px-8 py-4 bg-muted/30 border-t border-border flex flex-wrap items-center gap-x-8 gap-y-2">
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Market Alpha:</span>
-                        <p className="text-[10px] text-muted-foreground/70 font-medium">
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Market Alpha:</span>
+                        <p className="text-[10px] text-muted-foreground font-medium">
                             {metrics.rrp.current_value < 300 ? "RRP balance is below the configured observation threshold." : "RRP balance is above the configured observation threshold."}
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-white/30 uppercase tracking-widest">Correlates:</span>
-                        <p className="text-[10px] text-muted-foreground/70 font-medium whitespace-nowrap">SOFR Spreads • Treasury Repo Vol • Eurodollar Basis</p>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Correlates:</span>
+                        <p className="text-[10px] text-muted-foreground font-medium whitespace-nowrap">SOFR Spreads • Treasury Repo Vol • Eurodollar Basis</p>
                     </div>
                 </div>
             </div>

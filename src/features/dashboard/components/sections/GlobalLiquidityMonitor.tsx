@@ -60,13 +60,14 @@ const IndicatorCard: React.FC<{
         <Box sx={{
             p: 2,
             height: '100%',
-            bgcolor: 'rgba(15, 23, 42, 0.6)',
-            backdropFilter: 'blur(12px)',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
-            borderRadius: 1,
+            bgcolor: 'background.paper',
+            border: 1,
+            borderColor: 'divider',
+            borderRadius: 2,
             display: 'flex',
             flexDirection: 'column',
-            gap: 1
+            gap: 1,
+            boxShadow: 1
         }}>
             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase', letterSpacing: 1 }}>
@@ -126,10 +127,12 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                 p: 4,
                 mb: 3,
                 borderRadius: 2,
-                bgcolor: 'rgba(2, 6, 23, 0.8)',
-                border: '1px solid rgba(13, 242, 89, 0.1)',
+                bgcolor: 'background.paper',
+                border: 1,
+                borderColor: 'divider',
                 position: 'relative',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                boxShadow: 1
             }}>
                 {/* Subtle Background Glow */}
                 <Box sx={{
@@ -256,12 +259,12 @@ export const GlobalLiquidityMonitor: React.FC = () => {
             </Grid>
 
             {/* Regime Progress Bar */}
-            <Box sx={{ mt: 3, pt: 2, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <Box sx={{ mt: 3, pt: 2, borderTop: 1, borderColor: 'divider' }}>
                 <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>LIQUIDITY REGIME</Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>CORRELATION: HIGH (LIQUIDITY, DEBT WALL)</Typography>
                 </Box>
-                <Box sx={{ height: 8, bgcolor: 'rgba(255,255,255,0.05)', borderRadius: 1, overflow: 'hidden', display: 'flex' }}>
+                <Box sx={{ height: 8, bgcolor: 'action.hover', borderRadius: 1, overflow: 'hidden', display: 'flex' }}>
                     <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score < -15 ? 'error.main' : 'rgba(248, 113, 113, 0.2)' }} />
                     <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score >= -15 && data.composite_score <= 15 ? 'warning.main' : 'rgba(251, 191, 36, 0.2)' }} />
                     <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score > 15 ? 'success.main' : 'rgba(13, 242, 89, 0.2)' }} />

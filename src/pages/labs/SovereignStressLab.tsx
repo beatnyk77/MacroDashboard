@@ -105,26 +105,26 @@ export const SovereignStressLab: React.FC = () => {
         <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
             {/* Breadcrumbs */}
             <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                    <TrailLink to="/" className="hover:text-white transition-colors">Home</TrailLink>
+                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                    <TrailLink to="/" className="hover:text-foreground transition-colors">Home</TrailLink>
                     <ChevronRight size={10} />
-                    <TrailLink to="/macro-observatory/" className="hover:text-white transition-colors">Observatory</TrailLink>
+                    <TrailLink to="/macro-observatory/" className="hover:text-foreground transition-colors">Observatory</TrailLink>
                     <ChevronRight size={10} />
-                    <span className="text-purple-500">Sovereign Stress</span>
+                    <span className="text-purple-600 dark:text-purple-400">Sovereign Stress</span>
                 </nav>
             </div>
 
             <div className="mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
                     <ShieldAlert size={12} /> Fiscal Sustainability Monitor
                 </div>
                 <div className="flex items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-                        Sovereign <span className="text-purple-500">Stress</span> Lab
+                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-foreground">
+                        Sovereign <span className="text-purple-600 dark:text-purple-400">Stress</span> Lab
                     </h1>
                     <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                 </div>
-                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
+                <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
                     A country-level screen for observed debt burden, growth, reserve coverage, and balance-sheet transmission. Each reading carries its observation date and data state.
                 </p>
             </div>
@@ -144,8 +144,8 @@ export const SovereignStressLab: React.FC = () => {
                 {/* Section 1: Sovereign Risk Matrix */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-purple-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Risk Matrix</h2>
+                        <TrendingUp className="text-purple-600 dark:text-purple-400" size={28} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Sovereign Risk Matrix</h2>
                     </div>
 
                     <SectionErrorBoundary name="Sovereign Risk">
@@ -162,8 +162,8 @@ export const SovereignStressLab: React.FC = () => {
                 {/* Section 2: BoJ Monetary Dominance */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
-                        <Activity className="text-cyan-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">BoJ Monetary Dominance</h2>
+                        <Activity className="text-cyan-600 dark:text-cyan-400" size={28} />
+                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">BoJ Monetary Dominance</h2>
                     </div>
                     <SectionErrorBoundary name="BoJ Stress Monitor">
                         <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
@@ -178,8 +178,8 @@ export const SovereignStressLab: React.FC = () => {
             </div>
 
             {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of G20 Debt Sustainability">
-                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">How to read the Sovereign Stress Lab</h2>
+            <article className="mt-32 p-12 bg-card border border-border rounded-3xl shadow-sm" aria-label="Structural Analysis of G20 Debt Sustainability">
+                <h2 className="text-xl font-black text-foreground uppercase tracking-uppercase mb-6">How to read the Sovereign Stress Lab</h2>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>Sovereign Stress Lab</strong> organizes sovereign-risk evidence around fiscal burden, economic growth, reserve coverage, and central-bank balance sheets. The G20 matrix currently uses observed debt-to-GDP and real GDP growth readings, with gold reserves and nominal GDP available as supporting context.
@@ -193,21 +193,21 @@ export const SovereignStressLab: React.FC = () => {
                 </div>
 
                 {/* Visible FAQ block */}
-                <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
+                <div className="mt-10 pt-8 border-t border-border space-y-5">
+                    <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
                     {faqItems.map(({ question, answer }) => (
                         <div key={question}>
-                            <p className="text-sm font-bold text-white/90 mb-1">{question}</p>
+                            <p className="text-sm font-bold text-foreground/90 mb-1">{question}</p>
                             <p className="text-sm text-muted-foreground leading-relaxed">{answer}</p>
                         </div>
                     ))}
                 </div>
             </article>
 
-            <div className="mt-24 pt-12 border-t border-white/5 text-center">
+            <div className="mt-24 pt-12 border-t border-border text-center">
                 <Button
                     variant="ghost"
-                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    className="text-muted-foreground/60 font-black uppercase tracking-uppercase hover:text-foreground transition-colors"
                     asChild
                 >
                     <a href="/macro-observatory/" className="flex items-center gap-2">

@@ -65,7 +65,7 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
 
             <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-white/40">
+                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground">
                         Global M2 ($ Trillions)
                     </span>
                     <input
@@ -75,11 +75,11 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
                         value={m2T}
                         onChange={(e) => setM2T(e.target.value)}
                         onBlur={handleCalc}
-                        className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-amber-500/40 focus:outline-none"
+                        className="w-full rounded-lg border border-border bg-card px-3 py-2.5 font-mono text-sm text-foreground focus:border-amber-500/60 focus:outline-none shadow-sm"
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-white/40">
+                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground">
                         Gold Spot ($/oz)
                     </span>
                     <input
@@ -89,22 +89,22 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
                         value={gold}
                         onChange={(e) => setGold(e.target.value)}
                         onBlur={handleCalc}
-                        className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-amber-500/40 focus:outline-none"
+                        className="w-full rounded-lg border border-border bg-card px-3 py-2.5 font-mono text-sm text-foreground focus:border-amber-500/60 focus:outline-none shadow-sm"
                     />
                 </label>
             </div>
 
             {result && (
-                <div className="rounded-lg border border-white/[0.08] bg-black/20 p-4">
+                <div className="rounded-lg border border-border bg-card p-4 shadow-sm">
                     <div className="mb-2 flex items-end gap-2">
-                        <TrendingUp size={18} className="text-amber-400" />
-                        <span className="font-mono text-2xl font-bold text-white">
+                        <TrendingUp size={18} className="text-amber-500" />
+                        <span className="font-mono text-2xl font-bold text-foreground">
                             {result.ratio.toFixed(1)}
                         </span>
-                        <span className="pb-0.5 text-xs text-white/40">M2/Gold ratio</span>
+                        <span className="pb-0.5 text-xs text-muted-foreground">M2/Gold ratio</span>
                     </div>
-                    <p className={`text-xs leading-relaxed ${result.color}`}>{result.label}</p>
-                    <p className="mt-2 text-[10px] text-white/30">
+                    <p className={`text-xs leading-relaxed font-semibold ${result.color}`}>{result.label}</p>
+                    <p className="mt-2 text-[10px] text-muted-foreground">
                         Implied coverage: {(result.goldOzPerM2Unit * 1e6).toFixed(2)} oz gold per $1M M2 ·
                         Stock: {GOLD_STOCK_TONNES.toLocaleString()}t above-ground
                     </p>

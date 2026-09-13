@@ -1,5 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge, Sun, Moon } from 'lucide-react';
+import { useViewContext } from '@/context/ViewContext';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -55,6 +56,7 @@ const terminalNavItems = [
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
+    const { themeMode, toggleThemeMode } = useViewContext();
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
@@ -112,7 +114,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
             {isObservatory && !isEmbedded && <DataHealthBanner />}
             {!isChromeless && (
-                <header className="sticky top-0 z-[1300] w-full border-b border-white/12 bg-slate-950/90 backdrop-blur-md">
+                <header className="sticky top-0 z-[1300] w-full border-b border-border bg-background/95 backdrop-blur-md transition-colors duration-300">
                 <div className="flex h-16 items-center justify-between px-4 md:px-8">
                     <div className="flex items-center gap-3 md:gap-6">
                         <div className="flex items-center gap-3 cursor-pointer hover:opacity-90 transition-opacity">
@@ -122,26 +124,47 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                             />
                             <div className="hidden sm:block text-2xl font-black tracking-heading leading-none">
                                 <span className="text-foreground">{BrandConfig.namePrefix}</span>
-                                <span className="text-blue-500">{BrandConfig.nameSuffix}</span>
-                                <div className="text-xs font-bold text-muted-foreground/50 tracking-uppercase mt-1 uppercase">
+                                <span className="text-primary">{BrandConfig.nameSuffix}</span>
+                                <div className="text-xs font-bold text-muted-foreground tracking-uppercase mt-1 uppercase">
                                     {BrandConfig.tagline}
                                 </div>
                             </div>
                         </div>
 
-                        <div className="hidden md:block h-6 w-px bg-white/10 mx-2" />
+                        <div className="hidden md:block h-6 w-px bg-border mx-2" />
 
                         <ClockDisplay />
                     </div>
 
-                    <div className="flex items-center gap-4">
+                    <div className="flex items-center gap-3 md:gap-4">
+                        {/* Theme Switcher */}
+                        <button
+                            type="button"
+                            onClick={toggleThemeMode}
+                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold border transition-all duration-200 border-border hover:bg-muted text-foreground shadow-sm"
+                            title={themeMode === 'lively' ? 'Switch to Classic Dark' : 'Switch to Lively Mode'}
+                            aria-label="Toggle theme mode"
+                        >
+                            {themeMode === 'lively' ? (
+                                <>
+                                    <Sun size={15} className="text-primary" />
+                                    <span className="hidden sm:inline font-mono text-[10px] font-bold text-primary tracking-wider">LIVELY</span>
+                                </>
+                            ) : (
+                                <>
+                                    <Moon size={15} className="text-blue-400" />
+                                    <span className="hidden sm:inline font-mono text-[10px] font-bold text-slate-300 tracking-wider">DARK</span>
+                                </>
+                            )}
+                        </button>
+
                         {/* Hamburger menu button for mobile */}
                         <button
-                            className="lg:hidden flex items-center justify-center w-12 h-12 rounded-lg bg-white/5 hover:bg-white/10 border border-white/10 text-white transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                            className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 border border-border text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             onClick={() => setMobileDrawerOpen(true)}
                             aria-label="Open navigation menu"
                         >
-                            <Menu size={24} />
+                            <Menu size={22} />
                         </button>
 
                         <div className="hidden lg:block">

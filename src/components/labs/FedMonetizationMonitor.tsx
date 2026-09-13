@@ -40,15 +40,15 @@ const QE_PERIODS = [
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50">
-                <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1">{label}</p>
+            <div className="bg-popover text-popover-foreground backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl z-50">
+                <p className="text-foreground font-semibold mb-2 border-b border-border pb-1">{label}</p>
                 {payload.map((p: any, idx: number) => (
                     <div key={idx} className="flex items-center justify-between gap-4 py-0.5">
                         <span className="text-xs flex items-center gap-1" style={{ color: p.color }}>
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }}></div>
                             {p.name}
                         </span>
-                        <span className="text-white font-mono text-sm">
+                        <span className="text-foreground font-mono text-sm">
                             {p.value?.toFixed(2)}{p.dataKey.includes('Pct') || p.dataKey.includes('Yoy') || p.dataKey.includes('ield') ? '%' : 'T'}
                         </span>
                     </div>
@@ -382,34 +382,34 @@ export const FedMonetizationMonitor: React.FC = () => {
     };
 
     return (
-        <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50 p-6 md:p-8 space-y-8">
-            <header className="border-b border-slate-700/50 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-700/50 p-6 md:p-8 space-y-8">
+            <header className="border-b border-border dark:border-slate-700/50 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
-                    <h2 className="text-3xl md:text-4xl font-bold text-white mb-2 flex items-center gap-3">
+                    <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
                         <Activity className="w-8 h-8 text-blue-500" />
                         FED Debt Monetization & Yield Control
                     </h2>
-                    <p className="text-slate-400 text-sm md:text-base">
+                    <p className="text-muted-foreground text-sm md:text-base">
                         Tracking the Federal Reserve's footprint in sovereign US debt, resulting yield suppression, and inflationary consequences.
                     </p>
                 </div>
                 {latestGauge !== null && (
-                    <div className="bg-slate-800/50 border border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center min-w-[200px]">
-                        <span className="text-slate-400 text-xs uppercase tracking-widest mb-1">Monetization Gauge</span>
+                    <div className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center min-w-[200px] shadow-sm">
+                        <span className="text-muted-foreground text-xs uppercase tracking-widest mb-1">Monetization Gauge</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-blue-400 font-mono">{latestGauge.toFixed(1)}%</span>
+                            <span className="text-3xl font-black text-blue-600 dark:text-blue-400 font-mono">{latestGauge.toFixed(1)}%</span>
                         </div>
-                        <span className="text-slate-500 text-[10px] uppercase mt-1">Fed Ownership of Marketable Debt</span>
+                        <span className="text-muted-foreground text-[10px] uppercase mt-1">Fed Ownership of Marketable Debt</span>
                     </div>
                 )}
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Module 1: Monetization Gauge & Trend */}
-                <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col">
+                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
-                        <TrendingUp className="text-blue-400 w-5 h-5" />
-                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Monetization Trend</h3>
+                        <TrendingUp className="text-blue-500 w-5 h-5" />
+                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Monetization Trend</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -428,16 +428,16 @@ export const FedMonetizationMonitor: React.FC = () => {
                             </AreaChart>
                         </MacroChartContainer>
                     </div>
-                    <p className="text-xs text-slate-500 mt-4 h-8">
+                    <p className="text-xs text-muted-foreground mt-4 h-8">
                         The percentage of US marketable debt held directly on the Federal Reserve balance sheet. Growth indicates structural monetization.
                     </p>
                 </div>
 
                 {/* Module 2: Yield Suppression */}
-                <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col">
+                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
-                        <TrendingDown className="text-emerald-400 w-5 h-5" />
-                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Yield Suppression Mechanism</h3>
+                        <TrendingDown className="text-emerald-500 w-5 h-5" />
+                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Yield Suppression Mechanism</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -453,16 +453,16 @@ export const FedMonetizationMonitor: React.FC = () => {
                             </LineChart>
                         </MacroChartContainer>
                     </div>
-                    <p className="text-xs text-slate-500 mt-4 h-8">
+                    <p className="text-xs text-muted-foreground mt-4 h-8">
                         Demonstrates the inverse relationship between Central Bank asset purchases (balance sheet expansion) and sovereign bond yields.
                     </p>
                 </div>
 
                 {/* Module 3: Inflation Transmission */}
-                <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col">
+                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
-                        <AlertTriangle className="text-amber-400 w-5 h-5" />
-                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Inflation Transmission (18m Lag)</h3>
+                        <AlertTriangle className="text-amber-500 w-5 h-5" />
+                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Inflation Transmission (18m Lag)</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -477,16 +477,16 @@ export const FedMonetizationMonitor: React.FC = () => {
                             </LineChart>
                         </MacroChartContainer>
                     </div>
-                    <p className="text-xs text-slate-500 mt-4 h-8">
+                    <p className="text-xs text-muted-foreground mt-4 h-8">
                         The delayed transmission of broad money creation (M2) into consumer price inflation. M2 growth is shifted forward 18 months.
                     </p>
                 </div>
 
                 {/* Module 4: Real Yield Reality */}
-                <div className="bg-slate-800/30 border border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col">
+                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
-                        <Zap className="text-cyan-400 w-5 h-5" />
-                        <h3 className="text-white font-bold uppercase tracking-wider text-sm">Real Yields vs QE Regimes</h3>
+                        <Zap className="text-cyan-500 w-5 h-5" />
+                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Real Yields vs QE Regimes</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -502,7 +502,7 @@ export const FedMonetizationMonitor: React.FC = () => {
                                         x2={period.end} 
                                         fill={period.color} 
                                         fillOpacity={1}
-                                        label={{ value: period.name, position: 'insideTopLeft', fill: '#94a3b8', fontSize: 10 }}
+                                        label={{ value: period.name, position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
                                     />
                                 ))}
                                 <ReferenceArea y1={0} y2={-5} fill="rgba(239, 68, 68, 0.1)" />
@@ -510,7 +510,7 @@ export const FedMonetizationMonitor: React.FC = () => {
                             </AreaChart>
                         </MacroChartContainer>
                     </div>
-                    <p className="text-xs text-slate-500 mt-4 h-8">
+                    <p className="text-xs text-muted-foreground mt-4 h-8">
                         10-Year TIPS reveals the true cost of sovereign debt. Shaded regions denote major Quantitative Easing periods driving yields deeply negative.
                     </p>
                 </div>

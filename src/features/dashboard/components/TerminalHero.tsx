@@ -36,15 +36,15 @@ export const TerminalHero: React.FC = () => {
     return (
         <section
             id="terminal-hero"
-            className="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-slate-900/50 p-6 sm:p-8 backdrop-blur-xl"
+            className="relative mb-10 overflow-hidden rounded-2xl border border-border bg-card dark:bg-slate-900/50 p-6 sm:p-8 shadow-sm dark:shadow-2xl backdrop-blur-xl"
         >
-            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-blue-500/10 blur-3xl" />
+            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
             <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-amber-500/10 blur-3xl" />
 
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-3xl">
                     <div className="mb-3 flex flex-wrap items-center gap-2">
-                        <span className="rounded border border-blue-500/30 bg-blue-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] text-blue-400">
+                        <span className="rounded border border-primary/30 bg-primary/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.2em] text-primary">
                             Institutional Macro Terminal
                         </span>
                         <FreshnessChip
@@ -56,11 +56,11 @@ export const TerminalHero: React.FC = () => {
                         />
                     </div>
 
-                    <h1 className="mb-3 text-2xl font-black uppercase leading-tight tracking-heading text-white sm:text-3xl lg:text-4xl">
+                    <h1 className="mb-3 text-2xl font-black uppercase leading-tight tracking-heading text-foreground sm:text-3xl lg:text-4xl">
                         Sovereign &amp; Central Bank Macro Intelligence
                     </h1>
 
-                    <p className="mb-5 max-w-2xl text-sm leading-relaxed text-white/60 sm:text-base">
+                    <p className="mb-5 max-w-2xl text-sm leading-relaxed text-muted-foreground sm:text-base font-medium">
                         {BrandConfig.name} surfaces real-time telemetry on global liquidity, fiscal dominance,
                         de-dollarization, and India/China macro dynamics — with proprietary composites, live data
                         provenance, and a deep institutional glossary. Observe structural reality; do not forecast.
@@ -69,21 +69,21 @@ export const TerminalHero: React.FC = () => {
                     <div className="flex flex-wrap gap-3">
                         <a
                             href="#start-exploring"
-                            className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-white transition-colors hover:border-blue-500/40 hover:bg-blue-500/10"
+                            className="inline-flex items-center gap-2 rounded-lg border border-border bg-card hover:bg-muted px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-foreground transition-colors shadow-sm"
                         >
                             Start Exploring
                             <ArrowRight size={14} />
                         </a>
                         <Link
                             to="/glossary"
-                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/20 bg-emerald-500/5 px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-emerald-400 transition-colors hover:bg-emerald-500/10"
+                            className="inline-flex items-center gap-2 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-emerald-800 dark:text-emerald-300 transition-colors hover:bg-emerald-500/20"
                         >
                             <BookOpen size={14} />
-                            Glossary
+                            Institutional Glossary
                         </Link>
                         <Link
                             to="/regime-digest"
-                            className="inline-flex items-center gap-2 rounded-lg border border-amber-500/20 bg-amber-500/5 px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-amber-400 transition-colors hover:bg-amber-500/10"
+                            className="inline-flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-amber-800 dark:text-amber-300 transition-colors hover:bg-amber-500/20"
                         >
                             <Radio size={14} />
                             Regime Digest
@@ -91,20 +91,20 @@ export const TerminalHero: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex shrink-0 flex-col gap-2 rounded-xl border border-white/5 bg-black/20 p-4 text-right">
-                    <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase tracking-uppercase text-muted-foreground/50">
+                <div className="flex shrink-0 flex-col gap-2 rounded-xl border border-border bg-card p-4 text-right shadow-sm">
+                    <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase tracking-uppercase text-muted-foreground">
                         <Database size={12} />
                         Live Feed Status
                     </div>
-                    <div className="text-2xl font-black text-white">15+</div>
-                    <div className="text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground/40">
+                    <div className="text-2xl font-black text-foreground font-mono">15+</div>
+                    <div className="text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground">
                         Official Sources · Zero Mock Data
                     </div>
                 </div>
             </div>
 
-            <div className="relative mt-6 border-t border-white/[0.08] pt-5">
-                <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-white/40">Quick views</div>
+            <div className="relative mt-6 border-t border-border pt-5">
+                <div className="mb-2 text-[10px] font-bold uppercase tracking-[0.16em] text-muted-foreground">Quick views</div>
                 <GlassDock
                     items={[
                         { label: 'Liquidity', detail: 'Net liquidity proxy', href: '#net-liquidity' },
@@ -115,11 +115,11 @@ export const TerminalHero: React.FC = () => {
                 />
             </div>
 
-            <div className="relative mt-8 grid grid-cols-1 gap-4 border-t border-white/5 pt-6 sm:grid-cols-3">
+            <div className="relative mt-8 grid grid-cols-1 gap-4 border-t border-border pt-6 sm:grid-cols-3">
                 {pillars.map((pillar) => (
                     <div
                         key={pillar.label}
-                        className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 transition-colors hover:border-white/10 hover:bg-white/[0.04]"
+                        className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 shadow-sm"
                     >
                         <div className={`mb-2 flex items-center gap-2 ${pillar.accent}`}>
                             <pillar.icon size={16} />
@@ -127,7 +127,7 @@ export const TerminalHero: React.FC = () => {
                                 {pillar.label}
                             </span>
                         </div>
-                        <p className="text-xs leading-relaxed text-white/45">{pillar.detail}</p>
+                        <p className="text-xs leading-relaxed text-muted-foreground font-medium">{pillar.detail}</p>
                     </div>
                 ))}
             </div>

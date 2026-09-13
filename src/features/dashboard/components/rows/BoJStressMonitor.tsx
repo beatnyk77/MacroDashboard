@@ -89,8 +89,8 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     }
 
     return (
-      <div className="bg-slate-800/95 backdrop-blur-sm border border-slate-700 rounded-lg p-3 shadow-xl z-50 min-w-[160px]">
-        <p className="text-slate-300 font-semibold mb-2 border-b border-slate-700 pb-1 text-xs uppercase tracking-wide">
+      <div className="bg-popover text-popover-foreground border border-border rounded-lg p-3 shadow-xl z-50 min-w-[160px]">
+        <p className="text-foreground font-semibold mb-2 border-b border-border pb-1 text-xs uppercase tracking-wide">
           {date}
         </p>
         <div className="space-y-1.5">{rows}</div>
@@ -103,8 +103,8 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
 // ── Chart Shared Styles ─────────────────────────────────────────────
 
 const chartCommon = {
-  tick: { fontSize: 11, fill: '#94a3b8' },
-  stroke: '#64748b',
+  tick: { fontSize: 11, fill: 'hsl(var(--muted-foreground))' },
+  stroke: 'hsl(var(--border))',
 } as const;
 
 // ── Chart 1: Balance Sheet Expansion ────────────────────────────────
@@ -113,13 +113,13 @@ const BalanceSheetGrowth: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
-          <div className="w-1 h-5 bg-cyan-400 rounded-full" />
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <div className="w-1 h-5 bg-cyan-500 rounded-full" />
           Balance Sheet vs Monetary Base
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card rounded-xl p-4 border border-border shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
@@ -129,7 +129,7 @@ const BalanceSheetGrowth: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -188,13 +188,13 @@ const LiquidityAcceleration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
-          <div className="w-1 h-5 bg-emerald-400 rounded-full" />
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <div className="w-1 h-5 bg-emerald-500 rounded-full" />
           Liquidity Acceleration (3M Rate of Change)
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card rounded-xl p-4 border border-border shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
             <defs>
@@ -208,7 +208,7 @@ const LiquidityAcceleration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               </linearGradient>
             </defs>
 
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -223,7 +223,7 @@ const LiquidityAcceleration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               stroke={chartCommon.stroke}
             />
             <Tooltip content={<ChartTooltip />} />
-            <ReferenceLine y={0} stroke="#64748b" strokeDasharray="4 4" />
+            <ReferenceLine y={0} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" />
             
             <Bar
               dataKey="assetsRoc"
@@ -239,7 +239,7 @@ const LiquidityAcceleration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </ComposedChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center">
+      <p className="text-muted-foreground text-xs italic text-center">
         The speed of BoJ balance sheet expansion/contraction, identifying pivotal shifts in monetary posture.
       </p>
     </div>
@@ -252,16 +252,16 @@ const JGBCencentration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="text-sm font-bold text-white flex items-center gap-2">
-          <div className="w-1 h-5 bg-indigo-400 rounded-full" />
+        <h4 className="text-sm font-bold text-foreground flex items-center gap-2">
+          <div className="w-1 h-5 bg-indigo-500 rounded-full" />
           JGB Concentration
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-slate-800/50 rounded-xl p-4 border border-slate-700/30">
+      <div className="h-[280px] w-full bg-card rounded-xl p-4 border border-border shadow-sm">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#334155" opacity={0.3} vertical={false} />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
             <XAxis
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
@@ -289,7 +289,7 @@ const JGBCencentration: React.FC<{ data: DataPoint[] }> = ({ data }) => {
           </LineChart>
         </ResponsiveContainer>
       </div>
-      <p className="text-slate-500 text-xs italic text-center">
+      <p className="text-muted-foreground text-xs italic text-center">
         JGB Holdings as a percentage of Total Assets, measuring direct debt monetization.
       </p>
     </div>
@@ -308,24 +308,24 @@ const MetricCard: React.FC<{
   <m.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-slate-800/50 border border-slate-700/50 rounded-xl p-4 hover:border-cyan-500/30 transition-colors"
+    className="bg-card border border-border rounded-xl p-4 hover:border-primary/40 transition-colors shadow-sm"
   >
     <div className="flex items-center justify-between gap-2 mb-1">
-      <div className="flex items-center gap-2 text-slate-400 text-xs">{icon}</div>
+      <div className="flex items-center gap-2 text-muted-foreground text-xs">{icon}</div>
       {trend && (
         <span
           className={cn(
             'text-[10px] font-black uppercase px-1.5 py-0.5 rounded',
-            trend === 'up' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-500'
+            trend === 'up' ? 'bg-emerald-500/20 text-emerald-500' : 'bg-rose-500/20 text-rose-500'
           )}
         >
           {trend}
         </span>
       )}
     </div>
-    <div className="text-xl font-bold text-white tabular-nums">{value}</div>
-    <div className="text-xs text-slate-500 mt-0.5">{label}</div>
-    {sub && <div className="text-[10px] text-slate-600 mt-1">{sub}</div>}
+    <div className="text-xl font-bold text-foreground tabular-nums">{value}</div>
+    <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
+    {sub && <div className="text-[10px] text-muted-foreground/70 mt-1">{sub}</div>}
   </m.div>
 );
 
@@ -448,28 +448,28 @@ export const BoJStressMonitor: React.FC = () => {
     return (
       <section className="w-full rounded-2xl border border-amber-400/20 bg-amber-400/[0.05] p-8 text-center">
         <Database className="mx-auto mb-3 h-7 w-7 text-amber-300" />
-        <h2 className="text-lg font-bold text-white">BoJ balance-sheet data unavailable</h2>
-        <p className="mx-auto mt-2 max-w-xl text-sm text-slate-400">The connected source has returned no observations for this monitor. No replacement values are displayed.</p>
+        <h2 className="text-lg font-bold text-foreground">BoJ balance-sheet data unavailable</h2>
+        <p className="mx-auto mt-2 max-w-xl text-sm text-muted-foreground">The connected source has returned no observations for this monitor. No replacement values are displayed.</p>
       </section>
     );
   }
 
   return (
-    <section className="w-full bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-2xl shadow-2xl overflow-hidden border border-slate-700/50">
+    <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border">
       {/* Header */}
-      <div className="p-6 md:p-8 border-b border-slate-700/50">
+      <div className="p-6 md:p-8 border-b border-border">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 flex items-center gap-3">
-              <Database className="w-7 h-7 text-cyan-400" />
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
+              <Database className="w-7 h-7 text-cyan-500" />
               BOJ Monetary Dominance
             </h2>
-            <p className="text-slate-400 text-sm md:text-base max-w-2xl">
+            <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
               Bank of Japan balance sheet dynamics · Liquidity Acceleration · Debt Monetization
             </p>
           </div>
           {latest && (
-            <div className="flex items-center gap-2 text-slate-400 text-sm">
+            <div className="flex items-center gap-2 text-muted-foreground text-sm">
               <Clock className="w-4 h-4" />
               <span>Updated: {new Date(latest.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
             </div>
@@ -478,30 +478,30 @@ export const BoJStressMonitor: React.FC = () => {
       </div>
 
       {/* Quick Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-slate-800/20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-muted/20">
         <MetricCard
-          icon={<Database className="w-5 h-5 text-cyan-400" />}
+          icon={<Database className="w-5 h-5 text-cyan-500" />}
           label="Total Assets"
           value={latest?.totalAssetsT ? `¥${latest.totalAssetsT.toFixed(2)}T` : '—'}
           sub="Bank of Japan Holdings"
           trend={isAssetsGrowing ? 'up' : 'down'}
         />
         <MetricCard
-          icon={<Activity className="w-5 h-5 text-amber-400" />}
+          icon={<Activity className="w-5 h-5 text-amber-500" />}
           label="Monetary Base"
           value={latest?.monetaryBaseT ? `¥${latest.monetaryBaseT.toFixed(2)}T` : '—'}
           sub="Base Liquidity"
           trend={isBaseGrowing ? 'up' : 'down'}
         />
         <MetricCard
-          icon={<DollarSign className="w-5 h-5 text-indigo-400" />}
+          icon={<DollarSign className="w-5 h-5 text-indigo-500" />}
           label="JGB Holdings"
           value={latest?.jgbHoldingsT ? `¥${latest.jgbHoldingsT.toFixed(2)}T` : 'Unavailable'}
           sub="Awaiting a maintained source"
           trend={latest?.jgbHoldingsT === undefined ? undefined : (isJgbGrowing ? 'up' : 'down')}
         />
         <MetricCard
-          icon={<TrendingUp className="w-5 h-5 text-emerald-400" />}
+          icon={<TrendingUp className="w-5 h-5 text-emerald-500" />}
           label="3M Asset Growth"
           value={latest?.assetsRoc !== undefined ? `${latest.assetsRoc >= 0 ? '+' : ''}${latest.assetsRoc.toFixed(2)}%` : '—'}
           sub="Liquidity Acceleration"
@@ -518,8 +518,8 @@ export const BoJStressMonitor: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           <LiquidityAcceleration data={chartData} />
           {chartData.some(point => point.jgbConcentration !== undefined) ? <JGBCencentration data={chartData} /> : (
-            <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-amber-400/15 bg-amber-400/[0.04] p-6 text-center">
-              <div><div className="text-sm font-semibold text-amber-200">JGB concentration unavailable</div><div className="mt-2 text-xs text-slate-500">The JGB holdings series is not connected to a maintained source.</div></div>
+            <div className="flex min-h-[280px] items-center justify-center rounded-xl border border-amber-500/20 bg-amber-500/[0.05] p-6 text-center">
+              <div><div className="text-sm font-semibold text-amber-600 dark:text-amber-200">JGB concentration unavailable</div><div className="mt-2 text-xs text-muted-foreground">The JGB holdings series is not connected to a maintained source.</div></div>
             </div>
           )}
         </div>
@@ -527,8 +527,8 @@ export const BoJStressMonitor: React.FC = () => {
 
       {/* Source footer */}
       <div className="flex justify-center pb-6">
-        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800/50 border border-slate-700/30">
-          <span className="text-[10px] font-bold text-slate-400 uppercase tracking-uppercase">
+        <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card border border-border shadow-sm">
+          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-uppercase">
             Sources: Bank of Japan (BOJ)
           </span>
         </div>

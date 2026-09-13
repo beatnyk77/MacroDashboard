@@ -2,13 +2,13 @@ import type { CSSProperties } from 'react';
 
 export const DEFAULT_CARTESIAN_GRID_PROPS = {
   strokeDasharray: '3 3',
-  stroke: '#1e293b',
+  stroke: 'hsl(var(--border))',
   vertical: false,
 } as const;
 
 export const DEFAULT_XAXIS_PROPS = {
   tick: {
-    fill: '#64748b',
+    fill: 'hsl(var(--muted-foreground))',
     fontSize: 11,
     fontFamily: 'IBM Plex Mono, monospace'
   },
@@ -18,7 +18,7 @@ export const DEFAULT_XAXIS_PROPS = {
 
 export const DEFAULT_YAXIS_PROPS = {
   tick: {
-    fill: '#64748b',
+    fill: 'hsl(var(--muted-foreground))',
     fontSize: 11,
     fontFamily: 'IBM Plex Mono, monospace'
   },
@@ -28,22 +28,22 @@ export const DEFAULT_YAXIS_PROPS = {
 } as const;
 
 export const DEFAULT_TOOLTIP_STYLE: CSSProperties = {
-  backgroundColor: '#0f172a',
-  border: '1px solid rgba(255,255,255,0.08)',
+  backgroundColor: 'hsl(var(--popover))',
+  border: '1px solid hsl(var(--border))',
   borderRadius: '8px',
   padding: '10px 14px',
   fontSize: '12px',
   fontFamily: 'IBM Plex Mono, monospace',
-  color: '#f8fafc',
+  color: 'hsl(var(--popover-foreground))',
 };
 
 export const EVENT_REFERENCE_LINE_PROPS = {
-  stroke: '#475569',
+  stroke: 'hsl(var(--border))',
   strokeDasharray: '4 4',
   strokeWidth: 1,
   label: {
     fontSize: 10,
-    fill: '#64748b',
+    fill: 'hsl(var(--muted-foreground))',
     fontFamily: 'IBM Plex Mono, monospace'
   },
 } as const;
@@ -52,7 +52,7 @@ export const DEFAULT_LEGEND_PROPS = {
   wrapperStyle: {
     fontSize: '11px',
     fontFamily: 'IBM Plex Mono, monospace',
-    color: '#64748b'
+    color: 'hsl(var(--muted-foreground))'
   },
 } as const;
 

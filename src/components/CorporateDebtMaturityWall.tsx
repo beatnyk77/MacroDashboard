@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Cell } from 'recharts';
-import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp, ArrowUpRight, FileSearch } from 'lucide-react';
+import { Building2, Calendar, DollarSign, AlertTriangle, Activity, Percent, TrendingUp, ExternalLink, FileSearch } from 'lucide-react';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
 
@@ -173,8 +173,8 @@ export const CorporateDebtMaturityWall: React.FC = () => {
 
     if (loading) {
         return (
-            <div className="w-full h-96 flex items-center justify-center bg-slate-900/50 rounded-xl border border-slate-800">
-                <div className="animate-pulse text-slate-500 flex items-center gap-2">
+            <div className="w-full h-96 flex items-center justify-center bg-card rounded-xl border border-border shadow-sm">
+                <div className="animate-pulse text-muted-foreground flex items-center gap-2">
                     <Activity className="w-5 h-5 animate-spin" />
                     Loading corporate maturity telemetry...
                 </div>
@@ -184,13 +184,13 @@ export const CorporateDebtMaturityWall: React.FC = () => {
 
     if (!asOfDate || data.length === 0 || freshness === 'stale') {
         return (
-            <section className="w-full bg-slate-950 border border-slate-800/50 rounded-2xl p-8 md:p-10">
+            <section className="w-full bg-card border border-border rounded-2xl p-8 md:p-10 shadow-sm">
                 <div className="flex flex-wrap items-center gap-3 mb-4">
                     <FreshnessChip status={asOfDate ? freshness : 'no_data'} lastUpdated={asOfDate ?? undefined} />
-                    <span className="text-xs font-mono text-slate-500 uppercase tracking-widest">USD presentation</span>
+                    <span className="text-xs font-mono text-muted-foreground uppercase tracking-widest">USD presentation</span>
                 </div>
-                <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">Corporate Debt Maturity Wall</h2>
-                <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+                <h2 className="text-xl font-black text-foreground uppercase tracking-tight mb-2">Corporate Debt Maturity Wall</h2>
+                <p className="text-sm text-muted-foreground max-w-xl leading-relaxed">
                     {asOfDate
                         ? `Latest snapshot as-of ${asOfDate} is beyond the 30-day freshness window and is not shown as live telemetry. Pipeline restores via ingest-corporate-debt-maturities (FRED Z.1 × SIFMA structure).`
                         : 'No corporate debt maturity observations available. Surface withheld rather than displaying fabricated amounts. Source: FRED NCBCMDPMVCE + ICE BofA yields + SIFMA maturity weights.'}
@@ -200,40 +200,40 @@ export const CorporateDebtMaturityWall: React.FC = () => {
     }
 
     return (
-        <section className="w-full bg-gradient-to-b from-slate-950 via-slate-900/95 to-slate-950 border border-slate-800/50 rounded-2xl overflow-hidden shadow-2xl relative">
+        <section className="w-full bg-card dark:bg-gradient-to-b dark:from-slate-950 dark:via-slate-900/95 dark:to-slate-950 border border-border dark:border-slate-800/50 rounded-2xl overflow-hidden shadow-sm dark:shadow-2xl relative">
             {/* Glow accents */}
             <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-red-500/30 to-transparent"></div>
             <div className="absolute bottom-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-emerald-500/20 to-transparent"></div>
 
             {/* Header Area */}
-            <div className="relative p-6 md:p-8 border-b border-slate-800/50 bg-slate-900/30 backdrop-blur-sm">
+            <div className="relative p-6 md:p-8 border-b border-border dark:border-slate-800/50 bg-muted/40 dark:bg-slate-900/30 backdrop-blur-sm">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-6">
                     <div className="space-y-3">
                         <div className="flex flex-wrap items-center gap-2">
-                            <span className="bg-gradient-to-r from-blue-500/15 to-cyan-500/15 text-blue-300 text-[10px] font-black px-2.5 py-1 rounded border border-blue-500/30 uppercase tracking-[0.15em] shadow-sm">
+                            <span className="bg-blue-500/10 text-blue-700 dark:text-blue-300 text-[10px] font-black px-2.5 py-1 rounded border border-blue-500/30 uppercase tracking-[0.15em] shadow-sm">
                                 USD
                             </span>
                             <FreshnessChip status={freshness} lastUpdated={asOfDate} sourceRef="fred:NCBCMDPMVCE+ICE_BofA" />
-                            <span className="text-slate-600 text-xs">|</span>
-                            <span className="text-slate-400 text-xs font-mono">FRED Z.1 stock × SIFMA structure · ICE BofA yields</span>
+                            <span className="text-muted-foreground/40 text-xs">|</span>
+                            <span className="text-muted-foreground text-xs font-mono">FRED Z.1 stock × SIFMA structure · ICE BofA yields</span>
                             {stats.avgCpn > 0 && (
                                 <>
-                                    <span className="text-slate-600 text-xs">|</span>
-                                    <span className="text-amber-400/80 text-xs font-mono">
+                                    <span className="text-muted-foreground/40 text-xs">|</span>
+                                    <span className="text-amber-600 dark:text-amber-400/80 text-xs font-mono">
                                         WAC: {stats.avgCpn.toFixed(2)}%
                                     </span>
                                 </>
                             )}
                         </div>
                         <div className="flex items-center gap-3">
-                            <div className="p-2 bg-slate-800/80 rounded-lg border border-slate-700/50 shadow-lg">
-                                <Building2 className="w-6 h-6 text-blue-400" />
+                            <div className="p-2 bg-card dark:bg-slate-800/80 rounded-lg border border-border dark:border-slate-700/50 shadow-sm">
+                                <Building2 className="w-6 h-6 text-blue-500 dark:text-blue-400" />
                             </div>
                             <div>
-                                <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight leading-none">
+                                <h2 className="text-2xl md:text-3xl font-black text-foreground uppercase tracking-tight leading-none">
                                     Corporate Debt Maturity Wall
                                 </h2>
-                                <p className="text-slate-400 text-xs md:text-sm mt-2 font-mono">
+                                <p className="text-muted-foreground text-xs md:text-sm mt-2 font-mono">
                                     USD aggregate maturities • as-of {asOfDate} • rollover risk by tenor bucket
                                 </p>
                             </div>
@@ -244,20 +244,20 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     <div className="flex flex-wrap items-center gap-2.5">
                         <a
                             href="/corporate-transmission"
-                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-300 hover:text-white transition-all text-xs font-mono font-bold uppercase tracking-wider group shadow-sm"
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-blue-500/30 bg-blue-500/10 hover:bg-blue-500/20 text-blue-700 dark:text-blue-300 hover:text-foreground transition-all text-xs font-mono font-bold uppercase tracking-wider group shadow-sm"
                             title="Open full US SEC Corporate Transmission Desk"
                         >
-                            <FileSearch className="w-3.5 h-3.5 text-blue-400 group-hover:text-blue-300" />
-                            <span>US SEC Filings Desk</span>
-                            <ArrowUpRight className="w-3.5 h-3.5 text-blue-400/70 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                            <FileSearch className="w-3.5 h-3.5 text-blue-500 group-hover:text-blue-600 dark:text-blue-400 dark:group-hover:text-blue-300" />
+                            <span>SEC Transmission</span>
+                            <ExternalLink className="w-3 h-3 opacity-60 group-hover:opacity-100" />
                         </a>
 
-                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border ${
-                            (stats.yr1Total / stats.total) > 0.25
-                                ? 'bg-red-500/15 border-red-500/40 text-red-200'
-                                : (stats.yr1Total / stats.total) > 0.15
-                                ? 'bg-amber-500/15 border-amber-500/40 text-amber-200'
-                                : 'bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
+                        <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono font-bold shadow-sm ${
+                            stats.yr1Total / stats.total > 0.20
+                                ? 'bg-red-500/15 border-red-500/40 text-red-700 dark:text-red-200'
+                                : stats.yr1Total / stats.total > 0.15
+                                ? 'bg-amber-500/15 border-amber-500/40 text-amber-700 dark:text-amber-200'
+                                : 'bg-emerald-500/15 border-emerald-500/40 text-emerald-700 dark:text-emerald-200'
                         }`}>
                             <AlertTriangle className="w-4 h-4" />
                             <span className="text-xs font-bold uppercase tracking-wider">
@@ -269,64 +269,60 @@ export const CorporateDebtMaturityWall: React.FC = () => {
             </div>
 
             {/* Key Metrics Row - Higher Contrast */}
-            <div className="grid grid-cols-2 md:grid-cols-4 border-b border-slate-800/50 bg-slate-900/40">
-                <div className="p-5 border-r border-slate-800/50 hover:bg-slate-800/30 transition-colors relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+            <div className="grid grid-cols-2 md:grid-cols-4 border-b border-border bg-card dark:bg-slate-900/40">
+                <div className="p-5 border-r border-border hover:bg-muted/40 transition-colors relative group">
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-slate-400 text-[10px] font-bold uppercase tracking-wider mb-2">
-                            <DollarSign className="w-3.5 h-3.5 text-blue-400" />
+                        <div className="flex items-center gap-2 text-muted-foreground text-[10px] font-bold uppercase tracking-wider mb-2">
+                            <DollarSign className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
                             Total Aggregate Debt
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-white tracking-tight tabular-nums">
+                        <div className="text-2xl md:text-3xl font-mono font-black text-foreground tracking-tight tabular-nums">
                             {formatUsdTrillions(stats.total)}
                         </div>
-                        <p className="text-slate-500 text-xs mt-1 font-mono">USD · nonfin. corp debt securities (FRED)</p>
+                        <p className="text-muted-foreground text-xs mt-1 font-mono">USD · nonfin. corp debt securities (FRED)</p>
                     </div>
                 </div>
 
-                <div className="p-5 border-r border-slate-800/50 bg-red-500/5 hover:bg-red-500/10 transition-colors relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-red-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-5 border-r border-border bg-red-500/5 hover:bg-red-500/10 transition-colors relative group">
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-red-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <div className="flex items-center gap-2 text-rose-600 dark:text-red-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
                             <AlertTriangle className="w-3.5 h-3.5" />
                             &lt; 1 Year Maturities
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-red-400 tracking-tight tabular-nums">
+                        <div className="text-2xl md:text-3xl font-mono font-black text-rose-600 dark:text-red-400 tracking-tight tabular-nums">
                             {formatUsdTrillions(stats.yr1Total)}
                         </div>
-                        <p className="text-red-300/60 text-xs mt-1 font-mono">
+                        <p className="text-rose-700/80 dark:text-red-300/60 text-xs mt-1 font-mono">
                             USD · {((stats.yr1Total / stats.total) * 100).toFixed(1)}% of total
                         </p>
                     </div>
                 </div>
 
-                <div className="p-5 border-r border-slate-800/50 hover:bg-slate-800/30 transition-colors relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-amber-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-5 border-r border-border hover:bg-muted/40 transition-colors relative group">
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-amber-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <div className="flex items-center gap-2 text-amber-600 dark:text-amber-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
                             <Percent className="w-3.5 h-3.5" />
                             1–3 Year Bucket
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-amber-400 tracking-tight tabular-nums">
+                        <div className="text-2xl md:text-3xl font-mono font-black text-amber-600 dark:text-amber-400 tracking-tight tabular-nums">
                             {formatUsdTrillions(data.find(d => d.bucket === '1–3Y')?.amount || 0)}
                         </div>
-                        <p className="text-slate-500 text-xs mt-1 font-mono">
+                        <p className="text-muted-foreground text-xs mt-1 font-mono">
                             {(data.find(d => d.bucket === '1–3Y')?.percent || 0).toFixed(1)}% of total
                         </p>
                     </div>
                 </div>
 
-                <div className="p-5 hover:bg-slate-800/30 transition-colors relative group">
-                    <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="p-5 hover:bg-muted/40 transition-colors relative group">
                     <div className="relative z-10">
-                        <div className="flex items-center gap-2 text-emerald-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
+                        <div className="flex items-center gap-2 text-emerald-600 dark:text-emerald-400/80 text-[10px] font-bold uppercase tracking-wider mb-2">
                             <TrendingUp className="w-3.5 h-3.5" />
                             &gt; 5 Year Duration
                         </div>
-                        <div className="text-2xl md:text-3xl font-mono font-black text-emerald-400 tracking-tight">
+                        <div className="text-2xl md:text-3xl font-mono font-black text-emerald-600 dark:text-emerald-400 tracking-tight">
                             ${(data.find(d => d.bucket === '>5Y')?.amount || 0).toFixed(2)}T
                         </div>
-                        <p className="text-slate-500 text-xs mt-1 font-mono">
+                        <p className="text-muted-foreground text-xs mt-1 font-mono">
                             Long-dated resilience
                         </p>
                     </div>
@@ -334,14 +330,14 @@ export const CorporateDebtMaturityWall: React.FC = () => {
             </div>
 
             {/* Main Chart Section */}
-            <div className="p-6 md:p-8 bg-slate-950/50">
+            <div className="p-6 md:p-8 bg-muted/20 dark:bg-slate-950/50">
                 <div className="grid lg:grid-cols-4 gap-8">
                     {/* Chart Area */}
                     <div className="lg:col-span-3">
                         <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                             <div className="flex items-center gap-2">
                                 <div className="w-1 h-6 bg-gradient-to-b from-blue-400 to-cyan-500 rounded-full"></div>
-                                <h3 className="text-lg font-bold text-white uppercase tracking-wide">
+                                <h3 className="text-lg font-bold text-foreground uppercase tracking-wide">
                                     Maturity Distribution
                                 </h3>
                             </div>
@@ -350,17 +346,17 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                 onClick={() => setDistressOverlay(!distressOverlay)}
                                 className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-mono font-bold uppercase tracking-wider transition-all ${
                                     distressOverlay
-                                        ? 'border-red-500/60 bg-red-500/20 text-red-200 shadow-[0_0_16px_rgba(239,68,68,0.3)]'
-                                        : 'border-slate-700 bg-slate-800/70 text-slate-400 hover:text-slate-200 hover:border-slate-600'
+                                        ? 'border-red-500/60 bg-red-500/20 text-red-700 dark:text-red-200 shadow-[0_0_16px_rgba(239,68,68,0.3)]'
+                                        : 'border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted'
                                 }`}
                             >
-                                <AlertTriangle className={`w-3.5 h-3.5 ${distressOverlay ? 'text-red-400 animate-pulse' : 'text-slate-400'}`} />
+                                <AlertTriangle className={`w-3.5 h-3.5 ${distressOverlay ? 'text-red-500 animate-pulse' : 'text-muted-foreground'}`} />
                                 <span>{distressOverlay ? '⚡ Zombie Overlay: ACTIVE' : 'Zombie Distress Overlay'}</span>
                             </button>
                         </div>
 
                         {/* Enhanced Chart Container */}
-                        <div className="relative h-[400px] w-full bg-slate-900/50 rounded-xl border border-slate-800/50 p-4 shadow-inner">
+                        <div className="relative h-[400px] w-full bg-card dark:bg-slate-900/50 rounded-xl border border-border dark:border-slate-800/50 p-4 shadow-sm">
                             <div className="absolute inset-0 bg-gradient-to-b from-slate-900/0 via-slate-900/20 to-slate-900/0 pointer-events-none"></div>
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart
@@ -370,22 +366,22 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                 >
                                     <CartesianGrid
                                         strokeDasharray="2 2"
-                                        stroke="#334155"
-                                        opacity={0.25}
+                                        stroke="hsl(var(--border))"
+                                        opacity={0.5}
                                         vertical={false}
                                         horizontal={true}
                                     />
                                     <XAxis
                                         dataKey="bucket"
-                                        stroke="#64748b"
-                                        tick={{ fill: '#94a3b8', fontSize: 12, fontWeight: 600 }}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12, fontWeight: 600 }}
                                         axisLine={false}
                                         tickLine={false}
                                         padding={{ left: 8, right: 8 }}
                                     />
                                     <YAxis
-                                        stroke="#64748b"
-                                        tick={{ fill: '#94a3b8', fontSize: 11, fontFamily: 'mono' }}
+                                        stroke="hsl(var(--muted-foreground))"
+                                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 11, fontFamily: 'mono' }}
                                         tickFormatter={(val) => `$${val}T`}
                                         axisLine={false}
                                         tickLine={false}
@@ -397,57 +393,57 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                                             if (active && payload && payload.length) {
                                                 const entry = payload[0].payload;
                                                 return (
-                                                    <div className="bg-slate-900/98 border border-slate-700/70 rounded-lg p-4 shadow-2xl backdrop-blur-md min-w-[240px]">
-                                                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-slate-700/50">
+                                                    <div className="bg-popover text-popover-foreground border border-border rounded-lg p-4 shadow-2xl backdrop-blur-md min-w-[240px]">
+                                                        <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
                                                             <div
                                                                 className="w-3 h-3 rounded-sm shadow-lg"
                                                                 style={{ backgroundColor: entry.colorSet.base, boxShadow: `0 0 8px ${entry.colorSet.glow}` }}
                                                             ></div>
-                                                            <span className="text-slate-200 font-bold text-sm uppercase">
+                                                            <span className="text-foreground font-bold text-sm uppercase">
                                                                 {entry.bucket}
                                                             </span>
                                                         </div>
                                                         <div className="space-y-2.5">
                                                             <div className="flex items-center justify-between">
-                                                                <span className="text-slate-400 text-xs uppercase tracking-wide">Total Face</span>
-                                                                <span className="text-white font-mono font-bold text-sm">
+                                                                <span className="text-muted-foreground text-xs uppercase tracking-wide">Total Face</span>
+                                                                <span className="text-foreground font-mono font-bold text-sm">
                                                                     ${entry.amount.toFixed(2)}T
                                                                 </span>
                                                             </div>
                                                             {distressOverlay && (
                                                                 <>
                                                                     <div className="flex items-center justify-between p-1.5 rounded bg-red-500/10 border border-red-500/20">
-                                                                        <span className="text-red-300 text-xs font-bold uppercase tracking-wide">Zombie / Risk</span>
-                                                                        <span className="text-red-300 font-mono font-bold text-sm">
+                                                                        <span className="text-rose-600 dark:text-red-300 text-xs font-bold uppercase tracking-wide">Zombie / Risk</span>
+                                                                        <span className="text-rose-600 dark:text-red-300 font-mono font-bold text-sm">
                                                                             ${entry.zombieAmount?.toFixed(2)}T ({entry.zombiePercent?.toFixed(0)}%)
                                                                         </span>
                                                                     </div>
                                                                     <div className="flex items-center justify-between p-1.5 rounded bg-blue-500/10 border border-blue-500/20">
-                                                                        <span className="text-blue-300 text-xs font-bold uppercase tracking-wide">Solvent Quality</span>
-                                                                        <span className="text-blue-300 font-mono font-bold text-sm">
+                                                                        <span className="text-blue-600 dark:text-blue-300 text-xs font-bold uppercase tracking-wide">Solvent Quality</span>
+                                                                        <span className="text-blue-600 dark:text-blue-300 font-mono font-bold text-sm">
                                                                             ${entry.solventAmount?.toFixed(2)}T
                                                                         </span>
                                                                     </div>
                                                                 </>
                                                             )}
                                                             <div className="flex items-center justify-between">
-                                                                <span className="text-slate-400 text-xs uppercase tracking-wide">% of Total Wall</span>
-                                                                <span className="text-slate-200 font-mono text-sm">
+                                                                <span className="text-muted-foreground text-xs uppercase tracking-wide">% of Total Wall</span>
+                                                                <span className="text-foreground font-mono text-sm">
                                                                     {entry.percent.toFixed(1)}%
                                                                 </span>
                                                             </div>
                                                             {entry.coupon && entry.coupon > 0 && (
                                                                 <div className="flex items-center justify-between">
-                                                                    <span className="text-slate-400 text-xs uppercase tracking-wide">Wght Avg Cpn</span>
-                                                                    <span className="text-amber-300 font-mono text-sm">
+                                                                    <span className="text-muted-foreground text-xs uppercase tracking-wide">Wght Avg Cpn</span>
+                                                                    <span className="text-amber-600 dark:text-amber-300 font-mono text-sm">
                                                                         {entry.coupon.toFixed(2)}%
                                                                     </span>
                                                                 </div>
                                                             )}
                                                             {entry.delta && (
                                                                 <div className="flex items-center justify-between">
-                                                                    <span className="text-slate-400 text-xs uppercase tracking-wide">Refi Δ Cost</span>
-                                                                    <span className={`font-mono text-sm ${entry.delta > 0 ? 'text-red-300' : 'text-emerald-300'}`}>
+                                                                    <span className="text-muted-foreground text-xs uppercase tracking-wide">Refi Δ Cost</span>
+                                                                    <span className={`font-mono text-sm ${entry.delta > 0 ? 'text-rose-600 dark:text-red-300' : 'text-emerald-600 dark:text-emerald-300'}`}>
                                                                         {entry.delta > 0 ? '+' : ''}{entry.delta.toFixed(0)}bps
                                                                     </span>
                                                                 </div>
@@ -504,27 +500,27 @@ export const CorporateDebtMaturityWall: React.FC = () => {
 
                         {/* Legend */}
                         {distressOverlay ? (
-                            <div className="flex flex-wrap items-center justify-center gap-6 mt-4 pt-4 border-t border-slate-800/30">
+                            <div className="flex flex-wrap items-center justify-center gap-6 mt-4 pt-4 border-t border-border">
                                 <div className="flex items-center gap-2 text-xs">
                                     <div className="w-3 h-3 rounded-sm shadow-sm bg-red-600 shadow-[0_0_8px_rgba(220,38,38,0.5)]"></div>
-                                    <span className="text-red-400 font-mono font-bold uppercase tracking-wide">
+                                    <span className="text-rose-600 dark:text-red-400 font-mono font-bold uppercase tracking-wide">
                                         🔴 Sub-1.0 ICR / Rollover Zombie Debt (~21.6% Wall Total)
                                     </span>
                                 </div>
                                 <div className="flex items-center gap-2 text-xs">
                                     <div className="w-3 h-3 rounded-sm shadow-sm bg-blue-500 shadow-[0_0_8px_rgba(59,130,246,0.4)]"></div>
-                                    <span className="text-blue-400 font-mono font-bold uppercase tracking-wide">
+                                    <span className="text-blue-600 dark:text-blue-400 font-mono font-bold uppercase tracking-wide">
                                         🟢 Solvent High-Quality Debt (~78.4%)
                                     </span>
                                 </div>
                             </div>
                         ) : (
-                            <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-slate-800/30">
+                            <div className="flex items-center justify-center gap-6 mt-4 pt-4 border-t border-border">
                                 {[
-                                    {color: COLORS.yr1.base, label: '&lt;1Y (High Risk)', text: 'text-red-400'},
-                                    {color: COLORS.yr2_3.base, label: '1–3Y (Elevated)', text: 'text-amber-400'},
-                                    {color: COLORS.yr4_5.base, label: '3–5Y (Manageable)', text: 'text-blue-400'},
-                                    {color: COLORS.yr5Plus.base, label: '>5Y (Distant)', text: 'text-emerald-400'}
+                                    {color: COLORS.yr1.base, label: '<1Y (High Risk)', text: 'text-rose-600 dark:text-red-400'},
+                                    {color: COLORS.yr2_3.base, label: '1–3Y (Elevated)', text: 'text-amber-600 dark:text-amber-400'},
+                                    {color: COLORS.yr4_5.base, label: '3–5Y (Manageable)', text: 'text-blue-600 dark:text-blue-400'},
+                                    {color: COLORS.yr5Plus.base, label: '>5Y (Distant)', text: 'text-emerald-600 dark:text-emerald-400'}
                                 ].map((item, idx) => (
                                     <div key={idx} className="flex items-center gap-2 text-xs">
                                         <div
@@ -566,16 +562,16 @@ export const CorporateDebtMaturityWall: React.FC = () => {
 
                     {/* Insights Sidebar */}
                     <div className="space-y-4">
-                        <div className="bg-gradient-to-br from-red-500/10 via-red-500/5 to-transparent border border-red-500/20 rounded-xl p-5">
+                        <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-5 shadow-sm">
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="p-1.5 bg-red-500/20 rounded-lg">
-                                    <AlertTriangle className="w-4 h-4 text-red-400" />
+                                    <AlertTriangle className="w-4 h-4 text-red-500" />
                                 </div>
-                                <h4 className="text-xs font-bold text-red-200 uppercase tracking-wider">
+                                <h4 className="text-xs font-bold text-red-700 dark:text-red-200 uppercase tracking-wider">
                                     Refinancing Alert
                                 </h4>
                             </div>
-                            <p className="text-slate-300 text-xs leading-relaxed">
+                            <p className="text-foreground/90 text-xs leading-relaxed">
                                 {(stats.yr1Total / stats.total * 100) > 20
                                     ? `CRITICAL: ${((stats.yr1Total / stats.total) * 100).toFixed(0)}% of corporate debt rolls over within 12 months. Historical avg is ~12%.`
                                     : `ELEVATED: ${((stats.yr1Total / stats.total) * 100).toFixed(0)}% of debt maturing &lt;1Y exceeds historical averages.`
@@ -583,55 +579,55 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                             </p>
                             {stats.deltaAvg > 0 && (
                                 <div className="mt-3 p-2 bg-red-500/10 rounded border border-red-500/20">
-                                    <p className="text-red-300 text-[10px] font-mono">
+                                    <p className="text-red-700 dark:text-red-300 text-[10px] font-mono font-bold">
                                         Implied refinancing costs +{stats.deltaAvg.toFixed(0)}bps vs current avg coupon
                                     </p>
                                 </div>
                             )}
                         </div>
 
-                        <div className="bg-slate-800/40 border border-slate-700/50 rounded-xl p-5">
+                        <div className="bg-card dark:bg-slate-800/40 border border-border dark:border-slate-700/50 rounded-xl p-5 shadow-sm">
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="p-1.5 bg-blue-500/20 rounded-lg">
-                                    <Calendar className="w-4 h-4 text-blue-400" />
+                                    <Calendar className="w-4 h-4 text-blue-500" />
                                 </div>
-                                <h4 className="text-xs font-bold text-blue-200 uppercase tracking-wider">
+                                <h4 className="text-xs font-bold text-blue-700 dark:text-blue-200 uppercase tracking-wider">
                                     Read Framework
                                 </h4>
                             </div>
-                            <div className="space-y-3 text-xs text-slate-300">
+                            <div className="space-y-3 text-xs text-foreground/80">
                                 <p>
-                                    <strong className="text-blue-300">Tenor risk:</strong> Share of face maturing &lt;1Y is the primary rollover-stress gauge. Values above ~20% of total warrant higher scrutiny of refinancing capacity.
+                                    <strong className="text-blue-700 dark:text-blue-300">Tenor risk:</strong> Share of face maturing &lt;1Y is the primary rollover-stress gauge. Values above ~20% of total warrant higher scrutiny of refinancing capacity.
                                 </p>
                                 <p>
-                                    <strong className="text-blue-300">Units:</strong> All amounts are USD face aggregates from the maturity wall table. Coupons are weighted averages when present in source rows.
+                                    <strong className="text-blue-700 dark:text-blue-300">Units:</strong> All amounts are USD face aggregates from the maturity wall table. Coupons are weighted averages when present in source rows.
                                 </p>
                                 <p>
-                                    <strong className="text-blue-300">Provenance:</strong> FRED nonfinancial corporate debt securities stock allocated by SIFMA remaining-maturity weights; coupons from ICE BofA FRED yield series. Stale snapshots (&gt;30d) are withheld.
+                                    <strong className="text-blue-700 dark:text-blue-300">Provenance:</strong> FRED nonfinancial corporate debt securities stock allocated by SIFMA remaining-maturity weights; coupons from ICE BofA FRED yield series. Stale snapshots (&gt;30d) are withheld.
                                 </p>
                             </div>
                         </div>
 
-                        <div className="bg-gradient-to-br from-amber-500/5 via-amber-500/2 to-transparent border border-amber-500/15 rounded-xl p-5">
+                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-5 shadow-sm">
                             <div className="flex items-center gap-2 mb-3">
                                 <div className="p-1.5 bg-amber-500/20 rounded-lg">
-                                    <Activity className="w-4 h-4 text-amber-400" />
+                                    <Activity className="w-4 h-4 text-amber-500" />
                                 </div>
-                                <h4 className="text-xs font-bold text-amber-200 uppercase tracking-wider">
+                                <h4 className="text-xs font-bold text-amber-700 dark:text-amber-200 uppercase tracking-wider">
                                     Desk checklist
                                 </h4>
                             </div>
-                            <ul className="space-y-2 text-[11px] text-slate-300 font-mono leading-relaxed">
+                            <ul className="space-y-2 text-[11px] text-foreground/80 font-mono leading-relaxed">
                                 <li className="flex items-start gap-2">
-                                    <span className="text-amber-400 mt-0.5">▸</span>
+                                    <span className="text-amber-500 mt-0.5">▸</span>
                                     <span>Compare &lt;1Y USD share vs prior as_of</span>
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <span className="text-amber-400 mt-0.5">▸</span>
+                                    <span className="text-amber-500 mt-0.5">▸</span>
                                     <span>Cross-check coupon WAC vs refinancing delta</span>
                                 </li>
                                 <li className="flex items-start gap-2">
-                                    <span className="text-amber-400 mt-0.5">▸</span>
+                                    <span className="text-amber-500 mt-0.5">▸</span>
                                     <span>Validate as_of freshness chip before citation</span>
                                 </li>
                             </ul>
@@ -641,7 +637,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
             </div>
 
             {/* Footer Legend */}
-            <div className="px-6 py-3 bg-slate-900/40 border-t border-slate-800/30 flex items-center justify-between text-[10px] font-mono text-slate-500">
+            <div className="px-6 py-3 bg-muted/40 dark:bg-slate-900/40 border-t border-border flex items-center justify-between text-[10px] font-mono text-muted-foreground">
                 <div className="flex items-center gap-4">
                     <span className="flex items-center gap-1.5">
                         <div className="w-2 h-2 rounded-full bg-red-500"></div>
@@ -661,7 +657,7 @@ export const CorporateDebtMaturityWall: React.FC = () => {
                     </span>
                 </div>
                 <div className="flex items-center gap-2">
-                    <span className="text-slate-600">|</span>
+                    <span className="text-muted-foreground/40">|</span>
                     <span>DATA AS OF: {asOfDate ?? '—'}</span>
                 </div>
             </div>

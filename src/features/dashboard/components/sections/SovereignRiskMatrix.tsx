@@ -143,24 +143,24 @@ export const SovereignRiskMatrix = React.memo(() => {
         <div className="space-y-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3" aria-label="Sovereign data coverage">
                 {[
-                    { label: 'Debt coverage', value: `${availableDebt}/${totalCount}`, detail: 'countries with observations', color: 'text-white' },
-                    { label: 'Usable rows', value: `${freshRows}/${totalCount}`, detail: 'debt and growth current', color: 'text-emerald-400' },
-                    { label: 'Highest screen', value: selected?.code ?? '—', detail: 'selected by debt-growth screen', color: 'text-amber-400' },
-                    { label: 'Method', value: 'Observed', detail: 'no fallback values', color: 'text-cyan-400' },
+                    { label: 'Debt coverage', value: `${availableDebt}/${totalCount}`, detail: 'countries with observations', color: 'text-foreground' },
+                    { label: 'Usable rows', value: `${freshRows}/${totalCount}`, detail: 'debt and growth current', color: 'text-emerald-500' },
+                    { label: 'Highest screen', value: selected?.code ?? '—', detail: 'selected by debt-growth screen', color: 'text-amber-500' },
+                    { label: 'Method', value: 'Observed', detail: 'no fallback values', color: 'text-cyan-500' },
                 ].map(item => (
-                    <div key={item.label} className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">{item.label}</div>
+                    <div key={item.label} className="rounded-xl border border-border bg-card p-4 shadow-sm">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">{item.label}</div>
                         <div className={`mt-2 text-xl font-black tabular-nums ${item.color}`}>{item.value}</div>
-                        <div className="mt-1 text-[10px] text-muted-foreground/50">{item.detail}</div>
+                        <div className="mt-1 text-[10px] text-muted-foreground/70">{item.detail}</div>
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_280px] gap-4">
-                <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/30">
+                <div className="overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
                     <table className="w-full min-w-[720px] text-left">
                         <caption className="sr-only">Country triage based on observed debt to GDP and GDP growth</caption>
-                        <thead className="border-b border-white/10 text-[10px] uppercase tracking-widest text-muted-foreground/60">
+                        <thead className="border-b border-border text-[10px] uppercase tracking-widest text-muted-foreground">
                             <tr>
                                 <th className="px-4 py-3 font-bold">Country</th>
                                 <th className="px-4 py-3 font-bold">Debt / GDP</th>
@@ -169,77 +169,77 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 <th className="px-4 py-3 font-bold">Data state</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {ranked.map(point => {
                                 const active = selected?.code === point.code;
                                 return (
-                                    <tr key={point.code} className={cn('cursor-pointer transition-colors hover:bg-white/[0.05]', active && 'bg-cyan-400/[0.08]')} onClick={() => setSelectedCode(point.code)}>
+                                    <tr key={point.code} className={cn('cursor-pointer transition-colors hover:bg-muted/50', active && 'bg-primary/10')} onClick={() => setSelectedCode(point.code)}>
                                         <td className="px-4 py-3">
-                                            <button type="button" className="flex items-center gap-2 text-sm font-semibold text-white" onClick={() => setSelectedCode(point.code)}>
+                                            <button type="button" className="flex items-center gap-2 text-sm font-semibold text-foreground" onClick={() => setSelectedCode(point.code)}>
                                                 <span aria-hidden="true">{point.flag}</span>{point.name}
                                             </button>
-                                            <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/50">{point.region} · {point.code}</div>
+                                            <div className="mt-1 text-[10px] uppercase tracking-widest text-muted-foreground/60">{point.region} · {point.code}</div>
                                         </td>
-                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-white">{point.debtUpdatedAt ? `${point.debtGdpPct.toFixed(1)}%` : '—'}</td>
-                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-white">{point.growthUpdatedAt ? `${point.gdpGrowthPct.toFixed(1)}%` : '—'}</td>
-                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-amber-300">{point.dataAvailable ? `${point.zDebt > 0 ? '+' : ''}${point.zDebt.toFixed(2)}σ` : '—'}</td>
-                                        <td className="px-4 py-3"><span className={cn('rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-widest', point.dataAvailable && !point.isStale ? 'border-emerald-400/20 bg-emerald-400/10 text-emerald-300' : 'border-amber-400/20 bg-amber-400/10 text-amber-300')}>{point.dataAvailable ? statusLabel(point.debtStatus) : 'Partial'}</span></td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-foreground">{point.debtUpdatedAt ? `${point.debtGdpPct.toFixed(1)}%` : '—'}</td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-foreground">{point.growthUpdatedAt ? `${point.gdpGrowthPct.toFixed(1)}%` : '—'}</td>
+                                        <td className="px-4 py-3 font-mono text-sm tabular-nums text-amber-500 font-bold">{point.dataAvailable ? `${point.zDebt > 0 ? '+' : ''}${point.zDebt.toFixed(2)}σ` : '—'}</td>
+                                        <td className="px-4 py-3"><span className={cn('rounded-full border px-2 py-1 text-[10px] font-bold uppercase tracking-widest', point.dataAvailable && !point.isStale ? 'border-emerald-500/20 bg-emerald-500/10 text-emerald-500' : 'border-amber-500/20 bg-amber-500/10 text-amber-500')}>{point.dataAvailable ? statusLabel(point.debtStatus) : 'Partial'}</span></td>
                                     </tr>
                                 );
                             })}
                         </tbody>
                     </table>
                 </div>
-                <aside className="rounded-xl border border-white/10 bg-white/[0.03] p-4" aria-label="Selected country details">
-                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Selected country</div>
+                <aside className="rounded-xl border border-border bg-card p-4 shadow-sm" aria-label="Selected country details">
+                    <div className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Selected country</div>
                     {selected ? <>
-                        <div className="mt-3 flex items-center gap-2 text-lg font-bold text-white"><span aria-hidden="true">{selected.flag}</span>{selected.name}</div>
-                        <div className="mt-1 text-xs text-muted-foreground/60">{selected.region} · {selected.code}</div>
+                        <div className="mt-3 flex items-center gap-2 text-lg font-bold text-foreground"><span aria-hidden="true">{selected.flag}</span>{selected.name}</div>
+                        <div className="mt-1 text-xs text-muted-foreground">{selected.region} · {selected.code}</div>
                         <dl className="mt-5 space-y-3 text-xs">
-                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Debt / GDP</dt><dd className="font-mono text-white">{selected.debtUpdatedAt ? `${selected.debtGdpPct.toFixed(1)}%` : 'No data'}</dd></div>
-                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Growth</dt><dd className="font-mono text-white">{selected.growthUpdatedAt ? `${selected.gdpGrowthPct.toFixed(1)}%` : 'No data'}</dd></div>
-                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Debt observation</dt><dd className="text-right text-white/80">{formatDate(selected.debtUpdatedAt)}</dd></div>
-                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground/60">Growth observation</dt><dd className="text-right text-white/80">{formatDate(selected.growthUpdatedAt)}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Debt / GDP</dt><dd className="font-mono text-foreground font-semibold">{selected.debtUpdatedAt ? `${selected.debtGdpPct.toFixed(1)}%` : 'No data'}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Growth</dt><dd className="font-mono text-foreground font-semibold">{selected.growthUpdatedAt ? `${selected.gdpGrowthPct.toFixed(1)}%` : 'No data'}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Debt observation</dt><dd className="text-right text-foreground/80">{formatDate(selected.debtUpdatedAt)}</dd></div>
+                            <div className="flex justify-between gap-3"><dt className="text-muted-foreground">Growth observation</dt><dd className="text-right text-foreground/80">{formatDate(selected.growthUpdatedAt)}</dd></div>
                         </dl>
-                        <div className="mt-5 border-t border-white/10 pt-4 text-[11px] leading-relaxed text-muted-foreground/60">This screen ranks observed debt and growth readings. CDS, refinancing, and interest-to-revenue signals require separate country-level feeds.</div>
-                    </> : <div className="mt-4 text-sm text-muted-foreground/60">No country data available.</div>}
+                        <div className="mt-5 border-t border-border pt-4 text-[11px] leading-relaxed text-muted-foreground">This screen ranks observed debt and growth readings. CDS, refinancing, and interest-to-revenue signals require separate country-level feeds.</div>
+                    </> : <div className="mt-4 text-sm text-muted-foreground">No country data available.</div>}
                 </aside>
             </div>
             <div className="flex items-center justify-between">
                 <div>
-                    <h3 className="text-xl font-bold text-white uppercase tracking-heading flex items-center gap-2">
-                        <ShieldAlert className="w-5 h-5 text-blue-500" />
+                    <h3 className="text-xl font-bold text-foreground uppercase tracking-heading flex items-center gap-2">
+                        <ShieldAlert className="w-5 h-5 text-primary" />
                         Sovereign Risk Matrix
                     </h3>
-                    <p className="text-xs font-black tracking-uppercase text-muted-foreground/50 uppercase mt-1">
+                    <p className="text-xs font-black tracking-uppercase text-muted-foreground uppercase mt-1">
                         G20 Fiscal Vulnerability (Debt/GDP) vs Vitality (Growth) — {availableCount}/{totalCount} countries
                     </p>
                 </div>
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="group flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 border border-white/12 rounded-xl transition-all"
+                    className="group flex items-center gap-2 px-4 py-2 bg-card hover:bg-muted/60 border border-border rounded-xl transition-all shadow-sm"
                 >
-                    <span className="text-xs font-black uppercase tracking-uppercase text-white/80 group-hover:text-white">
+                    <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground group-hover:text-foreground">
                         {isExpanded ? 'Collapse View' : 'Deep Analysis'}
                     </span>
-                    <Activity className="w-3 h-3 text-blue-400 group-hover:animate-pulse" />
+                    <Activity className="w-3 h-3 text-primary group-hover:animate-pulse" />
                 </button>
             </div>
 
             <div className={cn(
-                "spa-card bg-[#0a0a0a] border-white/5 overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative shadow-2xl",
-                isExpanded ? "h-[650px] opacity-100 ring-1 ring-blue-500/20" : "h-[240px] opacity-90 hover:opacity-100"
+                "spa-card bg-card dark:bg-[#0a0a0a] border border-border overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.23,1,0.32,1)] relative shadow-sm dark:shadow-2xl",
+                isExpanded ? "h-[650px] opacity-100 ring-1 ring-primary/20" : "h-[240px] opacity-90 hover:opacity-100"
             )}>
                 {/* Background Grid Pattern */}
                 <div className="absolute inset-0 bg-grid-slate-800/[0.04] bg-[size:20px_20px] pointer-events-none" />
 
                 {!isExpanded && (
-                    <div role="button" tabIndex={0} aria-label="Expand global risk landscape" onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded(true); } }} className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-transparent to-slate-950/90 cursor-pointer group focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2 outline-none" onClick={() => setIsExpanded(true)}>
+                    <div role="button" tabIndex={0} aria-label="Expand global risk landscape" onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); setIsExpanded(true); } }} className="absolute inset-0 z-20 flex items-center justify-center bg-gradient-to-b from-transparent to-background/90 cursor-pointer group focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 outline-none" onClick={() => setIsExpanded(true)}>
                         <div className="text-center transform transition-all duration-500 group-hover:-translate-y-2">
-                            <div className="w-12 h-12 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-blue-500/20 group-hover:border-blue-500/50 transition-colors">
-                                <ArrowDown className="w-5 h-5 text-blue-400" />
+                            <div className="w-12 h-12 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-3 group-hover:bg-primary/20 group-hover:border-primary/50 transition-colors">
+                                <ArrowDown className="w-5 h-5 text-primary" />
                             </div>
-                            <span className="text-xs font-black text-blue-300 uppercase tracking-uppercase bg-blue-950/50 px-3 py-1 rounded-full border border-blue-500/10">
+                            <span className="text-xs font-black text-primary uppercase tracking-uppercase bg-card px-3 py-1 rounded-full border border-border shadow-sm">
                                 Expand Global Risk Landscape
                             </span>
                         </div>
@@ -252,34 +252,34 @@ export const SovereignRiskMatrix = React.memo(() => {
                         <>
                             <div className="absolute top-4 left-16 z-0 pointer-events-none">
                                 <div className="flex items-center gap-1.5 mb-0.5">
-                                    <Anchor className="w-3 h-3 text-emerald-400" />
-                                    <span className="text-xs font-black text-emerald-400 uppercase tracking-uppercase">Dynamic Anchors</span>
+                                    <Anchor className="w-3 h-3 text-emerald-500" />
+                                    <span className="text-xs font-black text-emerald-500 uppercase tracking-uppercase">Dynamic Anchors</span>
                                 </div>
-                                <span className="text-xs font-bold text-emerald-500/60 uppercase tracking-uppercase block">Low Debt, High Growth</span>
+                                <span className="text-xs font-bold text-emerald-600/70 dark:text-emerald-500/60 uppercase tracking-uppercase block">Low Debt, High Growth</span>
                             </div>
 
                             <div className="absolute top-4 right-8 z-0 pointer-events-none text-right">
                                 <div className="flex items-center gap-1.5 mb-0.5 justify-end">
-                                    <span className="text-xs font-black text-amber-400 uppercase tracking-uppercase">Growth at Risk</span>
-                                    <TrendingUp className="w-3 h-3 text-amber-400" />
+                                    <span className="text-xs font-black text-amber-500 uppercase tracking-uppercase">Growth at Risk</span>
+                                    <TrendingUp className="w-3 h-3 text-amber-500" />
                                 </div>
-                                <span className="text-xs font-bold text-amber-500/60 uppercase tracking-uppercase block">High Debt, High Growth</span>
+                                <span className="text-xs font-bold text-amber-600/70 dark:text-amber-500/60 uppercase tracking-uppercase block">High Debt, High Growth</span>
                             </div>
 
                             <div className="absolute bottom-16 right-8 z-0 pointer-events-none text-right">
                                 <div className="flex items-center gap-1.5 mb-0.5 justify-end">
-                                    <span className="text-xs font-black text-rose-400 uppercase tracking-uppercase">Fiscal Trap</span>
-                                    <ShieldAlert className="w-3 h-3 text-rose-400" />
+                                    <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">Fiscal Trap</span>
+                                    <ShieldAlert className="w-3 h-3 text-rose-500" />
                                 </div>
-                                <span className="text-xs font-bold text-rose-500/60 uppercase tracking-uppercase block">High Debt, Low Growth</span>
+                                <span className="text-xs font-bold text-rose-600/70 dark:text-rose-500/60 uppercase tracking-uppercase block">High Debt, Low Growth</span>
                             </div>
 
                             <div className="absolute bottom-16 left-16 z-0 pointer-events-none">
                                 <div className="flex items-center gap-1.5 mb-0.5">
-                                    <Activity className="w-3 h-3 text-blue-400" />
-                                    <span className="text-xs font-black text-blue-400 uppercase tracking-uppercase">Stagnant Stability</span>
+                                    <Activity className="w-3 h-3 text-primary" />
+                                    <span className="text-xs font-black text-primary uppercase tracking-uppercase">Stagnant Stability</span>
                                 </div>
-                                <span className="text-xs font-bold text-blue-500/60 uppercase tracking-uppercase block">Low Debt, Low Growth</span>
+                                <span className="text-xs font-bold text-primary/70 uppercase tracking-uppercase block">Low Debt, Low Growth</span>
                             </div>
                         </>
                     )}
@@ -289,7 +289,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                         {Object.entries(REGION_LABELS).map(([key, label]) => (
                             <div key={key} className="flex items-center gap-1.5">
                                 <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: REGION_COLORS[key as G20Region] }} />
-                                <span className="text-xs font-black text-white/50 uppercase tracking-uppercase">{label}</span>
+                                <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{label}</span>
                             </div>
                         ))}
                     </div>
@@ -298,8 +298,8 @@ export const SovereignRiskMatrix = React.memo(() => {
                         <ScatterChart margin={{ top: 30, right: 30, bottom: isExpanded ? 40 : 30, left: 30 }}>
                             <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
 
-                            <ReferenceLine x={xMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
-                            <ReferenceLine y={yMedian} stroke="rgba(255,255,255,0.1)" strokeDasharray="4 4" />
+                            <ReferenceLine x={xMedian} stroke="hsl(var(--border))" strokeDasharray="4 4" />
+                            <ReferenceLine y={yMedian} stroke="hsl(var(--border))" strokeDasharray="4 4" />
 
                             <XAxis
                                 type="number"
@@ -307,7 +307,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 name="Debt/GDP"
                                 unit="%"
                                 domain={[0, 'auto']}
-                                stroke="rgba(255,255,255,0.1)"
+                                stroke="hsl(var(--border))"
                                 fontSize={10}
                                 tick={DEFAULT_XAXIS_PROPS.tick}
                                 tickLine={DEFAULT_XAXIS_PROPS.tickLine}
@@ -316,7 +316,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     value: 'Government Debt / GDP (%)',
                                     position: 'insideBottom',
                                     offset: -20,
-                                    fill: 'rgba(255,255,255,0.6)',
+                                    fill: 'hsl(var(--muted-foreground))',
                                     fontSize: 10,
                                     fontWeight: 800,
                                     letterSpacing: '0.1em'
@@ -328,7 +328,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                 name="Growth"
                                 unit="%"
                                 domain={['auto', 'auto']}
-                                stroke="rgba(255,255,255,0.1)"
+                                stroke="hsl(var(--border))"
                                 fontSize={10}
                                 tick={DEFAULT_YAXIS_PROPS.tick}
                                 tickLine={DEFAULT_YAXIS_PROPS.tickLine}
@@ -337,7 +337,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     value: 'Real GDP Growth %',
                                     angle: -90,
                                     position: 'insideLeft',
-                                    fill: 'rgba(255,255,255,0.6)',
+                                    fill: 'hsl(var(--muted-foreground))',
                                     fontSize: 10,
                                     fontWeight: 800,
                                     letterSpacing: '0.1em'
@@ -347,7 +347,7 @@ export const SovereignRiskMatrix = React.memo(() => {
 
                             <RechartsTooltip
                                 content={CustomTooltip}
-                                cursor={{ strokeDasharray: '3 3', stroke: 'rgba(255,255,255,0.2)' }}
+                                cursor={{ strokeDasharray: '3 3', stroke: 'hsl(var(--border))' }}
                                 animationDuration={200}
                             />
 
@@ -368,7 +368,7 @@ export const SovereignRiskMatrix = React.memo(() => {
                                     dataKey="code"
                                     position="top"
                                     offset={10}
-                                    style={{ fill: '#ffffff', fontSize: '11px', fontWeight: '900', textShadow: '0 1px 3px rgba(0,0,0,1), 0 0 10px rgba(0,0,0,0.5)' }}
+                                    style={{ fill: 'hsl(var(--foreground))', fontSize: '11px', fontWeight: '900' }}
                                 />
                             </Scatter>
                         </ScatterChart>

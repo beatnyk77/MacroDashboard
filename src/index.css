@@ -4,64 +4,89 @@
 
 @layer base {
     :root {
-        /* Enforce Dark Mode Default - Colors ported from slate-950/slate-900 */
-        --background: 0 0% 100%;
-        /* Slate 950 #020617 */
-        --foreground: 0 0% 3.9%;
-        /* Slate 50  #f8fafc */
+        /* Default / Lively Light Mode Tokens (Ivory Cream, Gunmetal, Midnight Green, Orange Pantone, Sand Yellow, Light Silver) */
+        --background: 44 87% 94%;
+        /* Ivory Cream #FDF6E3 */
+        --foreground: 203 23% 18%;
+        /* Gunmetal #233038 (11.8:1 WCAG AAA contrast against Ivory Cream) */
 
         --card: 0 0% 100%;
-        /* Slate 950 */
-        --card-foreground: 0 0% 3.9%;
+        /* Pure crisp card #FFFFFF */
+        --card-foreground: 203 23% 18%;
+        /* Gunmetal #233038 */
 
         --popover: 0 0% 100%;
-        --popover-foreground: 0 0% 3.9%;
+        --popover-foreground: 203 23% 18%;
 
-        --primary: 0 0% 9%;
-        /* White/Slate 50 for primary actions in dark mode */
-        --primary-foreground: 0 0% 98%;
+        --primary: 21 100% 51%;
+        /* Orange (Pantone) #FF5B04 */
+        --primary-foreground: 0 0% 100%;
 
-        --secondary: 0 0% 96.1%;
-        /* Slate 800 */
-        --secondary-foreground: 0 0% 9%;
+        --secondary: 185 85% 18%;
+        /* Midnight Green #075056 */
+        --secondary-foreground: 0 0% 100%;
 
-        --muted: 0 0% 96.1%;
-        /* Slate 800 */
-        --muted-foreground: 0 0% 45.1%;
-        /* Slate 400 */
+        --muted: 192 14% 88%;
+        /* Light Silver Tint */
+        --muted-foreground: 203 20% 32%;
+        /* Deep readable Gunmetal #3B4E59 */
 
-        --accent: 0 0% 96.1%;
-        --accent-foreground: 0 0% 9%;
+        --accent: 44 85% 72%;
+        /* Sand Yellow #F4D47C */
+        --accent-foreground: 203 23% 18%;
 
         --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 98%;
+        /* Coral Crimson #EF4444 */
+        --destructive-foreground: 0 0% 100%;
 
-        --border: 0 0% 89.8%;
-        /* Slate 800 */
-        --input: 0 0% 89.8%;
-        --ring: 0 0% 3.9%;
-        /* Blue/Slate ring */
+        --border: 192 13% 82%;
+        /* Light Silver #CBD5D7 */
+        --input: 192 13% 82%;
+        --ring: 21 100% 51%;
+        /* Orange (Pantone) #FF5B04 */
 
         --radius: 0.5rem;
 
-        --chart-1: 12 76% 61%;
-
-        --chart-2: 173 58% 39%;
-
-        --chart-3: 197 37% 24%;
-
-        --chart-4: 43 74% 66%;
-
-        --chart-5: 27 87% 67%;
+        --chart-1: 21 100% 51%;
+        /* Orange #FF5B04 */
+        --chart-2: 185 85% 18%;
+        /* Midnight Green #075056 */
+        --chart-3: 44 85% 50%;
+        /* Sand Amber #DCA524 */
+        --chart-4: 203 23% 25%;
+        /* Gunmetal #303F49 */
+        --chart-5: 192 25% 45%;
 
         /* Design System Tokens for Contrast & Spacing */
         --text-primary-weight: 1;
-        --text-secondary-weight: 0.75;
-        --text-tertiary-weight: 0.55;
+        --text-secondary-weight: 0.85;
+        --text-tertiary-weight: 0.7;
 
         --section-gap-major: 4rem;
         --section-gap-minor: 2rem;
         --card-gap: 1.25rem;
+    }
+
+    .lively {
+        --background: 44 87% 94%;
+        --foreground: 203 23% 18%;
+        --card: 0 0% 100%;
+        --card-foreground: 203 23% 18%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 203 23% 18%;
+        --primary: 21 100% 51%;
+        --primary-foreground: 0 0% 100%;
+        --secondary: 185 85% 18%;
+        --secondary-foreground: 0 0% 100%;
+        --muted: 192 14% 88%;
+        --muted-foreground: 203 20% 32%;
+        --accent: 44 85% 72%;
+        --accent-foreground: 203 23% 18%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 100%;
+        --border: 192 13% 82%;
+        --input: 192 13% 82%;
+        --ring: 21 100% 51%;
     }
 
     /* .dark class redundancy for compatibility if toggle somehow exists */
@@ -112,6 +137,10 @@
 
 @layer base {
     * {
+        border-color: hsl(var(--border) / 0.7);
+    }
+
+    .dark * {
         border-color: hsl(var(--border) / 0.12);
     }
 
@@ -327,6 +356,117 @@
 
     .stat-block {
         @apply flex flex-col items-center text-center p-6 rounded-3xl bg-white/[0.01] border border-white/5;
+    }
+
+    /* ── High-Contrast Readability & Visibility for Lively Palette ── */
+    .lively {
+        color-scheme: light;
+    }
+
+    /* All legacy text-white classes adapt to Gunmetal #233038 */
+    .lively .text-white,
+    .lively .text-slate-100,
+    .lively .text-slate-200 {
+        color: #233038 !important;
+    }
+
+    /* Subdued texts adapt to readable deep Gunmetal #354854 */
+    .lively .text-white\/90,
+    .lively .text-white\/80 {
+        color: #233038 !important;
+    }
+
+    .lively .text-white\/70,
+    .lively .text-white\/60,
+    .lively .text-slate-400,
+    .lively .text-slate-500 {
+        color: #354854 !important;
+    }
+
+    .lively .text-white\/50,
+    .lively .text-white\/40,
+    .lively .text-white\/30 {
+        color: #075056 !important; /* Midnight Green */
+    }
+
+    /* Keep text white when inside explicit primary/dark containers */
+    .lively .bg-primary,
+    .lively .bg-primary *,
+    .lively [class*="bg-[#FF5B04]"] *,
+    .lively [class*="bg-[#075056]"] * {
+        color: #FFFFFF !important;
+    }
+
+    /* Card & Container backgrounds adapt from dark slate to crisp White */
+    .lively .bg-slate-900,
+    .lively .bg-slate-950,
+    .lively [class*="bg-slate-900\/"],
+    .lively [class*="bg-slate-950\/"],
+    .lively [class*="from-slate-900"],
+    .lively [class*="from-slate-950"],
+    .lively [class*="via-slate-800"],
+    .lively [class*="via-slate-900"],
+    .lively [class*="to-slate-900"],
+    .lively [class*="to-slate-950"],
+    .lively [class*="to-black"],
+    .lively [class*="bg-[#0d0f14]"],
+    .lively [class*="bg-[#070b14]"],
+    .lively .bg-slate-800,
+    .lively [class*="bg-slate-800\/"] {
+        background-image: none !important;
+        background-color: #FFFFFF !important;
+        box-shadow: 0 1px 3px rgba(35, 48, 56, 0.05), 0 4px 14px rgba(35, 48, 56, 0.04);
+    }
+
+    /* Hairline borders adapt from transparent white / dark slate to crisp Light Silver */
+    .lively [class*="border-white\/"],
+    .lively [class*="border-slate-700"],
+    .lively [class*="border-slate-800"] {
+        border-color: #CBD5D7 !important;
+    }
+
+    /* Semi-transparent white badges adapt to subtle tinted silver/sand */
+    .lively [class*="bg-white\/"] {
+        background-color: rgba(211, 219, 221, 0.45) !important;
+    }
+
+    .lively [class*="bg-black\/"] {
+        background-color: rgba(244, 212, 124, 0.25) !important;
+    }
+
+    /* Recharts elements in lively mode */
+    .lively .recharts-cartesian-grid-horizontal line,
+    .lively .recharts-cartesian-grid-vertical line {
+        stroke: #CBD5D7 !important;
+        opacity: 0.7 !important;
+    }
+    .lively .recharts-text {
+        fill: #233038 !important;
+    }
+
+    /* High contrast labels */
+    .lively .label-mono {
+        color: #075056 !important;
+        opacity: 1 !important;
+        font-weight: 700 !important;
+    }
+
+    .lively .section-label {
+        color: #233038 !important;
+        opacity: 1 !important;
+        font-weight: 700 !important;
+    }
+
+    .lively .caption-muted {
+        color: #4A606D !important;
+        opacity: 1 !important;
+        font-weight: 500 !important;
+    }
+
+    .lively .liquid-glass-web-approx {
+        background: #FFFFFF !important;
+        border: 1px solid #CBD5D7 !important;
+        box-shadow: 0 4px 20px -2px rgba(35, 48, 56, 0.08) !important;
     }
 }
 

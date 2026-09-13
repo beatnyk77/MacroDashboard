@@ -123,8 +123,8 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
 
     return (
         <Card className={cn(
-            "mb-8 border-l-4 border-l-primary relative overflow-hidden shadow-2xl transition-all duration-300",
-            "bg-card/40 backdrop-blur-md border-white/12 dark:border-white/5",
+            "mb-8 border-l-4 border-l-primary relative overflow-hidden shadow-sm dark:shadow-2xl transition-all duration-300",
+            "bg-card border-border",
             className
         )}>
             {/* Subtle Gradient Overlay */}
@@ -140,7 +140,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             {formatDate(new Date())}
                         </p>
                     </div>
-                    <div className="px-2 py-1 bg-blue-500/15 text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-uppercase uppercase">
+                    <div className="px-2 py-1 bg-blue-500/15 text-blue-500 dark:text-blue-400 border border-blue-500/30 rounded text-xs font-black tracking-uppercase uppercase">
                         Proprietary View
                     </div>
                 </div>
@@ -148,7 +148,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                     {/* Column 1: Core Signals (4 cols) */}
                     <div className="md:col-span-4 space-y-4">
-                        <div className="p-5 rounded-lg bg-white/5 border border-white/12">
+                        <div className="p-5 rounded-lg bg-muted/30 dark:bg-white/5 border border-border">
                             <div className="flex items-center gap-2 mb-3">
                                 {getStatusIcon(getRegimeStatus())}
                                 <span className="text-xs font-black tracking-uppercase text-muted-foreground uppercase" aria-label="Current Market Regime Status">
@@ -163,7 +163,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                             </span>
                         </div>
 
-                        <div className="p-5 rounded-lg bg-white/5 border border-white/12">
+                        <div className="p-5 rounded-lg bg-muted/30 dark:bg-white/5 border border-border">
                             <div className="flex items-center gap-2 mb-3">
                                 {liquidityDelta && liquidityDelta > 0 ? (
                                     <TrendingUp size={16} className="text-emerald-500" />
@@ -183,14 +183,14 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                         </div>
 
                         {/* Oil Market Stress Signal Widget */}
-                        <div className="p-0 rounded-lg bg-white/5 border border-white/12 overflow-hidden">
+                        <div className="p-0 rounded-lg bg-muted/30 dark:bg-white/5 border border-border overflow-hidden">
                             <OilStressSignal />
                         </div>
                     </div>
 
                     {/* Column 2: Market Briefing with India/Global Tabs */}
                     <div className="md:col-span-8">
-                        <section className="p-5 rounded-lg bg-white/5 border border-white/12 h-full" aria-label="India Macro News Feed">
+                        <section className="p-5 rounded-lg bg-muted/30 dark:bg-white/5 border border-border h-full" aria-label="India Macro News Feed">
                             <div className="flex items-center justify-between mb-4">
                                 <div className="flex items-center gap-2">
                                     <Newspaper size={16} className="text-primary" />
@@ -199,7 +199,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                     </span>
                                 </div>
                                 {/* Category Tabs */}
-                                <div className="flex gap-1 bg-white/5 rounded-lg p-0.5">
+                                <div className="flex gap-1 bg-muted/60 dark:bg-white/5 rounded-lg p-0.5 border border-border/50">
                                     {tabs.map(tab => (
                                         <button
                                             key={tab.key}
@@ -207,8 +207,8 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                             className={cn(
                                                 "px-2.5 py-1 rounded-md text-xs font-bold uppercase tracking-uppercase transition-all duration-200",
                                                 activeTab === tab.key
-                                                    ? "bg-blue-500/20 text-blue-400 shadow-sm"
-                                                    : "text-muted-foreground/60 hover:text-muted-foreground"
+                                                    ? "bg-primary/20 text-primary shadow-sm"
+                                                    : "text-muted-foreground hover:text-foreground"
                                             )}
                                         >
                                             {tab.emoji && <span className="mr-1">{tab.emoji}</span>}
@@ -217,7 +217,7 @@ export const TodaysBriefPanel: React.FC<TodaysBriefPanelProps> = ({ className })
                                     ))}
                                 </div>
                             </div>
-                            <div className="space-y-3 divide-y divide-white/5">
+                            <div className="space-y-3 divide-y divide-border">
                                 {filteredHeadlines.length > 0 ? (
                                     filteredHeadlines.map((headline: MacroHeadline, idx: number) => {
                                         const stale = isHeadlineStale(headline.published_at, now);

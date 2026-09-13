@@ -23,8 +23,8 @@ const COLORS = {
     central: '#3b82f6', // blue-500
     state: '#8b5cf6',   // violet-500
     us: '#ef4444',      // red-500 (matching US wall theme)
-    grid: 'rgba(255, 255, 255, 0.05)',
-    text: '#94a3b8'
+    grid: 'hsl(var(--border))',
+    text: 'hsl(var(--muted-foreground))'
 };
 
 export const IndiaDebtMaturityWall: React.FC = () => {
@@ -109,31 +109,31 @@ export const IndiaDebtMaturityWall: React.FC = () => {
     }, [indiaData, view]);
 
     if (indiaLoading) {
-        return <div className="h-96 w-full bg-white/[0.02] animate-pulse rounded-2xl border border-white/5" />;
+        return <div className="h-96 w-full bg-card animate-pulse rounded-2xl border border-border" />;
     }
 
     return (
-        <section className="w-full bg-gradient-to-br from-slate-900 via-slate-900 to-black rounded-3xl border border-white/12 overflow-hidden shadow-2xl relative">
+        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-black rounded-3xl border border-border shadow-sm dark:shadow-2xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[100px] -z-10" />
 
             {/* Header Area */}
-            <div className="p-8 md:p-10 border-b border-white/5">
+            <div className="p-8 md:p-10 border-b border-border">
                 <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
                     <div className="space-y-4">
                         <div className="flex items-center gap-3">
                             <div className="p-2 bg-blue-500/20 rounded-lg">
-                                <Scale className="w-6 h-6 text-blue-400" />
+                                <Scale className="w-6 h-6 text-primary" />
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-white tracking-heading">
-                                INDIA DEBT <span className="text-blue-500">MATURITY WALL</span>
+                            <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-heading">
+                                INDIA DEBT <span className="text-primary">MATURITY WALL</span>
                             </h2>
                         </div>
-                        <p className="text-slate-400 text-lg max-w-xl font-medium leading-tight">
+                        <p className="text-muted-foreground text-lg max-w-xl font-medium leading-tight">
                             Redemption profile of Sovereign Dated Securities (G-Sec) and State Development Loans (SDL).
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/5 rounded-2xl backdrop-blur-md border border-white/12">
+                    <div className="flex flex-wrap items-center gap-2 p-1 bg-muted/40 dark:bg-white/5 rounded-2xl backdrop-blur-md border border-border">
                         {[
                             { id: 'central', label: 'Central G-Sec', icon: <Building2 className="w-4 h-4" /> },
                             { id: 'combined', label: 'Central + States', icon: <Scale className="w-4 h-4" /> },
@@ -145,8 +145,8 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                                 className={`
                                     flex items-center gap-2 px-6 py-2.5 rounded-xl text-xs font-bold transition-all duration-300
                                     ${view === btn.id
-                                        ? 'bg-blue-600 text-white shadow-[0_0_20px_rgba(37,99,235,0.4)]'
-                                        : 'text-slate-400 hover:text-white hover:bg-white/5'}
+                                        ? 'bg-primary text-primary-foreground shadow-md'
+                                        : 'text-muted-foreground hover:text-foreground hover:bg-muted'}
                                 `}
                             >
                                 {btn.icon}
@@ -158,46 +158,46 @@ export const IndiaDebtMaturityWall: React.FC = () => {
             </div>
 
             {/* Quick Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 md:p-10 bg-white/[0.01]">
-                <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 md:p-10 bg-muted/10">
+                <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
-                        <Calendar className="w-5 h-5 text-blue-400" />
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Total Outstanding</span>
+                        <Calendar className="w-5 h-5 text-primary" />
+                        <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Total Outstanding</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-white">₹{stats?.total}</span>
-                        <span className="text-slate-500 text-lg font-bold">Lakh Cr</span>
+                        <span className="text-4xl font-black text-foreground">₹{stats?.total}</span>
+                        <span className="text-muted-foreground text-lg font-bold">Lakh Cr</span>
                     </div>
                 </div>
 
-                <div className="bg-white/[0.03] border border-white/12 rounded-2xl p-6 backdrop-blur-sm">
+                <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
-                        <AlertTriangle className="w-5 h-5 text-amber-400" />
-                        <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Next 12M Maturing</span>
+                        <AlertTriangle className="w-5 h-5 text-amber-500" />
+                        <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Next 12M Maturing</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-white">₹{stats?.next1Y}</span>
-                        <span className="text-slate-500 text-lg font-bold">Lakh Cr</span>
+                        <span className="text-4xl font-black text-foreground">₹{stats?.next1Y}</span>
+                        <span className="text-muted-foreground text-lg font-bold">Lakh Cr</span>
                     </div>
-                    <div className="mt-2 text-amber-500/80 text-xs font-bold flex items-center gap-1">
+                    <div className="mt-2 text-amber-500 text-xs font-bold flex items-center gap-1">
                         <TrendingUp className="w-3 h-3" />
                         {stats?.next1YPercent}% of total debt stock
                     </div>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-500/10 to-transparent border border-blue-500/20 rounded-2xl p-6 relative overflow-hidden">
+                <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6 relative overflow-hidden">
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-2">
-                            <Info className="w-5 h-5 text-blue-400" />
-                            <span className="text-slate-400 text-sm font-bold uppercase tracking-uppercase">Rollover Status</span>
+                            <Info className="w-5 h-5 text-primary" />
+                            <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Rollover Status</span>
                         </div>
-                        <p className="text-sm text-slate-300 font-medium leading-relaxed">
+                        <p className="text-sm text-foreground font-medium leading-relaxed">
                             {Number(stats?.next1YPercent) > 15
                                 ? "High localized pressure in short-end buckets. RBI likely to focus on switch operations."
                                 : "Maturity wall is well-distributed. Historical bias towards 10Y+ duration persists."}
                         </p>
                     </div>
-                    <div className="absolute -bottom-6 -right-6 text-blue-500/10">
+                    <div className="absolute -bottom-6 -right-6 text-primary/10">
                         <Activity className="w-32 h-32" />
                     </div>
                 </div>
@@ -211,7 +211,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                         layout="vertical"
                         margin={{ left: 40, right: 40 }}
                     >
-                        <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} horizontal={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} opacity={0.6} horizontal={false} />
                         <XAxis
                             type="number"
                             stroke={COLORS.text}
@@ -229,39 +229,39 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                             content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
                                     return (
-                                        <div className="bg-slate-900/95 backdrop-blur-xl border border-white/20 p-5 rounded-2xl shadow-2xl space-y-3 z-50">
-                                            <p className="text-white font-black border-b border-white/12 pb-2">{payload[0].payload.bucket} Maturity</p>
+                                        <div className="bg-popover text-popover-foreground border border-border p-5 rounded-2xl shadow-xl space-y-3 z-50">
+                                            <p className="text-foreground font-black border-b border-border pb-2">{payload[0].payload.bucket} Maturity</p>
                                             <div className="space-y-1">
                                                 {view === 'comparison' ? (
                                                     <>
                                                         <div className="flex justify-between gap-8">
-                                                            <span className="text-blue-400 text-xs font-bold">India (Lakh Cr)</span>
-                                                            <span className="text-white font-mono">₹{payload[0].payload.combined.toFixed(2)}</span>
+                                                            <span className="text-blue-500 text-xs font-bold">India (Lakh Cr)</span>
+                                                            <span className="text-foreground font-mono">₹{payload[0].payload.combined.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-8">
-                                                            <span className="text-red-400 text-xs font-bold">US ($ Trillion)</span>
-                                                            <span className="text-white font-mono">${payload[0].payload.us.toFixed(2)}</span>
+                                                            <span className="text-rose-500 text-xs font-bold">US ($ Trillion)</span>
+                                                            <span className="text-foreground font-mono">${payload[0].payload.us.toFixed(2)}</span>
                                                         </div>
                                                     </>
                                                 ) : view === 'combined' ? (
                                                     <>
                                                         <div className="flex justify-between gap-8">
-                                                            <span className="text-blue-400 text-xs font-bold">Central G-Sec</span>
-                                                            <span className="text-white font-mono">₹{payload[0].payload.central.toFixed(2)}</span>
+                                                            <span className="text-blue-500 text-xs font-bold">Central G-Sec</span>
+                                                            <span className="text-foreground font-mono">₹{payload[0].payload.central.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-8">
-                                                            <span className="text-violet-400 text-xs font-bold">States (SDL)</span>
-                                                            <span className="text-white font-mono">₹{payload[0].payload.state.toFixed(2)}</span>
+                                                            <span className="text-violet-500 text-xs font-bold">States (SDL)</span>
+                                                            <span className="text-foreground font-mono">₹{payload[0].payload.state.toFixed(2)}</span>
                                                         </div>
-                                                        <div className="border-t border-white/12 pt-2 flex justify-between gap-8">
-                                                            <span className="text-white text-xs font-black">Total</span>
-                                                            <span className="text-white font-mono font-black">₹{payload[0].payload.combined.toFixed(2)}</span>
+                                                        <div className="border-t border-border pt-2 flex justify-between gap-8">
+                                                            <span className="text-foreground text-xs font-black">Total</span>
+                                                            <span className="text-foreground font-mono font-black">₹{payload[0].payload.combined.toFixed(2)}</span>
                                                         </div>
                                                     </>
                                                 ) : (
                                                     <div className="flex justify-between gap-8">
-                                                        <span className="text-blue-400 text-xs font-bold">Central G-Sec</span>
-                                                        <span className="text-white font-mono">₹{payload[0].payload.central.toFixed(2)}L Cr</span>
+                                                        <span className="text-blue-500 text-xs font-bold">Central G-Sec</span>
+                                                        <span className="text-foreground font-mono">₹{payload[0].payload.central.toFixed(2)}L Cr</span>
                                                     </div>
                                                 )}
                                             </div>

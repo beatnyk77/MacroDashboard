@@ -37,24 +37,16 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal, refreshi
 
   return (
     <div
-      className={`flex-1 rounded-2xl p-6 transition-all duration-500 ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
-      style={{
-        background: 'rgba(255,255,255,0.02)',
-        border: '1px solid rgba(255,255,255,0.06)',
-        boxShadow: 'inset 0 1px 1px rgba(255,255,255,0.02)',
-      }}
+      className={`flex-1 rounded-2xl p-6 bg-card border border-border transition-all duration-500 shadow-sm dark:shadow-none ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
     >
       <div className="flex items-center gap-2 mb-6">
-        <span
-          className="text-[10px] font-black uppercase tracking-[0.2em]"
-          style={{ color: 'rgba(255,255,255,0.4)' }}
-        >
+        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
           Institutional Briefing
         </span>
-        <div className="h-px flex-1" style={{ background: 'rgba(255,255,255,0.04)' }} />
-        <div className="flex items-center gap-1.5 opacity-40">
-          <div className="w-1 h-1 rounded-full bg-emerald-400" />
-          <span className="text-[9px] text-white font-mono uppercase tracking-tighter">
+        <div className="h-px flex-1 bg-border" />
+        <div className="flex items-center gap-1.5 opacity-60">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+          <span className="text-[9px] text-foreground font-mono uppercase tracking-tighter">
             System Normal
           </span>
         </div>
@@ -64,11 +56,11 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal, refreshi
         {lines.map((line, i) => (
           <div
             key={i}
-            className={`text-[15px] font-medium leading-relaxed tracking-tight ${i === 0 ? 'text-white/95' : 'text-white/60'}`}
-            style={{
-              paddingLeft: i > 0 ? '1rem' : 0,
-              borderLeft: i > 0 ? '1px solid rgba(255,255,255,0.1)' : 'none',
-            }}
+            className={`text-[15px] font-medium leading-relaxed tracking-tight ${
+              i === 0
+                ? 'text-foreground font-semibold'
+                : 'text-muted-foreground border-l border-border pl-4'
+            }`}
           >
             {line}
           </div>
@@ -76,8 +68,8 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal, refreshi
       </div>
 
       {/* Component score mini-bars */}
-      <div className="mt-8 pt-6" style={{ borderTop: '1px solid rgba(255,255,255,0.06)' }}>
-        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-white/25 mb-4">
+      <div className="mt-8 pt-6 border-t border-border">
+        <div className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/80 mb-4">
           Signal Components
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-3">
@@ -86,16 +78,13 @@ export const MacroBriefCard: React.FC<MacroBriefCardProps> = ({ signal, refreshi
               val >= 60 ? '#10b981' : val <= 40 ? '#f43f5e' : '#f59e0b';
             return (
               <div key={key} className="flex items-center gap-2">
-                <span className="text-[9px] font-black text-white/30 w-16 uppercase tracking-wider">
+                <span className="text-[9px] font-black text-muted-foreground w-16 uppercase tracking-wider">
                   {key}
                 </span>
-                <div
-                  className="flex-1 h-1.5 rounded-full overflow-hidden relative"
-                  style={{ background: 'rgba(255,255,255,0.04)' }}
-                >
+                <div className="flex-1 h-1.5 rounded-full overflow-hidden relative bg-muted/60 dark:bg-white/10">
                   <div
                     className="absolute inset-y-0 left-0 rounded-full transition-all duration-1000 cubic-bezier(0.4, 0, 0.2, 1)"
-                    style={{ width: `${val}%`, background: color, boxShadow: `0 0 8px ${color}44` }}
+                    style={{ width: `${val}%`, background: color }}
                   />
                 </div>
                 <span

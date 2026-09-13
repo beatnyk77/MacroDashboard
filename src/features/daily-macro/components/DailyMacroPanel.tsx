@@ -109,24 +109,19 @@ const DailyMacroPanelInner: React.FC = () => {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden transition-all duration-300"
+      className="rounded-2xl overflow-hidden transition-all duration-300 bg-card border border-border shadow-sm dark:shadow-xl"
       style={{
-        background: 'rgba(8,12,24,0.7)',
-        border: '1px solid rgba(255,255,255,0.07)',
-        backdropFilter: 'blur(12px)',
         opacity: isRefreshing ? 0.7 : 1,
       }}
     >
       {/* Header bar */}
       <div
-        className="flex flex-wrap items-center justify-between px-5 py-3 gap-3"
-        style={{ borderBottom: '1px solid rgba(255,255,255,0.05)' }}
+        className="flex flex-wrap items-center justify-between px-5 py-3 gap-3 border-b border-border bg-muted/40"
       >
         <div className="flex items-center gap-3">
-          <Activity size={12} className="text-blue-400/50" />
+          <Activity size={12} className="text-primary" />
           <span
-            className="text-[10px] font-black uppercase tracking-[0.3em]"
-            style={{ color: 'rgba(255,255,255,0.4)' }}
+            className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground"
           >
             Daily Macro Signal
           </span>
@@ -137,9 +132,9 @@ const DailyMacroPanelInner: React.FC = () => {
           />
 
           {/* Pipeline Status */}
-          <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-white/5 border border-white/5">
-            <div className={`w-1 h-1 rounded-full ${signalHealth ? 'bg-emerald-400' : 'bg-white/20'}`} />
-            <span className="text-[8px] font-bold text-white/40 uppercase tracking-tighter">
+          <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-muted border border-border">
+            <div className={`w-1 h-1 rounded-full ${signalHealth ? 'bg-emerald-500' : 'bg-muted-foreground/40'}`} />
+            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-tighter">
               Pipeline: {signalHealth ? 'Active' : 'Offline'}
             </span>
           </div>
@@ -148,11 +143,11 @@ const DailyMacroPanelInner: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-end">
             <div
-              className="text-[9px] font-mono leading-none mb-1 uppercase tracking-widest opacity-30"
+              className="text-[9px] font-mono leading-none mb-1 uppercase tracking-widest text-muted-foreground/60"
             >
               Last Computed
             </div>
-            <div className="text-[10px] font-mono font-bold text-white/70">
+            <div className="text-[10px] font-mono font-bold text-foreground">
               {new Date(signal.computed_at).toLocaleTimeString(undefined, { 
                 hour: '2-digit', minute: '2-digit'
               })}
@@ -166,10 +161,10 @@ const DailyMacroPanelInner: React.FC = () => {
           <button
             onClick={handleRefresh}
             disabled={isRefreshing}
-            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all ${
+            className={`flex items-center gap-2 px-3 py-1.5 rounded-lg border transition-all text-foreground ${
               isRefreshing 
-                ? 'bg-white/5 border-white/10 opacity-50 cursor-not-allowed' 
-                : 'bg-white/5 border-white/10 hover:bg-white/10 hover:border-white/20 active:scale-95'
+                ? 'bg-muted border-border opacity-50 cursor-not-allowed' 
+                : 'bg-card border-border hover:bg-muted active:scale-95 shadow-sm'
             }`}
           >
             <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />

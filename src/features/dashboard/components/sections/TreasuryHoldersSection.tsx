@@ -151,7 +151,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                     className="mb-0"
                 />
 
-                <div className="bg-slate-950/50 p-1 rounded-lg border border-white/12 flex items-center">
+                <div className="bg-muted/50 p-1 rounded-lg border border-border flex items-center">
                     <button
                         type="button"
                         onClick={() => setViewMode('map')}
@@ -232,7 +232,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                             columns={treasuryColumns}
                             getRowKey={(holder) => holder.country_name}
                             maxHeight={isExpanded ? 800 : 500}
-                            className="bg-card/40 border-white/12 shadow-xl"
+                            className="bg-card border border-border shadow-sm dark:shadow-xl"
                             emptyTitle="No treasury holder data"
                             emptyDescription="TIC foreign holdings are not yet available for this release window."
                         />

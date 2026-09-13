@@ -23,6 +23,8 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { SubscribeCard } from '@/components/SubscribeCard';
 import { TerminalHero } from '@/features/dashboard/components/TerminalHero';
 import { TerminalSnapshotStrip } from '@/features/dashboard/components/TerminalSnapshotStrip';
+import { MacroTransmissionHUD } from '@/features/dashboard/components/MacroTransmissionHUD';
+import { ScenarioShockSimulator } from '@/features/dashboard/components/ScenarioShockSimulator';
 import { DeskContextStrip } from '@/features/dashboard/components/DeskContextStrip';
 
 import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
@@ -158,20 +160,26 @@ export const Terminal: React.FC = () => {
             {/* E4: build-time key telemetry for crawlers + live hydrate */}
             <TerminalSnapshotStrip />
 
+            {/* ── ALADDIN 4-PILLAR MACRO TRANSMISSION SWITCHBOARD ── */}
+            <MacroTransmissionHUD />
+
+            {/* ── FACTOR SENSITIVITY & SCENARIO SHOCK SIMULATOR ── */}
+            <ScenarioShockSimulator />
+
             <DeskContextStrip />
 
             {/* ── FEATURED RESEARCH SILO ── */}
-            <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-4 bg-white/5 border-y border-white/10 mb-6">
-                <Link to="/methods/m2-gold-ratio" className="text-sm font-semibold text-amber-400 hover:underline">
+            <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-4 bg-card border-y border-border mb-6 shadow-sm">
+                <Link to="/methods/m2-gold-ratio" className="text-sm font-semibold text-amber-500 hover:underline">
                     Featured: Global M2 to Gold Ratio Tracker
                 </Link>
-                <span className="text-white/20">|</span>
-                <Link to="/labs/central-bank-gold-purchases" className="text-sm font-semibold text-amber-400 hover:underline">
+                <span className="text-border">|</span>
+                <Link to="/labs/central-bank-gold-purchases" className="text-sm font-semibold text-amber-500 hover:underline">
                     Central Bank Gold Purchases
                 </Link>
-                <span className="text-white/20">|</span>
-                <Link to="/labs/macro-precedents" className="text-sm font-semibold text-blue-400 hover:underline flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse" />
+                <span className="text-border">|</span>
+                <Link to="/labs/macro-precedents" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                     Macro Precedents & Benchmarks
                 </Link>
             </div>
@@ -244,13 +252,13 @@ export const Terminal: React.FC = () => {
                             <div ref={netLiquidityRef} className="relative group">
                                 <ShareButton targetRef={netLiquidityRef} title="US Net Liquidity Proxy" dataSource="FRED / Treasury" href="/labs/us-macro-fiscal/" />
                                 <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center border-b border-white/5 pb-4 mb-6">
+                                    <CardHeader className="flex flex-row justify-between items-center border-b border-border pb-4 mb-6">
                                         <div>
                                             <CardTitle className="text-base font-semibold tracking-heading">US Net Liquidity Proxy</CardTitle>
                                             <p className="section-label mt-1">Monetary Base & Treasury General Account Telemetry</p>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
+                                            <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-700 dark:text-amber-400 hover:underline transition-colors">Methodology →</Link>
                                             <MetricFreshnessChip metricId={MID.FED_BALANCE_SHEET} sourceLabel="FRED / Treasury" />
                                         </div>
                                     </CardHeader>
@@ -271,18 +279,7 @@ export const Terminal: React.FC = () => {
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
                             <div ref={fedMonetizationRef} className="relative group">
                                 <ShareButton targetRef={fedMonetizationRef} title="Fed Monetization Monitor" dataSource="FRED" href="/labs/us-macro-fiscal/" />
-                                <Card variant="elevated">
-                                    <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                        <CardTitle className="text-base font-semibold tracking-heading">Fed Monetization Monitor</CardTitle>
-                                        <div className="flex items-center gap-4">
-                                            <Link to="/methods/fiscal-dominance-meter" className="text-xs text-amber-400/70 hover:text-amber-400 transition-colors">Methodology →</Link>
-                                            <MetricFreshnessChip metricId={MID.FED_BALANCE_SHEET} sourceLabel="FRED" />
-                                        </div>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <FedMonetizationMonitor />
-                                    </CardContent>
-                                </Card>
+                                <FedMonetizationMonitor />
                             </div>
                         </Suspense>
                     </SectionErrorBoundary>
@@ -294,15 +291,7 @@ export const Terminal: React.FC = () => {
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
                     <SectionErrorBoundary name="Auction Demand Gauge">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                            <Card variant="elevated">
-                                <CardHeader className="flex flex-row justify-between items-center mb-6 border-b border-white/5 pb-4">
-                                    <CardTitle className="text-base font-semibold tracking-heading">Auction Demand Gauge</CardTitle>
-                                    <MetricFreshnessChip metricId={MID.PRIMARY_DEALER_TREASURY_HOLDINGS_BN} sourceLabel="Treasury" />
-                                </CardHeader>
-                                <CardContent className="space-y-4">
-                                    <USTreasuryDemandGauge />
-                                </CardContent>
-                            </Card>
+                            <USTreasuryDemandGauge />
                         </Suspense>
                     </SectionErrorBoundary>
                     </LazyRender>
@@ -360,7 +349,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 10b: CFTC COT POSITIONING & SQUEEZE RADAR */}
-                <ModuleRow id="cot-positioning" label="COT POSITIONING" labelColor="text-cyan-400">
+                <ModuleRow id="cot-positioning" label="COT POSITIONING" labelColor="text-cyan-700 dark:text-cyan-400">
                     <LazyRender minHeight="350px" fallback={<SectionLoadingFallback minHeight={350} />}>
                     <SectionErrorBoundary name="COT Positioning Radar">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -446,13 +435,13 @@ export const Terminal: React.FC = () => {
                                         <Link
                                             key={item.href}
                                             to={item.href}
-                                            className="group p-4 rounded-lg bg-white/5 border border-white/10 hover:bg-white/10 hover:border-blue-500/30 transition-all duration-200"
+                                            className="group p-4 rounded-lg bg-card border border-border hover:bg-muted/50 hover:border-primary/40 transition-all duration-200 shadow-sm"
                                         >
                                             <div className="text-2xl mb-2">{item.flag}</div>
-                                            <div className="font-bold text-sm group-hover:text-blue-400 transition-colors">
+                                            <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
                                                 {item.label}
                                             </div>
-                                            <div className="text-xs text-muted-foreground/50 mt-1">
+                                            <div className="text-xs text-muted-foreground/60 mt-1">
                                                 Explore Hub →
                                             </div>
                                         </Link>

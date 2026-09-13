@@ -47,8 +47,8 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
       className={cn(
         "w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)]",
         "-mx-4 sm:-mx-6 lg:-mx-8",
-        "flex flex-col md:flex-row border-t border-b border-white/5",
-        alternateBg ? "bg-white/[0.01]" : "bg-transparent"
+        "flex flex-col md:flex-row border-t border-b border-border",
+        alternateBg ? "bg-muted/20 dark:bg-white/[0.01]" : "bg-transparent"
       )}
     >
       {/* Left edge: vertical label bar (desktop only) */}
@@ -65,7 +65,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
       {/* Main content area */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top: thin horizontal rule (which is the parent border-t) with module label and links */}
-        <div className="flex items-center justify-between py-3 px-4 sm:px-6 lg:px-8 border-b border-white/5 bg-black/10">
+        <div className="flex items-center justify-between py-3 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40 dark:bg-black/10">
           <div className="flex items-center gap-3">
             <span className={cn('label-mono', textColorClass)}>
               {label}
@@ -75,7 +75,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
           {href && (
             <Link
               to={href}
-              className="label-mono hover:text-white transition-colors duration-200"
+              className="label-mono hover:text-foreground transition-colors duration-200"
             >
               Full Analysis &rarr;
             </Link>

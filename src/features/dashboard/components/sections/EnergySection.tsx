@@ -83,20 +83,20 @@ export const EnergySection: React.FC = () => {
                 </div>
             </div>
 
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-amber-500/[0.03] border border-amber-500/10">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-6 rounded-2xl bg-amber-500/[0.05] border border-amber-500/20">
                 <div className="flex items-center gap-4">
                     <div className="p-3 rounded-xl bg-amber-500/10 border border-amber-500/20">
                         <Fuel className="w-5 h-5 text-amber-500" />
                     </div>
                     <div>
-                        <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest block">Brent Crude</span>
+                        <span className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest block">Brent Crude</span>
                         <div className="flex items-center gap-3 mt-1">
                             {brentMetric?.value != null ? (
-                                <span className="text-2xl font-black text-white font-mono tracking-heading">
+                                <span className="text-2xl font-black text-foreground font-mono tracking-heading">
                                     ${Number(brentMetric.value).toFixed(2)}
                                 </span>
                             ) : (
-                                <span className="text-sm font-black text-muted-foreground/30 uppercase">Unavailable</span>
+                                <span className="text-sm font-black text-muted-foreground/40 uppercase">Unavailable</span>
                             )}
                             <FreshnessChip status={brentFreshness.state} lastUpdated={brentMetric?.lastUpdated} />
                         </div>
@@ -104,7 +104,7 @@ export const EnergySection: React.FC = () => {
                 </div>
                 <Link
                     to="/labs/energy-commodities"
-                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/10 text-xs font-black uppercase tracking-widest text-white/70 hover:text-white hover:border-amber-500/30 transition-colors"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-card border border-border text-xs font-black uppercase tracking-widest text-foreground hover:bg-muted/60 hover:border-amber-500/30 transition-colors shadow-sm"
                 >
                     Open Energy Lab
                     <ArrowRight className="w-3.5 h-3.5" />
@@ -113,43 +113,43 @@ export const EnergySection: React.FC = () => {
 
             {hasIndiaData && (
                 <>
-                    <div className="flex items-center gap-3 pt-4 border-t border-white/5">
-                        <h3 className="text-sm font-black text-white/50 uppercase tracking-widest">India State Energy Matrix</h3>
-                        <span className="text-[10px] font-bold text-muted-foreground/30 uppercase">Weekly · MoSPI</span>
+                    <div className="flex items-center gap-3 pt-4 border-t border-border">
+                        <h3 className="text-sm font-black text-muted-foreground uppercase tracking-widest">India State Energy Matrix</h3>
+                        <span className="text-[10px] font-bold text-muted-foreground/50 uppercase">Weekly · MoSPI</span>
                     </div>
 
-                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 backdrop-blur-xl relative overflow-hidden group">
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-8 rounded-[2rem] bg-card border border-border backdrop-blur-xl relative overflow-hidden group shadow-sm">
                         <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.03] to-transparent pointer-events-none" />
 
                         <div className="space-y-1.5 relative z-10">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Aggregate Coal</span>
+                            <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Aggregate Coal</span>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl font-black text-white font-mono tracking-heading">{totalCoal.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
-                                <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
+                                <span className="text-2xl font-black text-foreground font-mono tracking-heading">{totalCoal.toLocaleString(undefined, { maximumFractionDigits: 1 })}</span>
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase">KToE</span>
                             </div>
                         </div>
 
                         <div className="space-y-1.5 relative z-10">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Renewable Alpha</span>
+                            <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Renewable Alpha</span>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl font-black text-emerald-400 font-mono tracking-heading">
-                                    {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-xs text-muted-foreground/30 uppercase tracking-uppercase italic font-bold">Sync...</span>}
+                                <span className="text-2xl font-black text-emerald-500 dark:text-emerald-400 font-mono tracking-heading">
+                                    {avgRenewableShare > 0 ? `${avgRenewableShare.toFixed(1)}%` : <span className="text-xs text-muted-foreground/40 uppercase tracking-uppercase italic font-bold">Sync...</span>}
                                 </span>
                             </div>
                         </div>
 
                         <div className="space-y-1.5 relative z-10">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">System Demand</span>
+                            <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">System Demand</span>
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl font-black text-blue-400 font-mono tracking-heading">{(totalElectricity).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
-                                <span className="text-xs font-bold text-white/20 uppercase">KToE</span>
+                                <span className="text-2xl font-black text-blue-500 dark:text-blue-400 font-mono tracking-heading">{(totalElectricity).toLocaleString(undefined, { maximumFractionDigits: 0 })}</span>
+                                <span className="text-xs font-bold text-muted-foreground/40 uppercase">KToE</span>
                             </div>
                         </div>
 
                         <div className="space-y-1.5 relative z-10">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Relative Intensity</span>
+                            <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Relative Intensity</span>
                             <div className="flex items-center gap-2">
-                                <span className="text-2xl font-black font-mono tracking-heading text-emerald-400">
+                                <span className="text-2xl font-black font-mono tracking-heading text-emerald-500 dark:text-emerald-400">
                                     {avgEnergyIntensity.toFixed(1)}
                                 </span>
                             </div>
@@ -160,24 +160,24 @@ export const EnergySection: React.FC = () => {
                         <div className="lg:col-span-8 space-y-6">
                             <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                                 <div className="space-y-1">
-                                    <h3 className="text-lg font-black text-white italic tracking-heading uppercase">Sub-National Energy Matrix</h3>
-                                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase">Interactive choropleth · High-fidelity telemetry</p>
+                                    <h3 className="text-lg font-black text-foreground italic tracking-heading uppercase">Sub-National Energy Matrix</h3>
+                                    <p className="text-xs font-bold text-muted-foreground/70 uppercase tracking-uppercase">Interactive choropleth · High-fidelity telemetry</p>
                                 </div>
 
-                                <div className="flex p-1 rounded-xl bg-white/5 border border-white/5 gap-1">
+                                <div className="flex p-1 rounded-xl bg-muted/40 dark:bg-white/5 border border-border gap-1">
                                     <button
                                         onClick={() => setIsInfrared(!isInfrared)}
                                         className={cn(
                                             'flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all',
                                             isInfrared
                                                 ? 'bg-rose-500 text-white shadow-lg shadow-rose-500/20 animate-pulse'
-                                                : 'text-muted-foreground hover:text-white hover:bg-white/5',
+                                                : 'text-muted-foreground hover:text-foreground hover:bg-muted',
                                         )}
                                     >
                                         <Zap className="w-3.5 h-3.5" />
                                         <span className="text-xs font-black uppercase tracking-uppercase">Infrared Overlay</span>
                                     </button>
-                                    <div className="w-[1px] h-4 bg-white/10 self-center mx-1" />
+                                    <div className="w-[1px] h-4 bg-border self-center mx-1" />
                                     {metricTabs.map((tab) => (
                                         <button
                                             key={tab.id}
@@ -188,8 +188,8 @@ export const EnergySection: React.FC = () => {
                                             className={cn(
                                                 'flex items-center gap-2 px-3 py-1.5 rounded-lg transition-all',
                                                 !isInfrared && selectedMetric === tab.id
-                                                    ? 'bg-blue-500 text-white shadow-lg shadow-blue-500/20'
-                                                    : 'text-muted-foreground hover:text-white hover:bg-white/5',
+                                                    ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20'
+                                                    : 'text-muted-foreground hover:text-foreground hover:bg-muted',
                                             )}
                                         >
                                             <tab.icon className="w-3.5 h-3.5" />
@@ -201,9 +201,9 @@ export const EnergySection: React.FC = () => {
 
                             <div className="h-[550px] w-full relative group">
                                 <Suspense fallback={
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl gap-4">
-                                        <Activity className="w-6 h-6 text-blue-500 animate-spin" />
-                                        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Initializing Geospatial Environment...</span>
+                                    <div className="w-full h-full flex flex-col items-center justify-center bg-card border border-border rounded-3xl gap-4">
+                                        <Activity className="w-6 h-6 text-primary animate-spin" />
+                                        <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Initializing Geospatial Environment...</span>
                                     </div>
                                 }>
                                     <IndiaLeafletMap
@@ -240,8 +240,8 @@ export const EnergySection: React.FC = () => {
                         <div className="lg:col-span-4 space-y-10">
                             <div className="space-y-6">
                                 <div className="flex justify-between items-center">
-                                    <h3 className="text-lg font-black text-white italic tracking-heading uppercase px-4 border-l-2 border-emerald-500">Tier-1 Node Ranking</h3>
-                                    <span className="text-xs font-black text-white/30 uppercase tracking-uppercase">Live Buffer</span>
+                                    <h3 className="text-lg font-black text-foreground italic tracking-heading uppercase px-4 border-l-2 border-emerald-500">Tier-1 Node Ranking</h3>
+                                    <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Live Buffer</span>
                                 </div>
                                 <div className="space-y-3">
                                     {topStates.map((state, i) => (
@@ -251,21 +251,21 @@ export const EnergySection: React.FC = () => {
                                             className={cn(
                                                 'w-full flex justify-between items-center p-4 rounded-2xl border transition-all group text-left',
                                                 selectedState?.state_code === state.state_code
-                                                    ? 'bg-blue-500/10 border-blue-500/20 shadow-lg shadow-blue-500/5'
-                                                    : 'bg-white/[0.02] border-white/5 hover:border-white/12',
+                                                    ? 'bg-primary/10 border-primary/30 shadow-lg shadow-primary/5'
+                                                    : 'bg-card border-border hover:bg-muted/50',
                                             )}
                                         >
                                             <div className="flex items-center gap-4">
-                                                <span className="text-xs font-black text-muted-foreground/20 italic">0{i + 1}</span>
-                                                <span className="text-xs font-black text-white/80 uppercase tracking-heading">{state.state_name}</span>
+                                                <span className="text-xs font-black text-muted-foreground/40 italic">0{i + 1}</span>
+                                                <span className="text-xs font-black text-foreground uppercase tracking-heading">{state.state_name}</span>
                                             </div>
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm font-black text-blue-400 font-mono">
+                                                <span className="text-sm font-black text-primary font-mono">
                                                     {Number(state[selectedMetric]).toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                 </span>
                                                 <ChevronRight className={cn(
                                                     'w-3 h-3 transition-colors',
-                                                    selectedState?.state_code === state.state_code ? 'text-blue-500' : 'text-white/10 group-hover:text-blue-500',
+                                                    selectedState?.state_code === state.state_code ? 'text-primary' : 'text-muted-foreground/40 group-hover:text-primary',
                                                 )} />
                                             </div>
                                         </button>
@@ -274,19 +274,19 @@ export const EnergySection: React.FC = () => {
                             </div>
 
                             {selectedState ? (
-                                <div className="p-6 rounded-3xl bg-blue-500/10 border border-blue-500/20 space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
+                                <div className="p-6 rounded-3xl bg-primary/10 border border-primary/20 space-y-4 animate-in fade-in slide-in-from-right-4 duration-500">
                                     <div className="flex justify-between items-center">
-                                        <span className="text-xs font-black text-blue-400 uppercase tracking-uppercase">Node Focus: {selectedState.state_name}</span>
-                                        <button onClick={() => setSelectedState(null)} className="text-xs font-black text-white/30 hover:text-white underline uppercase">Clear</button>
+                                        <span className="text-xs font-black text-primary uppercase tracking-uppercase">Node Focus: {selectedState.state_name}</span>
+                                        <button onClick={() => setSelectedState(null)} className="text-xs font-black text-muted-foreground hover:text-foreground underline uppercase">Clear</button>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-1">
-                                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">Coal Prod</span>
-                                            <div className="text-sm font-black text-white font-mono">{selectedState.coal_production.toFixed(1)} <span className="text-xs text-white/20">KToE</span></div>
+                                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Coal Prod</span>
+                                            <div className="text-sm font-black text-foreground font-mono">{selectedState.coal_production.toFixed(1)} <span className="text-xs text-muted-foreground/50">KToE</span></div>
                                         </div>
                                         <div className="space-y-1">
-                                            <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">RE Share</span>
-                                            <div className="text-sm font-black text-emerald-400 font-mono">{selectedState.renewable_share.toFixed(1)}%</div>
+                                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">RE Share</span>
+                                            <div className="text-sm font-black text-emerald-500 font-mono">{selectedState.renewable_share.toFixed(1)}%</div>
                                         </div>
                                     </div>
 
@@ -295,9 +295,9 @@ export const EnergySection: React.FC = () => {
                                     </div>
                                 </div>
                             ) : (
-                                <div className="p-8 rounded-3xl border border-dashed border-white/5 bg-white/[0.01] flex flex-col items-center justify-center text-center space-y-4">
-                                    <Activity className="w-5 h-5 text-white/10 animate-pulse" />
-                                    <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase leading-relaxed">
+                                <div className="p-8 rounded-3xl border border-dashed border-border bg-card/60 flex flex-col items-center justify-center text-center space-y-4">
+                                    <Activity className="w-5 h-5 text-muted-foreground/40 animate-pulse" />
+                                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase leading-relaxed">
                                         Select a state on the map for <br /> high-frequency drill-down
                                     </p>
                                 </div>
