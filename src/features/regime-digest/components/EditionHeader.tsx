@@ -38,37 +38,37 @@ export const EditionHeader: React.FC<EditionHeaderProps> = ({
   const asOfLabel = formatDate(asOf);
 
   return (
-    <header className="space-y-3 border-b border-white/5 pb-8">
-      <div className="flex flex-wrap items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-muted-foreground/40">
+    <header className="space-y-3 border-b border-border pb-8">
+      <div className="flex flex-wrap items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-muted-foreground">
         <span>Monthly Regime Notebook</span>
         {editionNumber != null && (
-          <span className="inline-flex items-center gap-1 text-muted-foreground/50">
+          <span className="inline-flex items-center gap-1 text-muted-foreground">
             <Hash size={10} aria-hidden />
             <span className="tabular-nums">Edition {editionNumber}</span>
           </span>
         )}
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-tight">
+      <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
         {monthLabel} Macro Regime Digest
       </h1>
 
-      <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest">
+      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
         Desk brief · Scoreboard · Automated rules
       </p>
 
-      <div className="flex flex-wrap gap-4 pt-1 text-[11px] font-medium text-muted-foreground/60">
+      <div className="flex flex-wrap gap-4 pt-1 text-[11px] font-medium text-muted-foreground">
         {published && (
           <span className="inline-flex items-center gap-1.5">
-            <Calendar size={12} className="text-muted-foreground/40" aria-hidden />
+            <Calendar size={12} className="text-muted-foreground" aria-hidden />
             <span>Published {published}</span>
           </span>
         )}
         {asOfLabel && (
           <span className="inline-flex items-center gap-1.5">
-            <Clock size={12} className="text-muted-foreground/40" aria-hidden />
+            <Clock size={12} className="text-muted-foreground" aria-hidden />
             <span>
-              Data as of <span className="tabular-nums text-muted-foreground/80">{asOfLabel}</span>
+              Data as of <span className="tabular-nums font-semibold text-foreground">{asOfLabel}</span>
             </span>
           </span>
         )}

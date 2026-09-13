@@ -47,10 +47,10 @@ export const TICWorldMapModule: React.FC = () => {
     const top5 = useMemo(() => latestHolders.slice(0, 5), [latestHolders]);
     const top10 = useMemo(() => latestHolders.slice(0, 10), [latestHolders]);
 
-    if (isLoading) return <Skeleton variant="rectangular" height={750} className="rounded-[40px] bg-white/5" />;
+    if (isLoading) return <Skeleton variant="rectangular" height={750} className="rounded-[40px] bg-muted/30" />;
 
     return (
-        <Box className="relative w-full min-h-[750px] rounded-[48px] border border-border dark:border-white/12 bg-card dark:bg-[#050505] overflow-hidden group/module shadow-sm dark:shadow-3xl">
+        <Box className="relative w-full min-h-[750px] rounded-[48px] border border-border bg-card dark:bg-[#050505] overflow-hidden group/module shadow-sm dark:shadow-3xl text-card-foreground">
             {/* 1. Header & Primary Controls */}
             <div className="absolute top-10 left-10 z-30 flex flex-col gap-8 max-w-sm">
                 <div>
@@ -61,18 +61,18 @@ export const TICWorldMapModule: React.FC = () => {
                     <h2 className="text-4xl font-black uppercase tracking-heading text-foreground leading-none">
                         Top Foreign <span className="text-cyan-600 dark:text-cyan-400">Holders</span>
                     </h2>
-                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mt-2 leading-relaxed opacity-80">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mt-2 leading-relaxed">
                         Pinpointing institutional demand and sovereign accumulation of US government debt
                     </p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-muted/80 dark:bg-white/5 p-1 rounded-2xl border border-border dark:border-white/5 w-fit backdrop-blur-3xl shadow-sm dark:shadow-2xl">
+                <div className="flex items-center gap-2 bg-muted/80 dark:bg-card/80 p-1 rounded-2xl border border-border w-fit backdrop-blur-3xl shadow-sm">
                     <Button
                         size="small"
                         onClick={() => setMetric('holdings')}
                         className={cn(
                             "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all",
-                            metric === 'holdings' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-foreground"
+                            metric === 'holdings' ? "bg-cyan-600 text-white dark:bg-cyan-500 dark:text-black shadow-sm font-black" : "text-muted-foreground hover:text-foreground"
                         )}
                     >
                         Holdings ($B)
@@ -82,7 +82,7 @@ export const TICWorldMapModule: React.FC = () => {
                         onClick={() => setMetric('share')}
                         className={cn(
                             "px-5 py-2.5 rounded-xl text-xs font-black uppercase tracking-uppercase transition-all",
-                            metric === 'share' ? "bg-cyan-500 text-black shadow-[0_0_30px_rgba(6,182,212,0.4)]" : "text-muted-foreground hover:text-foreground"
+                            metric === 'share' ? "bg-cyan-600 text-white dark:bg-cyan-500 dark:text-black shadow-sm font-black" : "text-muted-foreground hover:text-foreground"
                         )}
                     >
                         Market Share
@@ -91,7 +91,7 @@ export const TICWorldMapModule: React.FC = () => {
             </div>
 
             {/* 2. Top 5 Power List (Bottom Left Overlay) */}
-            <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-card/90 dark:bg-black/60 backdrop-blur-3xl border border-border dark:border-white/12 p-8 rounded-[2.5rem] shadow-md dark:shadow-3xl w-80">
+            <div className="absolute bottom-10 left-10 z-30 hidden xl:flex flex-col gap-4 bg-card/90 dark:bg-black/60 backdrop-blur-3xl border border-border p-8 rounded-[2.5rem] shadow-lg w-80 text-card-foreground">
                 <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-black text-foreground uppercase tracking-uppercase">Top 5 Holders</span>
                     <Layers className="text-cyan-600 dark:text-cyan-400 w-4 h-4" />
@@ -115,7 +115,7 @@ export const TICWorldMapModule: React.FC = () => {
             </div>
 
             {/* 3. Ranked Sidebar (Desktop Right) */}
-            <div className="absolute top-10 right-10 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-card/90 dark:bg-black/40 backdrop-blur-3xl border border-border dark:border-white/5 rounded-[2.5rem] p-8 shadow-sm dark:shadow-inner">
+            <div className="absolute top-10 right-10 z-30 w-72 max-h-[calc(100%-120px)] overflow-y-auto hidden lg:block scrollbar-hide bg-card/90 dark:bg-black/60 backdrop-blur-3xl border border-border rounded-[2.5rem] p-8 shadow-lg text-card-foreground">
                 <div className="flex items-center justify-between mb-8">
                     <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Institutional Rank</span>
                     <TrendingUp size={16} className="text-cyan-600 dark:text-cyan-400" />
@@ -166,24 +166,24 @@ export const TICWorldMapModule: React.FC = () => {
             />
 
             {/* 5. Quantized Legend (Bottom Right Center) */}
-            <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col gap-4 bg-card/90 dark:bg-black/60 backdrop-blur-3xl border border-border dark:border-white/5 p-6 rounded-[2rem] shadow-md dark:shadow-2xl min-w-[320px]">
+            <div className="absolute bottom-10 right-10 z-30 hidden md:flex flex-col gap-4 bg-card/90 dark:bg-black/60 backdrop-blur-3xl border border-border p-6 rounded-[2rem] shadow-lg min-w-[320px] text-card-foreground">
                 <div className="flex justify-between text-xs font-black text-muted-foreground uppercase tracking-uppercase">
                     <span>Minimum Exposure</span>
                     <span>Median</span>
                     <span>High Demand</span>
                 </div>
                 <div className="flex gap-1 h-3 w-full px-1">
-                    <div className="flex-1 bg-[#112229] rounded-l-md border border-white/5" />
-                    <div className="flex-1 bg-[#0891b2] border border-white/5" />
-                    <div className="flex-1 bg-[#06b6d4] border border-white/5" />
-                    <div className="flex-1 bg-[#22d3ee] border border-white/5" />
-                    <div className="flex-1 bg-[#67e8f9] rounded-r-md border border-white/5" />
+                    <div className="flex-1 bg-[#cffafe] dark:bg-[#112229] rounded-l-md border border-border" />
+                    <div className="flex-1 bg-[#67e8f9] dark:bg-[#0891b2] border border-border" />
+                    <div className="flex-1 bg-[#06b6d4] dark:bg-[#06b6d4] border border-border" />
+                    <div className="flex-1 bg-[#0891b2] dark:bg-[#22d3ee] border border-border" />
+                    <div className="flex-1 bg-[#0e7490] dark:bg-[#67e8f9] rounded-r-md border border-border" />
                 </div>
                 <div className="flex justify-between items-center mt-1">
                     <span className="text-xs text-muted-foreground font-mono uppercase tracking-heading italic">
                         As of {latestHolders[0] ? new Date(latestHolders[0].as_of_date).toLocaleDateString('en-US', { month: 'short', year: 'numeric' }) : '--'} • US Treasury TIC Stats
                     </span>
-                    <Globe size={12} className="text-muted-foreground/40" />
+                    <Globe size={12} className="text-muted-foreground" />
                 </div>
             </div>
 

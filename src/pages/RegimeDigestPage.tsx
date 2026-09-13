@@ -101,15 +101,15 @@ interface MetricPillProps {
 
 const MetricPill: React.FC<MetricPillProps> = ({ label, value, sub, trend }) => {
     const TrendIcon = trend === 'up' ? TrendingUp : trend === 'down' ? TrendingDown : Minus;
-    const trendColor = trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-slate-500';
+    const trendColor = trend === 'up' ? 'text-emerald-600 dark:text-emerald-400' : trend === 'down' ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground';
     return (
-        <div className="flex flex-col gap-1 px-4 py-3 rounded-lg bg-white/[0.03] border border-white/[0.06] min-w-0">
-            <span className="text-[9px] font-black tracking-[0.2em] uppercase text-muted-foreground/40 whitespace-nowrap">{label}</span>
+        <div className="flex flex-col gap-1 px-4 py-3 rounded-lg bg-card border border-border shadow-sm min-w-0">
+            <span className="text-[9px] font-black tracking-[0.2em] uppercase text-muted-foreground whitespace-nowrap">{label}</span>
             <div className="flex items-baseline gap-1.5">
-                <span className="text-base font-black text-white tracking-tight leading-none">{value}</span>
+                <span className="text-base font-black text-foreground tracking-tight leading-none">{value}</span>
                 {trend && <TrendIcon size={11} className={trendColor} />}
             </div>
-            {sub && <span className="text-[9px] font-bold text-muted-foreground/30 whitespace-nowrap">{sub}</span>}
+            {sub && <span className="text-[9px] font-bold text-muted-foreground whitespace-nowrap">{sub}</span>}
         </div>
     );
 };
@@ -150,8 +150,8 @@ const MetricsStrip: React.FC<{ snapshot: MetricsSnapshot }> = ({ snapshot }) => 
     if (vitals.length === 0) return null;
 
     return (
-        <div className="mb-10 pb-10 border-b border-white/5">
-            <p className="text-[9px] font-black tracking-[0.25em] uppercase text-muted-foreground/30 mb-3">
+        <div className="mb-10 pb-10 border-b border-border">
+            <p className="text-[9px] font-black tracking-[0.25em] uppercase text-muted-foreground mb-3">
                 Macro Vitals · Snapshot
             </p>
             <div className="flex flex-wrap gap-2">
@@ -189,12 +189,12 @@ const NotebookDigest: React.FC<{
                 ogImage={seo.ogImage}
             />
 
-            <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/35">
-                <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
+            <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</Link>
                 <ChevronRight size={10} />
-                <Link to="/regime-digest" className="hover:text-blue-400 transition-colors">Archive</Link>
+                <Link to="/regime-digest" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Archive</Link>
                 <ChevronRight size={10} />
-                <span className="text-blue-400/70">{digest.year_month}</span>
+                <span className="text-blue-600 dark:text-blue-400 font-bold">{digest.year_month}</span>
             </nav>
 
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
@@ -219,7 +219,7 @@ const NotebookDigest: React.FC<{
                         disabled={isRegenerating}
                         variant="outline"
                         size="sm"
-                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
+                        className="border-border hover:bg-muted text-foreground font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
                     >
                         {isRegenerating
                             ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
@@ -232,7 +232,7 @@ const NotebookDigest: React.FC<{
             {payload.quality.overall === 'partial' && (
                 <div
                     role="status"
-                    className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-200/90"
+                    className="rounded-lg border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-amber-800 dark:text-amber-200 font-medium"
                 >
                     Partial data quality — some metrics withheld or stale.
                 </div>
@@ -241,7 +241,7 @@ const NotebookDigest: React.FC<{
             {payload.quality.overall === 'blocked' && (
                 <div
                     role="status"
-                    className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-200/90"
+                    className="rounded-lg border border-rose-500/30 bg-rose-500/10 px-4 py-3 text-sm text-rose-800 dark:text-rose-200 font-medium"
                 >
                     Data quality blocked — key metrics unavailable for this edition.
                 </div>
@@ -259,13 +259,13 @@ const NotebookDigest: React.FC<{
             <BriefIndex links={payload.briefLinks} />
             <QualityFooter quality={payload.quality} asOf={payload.asOf} />
 
-            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
-                <Button asChild variant="ghost" size="sm" className="text-muted-foreground/50 hover:text-white -ml-2">
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+                <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2">
                     <Link to="/regime-digest">
                         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> All Editions
                     </Link>
                 </Button>
-                <p className="text-[9px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                     Ref: {digest.id.substring(0, 8)}
                     {lastUpdated
                         ? ` · ${new Date(lastUpdated).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`
@@ -309,17 +309,17 @@ const LegacyDigest: React.FC<{
 
             <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
                 <div>
-                    <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/35 mb-3">
-                        <Link to="/" className="hover:text-blue-400 transition-colors">Home</Link>
+                    <nav className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground mb-3">
+                        <Link to="/" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Home</Link>
                         <ChevronRight size={10} />
-                        <Link to="/regime-digest" className="hover:text-blue-400 transition-colors">Archive</Link>
+                        <Link to="/regime-digest" className="hover:text-blue-600 dark:hover:text-blue-400 transition-colors">Archive</Link>
                         <ChevronRight size={10} />
-                        <span className="text-blue-400/70">{digest.year_month}</span>
+                        <span className="text-blue-600 dark:text-blue-400 font-bold">{digest.year_month}</span>
                     </nav>
-                    <h1 className="text-2xl md:text-3xl font-black tracking-tight text-white leading-tight">
+                    <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
                         {formattedTitleDate} Macro Regime Digest
                     </h1>
-                    <p className="text-xs font-bold text-muted-foreground/50 uppercase tracking-widest pt-2">
+                    <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest pt-2">
                         Desk brief · Scoreboard · Automated rules
                     </p>
                     <div className="flex flex-wrap items-center gap-3 pt-3">
@@ -330,8 +330,8 @@ const LegacyDigest: React.FC<{
                         />
                         {wordCount > 0 && (
                             <>
-                                <span className="w-px h-3 bg-white/10" />
-                                <span className="text-[10px] font-bold text-muted-foreground/35 uppercase tracking-widest">
+                                <span className="w-px h-3 bg-border" />
+                                <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                     {readingMinutes} min read
                                 </span>
                             </>
@@ -344,7 +344,7 @@ const LegacyDigest: React.FC<{
                         disabled={isRegenerating}
                         variant="outline"
                         size="sm"
-                        className="border-white/10 hover:bg-white/5 text-white/60 font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
+                        className="border-border hover:bg-muted text-foreground font-black text-[10px] tracking-widest uppercase h-9 px-4 rounded-lg self-start shrink-0"
                     >
                         {isRegenerating
                             ? <RefreshCw className="mr-1.5 h-3 w-3 animate-spin" />
@@ -353,7 +353,7 @@ const LegacyDigest: React.FC<{
                     </Button>
                 )}
             </div>
-            <p className="text-[10px] font-mono text-muted-foreground/40 uppercase tracking-widest">
+            <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest">
                 Generated{' '}
                 {generatedAt
                     ? new Date(generatedAt).toLocaleString('en-US', { dateStyle: 'medium', timeStyle: 'short' })
@@ -361,13 +361,13 @@ const LegacyDigest: React.FC<{
                 {' · '}Source: multi-metric monthly synthesis · GraphiQuestor
             </p>
 
-            <Card className="overflow-hidden border-white/[0.06] bg-slate-950/50 backdrop-blur-xl shadow-2xl">
+            <Card className="overflow-hidden border-border bg-card shadow-sm">
                 <CardContent className="p-6 sm:p-10 lg:p-14">
-                    <div className="mb-10 pb-10 border-b border-white/[0.06]">
-                        <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/80 mb-4">
+                    <div className="mb-10 pb-10 border-b border-border">
+                        <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-600 dark:text-blue-400 mb-4">
                             Intelligence Brief · {formattedTitleDate}
                         </p>
-                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-white tracking-tight leading-[1.15] max-w-3xl">
+                        <h2 className="text-2xl sm:text-3xl lg:text-4xl font-black text-foreground tracking-tight leading-[1.15] max-w-3xl">
                             {digest.subject_line}
                         </h2>
                     </div>
@@ -377,7 +377,7 @@ const LegacyDigest: React.FC<{
                     <style>{`
                         .digest-body { max-width: 72ch; }
                         .digest-body h2 {
-                            color: #fff;
+                            color: hsl(var(--foreground));
                             font-size: 0.875rem;
                             font-weight: 900;
                             text-transform: uppercase;
@@ -390,7 +390,7 @@ const LegacyDigest: React.FC<{
                         }
                         .digest-body > h2:first-child { margin-top: 0; }
                         .digest-body h3 {
-                            color: #7dd3fc;
+                            color: #2563eb;
                             font-size: 0.6875rem;
                             font-weight: 900;
                             text-transform: uppercase;
@@ -398,16 +398,19 @@ const LegacyDigest: React.FC<{
                             margin-top: 2.25rem;
                             margin-bottom: 0.875rem;
                         }
+                        .dark .digest-body h3 {
+                            color: #7dd3fc;
+                        }
                         .digest-body p {
-                            color: #cbd5e1;
+                            color: hsl(var(--foreground) / 0.85);
                             font-size: 0.9375rem;
                             line-height: 1.85;
                             margin-bottom: 1.375rem;
                         }
-                        .digest-body strong { color: #f8fafc; font-weight: 800; }
+                        .digest-body strong { color: hsl(var(--foreground)); font-weight: 800; }
                         .digest-body ul { margin: 1.25rem 0; padding: 0; list-style: none; }
                         .digest-body li {
-                            color: #94a3b8;
+                            color: hsl(var(--foreground) / 0.8);
                             font-size: 0.9rem;
                             line-height: 1.75;
                             margin-bottom: 0.75rem;
@@ -422,31 +425,32 @@ const LegacyDigest: React.FC<{
                             font-weight: 700;
                             opacity: 0.7;
                         }
-                        .digest-body a { color: #60a5fa; text-decoration: none; }
-                        .digest-body a:hover { color: #93c5fd; }
+                        .digest-body a { color: #2563eb; text-decoration: none; }
+                        .dark .digest-body a { color: #60a5fa; }
+                        .digest-body a:hover { text-decoration: underline; }
                         .digest-body hr {
                             border: none;
-                            border-top: 1px solid rgba(255,255,255,0.05);
+                            border-top: 1px solid hsl(var(--border));
                             margin: 3rem 0;
                         }
                     `}</style>
                     {cleanHtml ? (
                         <div dangerouslySetInnerHTML={{ __html: cleanHtml }} className="digest-body" />
                     ) : (
-                        <p className="text-sm text-muted-foreground/50">
+                        <p className="text-sm text-muted-foreground">
                             Narrative body unavailable for this edition.
                         </p>
                     )}
                 </CardContent>
             </Card>
 
-            <div className="flex items-center justify-between pt-6 border-t border-white/[0.05]">
-                <Button asChild variant="ghost" size="sm" className="text-muted-foreground/50 hover:text-white -ml-2">
+            <div className="flex items-center justify-between pt-6 border-t border-border">
+                <Button asChild variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground -ml-2">
                     <Link to="/regime-digest">
                         <ArrowLeft className="mr-1.5 h-3.5 w-3.5" /> All Editions
                     </Link>
                 </Button>
-                <p className="text-[9px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                     Ref: {digest.id.substring(0, 8)}
                     {generatedAt
                         ? ` · ${new Date(generatedAt).toLocaleDateString('en-US', { day: 'numeric', month: 'short', year: 'numeric' })}`
@@ -592,21 +596,20 @@ export const RegimeDigestPage: React.FC = () => {
                 </SectionErrorBoundary>
             </div>
 
-            <div className="mt-20 p-10 sm:p-14 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-950 border border-blue-500/10 text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_70%)]" />
+            <div className="mt-20 p-10 sm:p-14 rounded-2xl bg-card border border-border text-center relative overflow-hidden shadow-sm">
                 <div className="relative z-10 space-y-5">
-                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/70">Monthly Intelligence</p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tighter leading-tight">
+                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-600 dark:text-blue-400">Monthly Intelligence</p>
+                    <h3 className="text-2xl sm:text-3xl font-black text-foreground tracking-tighter leading-tight">
                         Delivered to Your Inbox<br />on the 1st of Every Month
                     </h3>
-                    <p className="text-sm text-slate-400/80 max-w-sm mx-auto leading-relaxed">
+                    <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
                         Institutional macro synthesis on Global Liquidity, Sovereign Stress, and structural regime shifts.
                     </p>
                     <div className="flex justify-center flex-wrap gap-3 pt-2">
                         <Button asChild size="lg" className="bg-blue-600 hover:bg-blue-500 text-white font-black px-10 rounded-xl h-12">
                             <a href="https://graphiquestor.com/#newsletter">Subscribe — Free</a>
                         </Button>
-                        <Button asChild variant="outline" size="lg" className="border-white/10 rounded-xl h-12 bg-white/[0.03] hover:bg-white/[0.06]">
+                        <Button asChild variant="outline" size="lg" className="border-border rounded-xl h-12 bg-muted/40 hover:bg-muted text-foreground">
                             <Link to="/">Open Terminal</Link>
                         </Button>
                     </div>

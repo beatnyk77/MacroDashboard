@@ -11,15 +11,15 @@ export interface RegimeHistoryProps {
 const REGIME_UI: Record<RegimeLabel, { label: string; className: string }> = {
   RISK_ON: {
     label: 'Risk On',
-    className: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
   },
   NEUTRAL: {
     label: 'Neutral',
-    className: 'text-slate-300 border-slate-500/30 bg-slate-500/10',
+    className: 'text-slate-700 dark:text-slate-300 border-slate-500/30 bg-slate-500/10',
   },
   RISK_OFF: {
     label: 'Risk Off',
-    className: 'text-rose-400 border-rose-500/30 bg-rose-500/10',
+    className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
   },
 };
 
@@ -34,13 +34,13 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
   if (!history.length) {
     return (
       <section aria-label="Regime history">
-        <Card variant="elevated" className="bg-slate-950/50 border-white/5">
+        <Card variant="elevated" className="bg-card border-border shadow-sm">
           <CardContent className="p-5">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 flex items-center gap-2 mb-3">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2 mb-3">
               <History size={14} aria-hidden />
               Regime history
             </h2>
-            <p className="text-sm text-muted-foreground/40">No prior regime history for this series.</p>
+            <p className="text-sm text-muted-foreground">No prior regime history for this series.</p>
           </CardContent>
         </Card>
       </section>
@@ -52,9 +52,9 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
 
   return (
     <section aria-label="Regime history">
-      <Card variant="elevated" className="bg-slate-950/50 border-white/5">
+      <Card variant="elevated" className="bg-card border-border shadow-sm">
         <CardContent className="p-5 md:p-6 space-y-4">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 flex items-center gap-2">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2">
             <History size={14} aria-hidden />
             Regime history
           </h2>
@@ -65,9 +65,9 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
               return (
                 <li
                   key={entry.yearMonth}
-                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-white/5 bg-white/[0.02]"
+                  className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-border bg-muted/40"
                 >
-                  <span className="text-[11px] font-mono font-bold tabular-nums text-muted-foreground/70">
+                  <span className="text-[11px] font-mono font-bold tabular-nums text-foreground">
                     {formatYm(entry.yearMonth)}
                   </span>
                   <span

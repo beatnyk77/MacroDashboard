@@ -19,22 +19,22 @@ const SignalCard: React.FC<{
     desc: string;
     interpretation: string;
 }> = ({ label, sublabel, value, delta, trend, color, borderColor, desc, interpretation }) => (
-    <div className={cn('p-5 rounded-2xl bg-white/[0.02] border transition-all hover:bg-white/[0.04]', borderColor)}>
+    <div className={cn('p-5 rounded-2xl bg-card border shadow-sm transition-all hover:border-border/80', borderColor)}>
         <p className={cn('text-xs font-black uppercase tracking-uppercase mb-1', color)}>{label}</p>
-        <p className="text-xs text-muted-foreground/40 mb-3">{sublabel}</p>
+        <p className="text-xs text-muted-foreground mb-3">{sublabel}</p>
         <div className="flex items-baseline justify-between mb-2">
             <p className={cn('text-3xl font-black tabular-nums tracking-heading', color)}>{value}</p>
             {delta && (
                 <div className={cn('flex items-center gap-0.5 text-xs font-black',
-                    trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-muted-foreground/40'
+                    trend === 'up' ? 'text-emerald-700 dark:text-emerald-400' : trend === 'down' ? 'text-rose-700 dark:text-rose-400' : 'text-muted-foreground'
                 )}>
                     {trend === 'up' ? <TrendingUp size={12} /> : trend === 'down' ? <TrendingDown size={12} /> : null}
                     {delta}
                 </div>
             )}
         </div>
-        <p className="text-xs text-muted-foreground/30 mb-2">{desc}</p>
-        <div className={cn('p-2 rounded-xl text-xs text-muted-foreground/60 leading-relaxed border', borderColor, 'bg-white/[0.01]')}>
+        <p className="text-xs text-muted-foreground/80 mb-2">{desc}</p>
+        <div className={cn('p-2 rounded-xl text-xs text-muted-foreground leading-relaxed border bg-muted/30', borderColor)}>
             {interpretation}
         </div>
     </div>
@@ -89,13 +89,13 @@ export const ChinaProprietarySignals: React.FC = () => {
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex items-center gap-3 border-b border-white/5 pb-6">
+            <div className="flex items-center gap-3 border-b border-border pb-6">
                 <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                    <Cpu className="text-purple-400 w-5 h-5" />
+                    <Cpu className="text-purple-600 dark:text-purple-400 w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-black tracking-heading text-white uppercase">
-                        Proprietary <span className="text-purple-400">Alpha Signals</span>
+                    <h3 className="text-xl font-black tracking-heading text-foreground uppercase">
+                        Proprietary <span className="text-purple-600 dark:text-purple-400">Alpha Signals</span>
                     </h3>
                     <p className="text-muted-foreground text-xs mt-0.5">Credit Impulse · De-Dollarization · Distress · PBOC/Fed Divergence</p>
                 </div>
@@ -113,8 +113,8 @@ export const ChinaProprietarySignals: React.FC = () => {
                     trend={latestCI?.value != null && creditImpulse?.[1]?.value != null
                         ? latestCI.value > creditImpulse[1].value ? 'up' : 'down'
                         : 'neutral'}
-                    color="text-amber-400"
-                    borderColor="border-amber-500/20"
+                    color="text-amber-600 dark:text-amber-400"
+                    borderColor="border-border"
                     desc="Source: PBoC Total Social Financing / Nominal GDP"
                     interpretation={
                         latestCI?.value == null
@@ -133,8 +133,8 @@ export const ChinaProprietarySignals: React.FC = () => {
                     value={latestDD?.value != null ? `${latestDD.value.toFixed(1)}%` : '--'}
                     delta={latestDD?.value != null ? `${latestDD.value.toFixed(1)}% YoY` : undefined}
                     trend={latestDD?.value != null ? (latestDD.value < 0 ? 'down' : 'up') : 'neutral'}
-                    color="text-red-400"
-                    borderColor="border-red-500/20"
+                    color="text-red-600 dark:text-red-400"
+                    borderColor="border-border"
                     desc="Source: IMF COFER database (quarterly)"
                     interpretation={
                         latestDD?.value == null
@@ -157,8 +157,8 @@ export const ChinaProprietarySignals: React.FC = () => {
                     trend={latestCD?.value != null && corpDistress?.[1]?.value != null
                         ? latestCD.value < corpDistress[1].value ? 'down' : 'up'
                         : 'neutral'}
-                    color={latestCD?.value == null ? 'text-muted-foreground' : latestCD.value < -1.5 ? 'text-rose-400' : 'text-amber-400'}
-                    borderColor={latestCD?.value == null ? 'border-white/10' : latestCD.value < -1.5 ? 'border-rose-500/20' : 'border-amber-500/20'}
+                    color={latestCD?.value == null ? 'text-muted-foreground' : latestCD.value < -1.5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'}
+                    borderColor="border-border"
                     desc="Negative = PPI deflation faster than CPI → industrial margin squeeze"
                     interpretation={
                         latestCD?.value == null
@@ -175,8 +175,8 @@ export const ChinaProprietarySignals: React.FC = () => {
                     label="PBOC vs Fed Divergence"
                     sublabel="MLF Rate minus Fed Funds Rate"
                     value={pbocFedGap != null ? `${pbocFedGap.toFixed(2)}%` : '--'}
-                    color={pbocFedGap == null ? 'text-muted-foreground' : pbocFedGap < -2 ? 'text-rose-400' : 'text-emerald-400'}
-                    borderColor={pbocFedGap == null ? 'border-white/10' : pbocFedGap < -2 ? 'border-rose-500/20' : 'border-emerald-500/20'}
+                    color={pbocFedGap == null ? 'text-muted-foreground' : pbocFedGap < -2 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}
+                    borderColor="border-border"
                     desc="Source: PBOC (MLF 1Y) vs Fed Funds Effective Rate"
                     interpretation={
                         pbocFedGap == null
@@ -190,10 +190,10 @@ export const ChinaProprietarySignals: React.FC = () => {
 
             {/* Credit Impulse Trend */}
             {ciTrend.length > 0 && (
-                <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
+                <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <p className="text-xs font-black text-white/60 uppercase tracking-uppercase">Credit Impulse Trend — Lead Indicator for Global Demand</p>
-                        <span className="text-xs text-muted-foreground/30">9-12M forward lead</span>
+                        <p className="text-xs font-black text-foreground uppercase tracking-uppercase">Credit Impulse Trend — Lead Indicator for Global Demand</p>
+                        <span className="text-xs text-muted-foreground">9-12M forward lead</span>
                     </div>
                     <ResponsiveContainer width="100%" height={150}>
                         <AreaChart data={ciTrend}>
@@ -203,15 +203,15 @@ export const ChinaProprietarySignals: React.FC = () => {
                                     <stop offset="95%" stopColor="#fbbf24" stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.04)" />
-                            <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 9 }} tickLine={false} axisLine={false} />
-                            <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 9 }} tickLine={false} axisLine={false} />
+                            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border/40" />
+                            <XAxis dataKey="date" tick={{ fill: 'currentColor', fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
+                            <YAxis tick={{ fill: 'currentColor', fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
                             <Tooltip
-                                contentStyle={{ background: '#030712', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 10 }}
-                                labelStyle={{ color: 'rgba(255,255,255,0.5)' }}
+                                contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: 8, fontSize: 10, color: 'hsl(var(--popover-foreground))' }}
+                                labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
                                 itemStyle={{ color: '#fbbf24' }}
                             />
-                            <ReferenceLine y={0} stroke="rgba(255,255,255,0.15)" strokeDasharray="4 4" />
+                            <ReferenceLine y={0} stroke="currentColor" className="text-border" strokeDasharray="4 4" />
                             <Area type="monotone" dataKey="value" stroke="#fbbf24" strokeWidth={2.5} fill="url(#ciGradPos)" name="Credit Impulse (%GDP)" />
                         </AreaChart>
                     </ResponsiveContainer>
@@ -219,12 +219,12 @@ export const ChinaProprietarySignals: React.FC = () => {
             )}
 
             {/* Macro Radar */}
-            <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/5">
-                <p className="text-xs font-black text-white/60 uppercase tracking-uppercase mb-4">China Macro Composite — Radar View</p>
+            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
+                <p className="text-xs font-black text-foreground uppercase tracking-uppercase mb-4">China Macro Composite — Radar View</p>
                 <ResponsiveContainer width="100%" height={220}>
                     <RadarChart data={radarData}>
-                        <PolarGrid stroke="rgba(255,255,255,0.08)" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 10, fontWeight: 800 }} />
+                        <PolarGrid stroke="currentColor" className="text-border/40" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 800 }} className="text-muted-foreground" />
                         <Radar
                             name="China Signal"
                             dataKey="value"
@@ -234,8 +234,8 @@ export const ChinaProprietarySignals: React.FC = () => {
                             strokeWidth={2}
                         />
                         <Tooltip
-                            contentStyle={{ background: '#030712', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 10 }}
-                            labelStyle={{ color: 'rgba(255,255,255,0.5)' }}
+                            contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: 8, fontSize: 10, color: 'hsl(var(--popover-foreground))' }}
+                            labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
                             itemStyle={{ color: '#f87171' }}
                             formatter={(val: number) => [`${val.toFixed(0)}/100`, 'Score']}
                         />

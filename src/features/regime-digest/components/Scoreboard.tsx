@@ -81,7 +81,7 @@ const DeltaPctCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
   const { text, dir } = formatDeltaPct(deltaPct);
   const Icon = dir === 'up' ? ArrowUpRight : dir === 'down' ? ArrowDownRight : Minus;
   const color =
-    dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-rose-400' : 'text-muted-foreground/50';
+    dir === 'up' ? 'text-emerald-600 dark:text-emerald-400' : dir === 'down' ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground';
   return (
     <span className={cn('inline-flex items-center justify-end gap-1 font-mono tabular-nums text-xs font-bold', color)}>
       <Icon size={12} aria-hidden />
@@ -96,7 +96,7 @@ const DeltaPctCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
 const AbsDeltaCell: React.FC<{ delta: number | null }> = ({ delta }) => {
   const { text, dir } = formatAbsDelta(delta);
   const color =
-    dir === 'up' ? 'text-emerald-400' : dir === 'down' ? 'text-rose-400' : 'text-muted-foreground/50';
+    dir === 'up' ? 'text-emerald-600 dark:text-emerald-400' : dir === 'down' ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground';
   return (
     <span className={cn('font-mono tabular-nums text-xs font-bold', color)}>{text}</span>
   );
@@ -107,13 +107,13 @@ const MetricName: React.FC<{ row: MetricRow }> = ({ row }) => {
     return (
       <Link
         to={row.glossaryPath}
-        className="text-sm font-bold text-white/90 hover:text-blue-400 transition-colors"
+        className="text-sm font-bold text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
       >
         {row.name}
       </Link>
     );
   }
-  return <span className="text-sm font-bold text-white/90">{row.name}</span>;
+  return <span className="text-sm font-bold text-foreground">{row.name}</span>;
 };
 
 export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
@@ -132,9 +132,9 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
   if (sections.length === 0) {
     return (
       <section aria-label="Scoreboard">
-        <Card variant="elevated" className="bg-slate-950/60 border-white/10">
+        <Card variant="elevated" className="bg-card border-border shadow-sm">
           <CardContent className="p-6">
-            <p className="text-sm text-muted-foreground/50">Scoreboard unavailable — no metrics in board.</p>
+            <p className="text-sm text-muted-foreground">Scoreboard unavailable — no metrics in board.</p>
           </CardContent>
         </Card>
       </section>
@@ -144,8 +144,8 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
   return (
     <section className="space-y-4" aria-label="Scoreboard">
       <div className="flex items-center gap-2">
-        <Table2 size={14} className="text-muted-foreground/40" aria-hidden />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50">
+        <Table2 size={14} className="text-muted-foreground" aria-hidden />
+        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground">
           Scoreboard
         </h2>
       </div>
@@ -154,10 +154,10 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
         <Card
           key={section.id}
           variant="elevated"
-          className="bg-slate-950/50 border-white/5 overflow-hidden"
+          className="bg-card border-border shadow-sm overflow-hidden"
         >
-          <div className="px-4 md:px-5 py-3 border-b border-white/5 bg-white/[0.02]">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/55">
+          <div className="px-4 md:px-5 py-3 border-b border-border bg-muted/40">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground font-bold">
               {section.label}
             </h3>
           </div>
@@ -166,7 +166,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35 border-b border-white/5">
+                <tr className="text-[9px] font-black uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/20">
                   <th className="px-5 py-2.5 font-black">Metric</th>
                   <th className="px-3 py-2.5 font-black text-right">Level</th>
                   <th className="px-3 py-2.5 font-black text-right">Prior</th>
@@ -182,18 +182,18 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                 {section.rows.map((row) => (
                   <tr
                     key={row.id}
-                    className="border-b border-white/[0.04] last:border-0 hover:bg-white/[0.02]"
+                    className="border-b border-border last:border-0 hover:bg-muted/40 transition-colors"
                   >
                     <td className="px-5 py-3">
                       <MetricName row={row} />
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <span className="font-mono text-sm font-bold text-white tabular-nums">
+                      <span className="font-mono text-sm font-bold text-foreground tabular-nums">
                         {formatLevel(row)}
                       </span>
                     </td>
                     <td className="px-3 py-3 text-right">
-                      <span className="font-mono text-xs font-bold text-muted-foreground/70 tabular-nums">
+                      <span className="font-mono text-xs font-bold text-muted-foreground tabular-nums">
                         {formatPrior(row)}
                       </span>
                     </td>
@@ -203,13 +203,13 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                     <td className="px-3 py-3 text-right">
                       <DeltaPctCell deltaPct={row.deltaPct} />
                     </td>
-                    <td className="px-3 py-3 text-[11px] text-muted-foreground/50 font-medium">
+                    <td className="px-3 py-3 text-[11px] text-muted-foreground font-medium">
                       {row.unit || '—'}
                     </td>
-                    <td className="px-3 py-3 text-[11px] font-mono tabular-nums text-muted-foreground/45">
+                    <td className="px-3 py-3 text-[11px] font-mono tabular-nums text-muted-foreground">
                       {row.asOf ?? '—'}
                     </td>
-                    <td className="px-3 py-3 text-[11px] text-muted-foreground/45">
+                    <td className="px-3 py-3 text-[11px] text-muted-foreground">
                       {row.sourceFamily || '—'}
                     </td>
                     <td className="px-5 py-3">
@@ -222,7 +222,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
           </div>
 
           {/* Mobile cards */}
-          <div className="md:hidden divide-y divide-white/5">
+          <div className="md:hidden divide-y divide-border">
             {section.rows.map((row) => (
               <div key={row.id} className="p-4 space-y-2">
                 <div className="flex items-start justify-between gap-3">
@@ -231,34 +231,34 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                 </div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                       Level
                     </p>
-                    <p className="font-mono text-base font-black text-white tabular-nums">
+                    <p className="font-mono text-base font-black text-foreground tabular-nums">
                       {formatLevel(row)}
                       {row.unit ? (
-                        <span className="ml-1 text-[10px] font-bold text-muted-foreground/40 not-italic">
+                        <span className="ml-1 text-[10px] font-bold text-muted-foreground not-italic">
                           {row.unit}
                         </span>
                       ) : null}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                       Prior
                     </p>
-                    <p className="font-mono text-sm font-bold text-muted-foreground/70 tabular-nums">
+                    <p className="font-mono text-sm font-bold text-muted-foreground tabular-nums">
                       {formatPrior(row)}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                       Δ
                     </p>
                     <AbsDeltaCell delta={row.delta} />
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/35">
+                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
                       Δ%
                     </p>
                     <div className="flex justify-end">
@@ -266,10 +266,10 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground/40">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
                   <span>
                     As of{' '}
-                    <span className="font-mono tabular-nums text-muted-foreground/60">
+                    <span className="font-mono tabular-nums text-muted-foreground font-semibold">
                       {row.asOf ?? '—'}
                     </span>
                   </span>

@@ -95,14 +95,14 @@ export const ChinaDebtIcebergHero: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[420px] w-full rounded-3xl bg-white/[0.02] border border-white/5 animate-pulse" />
+            <div className="h-[420px] w-full rounded-3xl bg-card border border-border animate-pulse" />
         );
     }
 
     if (!latestLayers.length) {
         return (
-            <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 text-center">
-                <p className="text-sm text-muted-foreground/60">China debt layer data unavailable</p>
+            <div className="p-8 rounded-3xl bg-card border border-border text-center">
+                <p className="text-sm text-muted-foreground">China debt layer data unavailable</p>
             </div>
         );
     }
@@ -112,20 +112,20 @@ export const ChinaDebtIcebergHero: React.FC = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.15 }}
-            className="rounded-[2rem] border border-white/8 bg-white/[0.02] overflow-hidden"
+            className="rounded-[2rem] border border-border bg-card shadow-sm overflow-hidden text-card-foreground"
         >
             <div className="grid grid-cols-1 lg:grid-cols-5 gap-0">
                 {/* Left: Iceberg stack */}
-                <div className="lg:col-span-3 p-8 border-b lg:border-b-0 lg:border-r border-white/5">
+                <div className="lg:col-span-3 p-8 border-b lg:border-b-0 lg:border-r border-border">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
-                            <Layers size={20} className="text-amber-400" />
+                            <Layers size={20} className="text-amber-600 dark:text-amber-400" />
                         </div>
                         <div>
-                            <h2 className="text-sm font-black text-white uppercase tracking-uppercase italic">
+                            <h2 className="text-sm font-black text-foreground uppercase tracking-uppercase italic">
                                 The Iceberg — China Public Sector Debt
                             </h2>
-                            <p className="text-xs text-muted-foreground/60 mt-0.5">
+                            <p className="text-xs text-muted-foreground mt-0.5">
                                 Official vs shadow balance sheet · {latestYear} snapshot
                             </p>
                         </div>
@@ -133,10 +133,10 @@ export const ChinaDebtIcebergHero: React.FC = () => {
 
                     {/* Waterline label */}
                     <div className="relative mb-2">
-                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-blue-400/80">
+                        <div className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-blue-600 dark:text-blue-400">
                             <span>▲ Official (MoF-reported)</span>
-                            <span className="text-white/30">—</span>
-                            <span className="text-amber-400/80">{officialTotal.toFixed(0)}% GDP</span>
+                            <span className="text-muted-foreground">—</span>
+                            <span className="text-amber-700 dark:text-amber-400">{officialTotal.toFixed(0)}% GDP</span>
                         </div>
                     </div>
 
@@ -154,14 +154,14 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                                     className="group"
                                 >
                                     <div className="flex items-center justify-between text-xs mb-1">
-                                        <span className="font-black uppercase tracking-uppercase text-white/60">{meta.label}</span>
-                                        <span className="font-mono text-white/80">
+                                        <span className="font-black uppercase tracking-uppercase text-foreground">{meta.label}</span>
+                                        <span className="font-mono text-foreground font-semibold">
                                             {layer.value_low_pct_gdp != null && layer.value_high_pct_gdp != null
                                                 ? `${layer.value_low_pct_gdp.toFixed(0)}–${layer.value_high_pct_gdp.toFixed(0)}`
                                                 : val.toFixed(1)}% GDP
                                         </span>
                                     </div>
-                                    <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-3 bg-muted rounded-full overflow-hidden">
                                         <m.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${widthPct}%` }}
@@ -176,12 +176,12 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                     </div>
 
                     {/* Waterline */}
-                    <div className="flex items-center gap-3 py-3 border-y border-dashed border-white/10 my-4">
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-400/40 to-transparent" />
-                        <span className="text-xs font-black uppercase tracking-uppercase text-white/30 whitespace-nowrap">
+                    <div className="flex items-center gap-3 py-3 border-y border-dashed border-border my-4">
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
+                        <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground whitespace-nowrap">
                             Waterline · ~{officialTotal.toFixed(0)}% GDP official
                         </span>
-                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-400/40 to-transparent" />
+                        <div className="flex-1 h-px bg-gradient-to-r from-transparent via-blue-500/40 to-transparent" />
                     </div>
 
                     <div className="space-y-2">
@@ -192,14 +192,14 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                             return (
                                 <m.div key={layer.layer_code} className="group">
                                     <div className="flex items-center justify-between text-xs mb-1">
-                                        <span className="font-black uppercase tracking-uppercase text-white/50">{meta.label}</span>
-                                        <span className="font-mono text-amber-400/90">
+                                        <span className="font-black uppercase tracking-uppercase text-foreground">{meta.label}</span>
+                                        <span className="font-mono text-amber-700 dark:text-amber-400 font-semibold">
                                             {layer.value_low_pct_gdp != null && layer.value_high_pct_gdp != null
                                                 ? `${layer.value_low_pct_gdp.toFixed(0)}–${layer.value_high_pct_gdp.toFixed(0)}`
                                                 : val.toFixed(1)}% GDP
                                         </span>
                                     </div>
-                                    <div className="h-3 bg-white/5 rounded-full overflow-hidden">
+                                    <div className="h-3 bg-muted rounded-full overflow-hidden">
                                         <m.div
                                             initial={{ width: 0 }}
                                             animate={{ width: `${widthPct}%` }}
@@ -213,7 +213,7 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                         })}
                     </div>
 
-                    <p className="mt-4 text-xs text-muted-foreground/50 flex items-start gap-2">
+                    <p className="mt-4 text-xs text-muted-foreground flex items-start gap-2">
                         <Info size={12} className="mt-0.5 shrink-0" />
                         Shadow layers show IMF Article IV / BIS ranges. Opaque estimates carry provenance — not point-precision claims.
                     </p>
@@ -221,35 +221,35 @@ export const ChinaDebtIcebergHero: React.FC = () => {
 
                 {/* Right: KPIs + history */}
                 <div className="lg:col-span-2 p-8 flex flex-col gap-6">
-                    <div className="p-6 rounded-2xl bg-amber-500/[0.06] border border-amber-500/15">
-                        <p className="text-xs font-black uppercase tracking-uppercase text-amber-400/80 mb-1">
+                    <div className="p-6 rounded-2xl bg-amber-500/[0.08] border border-amber-500/20">
+                        <p className="text-xs font-black uppercase tracking-uppercase text-amber-700 dark:text-amber-400 mb-1">
                             Iceberg Ratio
                         </p>
-                        <p className="text-5xl font-black text-white font-mono tracking-tight">
+                        <p className="text-5xl font-black text-foreground font-mono tracking-tight">
                             {icebergRatio != null ? `${icebergRatio.toFixed(1)}×` : '—'}
                         </p>
-                        <p className="text-xs text-muted-foreground/60 mt-2">
+                        <p className="text-xs text-muted-foreground mt-2">
                             Consolidated (high) ÷ official central debt
                         </p>
                     </div>
 
                     {consolidated && (
-                        <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/5">
-                            <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-3">
+                        <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
+                            <p className="text-xs font-black uppercase tracking-uppercase text-foreground mb-3">
                                 Consolidated Range
                             </p>
                             <div className="flex items-end gap-4">
                                 <div>
-                                    <p className="text-2xl font-black text-white font-mono">{consolidated.value_low_pct_gdp?.toFixed(0) ?? '—'}%</p>
-                                    <p className="text-xs text-muted-foreground/50">IMF Low</p>
+                                    <p className="text-2xl font-black text-foreground font-mono">{consolidated.value_low_pct_gdp?.toFixed(0) ?? '—'}%</p>
+                                    <p className="text-xs text-muted-foreground">IMF Low</p>
                                 </div>
-                                <div className="text-white/20 text-xl pb-1">→</div>
+                                <div className="text-muted-foreground text-xl pb-1">→</div>
                                 <div>
-                                    <p className="text-2xl font-black text-amber-400 font-mono">{consolidated.value_high_pct_gdp?.toFixed(0) ?? '—'}%</p>
-                                    <p className="text-xs text-muted-foreground/50">IMF High</p>
+                                    <p className="text-2xl font-black text-amber-700 dark:text-amber-400 font-mono">{consolidated.value_high_pct_gdp?.toFixed(0) ?? '—'}%</p>
+                                    <p className="text-xs text-muted-foreground">IMF High</p>
                                 </div>
                             </div>
-                            <p className="text-xs text-muted-foreground/50 mt-3">
+                            <p className="text-xs text-muted-foreground mt-3">
                                 Shadow stack: ~{shadowTotal.toFixed(0)}% GDP below waterline
                             </p>
                         </div>
@@ -257,18 +257,18 @@ export const ChinaDebtIcebergHero: React.FC = () => {
 
                     <div className="flex-1 min-h-[140px]">
                         <div className="flex items-center gap-2 mb-2">
-                            <TrendingUp size={14} className="text-white/30" />
-                            <p className="text-xs font-black uppercase tracking-uppercase text-white/30">
+                            <TrendingUp size={14} className="text-muted-foreground" />
+                            <p className="text-xs font-black uppercase tracking-uppercase text-muted-foreground">
                                 Debt Progression 2015–{latestYear}
                             </p>
                         </div>
                         <ResponsiveContainer width="100%" height={120}>
                             <AreaChart data={historyChart} margin={{ top: 4, right: 4, left: -20, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                                <XAxis dataKey="year" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                                <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
+                                <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border/40" />
+                                <XAxis dataKey="year" tick={{ fill: 'currentColor', fontSize: 10 }} axisLine={false} tickLine={false} className="text-muted-foreground" />
+                                <YAxis tick={{ fill: 'currentColor', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" className="text-muted-foreground" />
                                 <Tooltip
-                                    contentStyle={{ background: '#0a0f1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11 }}
+                                    contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: 12, fontSize: 11, color: 'hsl(var(--popover-foreground))' }}
                                     formatter={(v: number) => [`${v}%`, '']}
                                 />
                                 <Area type="monotone" dataKey="official" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.15} name="Official" />
@@ -285,7 +285,7 @@ export const ChinaDebtIcebergHero: React.FC = () => {
                         />
                         <Link
                             to="/methods/china-debt-iceberg"
-                            className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-400/60 hover:text-amber-300"
+                            className="flex items-center gap-1 text-[10px] font-black uppercase tracking-widest text-amber-700 hover:text-amber-800 dark:text-amber-400 dark:hover:text-amber-300"
                         >
                             <BookOpen size={11} />
                             Full Methodology

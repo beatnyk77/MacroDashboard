@@ -14,17 +14,17 @@ const REGIME_UI: Record<
   RISK_ON: {
     label: 'Risk On',
     icon: <Activity size={14} aria-hidden />,
-    className: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
   },
   NEUTRAL: {
     label: 'Neutral',
     icon: <Gauge size={14} aria-hidden />,
-    className: 'text-slate-300 border-slate-500/30 bg-slate-500/10',
+    className: 'text-slate-700 dark:text-slate-300 border-slate-500/30 bg-slate-500/10',
   },
   RISK_OFF: {
     label: 'Risk Off',
     icon: <Shield size={14} aria-hidden />,
-    className: 'text-rose-400 border-rose-500/30 bg-rose-500/10',
+    className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
   },
 };
 
@@ -39,11 +39,11 @@ function Stat({
 }) {
   return (
     <div className="flex flex-col gap-1 min-w-0">
-      <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/40">
+      <span className="inline-flex items-center gap-1.5 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">
         {icon}
         {label}
       </span>
-      <span className="text-sm font-black text-white tabular-nums tracking-tight">{value}</span>
+      <span className="text-sm font-black text-foreground tabular-nums tracking-tight">{value}</span>
     </div>
   );
 }
@@ -59,7 +59,7 @@ export const RegimeStrip: React.FC<RegimeStripProps> = ({ regime }) => {
 
   return (
     <section
-      className="rounded-xl border border-white/10 bg-slate-950/60 backdrop-blur-xl p-5 md:p-6"
+      className="rounded-xl border border-border bg-card backdrop-blur-xl shadow-sm p-5 md:p-6"
       aria-label={`Current regime: ${ui.label}`}
     >
       <div className="flex flex-col md:flex-row md:items-center gap-6">

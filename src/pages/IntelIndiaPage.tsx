@@ -140,7 +140,7 @@ export const IntelIndiaPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#050810]">
+        <div className="min-h-screen bg-background text-foreground">
             {/* Place Schema */}
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(placeSchema) }} />
             <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }} />
@@ -158,7 +158,7 @@ export const IntelIndiaPage: React.FC = () => {
             />
 
             {/* Hero */}
-            <section className="relative overflow-hidden pt-24 pb-16 border-b border-white/5">
+            <section className="relative overflow-hidden pt-24 pb-16 border-b border-border">
                 {/* Ambient glow */}
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-blue-600/10 rounded-full blur-[120px]" />
@@ -167,10 +167,10 @@ export const IntelIndiaPage: React.FC = () => {
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-12">
-                        <Link to="/" className="hover:text-white transition-colors">Home</Link>
+                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-muted-foreground mb-12">
+                        <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
                         <span>/</span>
-                        <span className="text-blue-400">India Intelligence</span>
+                        <span className="text-blue-600 dark:text-blue-400">India Intelligence</span>
                     </nav>
 
                     {/* Flag + Title */}
@@ -183,9 +183,9 @@ export const IntelIndiaPage: React.FC = () => {
                         <span className="text-6xl md:text-8xl select-none">🇮🇳</span>
                         <div className="flex-1">
                             <div className="flex items-center gap-3 mb-4">
-                                <h1 className="text-4xl md:text-7xl font-black tracking-heading text-white leading-[0.9]">
+                                <h1 className="text-4xl md:text-7xl font-black tracking-heading text-foreground leading-[0.9]">
                                     India <br />
-                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-blue-200 to-orange-400">
+                                    <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-500 via-blue-400 to-orange-500">
                                         Intelligence
                                     </span>
                                 </h1>
@@ -218,8 +218,8 @@ export const IntelIndiaPage: React.FC = () => {
                                 href={href}
                                 className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors ${
                                     active
-                                        ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20'
-                                        : 'bg-white/5 border border-white/12 text-white/60 hover:bg-white/10'
+                                        ? 'bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 hover:bg-blue-500/20'
+                                        : 'bg-card border border-border text-muted-foreground hover:text-foreground hover:bg-muted'
                                 }`}
                             >
                                 {label} <ArrowRight size={10} />
@@ -227,7 +227,7 @@ export const IntelIndiaPage: React.FC = () => {
                         ))}
                         <Link
                             to="/labs/de-dollarization-gold"
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors bg-amber-500/10 border border-amber-500/25 text-amber-500 hover:bg-amber-500/20"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors bg-amber-500/10 border border-amber-500/25 text-amber-600 dark:text-amber-500 hover:bg-amber-500/20"
                         >
                             De-Dollarization Lab <ArrowRight size={10} />
                         </Link>
@@ -247,7 +247,7 @@ export const IntelIndiaPage: React.FC = () => {
                         <a key={label} href={anchor} className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}>
                             <Icon size={18} className="mb-3 opacity-80" />
                             <p className="text-xs font-black uppercase tracking-uppercase mb-1">{label}</p>
-                            <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
+                            <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
                         </a>
                     ))}
                 </m.div>
@@ -270,7 +270,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
 
 
@@ -285,7 +285,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Fiscal Stress */}
                 <section id="fiscal">
@@ -298,7 +298,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Liquidity */}
                 <section id="liquidity">
@@ -311,7 +311,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Credit Cycle */}
                 <section id="credit">
@@ -324,7 +324,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Debt Maturity Wall */}
                 <section id="debt">
@@ -337,7 +337,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* RBI Monetary & FX Defense (from Lab) */}
                 <section id="monetary">
@@ -345,8 +345,8 @@ export const IntelIndiaPage: React.FC = () => {
                         <div className="space-y-16">
                             <div>
                                 <div className="flex items-center gap-3 mb-10">
-                                    <BarChart3 className="text-emerald-500" size={24} />
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-white">RBI FX Defense Monitor</h2>
+                                    <BarChart3 className="text-emerald-600 dark:text-emerald-500" size={24} />
+                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">RBI FX Defense Monitor</h2>
                                 </div>
                                 <SectionErrorBoundary name="RBI FX Defense">
                                     <Suspense fallback={<SectionSkeleton />}>
@@ -354,10 +354,10 @@ export const IntelIndiaPage: React.FC = () => {
                                     </Suspense>
                                 </SectionErrorBoundary>
                             </div>
-                            <div className="pt-12 border-t border-white/5">
+                            <div className="pt-12 border-t border-border">
                                 <div className="flex items-center gap-3 mb-10">
-                                    <Landmark className="text-blue-500" size={24} />
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-white">Daily Money Market Terminal</h2>
+                                    <Landmark className="text-blue-600 dark:text-blue-500" size={24} />
+                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Daily Money Market Terminal</h2>
                                 </div>
                                 <SectionErrorBoundary name="India Money Market">
                                     <Suspense fallback={<SectionSkeleton />}>
@@ -369,7 +369,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* India External Sector */}
                 <section id="external-sector">
@@ -382,7 +382,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* India FII Flows */}
                 <section id="fii-flows">
@@ -395,7 +395,7 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 <section id="institutional-positioning">
                     <LazyRender minHeight="420px" fallback={<SectionSkeleton />}>
@@ -407,42 +407,42 @@ export const IntelIndiaPage: React.FC = () => {
                     </LazyRender>
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* State-Level Fiscal (from Lab) */}
                 <section id="state-fiscal">
                     <div className="flex items-center gap-3 mb-10">
-                        <MapPin className="text-blue-500" size={24} />
-                        <h2 className="text-xl font-black uppercase tracking-heading text-white">State-Level Fiscal Intelligence</h2>
+                        <MapPin className="text-blue-600 dark:text-blue-500" size={24} />
+                        <h2 className="text-xl font-black uppercase tracking-heading text-foreground">State-Level Fiscal Intelligence</h2>
                     </div>
                     <DataStatePanel variant="empty" title="State fiscal module unavailable" description="The previous allocation feed used manually entered values. The module will return after a verified state-by-state source adapter is connected." height={260} />
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Digitization Premium (from Lab) */}
                 <section id="digital">
                     <div className="flex items-center gap-3 mb-10">
-                        <Zap className="text-blue-400" size={24} />
-                        <h2 className="text-xl font-black uppercase tracking-heading text-white">India Stack — Digitization Premium</h2>
+                        <Zap className="text-blue-600 dark:text-blue-400" size={24} />
+                        <h2 className="text-xl font-black uppercase tracking-heading text-foreground">India Stack — Digitization Premium</h2>
                     </div>
                     <DataStatePanel variant="empty" title="Digitization context unavailable" description="The previous feed synthesized values from unrelated series. Direct RBI and NPCI observations are required before this module is shown." height={260} />
                 </section>
 
-                <div className="border-t border-white/5" />
+                <div className="border-t border-border" />
 
                 {/* Structural Analysis Article (from Lab) */}
-                <article className="p-12 bg-white/[0.02] border border-white/5 rounded-[2.5rem]" aria-label="Structural Analysis of India Macro Resilience">
-                    <h3 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience &amp; Fiscal Quality</h3>
-                    <div className="space-y-6 text-sm text-muted-foreground/60 leading-relaxed font-medium">
+                <article className="p-12 bg-card border border-border shadow-sm rounded-[2.5rem] text-card-foreground" aria-label="Structural Analysis of India Macro Resilience">
+                    <h3 className="text-xl font-black text-foreground uppercase tracking-uppercase mb-6">Structural Analysis: India's Macro Resilience &amp; Fiscal Quality</h3>
+                    <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                         <p>
-                            The <strong>India Intelligence Hub</strong> organizes published macroeconomic observations from the <a href="/glossary/mospi/" className="text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>, RBI, FRED, and other recorded source contracts. The evidence cockpit separates source publication dates from pipeline freshness and shows coverage before producing a daily regime label.
+                            The <strong>India Intelligence Hub</strong> organizes published macroeconomic observations from the <a href="/glossary/mospi/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors">Ministry of Statistics and Programme Implementation (MoSPI)</a>, RBI, FRED, and other recorded source contracts. The evidence cockpit separates source publication dates from pipeline freshness and shows coverage before producing a daily regime label.
                         </p>
                         <p>
                             The <em>State Fiscal Heatmap</em> remains a secondary module. It reports only the states and fiscal years returned by its current source data, with missing state-period observations excluded from ratios rather than represented as zero.
                         </p>
                         <p>
-                            The hub monitors the Reserve Bank of India's FX posture through reserves, external-sector observations, and <a href="/glossary/stealth-qe/" className="text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>. Derived regime states are shown with their inputs and coverage so users can audit the evidence before forming a view.
+                            The hub monitors the Reserve Bank of India's FX posture through reserves, external-sector observations, and <a href="/glossary/stealth-qe/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors">liquidity stress monitors</a>. Derived regime states are shown with their inputs and coverage so users can audit the evidence before forming a view.
                         </p>
                     </div>
                 </article>

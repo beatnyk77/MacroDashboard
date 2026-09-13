@@ -75,16 +75,25 @@ function buildSectorReports(rows: Array<Record<string, unknown>>): SectorReport[
   }
   return [...reports.values()].sort((a, b) => a.date.localeCompare(b.date));
 }
-
 export async function computeIndiaPositioning(supabase: ReturnType<typeof createClient>): Promise<IngestResult> {
-  const { data: rows, error } = await supabase
-    .from('metric_observations')
-    .select('metric_id, as_of_date, value')
-    .in('metric_id', METRIC_IDS)
-    .order('as_of_date', { ascending: true });
-  if (error) throw error;
+  let rows: RawMetricRow[] = [];
+  let from = 0;
+  const pageSize = 1000;
+  while (true) {
+    const { data, error } = await supabase
+      .from('metric_observations')
+      .select('metric_id, as_of_date, value')
+      .in('metric_id', METRIC_IDS)
+      .order('as_of_date', { ascending: true })
+      .range(from, from + pageSize - 1);
+    if (error) throw error;
+    if (!data || data.length === 0) break;
+    rows.push(...(data as RawMetricRow[]));
+    if (data.length < pageSize) break;
+    from += pageSize;
+  }
 
-  const points = buildDailyPoints((rows ?? []) as RawMetricRow[]);
+  const points = buildDailyPoints(rows);
   if (!hasSufficientDailyHistory(points)) {
     return {
       ok: true,

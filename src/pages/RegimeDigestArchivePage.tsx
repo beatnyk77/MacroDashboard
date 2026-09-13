@@ -23,17 +23,17 @@ const REGIME_BADGE: Record<
     RISK_ON: {
         label: 'Risk On',
         icon: <Activity size={12} aria-hidden />,
-        className: 'text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+        className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
     },
     NEUTRAL: {
         label: 'Neutral',
         icon: <Gauge size={12} aria-hidden />,
-        className: 'text-slate-300 border-slate-500/30 bg-slate-500/10',
+        className: 'text-slate-700 dark:text-slate-300 border-slate-500/30 bg-slate-500/10',
     },
     RISK_OFF: {
         label: 'Risk Off',
         icon: <Shield size={12} aria-hidden />,
-        className: 'text-rose-400 border-rose-500/30 bg-rose-500/10',
+        className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
     },
 };
 
@@ -159,33 +159,33 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 robots="index, follow"
             />
 
-            <div className="mb-10 border-b border-white/10 pb-10">
-                <nav className="mb-4 text-[10px] font-mono uppercase tracking-widest text-white/25 flex items-center gap-2">
-                    <Link to="/" className="hover:text-white/50 transition-colors">
+            <div className="mb-10 border-b border-border pb-10">
+                <nav className="mb-4 text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                    <Link to="/" className="hover:text-foreground transition-colors">
                         Home
                     </Link>
                     <span>/</span>
-                    <span className="text-white/50">Regime Digest Archive</span>
+                    <span className="text-foreground font-semibold">Regime Digest Archive</span>
                 </nav>
-                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-emerald-500 mb-3">
+                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-emerald-600 dark:text-emerald-400 mb-3">
                     GraphiQuestor Desk Product
                 </p>
-                <h1 className="text-4xl sm:text-5xl font-black text-white tracking-tighter uppercase leading-none mb-4">
+                <h1 className="text-4xl sm:text-5xl font-black text-foreground tracking-tighter uppercase leading-none mb-4">
                     Macro Regime
                     <br />
-                    <span className="text-emerald-500">Digest Archive</span>
+                    <span className="text-emerald-600 dark:text-emerald-400">Digest Archive</span>
                 </h1>
-                <p className="text-sm text-muted-foreground/70 max-w-2xl leading-relaxed">
+                <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
                     Monthly institutional notebook on Global Liquidity, Sovereign Stress, De-Dollarization,
                     and structural regime shifts. Desk brief, scoreboard, and automated rules — published on
                     the 1st. Missing months are listed explicitly, never silent.
                 </p>
                 {gapMonths.length > 0 && (
-                    <div className="mt-6 p-4 rounded-xl border border-amber-500/25 bg-amber-500/5">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-400 mb-2">
+                    <div className="mt-6 p-4 rounded-xl border border-amber-500/25 bg-amber-500/10">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-2">
                             Coverage gaps ({gapMonths.length})
                         </p>
-                        <p className="text-xs font-mono text-amber-200/70 leading-relaxed">
+                        <p className="text-xs font-mono text-amber-800 dark:text-amber-200/90 leading-relaxed font-semibold">
                             {gapMonths.slice(0, 12).join(' · ')}
                             {gapMonths.length > 12 ? ` · +${gapMonths.length - 12} more` : ''}
                         </p>
@@ -194,28 +194,28 @@ export const RegimeDigestArchivePage: React.FC = () => {
             </div>
 
             {loading ? (
-                <Card variant="elevated" className="overflow-hidden bg-slate-950/50 backdrop-blur-md border-white/10">
+                <Card variant="elevated" className="overflow-hidden bg-card border-border shadow-sm">
                     <CardContent className="p-16 flex flex-col items-center gap-4">
                         <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-                        <p className="text-[10px] font-black tracking-[0.25em] uppercase text-muted-foreground/40 animate-pulse">
+                        <p className="text-[10px] font-black tracking-[0.25em] uppercase text-muted-foreground animate-pulse">
                             Loading Intelligence Archive...
                         </p>
                     </CardContent>
                 </Card>
             ) : digests.length === 0 ? (
-                <Card variant="elevated" className="overflow-hidden bg-slate-950/50 backdrop-blur-md border-white/10">
+                <Card variant="elevated" className="overflow-hidden bg-card border-border shadow-sm">
                     <CardContent className="p-16 flex flex-col items-center gap-4 text-center">
                         <div className="w-12 h-12 rounded-full bg-blue-500/10 flex items-center justify-center mb-2">
                             <FileText className="w-5 h-5 text-blue-500/50" />
                         </div>
-                        <p className="text-sm font-bold text-white/50">No digests published yet</p>
-                        <p className="text-xs text-muted-foreground/40 max-w-xs">
+                        <p className="text-sm font-bold text-foreground">No digests published yet</p>
+                        <p className="text-xs text-muted-foreground max-w-xs">
                             The first digest will be generated on the 1st of next month, or you can trigger one
                             from the terminal.
                         </p>
                         <Link
                             to="/"
-                            className="mt-2 text-[10px] font-black tracking-widest uppercase text-blue-400 hover:text-blue-300 transition-colors"
+                            className="mt-2 text-[10px] font-black tracking-widest uppercase text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
                         >
                             Go to Terminal →
                         </Link>
@@ -227,30 +227,30 @@ export const RegimeDigestArchivePage: React.FC = () => {
                     {latest && (
                         <Card
                             variant="elevated"
-                            className="overflow-hidden bg-gradient-to-br from-slate-950 via-slate-950/90 to-emerald-950/20 border-white/10"
+                            className="overflow-hidden bg-card border-border shadow-sm"
                         >
                             <CardContent className="p-6 sm:p-8 space-y-5">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/25 text-[10px] font-black text-blue-400 tracking-widest uppercase">
+                                    <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/25 text-[10px] font-black text-blue-600 dark:text-blue-400 tracking-widest uppercase">
                                         Latest edition
                                     </span>
                                     <RegimeBadgeChip payload={latest.notebook_payload} size="md" />
                                 </div>
 
                                 <div className="space-y-2">
-                                    <div className="flex items-center gap-1.5 text-xs font-bold text-white/60">
-                                        <Calendar size={12} className="text-emerald-400/70" />
+                                    <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
+                                        <Calendar size={12} className="text-emerald-600 dark:text-emerald-400" />
                                         {formatDate(latest.year_month)}
                                     </div>
-                                    <h2 className="text-2xl sm:text-3xl font-black text-white tracking-tight leading-tight">
+                                    <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight leading-tight">
                                         {latest.subject_line}
                                     </h2>
                                     {latestThesis && (
-                                        <p className="text-sm text-muted-foreground/80 leading-relaxed max-w-3xl">
+                                        <p className="text-sm text-muted-foreground leading-relaxed max-w-3xl">
                                             {latestThesis}
                                         </p>
                                     )}
-                                    <p className="text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
+                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                                         Published{' '}
                                         {latest.generated_at
                                             ? new Date(latest.generated_at).toLocaleDateString('en-US', {
@@ -276,7 +276,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                     {/* Prior editions grid */}
                     {rest.length > 0 && (
                         <div className="space-y-4">
-                            <h2 className="text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground/40">
+                            <h2 className="text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground">
                                 Prior editions ({rest.length})
                             </h2>
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -286,32 +286,32 @@ export const RegimeDigestArchivePage: React.FC = () => {
                                         <li key={digest.id}>
                                             <Link
                                                 to={editionHref(digest.year_month)}
-                                                className="group block h-full rounded-xl border border-white/10 bg-slate-950/50 backdrop-blur-md p-5 hover:bg-white/[0.03] hover:border-white/20 transition-colors"
+                                                className="group block h-full rounded-xl border border-border bg-card p-5 hover:bg-muted/40 transition-colors shadow-sm"
                                             >
                                                 <div className="flex flex-col gap-3 h-full">
                                                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                                                        <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-white/5 border border-white/8 text-[11px] font-bold text-white/70">
-                                                            <Calendar size={11} className="text-blue-400/70" />
+                                                        <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-muted border border-border text-[11px] font-bold text-foreground">
+                                                            <Calendar size={11} className="text-blue-600 dark:text-blue-400" />
                                                             {formatDate(digest.year_month)}
                                                         </div>
-                                                        <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground/25">
+                                                        <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">
                                                             #{digests.length - 1 - index}
                                                         </span>
                                                     </div>
 
                                                     <RegimeBadgeChip payload={digest.notebook_payload} />
 
-                                                    <h3 className="text-sm font-bold text-white/90 group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
+                                                    <h3 className="text-sm font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
                                                         {digest.subject_line}
                                                     </h3>
 
                                                     {thesis && (
-                                                        <p className="text-xs text-muted-foreground/55 leading-relaxed line-clamp-2 flex-1">
+                                                        <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2 flex-1">
                                                             {thesis}
                                                         </p>
                                                     )}
 
-                                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-blue-400/70 group-hover:text-blue-300 mt-auto">
+                                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 group-hover:text-blue-500 mt-auto">
                                                         Read edition
                                                         <ArrowRight
                                                             size={12}
@@ -330,18 +330,17 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 </div>
             )}
 
-            <div className="mt-16 p-10 sm:p-14 rounded-2xl bg-gradient-to-br from-blue-950/60 to-slate-950 border border-blue-500/10 text-center relative overflow-hidden">
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,rgba(59,130,246,0.08),transparent_70%)]" />
+            <div className="mt-16 p-10 sm:p-14 rounded-2xl bg-card border border-border text-center relative overflow-hidden shadow-sm">
                 <div className="relative z-10 space-y-5">
-                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/70">
+                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-600 dark:text-blue-400">
                         Monthly Intelligence
                     </p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-white tracking-tighter leading-tight">
+                    <h3 className="text-2xl sm:text-3xl font-black text-foreground tracking-tighter leading-tight">
                         Delivered to Your Inbox
                         <br />
                         on the 1st of Every Month
                     </h3>
-                    <p className="text-sm text-slate-400/80 max-w-sm mx-auto leading-relaxed">
+                    <p className="text-sm text-muted-foreground max-w-sm mx-auto leading-relaxed">
                         Institutional macro synthesis on Global Liquidity, Sovereign Stress, and structural
                         regime shifts.
                     </p>
@@ -357,7 +356,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                             asChild
                             variant="outline"
                             size="lg"
-                            className="border-white/10 rounded-xl h-12 bg-white/[0.03] hover:bg-white/[0.06]"
+                            className="border-border rounded-xl h-12 bg-muted/40 hover:bg-muted text-foreground"
                         >
                             <Link to="/">Open Terminal</Link>
                         </Button>
@@ -365,7 +364,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 </div>
             </div>
 
-            <p className="mt-10 text-center text-[10px] font-bold text-muted-foreground/25 uppercase tracking-widest">
+            <p className="mt-10 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
                 GraphiQuestor · Institutional Macro Intelligence · Rules-based notebook
             </p>
         </div>

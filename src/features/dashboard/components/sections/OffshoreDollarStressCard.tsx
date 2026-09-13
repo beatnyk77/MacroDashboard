@@ -20,7 +20,7 @@ export const OffshoreDollarStressCard: React.FC = () => {
             description={
                 <>
                     Measures institutional liquidity constraints using the SOFR-OIS Spread (modern replacement for TED Spread).
-                    <span className="text-white/40 block mt-1">Reflects the premium for short-term wholesale dollar funding.</span>
+                    <span className="text-muted-foreground block mt-1">Reflects the premium for short-term wholesale dollar funding.</span>
                 </>
             }
             methodology="High values in SOFR-OIS Spread (>40bps) indicate rising credit risk or balance sheet constraints in the Eurodollar market."

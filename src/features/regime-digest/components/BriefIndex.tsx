@@ -27,13 +27,13 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
   if (!links.length) {
     return (
       <section aria-label="Related briefs">
-        <Card variant="elevated" className="bg-slate-950/50 border-white/5">
+        <Card variant="elevated" className="bg-card border-border shadow-sm">
           <CardContent className="p-5">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 flex items-center gap-2 mb-3">
+            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2 mb-3">
               <Newspaper size={14} aria-hidden />
               Related briefs
             </h2>
-            <p className="text-sm text-muted-foreground/40">No linked briefs for this edition.</p>
+            <p className="text-sm text-muted-foreground">No linked briefs for this edition.</p>
           </CardContent>
         </Card>
       </section>
@@ -44,32 +44,32 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
 
   return (
     <section aria-label="Related briefs">
-      <Card variant="elevated" className="bg-slate-950/50 border-white/5">
+      <Card variant="elevated" className="bg-card border-border shadow-sm">
         <CardContent className="p-5 md:p-6 space-y-4">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground/50 flex items-center gap-2">
+          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2">
             <Newspaper size={14} aria-hidden />
             Related briefs
           </h2>
 
-          <ul className="divide-y divide-white/5">
+          <ul className="divide-y divide-border">
             {ordered.map((link) => {
               const external = isExternalUrl(link.url);
               const className =
-                'group flex items-start justify-between gap-3 hover:bg-white/[0.02] rounded-lg -mx-1 px-1 transition-colors';
+                'group flex items-start justify-between gap-3 hover:bg-muted/50 rounded-lg -mx-1 px-1 transition-colors';
               const body = (
                 <>
                   <div className="min-w-0 space-y-0.5">
-                    <p className="text-sm font-bold text-white/90 group-hover:text-blue-400 transition-colors truncate">
+                    <p className="text-sm font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
                       {link.title}
                     </p>
-                    <p className="text-[11px] font-mono tabular-nums text-muted-foreground/45">
+                    <p className="text-[11px] font-mono tabular-nums text-muted-foreground">
                       {formatDate(link.date)}
                     </p>
                   </div>
                   {external ? (
                     <ExternalLink
                       size={13}
-                      className="mt-1 shrink-0 text-muted-foreground/30 group-hover:text-blue-400/70"
+                      className="mt-1 shrink-0 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400"
                       aria-hidden
                     />
                   ) : null}

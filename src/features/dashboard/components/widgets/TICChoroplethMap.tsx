@@ -5,6 +5,7 @@ import { TreasuryHolder } from '@/hooks/useTreasuryHolders';
 import { getISO3FromTIC } from '@/utils/ticCountryMapping';
 import { MetricType } from './TICWorldMapModule';
 import { Box } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import { cn } from '@/lib/utils';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 
@@ -41,20 +42,27 @@ interface TICChoroplethMapProps {
 }
 
 export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric, hoveredCountry, onHover, onSelect }) => {
+    const theme = useTheme();
+    const isDark = theme.palette.mode === 'dark';
+
     const colorScale = useMemo(() => {
         const values = data.map(d => metric === 'holdings' ? d.holdings_usd_bn : (d.pct_of_total_foreign || 0));
         const maxVal = Math.max(...values, 100);
         
-        // 5-step quantized teal scale for high contrast
+        // 5-step quantized teal scale for high contrast in dark and light modes
+        const range = isDark
+            ? ['#112229', '#0891b2', '#06b6d4', '#22d3ee', '#67e8f9']
+            : ['#cffafe', '#67e8f9', '#06b6d4', '#0891b2', '#0e7490'];
+
         return scaleThreshold<number, string>()
             .domain([maxVal * 0.05, maxVal * 0.15, maxVal * 0.35, maxVal * 0.7])
-            .range(['#112229', '#0891b2', '#06b6d4', '#22d3ee', '#67e8f9']);
-    }, [data, metric]);
+            .range(range);
+    }, [data, metric, isDark]);
 
     const top10 = useMemo(() => data.slice(0, 10), [data]);
 
     return (
-        <Box className="w-full h-full relative overflow-hidden bg-[#050505]">
+        <Box className="w-full h-full relative overflow-hidden bg-card dark:bg-[#050505]">
             <ComposableMap
                 projectionConfig={{ rotate: [-10, 0, 0], scale: 145 }}
                 className="w-full h-full"
@@ -74,12 +82,12 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
                                     onMouseEnter={() => countryData && onHover(countryData)}
                                     onMouseLeave={() => onHover(null)}
                                     onClick={() => countryData && onSelect(countryData)}
-                                    fill={countryData ? colorScale(metric === 'holdings' ? countryData.holdings_usd_bn : (countryData.pct_of_total_foreign || 0)) : "#0f172a"}
-                                    stroke={isHovered ? "#ffffff" : isTop10 ? "rgba(34,211,238,0.5)" : "rgba(255,255,255,0.08)"}
+                                    fill={countryData ? colorScale(metric === 'holdings' ? countryData.holdings_usd_bn : (countryData.pct_of_total_foreign || 0)) : (isDark ? "#0f172a" : "#e2e8f0")}
+                                    stroke={isHovered ? (isDark ? "#ffffff" : "#0f172a") : isTop10 ? (isDark ? "rgba(34,211,238,0.5)" : "rgba(8,145,178,0.6)") : (isDark ? "rgba(255,255,255,0.08)" : "rgba(0,0,0,0.08)")}
                                     strokeWidth={isHovered ? 1.5 : isTop10 ? 0.8 : 0.4}
                                     style={{
                                         default: { outline: 'none', transition: 'all 200ms' },
-                                        hover: { outline: 'none', fill: countryData ? '#0891b2' : '#1e293b', cursor: countryData ? 'pointer' : 'default' },
+                                        hover: { outline: 'none', fill: countryData ? (isDark ? '#0891b2' : '#06b6d4') : (isDark ? '#1e293b' : '#cbd5e1'), cursor: countryData ? 'pointer' : 'default' },
                                         pressed: { outline: 'none' }
                                     }}
                                 />
@@ -91,29 +99,29 @@ export const TICChoroplethMap: React.FC<TICChoroplethMapProps> = ({ data, metric
 
             {/* Floating Tooltip Interface */}
             {hoveredCountry && (
-                <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 p-6 rounded-2xl bg-slate-950/95 backdrop-blur-3xl border border-cyan-500/40 shadow-[0_0_60px_rgba(6,182,212,0.25)] z-50 min-w-[260px] animate-in fade-in slide-in-from-bottom-4 duration-300">
-                    <div className="flex items-center gap-4 mb-4 border-b border-white/12 pb-3">
+                <div className="absolute bottom-6 left-6 md:bottom-12 md:left-12 p-6 rounded-2xl bg-card/95 dark:bg-slate-950/95 backdrop-blur-3xl border border-border dark:border-cyan-500/40 shadow-xl dark:shadow-[0_0_60px_rgba(6,182,212,0.25)] z-50 min-w-[260px] animate-in fade-in slide-in-from-bottom-4 duration-300 text-card-foreground">
+                    <div className="flex items-center gap-4 mb-4 border-b border-border pb-3">
                         <span className="text-3xl filter drop-shadow-md">{COUNTRY_FLAGS[hoveredCountry.country_name] || '🌐'}</span>
                         <div className="flex flex-col">
-                            <h4 className="text-sm font-black text-white uppercase tracking-heading italic">{hoveredCountry.country_name}</h4>
-                            <span className="text-xs font-black text-cyan-400 uppercase tracking-uppercase">Sovereign Treasury Holder</span>
+                            <h4 className="text-sm font-black text-foreground uppercase tracking-heading italic">{hoveredCountry.country_name}</h4>
+                            <span className="text-xs font-black text-cyan-600 dark:text-cyan-400 uppercase tracking-uppercase">Sovereign Treasury Holder</span>
                         </div>
                     </div>
                     
                     <div className="grid grid-cols-2 gap-x-8 gap-y-5">
                         <div className="space-y-1">
                             <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Holdings</span>
-                            <div className="text-2xl font-black text-white tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</div>
+                            <div className="text-2xl font-black text-foreground tabular-nums">${Math.round(hoveredCountry.holdings_usd_bn)}B</div>
                         </div>
                         <div className="space-y-1 text-right">
                             <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Share (%)</span>
-                            <div className="text-2xl font-black text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</div>
+                            <div className="text-2xl font-black text-cyan-600 dark:text-cyan-400 tabular-nums">{(hoveredCountry.pct_of_total_foreign || 0).toFixed(1)}%</div>
                         </div>
-                        <div className="col-span-2 pt-3 border-t border-white/12 flex items-center justify-between">
+                        <div className="col-span-2 pt-3 border-t border-border flex items-center justify-between">
                             <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Year-on-Year Change</span>
                             <div className={cn(
                                 "flex items-center gap-1.5 text-sm font-black tabular-nums",
-                                (hoveredCountry.yoy_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"
+                                (hoveredCountry.yoy_pct_change || 0) > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                             )}>
                                 {(hoveredCountry.yoy_pct_change || 0) > 0 ? <ArrowUpRight size={16} /> : <ArrowDownRight size={16} />}
                                 {Math.abs(hoveredCountry.yoy_pct_change || 0).toFixed(1)}%

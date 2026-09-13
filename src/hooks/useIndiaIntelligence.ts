@@ -35,7 +35,7 @@ export interface IndiaDomainResult {
 
 const SOURCE_TOKENS = [
     'live_api:rbi', 'live_api:mospi', 'live_api:ingest-mospi', 'live_api:fred',
-    'live_api:dbie', 'live_api:nse', 'live_api:bse',
+    'live_api:dbie', 'live_api:nse', 'live_api:bse', 'live_api:direct',
 ];
 
 const REGISTRY = [
@@ -44,7 +44,7 @@ const REGISTRY = [
     { id: MID.IN_CPI_YOY, label: 'CPI inflation', domain: 'inflation' as const, unit: '%', direction: 'negative' as const },
     { id: MID.IN_WPI_YOY, label: 'WPI inflation', domain: 'inflation' as const, unit: '%', direction: 'negative' as const },
     { id: MID.IN_REPO_RATE, label: 'RBI repo rate', domain: 'liquidity' as const, unit: '%', direction: 'positive' as const },
-    { id: MID.IN_FX_RESERVES, label: 'FX reserves', domain: 'external' as const, unit: 'USD bn', direction: 'positive' as const },
+    { id: MID.IN_FX_RESERVES, label: 'FX reserves', domain: 'external' as const, unit: 'USD tn', direction: 'positive' as const },
     { id: MID.IN_DEBT_GDP_PCT, label: 'Debt / GDP', domain: 'fiscal' as const, unit: '%', direction: 'negative' as const },
     { id: MID.IN_BANK_CREDIT_GROWTH_YOY, label: 'Bank credit growth', domain: 'credit' as const, unit: '%', direction: 'positive' as const },
     { id: MID.USD_INR_RATE, label: 'USD / INR', domain: 'market' as const, unit: 'INR', direction: 'negative' as const },
@@ -61,13 +61,15 @@ const ageState = (row: any): IndiaEvidenceState => {
     if (!row?.as_of_date || new Date(row.as_of_date).getTime() > Date.now()) return 'unavailable';
     const ageDays = (Date.now() - new Date(row.as_of_date).getTime()) / 86_400_000;
     const frequency = String(row.native_frequency || row.display_frequency || '').toLowerCase();
-    const thresholds = frequency.includes('quarter')
-        ? { fresh: 120, lagged: 240 }
-        : frequency.includes('month')
-            ? { fresh: 45, lagged: 90 }
-            : frequency.includes('week')
-                ? { fresh: 9, lagged: 21 }
-                : { fresh: 2, lagged: 7 };
+    const thresholds = frequency.includes('annual') || frequency.includes('year')
+        ? { fresh: 500, lagged: 1500 }
+        : frequency.includes('quarter')
+            ? { fresh: 120, lagged: 240 }
+            : frequency.includes('month')
+                ? { fresh: 45, lagged: 90 }
+                : frequency.includes('week')
+                    ? { fresh: 9, lagged: 21 }
+                    : { fresh: 2, lagged: 7 };
     if (ageDays <= thresholds.fresh) return 'observed';
     if (ageDays <= thresholds.lagged) return 'lagged';
     return 'historical';
@@ -89,16 +91,19 @@ const scoreFromRow = (row: any, direction: 'positive' | 'negative', history: any
 };
 
 const normalize = (definition: typeof REGISTRY[number], row: any, history: any[]): IndiaEvidenceMetric => {
-    const numeric = row?.value == null ? null : Number(row.value);
+    let numeric = row?.value == null ? null : Number(row.value);
+    if (numeric !== null && Number.isFinite(numeric) && definition.id === MID.IN_FX_RESERVES) {
+        numeric = numeric >= 10_000 ? numeric / 1_000_000 : numeric >= 10 ? numeric / 1_000 : numeric;
+    }
     const hasValue = Number.isFinite(numeric) && row?.as_of_date && new Date(row.as_of_date).getTime() <= Date.now();
     const isHistorical = row?.provenance === 'verified_historical' || String(row?.source_ref || '').startsWith('verified_historical:');
     const approved = acceptedSource(row?.source_ref) && row?.provenance === 'api_live';
     const state = hasValue && (approved || isHistorical) ? ageState(row) : 'unavailable';
     const usable = state === 'observed' || state === 'lagged';
-    const score = usable ? scoreFromRow(row, definition.direction, history) : null;
+    const score = (usable || state === 'historical') ? scoreFromRow(row, definition.direction, history) : null;
     return {
         ...definition,
-        value: usable ? numeric : isHistorical && hasValue ? numeric : null,
+        value: hasValue && (usable || isHistorical || state === 'historical') ? numeric : null,
         asOf: row?.as_of_date || null,
         ingestedAt: row?.last_updated_at || null,
         frequency: row?.native_frequency || row?.display_frequency || null,
@@ -129,9 +134,16 @@ export function useIndiaIntelligence() {
             const metrics = REGISTRY.map(definition => normalize(definition, latestMap.get(definition.id), historyMap.get(definition.id) || []));
             const domains = (Object.keys(DOMAIN_LABELS) as IndiaDomainKey[]).map(key => {
                 const domainMetrics = metrics.filter(metric => metric.domain === key);
-                const scored = domainMetrics.filter(metric => metric.score != null && metric.state !== 'historical');
+                const scored = domainMetrics.filter(metric => metric.score != null);
                 const score = scored.length ? scored.reduce((sum, metric) => sum + (metric.score || 0), 0) / scored.length : null;
-                return { key, label: DOMAIN_LABELS[key], required: key !== 'market', score, state: scored.length ? (scored.some(metric => metric.state === 'lagged') ? 'lagged' : 'observed') : 'unavailable', metrics: domainMetrics } as IndiaDomainResult;
+                return {
+                    key,
+                    label: DOMAIN_LABELS[key],
+                    required: key !== 'market',
+                    score,
+                    state: scored.length ? (scored.some(metric => metric.state === 'lagged' || metric.state === 'historical') ? 'lagged' : 'observed') : 'unavailable',
+                    metrics: domainMetrics,
+                } as IndiaDomainResult;
             });
             const required = domains.filter(domain => domain.required);
             const complete = required.every(domain => domain.score != null);

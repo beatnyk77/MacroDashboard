@@ -161,13 +161,22 @@ function flowPriceScore(points: DailySignalPoint[], index: number): ComponentSco
   const nifty = twentySessionReturn(points, index, 'nifty');
   const breadth = rollingAverage(points, 'breadth', 20, index);
   const vix = rollingAverage(points, 'vix', 20, index);
-  if (index < 19 || !finite(nifty) || !finite(breadth) || !finite(vix)) return component(null, []);
+  if (index < 19 || !finite(nifty) || !finite(vix)) return component(null, []);
   const sample = points.slice(19, index + 1);
   const pFlow = winsorizedPercentile(rollingSum(points, 'fii', 20, index), sample.map((_, i) => rollingSum(points, 'fii', 20, i + 19)));
   const pNifty = winsorizedPercentile(nifty, sample.map((_, i) => twentySessionReturn(points, i + 19, 'nifty')).filter(finite));
-  const pBreadth = winsorizedPercentile(breadth, sample.map((_, i) => rollingAverage(points, 'breadth', 20, i + 19)).filter(finite));
   const pVix = winsorizedPercentile(vix, sample.map((_, i) => rollingAverage(points, 'vix', 20, i + 19)).filter(finite));
-  return component(pFlow === null || pNifty === null || pBreadth === null || pVix === null ? null : toSignedScore((pNifty - pFlow) * 0.5 + pBreadth * 0.3 + (1 - pVix) * 0.2), ['fii_20d', 'nifty_20d', 'breadth_20d', 'india_vix_20d']);
+  if (pFlow === null || pNifty === null || pVix === null) return component(null, []);
+
+  const hasBreadth = finite(breadth);
+  const pBreadth = hasBreadth ? winsorizedPercentile(breadth, sample.map((_, i) => rollingAverage(points, 'breadth', 20, i + 19)).filter(finite)) : null;
+
+  const score = hasBreadth && pBreadth !== null
+    ? toSignedScore((pNifty - pFlow) * 0.5 + pBreadth * 0.3 + (1 - pVix) * 0.2)
+    : toSignedScore((pNifty - pFlow) * 0.65 + (1 - pVix) * 0.35);
+
+  const inputs = ['fii_20d', 'nifty_20d', ...(hasBreadth ? ['breadth_20d'] : []), 'india_vix_20d'];
+  return component(score, inputs);
 }
 
 function weightedMedian(values: Array<{ value: number; weight: number }>): number | null {
@@ -180,24 +189,25 @@ function weightedMedian(values: Array<{ value: number; weight: number }>): numbe
 
 function sectorScore(reports: SectorReport[]): ComponentScore {
   const sorted = [...reports].sort((a, b) => a.date.localeCompare(b.date));
-  if (sorted.length < 12) return component(null, []);
+  if (sorted.length < 2) return component(null, []);
   const latest = sorted.slice(-12);
-  const current = latest.slice(-3);
+  const current = latest.slice(-Math.min(3, latest.length));
+  const baseline = latest.length >= 4 ? latest.slice(0, -Math.min(3, latest.length)) : latest;
   const reportFlow = (report: SectorReport) => weightedMedian(report.sectors.filter((sector) => sector.aum > 0).map((sector) => ({ value: sector.flow / sector.aum, weight: sector.aum })));
-  const flowSeries = latest.map(reportFlow).filter(finite);
+  const flowSeries = baseline.map(reportFlow).filter(finite);
   const currentFlow = weightedMedian(current.flatMap((report) => report.sectors.filter((sector) => sector.aum > 0).map((sector) => ({ value: sector.flow / sector.aum, weight: sector.aum }))));
   const breadthFor = (report: SectorReport) => report.sectors.reduce((score, sector) => score + (sector.flow > 0 ? 1 : sector.flow < 0 ? -1 : 0), 0);
-  const currentBreadth = current.reduce((sum, report) => sum + breadthFor(report), 0);
-  const breadthSeries = latest.map(breadthFor);
+  const currentBreadth = current.reduce((sum, report) => sum + breadthFor(report), 0) / current.length;
+  const breadthSeries = baseline.map(breadthFor);
   const concentrationFor = (report: SectorReport) => {
     const values = report.sectors.map((sector) => Math.abs(sector.flow)).sort((a, b) => b - a);
     const total = values.reduce((sum, value) => sum + value, 0);
     return total > 0 ? values.slice(0, 5).reduce((sum, value) => sum + value, 0) / total : 1;
   };
   const concentration = current.reduce((sum, report) => sum + concentrationFor(report), 0) / current.length;
-  const pFlow = currentFlow === null ? null : winsorizedPercentile(currentFlow, flowSeries.slice(0, 9));
-  const pBreadth = winsorizedPercentile(currentBreadth, breadthSeries.slice(0, 9));
-  const pConcentration = winsorizedPercentile(concentration, latest.map(concentrationFor).slice(0, 9));
+  const pFlow = currentFlow === null ? null : (flowSeries.length >= 3 ? winsorizedPercentile(currentFlow, flowSeries) : (currentFlow > 0 ? 0.7 : currentFlow < 0 ? 0.3 : 0.5));
+  const pBreadth = breadthSeries.length >= 3 ? winsorizedPercentile(currentBreadth, breadthSeries) : (currentBreadth > 0 ? 0.65 : currentBreadth < 0 ? 0.35 : 0.5);
+  const pConcentration = baseline.length >= 3 ? winsorizedPercentile(concentration, baseline.map(concentrationFor)) : (concentration > 0.6 ? 0.7 : 0.4);
   return component(pFlow === null || pBreadth === null || pConcentration === null ? null : toSignedScore(pFlow * 0.5 + pBreadth * 0.3 + (1 - pConcentration) * 0.2), ['nsdl_sector_flow_aum', 'sector_breadth', 'top5_concentration']);
 }
 

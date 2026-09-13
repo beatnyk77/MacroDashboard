@@ -64,7 +64,7 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             initial={{ opacity: 0, x: -20 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            className="group grid grid-cols-1 md:grid-cols-12 gap-4 items-center py-6 border-b border-white/5 hover:bg-white/[0.01] transition-colors"
+            className="group grid grid-cols-1 md:grid-cols-12 gap-4 items-center py-6 border-b border-border hover:bg-muted/30 transition-colors"
         >
             {/* Country Identity */}
             <div className="md:col-span-3 flex items-center gap-4">
@@ -72,8 +72,8 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
                     {FLAG_MAP[country.country_code] || '🏳️'}
                 </div>
                 <div>
-                    <h4 className="text-sm font-black text-white uppercase tracking-uppercase">{country.country_label}</h4>
-                    <span className="text-[10px] text-muted-foreground/50 font-bold uppercase tracking-widest">
+                    <h4 className="text-sm font-black text-foreground uppercase tracking-uppercase">{country.country_label}</h4>
+                    <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
                         {country.country_type}
                     </span>
                 </div>
@@ -83,14 +83,14 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             <div className="md:col-span-3 flex items-center justify-between px-4">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <Landmark size={12} className="text-blue-400 opacity-50" />
-                        <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-uppercase">UST Holdings</span>
+                        <Landmark size={12} className="text-blue-600 dark:text-blue-400" />
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-uppercase">UST Holdings</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-black text-white tabular-nums">${country.latest_tic.toFixed(1)}B</span>
+                        <span className="text-lg font-black text-foreground tabular-nums">${country.latest_tic.toFixed(1)}B</span>
                         <div className={cn(
                             "text-[10px] font-black tabular-nums flex items-center",
-                            country.tic_delta_qoq >= 0 ? "text-emerald-400" : "text-rose-400"
+                            country.tic_delta_qoq >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                         )}>
                             {country.tic_delta_qoq >= 0 ? <TrendingUp size={10} className="mr-0.5" /> : <TrendingDown size={10} className="mr-0.5" />}
                             {Math.abs(country.tic_delta_qoq).toFixed(1)}%
@@ -105,17 +105,17 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             </div>
 
             {/* Total FX Reserves */}
-            <div className="md:col-span-3 flex items-center justify-between px-4 border-l border-white/5">
+            <div className="md:col-span-3 flex items-center justify-between px-4 border-l border-border">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <BarChart3 size={12} className="text-indigo-400 opacity-50" />
-                        <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-uppercase">Total Reserves</span>
+                        <BarChart3 size={12} className="text-indigo-600 dark:text-indigo-400" />
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-uppercase">Total Reserves</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-black text-white tabular-nums">${country.latest_fx.toFixed(1)}B</span>
+                        <span className="text-lg font-black text-foreground tabular-nums">${country.latest_fx.toFixed(1)}B</span>
                         <div className={cn(
                             "text-[10px] font-black tabular-nums flex items-center",
-                            country.fx_delta_qoq >= 0 ? "text-emerald-400" : "text-rose-400"
+                            country.fx_delta_qoq >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
                         )}>
                             {country.fx_delta_qoq >= 0 ? <TrendingUp size={10} className="mr-0.5" /> : <TrendingDown size={10} className="mr-0.5" />}
                             {Math.abs(country.fx_delta_qoq).toFixed(1)}%
@@ -132,12 +132,12 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             {/* Signal Logic Area */}
             <div className="md:col-span-3 flex justify-end items-center gap-3 pr-4">
                 {isSellingSignal ? (
-                    <div className="animate-pulse flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400">
+                    <div className="animate-pulse flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-bold">
                         <ShieldAlert size={14} />
                         <span className="text-[10px] font-black uppercase tracking-uppercase">Selling to fund Oil</span>
                     </div>
                 ) : (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/10 text-muted-foreground/40">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border text-muted-foreground">
                         <span className="text-[10px] font-black uppercase tracking-uppercase">Neutral Accumulation</span>
                     </div>
                 )}
@@ -154,7 +154,7 @@ export const ReserveSellerTracker: React.FC = () => {
     const { countries, oilPrice, latestOil } = data;
 
     return (
-        <Card className="p-8 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl relative overflow-hidden rounded-[2.5rem] w-full mt-8">
+        <Card className="p-8 bg-card backdrop-blur-3xl border-border shadow-sm relative overflow-hidden rounded-[2.5rem] w-full mt-8">
             {/* Background Decorative Element */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] rounded-full -mr-48 -mt-48" />
 
@@ -166,24 +166,24 @@ export const ReserveSellerTracker: React.FC = () => {
                             <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20">
                                 <AlertTriangle className="text-orange-500 w-5 h-5" />
                             </div>
-                            <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
-                                Reserve-Seller <span className="text-orange-500">Tracker</span>
+                            <h2 className="text-2xl font-black tracking-heading text-foreground uppercase italic">
+                                Reserve-Seller <span className="text-orange-600 dark:text-orange-500">Tracker</span>
                             </h2>
                         </div>
                         <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
-                            Monitoring secondary market liquidations. High oil prices force energy importers and petrodollar anchors to rotate <span className="text-white font-bold">UST Holdings</span> to maintain liquidity.
+                            Monitoring secondary market liquidations. High oil prices force energy importers and petrodollar anchors to rotate <span className="text-foreground font-bold">UST Holdings</span> to maintain liquidity.
                         </p>
                     </div>
 
                     {/* Oil Context Card */}
-                    <div className="bg-white/5 border border-white/10 rounded-2xl p-4 flex items-center gap-4 min-w-[240px]">
-                        <div className="p-2.5 rounded-xl bg-black/20 text-orange-400">
+                    <div className="bg-muted/40 border border-border rounded-2xl p-4 flex items-center gap-4 min-w-[240px]">
+                        <div className="p-2.5 rounded-xl bg-background text-orange-600 dark:text-orange-400">
                             <Droplets size={20} />
                         </div>
                         <div className="flex-1">
-                            <div className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest">Global Energy Context</div>
+                            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Global Energy Context</div>
                             <div className="flex items-end gap-2">
-                                <span className="text-xl font-black text-white tabular-nums">${latestOil.toFixed(2)}</span>
+                                <span className="text-xl font-black text-foreground tabular-nums">${latestOil.toFixed(2)}</span>
                                 <span className="text-[10px] font-bold text-muted-foreground uppercase pb-1">Brent / BBL</span>
                             </div>
                         </div>
@@ -218,9 +218,9 @@ export const ReserveSellerTracker: React.FC = () => {
                 <div className="mt-8 flex flex-wrap gap-6 items-center">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-white/40 uppercase tracking-widest">Active Signal: Selling Condition Met</span>
+                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Active Signal: Selling Condition Met</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground/30 font-medium italic underline underline-offset-4 decoration-white/5">
+                    <p className="text-[10px] text-muted-foreground font-medium italic underline underline-offset-4 decoration-border">
                         *UST Holdings derived from TIC Long-Term Securities. Reserves represent official gross FX excluding Gold.
                     </p>
                 </div>
