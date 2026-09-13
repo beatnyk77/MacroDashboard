@@ -39,6 +39,15 @@ export const MacroTransmissionHUD: React.FC = () => {
         return v.toFixed(2);
     };
 
+    const getUsdBillions = (id: string, fallback: string = '—') => {
+        const item = metrics?.[id];
+        if (!item || item.value === undefined || Number.isNaN(item.value)) return fallback;
+        const raw = Number(item.value);
+        const isStoredInMillions = id === MID.TGA_BALANCE || id === MID.FED_BALANCE_SHEET;
+        const billions = isStoredInMillions ? raw / 1000 : raw;
+        return billions.toLocaleString('en-US', { maximumFractionDigits: 1 });
+    };
+
 
     // Derived 10Y and 2s10s display
     const tenYield = metrics?.[MID.UST_10Y_YIELD]?.value ?? 4.38;
@@ -192,7 +201,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">Net Liquidity</span>
-                                    <span className="font-bold text-foreground">${getVal(MID.US_NET_LIQUIDITY_USD_BN, '6,140')}B</span>
+                                    <span className="font-bold text-foreground">${getUsdBillions(MID.US_NET_LIQUIDITY_USD_BN, '6,140')}B</span>
                                 </div>
                             </div>
                         </div>
@@ -302,11 +311,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">TGA Cash</span>
-                                    <span className="font-bold text-foreground">${getVal(MID.TGA_BALANCE, '780')}B</span>
+                                    <span className="font-bold text-foreground">${getUsdBillions(MID.TGA_BALANCE, '780')}B</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">Fed RRP</span>
-                                    <span className="font-bold text-foreground">${getVal(MID.RRP_BALANCE_BN, '145')}B</span>
+                                    <span className="font-bold text-foreground">${getUsdBillions(MID.RRP_BALANCE_BN, '145')}B</span>
                                 </div>
                             </div>
                         </div>

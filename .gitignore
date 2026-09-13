@@ -141,3 +141,5 @@ android/local.properties
 
 # Superpowers temporary artifacts
 .superpowers/
+.vercel
+.env*

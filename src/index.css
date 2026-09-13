@@ -26,9 +26,9 @@
         /* Midnight Green #075056 */
         --secondary-foreground: 0 0% 100%;
 
-        --muted: 192 14% 88%;
+        --muted: 195 20% 91%;
         /* Light Silver Tint */
-        --muted-foreground: 203 20% 32%;
+        --muted-foreground: 202 22% 28%;
         /* Deep readable Gunmetal #3B4E59 */
 
         --accent: 44 85% 72%;
@@ -39,9 +39,9 @@
         /* Coral Crimson #EF4444 */
         --destructive-foreground: 0 0% 100%;
 
-        --border: 192 13% 82%;
+        --border: 193 16% 78%;
         /* Light Silver #CBD5D7 */
-        --input: 192 13% 82%;
+        --input: 193 16% 78%;
         --ring: 21 100% 51%;
         /* Orange (Pantone) #FF5B04 */
 
@@ -62,9 +62,9 @@
         --text-secondary-weight: 0.85;
         --text-tertiary-weight: 0.7;
 
-        --section-gap-major: 4rem;
-        --section-gap-minor: 2rem;
-        --card-gap: 1.25rem;
+        --section-gap-major: 2rem;
+        --section-gap-minor: 1rem;
+        --card-gap: 1rem;
     }
 
     .lively {
@@ -78,14 +78,14 @@
         --primary-foreground: 0 0% 100%;
         --secondary: 185 85% 18%;
         --secondary-foreground: 0 0% 100%;
-        --muted: 192 14% 88%;
-        --muted-foreground: 203 20% 32%;
+        --muted: 195 20% 91%;
+        --muted-foreground: 202 22% 28%;
         --accent: 44 85% 72%;
         --accent-foreground: 203 23% 18%;
         --destructive: 0 84.2% 60.2%;
         --destructive-foreground: 0 0% 100%;
-        --border: 192 13% 82%;
-        --input: 192 13% 82%;
+        --border: 193 16% 78%;
+        --input: 193 16% 78%;
         --ring: 21 100% 51%;
     }
 
@@ -214,7 +214,7 @@
     }
 
     .spa-card {
-        @apply bg-card/40 border border-border/50 rounded-3xl p-6 lg:p-10;
+        @apply bg-card/40 border border-border/50 rounded-lg p-6 lg:p-10;
         @apply shadow-xl transition-colors duration-300;
         transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
         @apply hover:border-blue-500/30;
@@ -295,13 +295,23 @@
 
     /* ── Mobile-First Responsive Enhancements ── */
 
-    /* Responsive headings using clamp() for fluid scaling */
+    /* Responsive headings use fixed steps to keep dense data layouts stable. */
     .spa-section-title {
-        font-size: clamp(1.25rem, 4vw, 1.875rem);
+        font-size: 1.5rem;
     }
 
     .spa-hero-value {
-        font-size: clamp(2rem, 6vw, 3.75rem);
+        font-size: 2.5rem;
+    }
+
+    @media (min-width: 1024px) {
+        .spa-section-title {
+            font-size: 1.875rem;
+        }
+
+        .spa-hero-value {
+            font-size: 3.25rem;
+        }
     }
 
     /* Chart containers: horizontal scroll with momentum on mobile */
@@ -339,15 +349,15 @@
     /* ── Homepage Overhaul Utilities ── */
 
     .hero-capability-bullet {
-        @apply flex items-start gap-3 p-4 rounded-2xl bg-white/[0.02] border border-white/5 backdrop-blur-sm transition-colors hover:bg-white/[0.05];
+        @apply flex items-start gap-3 p-4 rounded-lg bg-white/[0.02] border border-white/5 backdrop-blur-sm transition-colors hover:bg-white/[0.05];
     }
 
     .grit-badge {
-        @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest leading-none;
+        @apply inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest leading-none;
     }
 
     .email-capture-glass {
-        @apply flex flex-col sm:flex-row gap-3 p-2 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-xl focus-within:border-blue-500/30 transition-all;
+        @apply flex flex-col sm:flex-row gap-3 p-2 rounded-lg bg-white/[0.03] border border-white/10 backdrop-blur-xl focus-within:border-blue-500/30 transition-all;
     }
 
     .comparison-row {
@@ -355,12 +365,25 @@
     }
 
     .stat-block {
-        @apply flex flex-col items-center text-center p-6 rounded-3xl bg-white/[0.01] border border-white/5;
+        @apply flex flex-col items-center text-center p-6 rounded-lg bg-white/[0.01] border border-white/5;
     }
 
     /* ── High-Contrast Readability & Visibility for Lively Palette ── */
     .lively {
         color-scheme: light;
+    }
+
+    .lively body,
+    .lively #root {
+        background: #FDF6E3;
+        color: #233038;
+    }
+
+    .lively header,
+    .lively aside {
+        background-color: rgba(253, 246, 227, 0.96) !important;
+        border-color: #C8D2D5 !important;
+        box-shadow: 0 8px 24px rgba(35, 48, 56, 0.06);
     }
 
     /* All legacy text-white classes adapt to Gunmetal #233038 */
@@ -386,7 +409,13 @@
     .lively .text-white\/50,
     .lively .text-white\/40,
     .lively .text-white\/30 {
-        color: #075056 !important; /* Midnight Green */
+        color: #3B4E59 !important;
+    }
+
+    .lively .text-white\/25,
+    .lively .text-white\/20,
+    .lively .text-white\/10 {
+        color: #61727C !important;
     }
 
     /* Keep text white when inside explicit primary/dark containers */
@@ -412,26 +441,86 @@
     .lively [class*="bg-[#0d0f14]"],
     .lively [class*="bg-[#070b14]"],
     .lively .bg-slate-800,
-    .lively [class*="bg-slate-800\/"] {
+    .lively [class*="bg-slate-800\/"],
+    .lively [class*="bg-black\/40"],
+    .lively [class*="bg-black\/30"],
+    .lively [class*="bg-black\/10"] {
         background-image: none !important;
         background-color: #FFFFFF !important;
-        box-shadow: 0 1px 3px rgba(35, 48, 56, 0.05), 0 4px 14px rgba(35, 48, 56, 0.04);
+        box-shadow: 0 1px 2px rgba(35, 48, 56, 0.05), 0 8px 20px rgba(35, 48, 56, 0.06);
     }
 
     /* Hairline borders adapt from transparent white / dark slate to crisp Light Silver */
     .lively [class*="border-white\/"],
     .lively [class*="border-slate-700"],
-    .lively [class*="border-slate-800"] {
+    .lively [class*="border-slate-800"],
+    .lively [class*="border-black\/"] {
         border-color: #CBD5D7 !important;
     }
 
     /* Semi-transparent white badges adapt to subtle tinted silver/sand */
     .lively [class*="bg-white\/"] {
-        background-color: rgba(211, 219, 221, 0.45) !important;
+        background-color: rgba(244, 247, 247, 0.88) !important;
+        box-shadow: inset 0 0 0 1px rgba(203, 213, 215, 0.55);
     }
 
     .lively [class*="bg-black\/"] {
-        background-color: rgba(244, 212, 124, 0.25) !important;
+        background-color: rgba(255, 255, 255, 0.94) !important;
+        box-shadow: inset 0 0 0 1px rgba(203, 213, 215, 0.6);
+    }
+
+    .lively [class*="hover:bg-white\/"]:hover {
+        background-color: rgba(244, 212, 124, 0.28) !important;
+    }
+
+    .lively [class*="hover:text-white"]:hover {
+        color: #075056 !important;
+    }
+
+    .lively [class*="shadow-2xl"],
+    .lively [class*="shadow-xl"],
+    .lively [class*="shadow-lg"] {
+        box-shadow: 0 10px 28px rgba(35, 48, 56, 0.08) !important;
+    }
+
+    .lively .bg-card,
+    .lively [class*="bg-card\/"] {
+        background-color: rgba(255, 255, 255, 0.94) !important;
+    }
+
+    .lively .border-border,
+    .lively [class*="border-border"] {
+        border-color: #C8D2D5 !important;
+    }
+
+    .lively [class*="divide-border"] > :not([hidden]) ~ :not([hidden]) {
+        border-color: #C8D2D5 !important;
+    }
+
+    .lively .text-muted-foreground,
+    .lively [class*="text-muted-foreground"] {
+        color: #3B4E59 !important;
+    }
+
+    .lively .text-blue-400,
+    .lively .text-blue-500,
+    .lively .text-cyan-400 {
+        color: #0B5A68 !important;
+    }
+
+    .lively .text-amber-400,
+    .lively .text-amber-500 {
+        color: #9A5B00 !important;
+    }
+
+    .lively .text-emerald-400,
+    .lively .text-emerald-500 {
+        color: #075056 !important;
+    }
+
+    .lively .text-rose-400,
+    .lively .text-rose-500 {
+        color: #B4232F !important;
     }
 
     /* Recharts elements in lively mode */
@@ -442,6 +531,13 @@
     }
     .lively .recharts-text {
         fill: #233038 !important;
+    }
+
+    .lively .recharts-tooltip-wrapper [class*="bg-slate"],
+    .lively .recharts-tooltip-wrapper [class*="bg-black"] {
+        background-color: #FFFFFF !important;
+        border-color: #C8D2D5 !important;
+        color: #233038 !important;
     }
 
     /* High contrast labels */
@@ -467,6 +563,11 @@
         background: #FFFFFF !important;
         border: 1px solid #CBD5D7 !important;
         box-shadow: 0 4px 20px -2px rgba(35, 48, 56, 0.08) !important;
+    }
+
+    .lively .liquid-glass-web-approx::before,
+    .lively .liquid-glass-web-approx::after {
+        display: none;
     }
 }
 
@@ -494,9 +595,9 @@
         min-width: 320px;
     }
 
-    /* Improve touch targets */
+    /* Improve compact mobile touch targets without shrinking primary controls */
     button, a, [role="button"] {
-        min-height: 36px;
+        min-height: 44px;
     }
 }
 

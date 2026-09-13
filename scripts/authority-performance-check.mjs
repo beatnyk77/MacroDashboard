@@ -4,7 +4,7 @@
  * Verifies performance, payload budgets, and caching rules for authority surfaces:
  * 1. Metric catalog completeness (8 flagship metrics).
  * 2. Prerendered HTML bundle sizes (< 250KB uncompressed).
- * 3. Netlify configuration headers for edge functions and caching.
+ * 3. Hosting configuration headers for export functions and caching.
  */
 
 import fs from 'fs';
@@ -25,22 +25,27 @@ console.log('🔍 Running Authority Engine Performance & Service Gate Checks...\
 
 let failed = false;
 
-// 1. Verify netlify.toml caching rules
-console.log('1. Checking Netlify edge caching & export rules...');
-const netlifyToml = fs.readFileSync('netlify.toml', 'utf8');
+// 1. Verify hosting caching rules
+console.log('1. Checking hosting export routing & caching rules...');
+const netlifyToml = fs.existsSync('netlify.toml') ? fs.readFileSync('netlify.toml', 'utf8') : '';
+const vercelJson = fs.existsSync('vercel.json') ? fs.readFileSync('vercel.json', 'utf8') : '';
 
-if (!netlifyToml.includes('export-metric') || !netlifyToml.includes('/api/v1/metrics/*/export')) {
-    console.error('❌ Netlify configuration missing export-metric edge function routing.');
+const hasNetlifyExport = netlifyToml.includes('export-metric') && netlifyToml.includes('/api/v1/metrics/*/export');
+const hasVercelExport = vercelJson.includes('/api/v1/metrics/:slug/export') && fs.existsSync('api/v1/metrics/[slug]/export.js');
+
+if (!hasNetlifyExport && !hasVercelExport) {
+    console.error('❌ Hosting configuration missing /api/v1/metrics/:slug/export routing.');
     failed = true;
 } else {
-    console.log('✅ Netlify edge function routing configured for /api/v1/metrics/*/export');
+    console.log('✅ Export routing configured for /api/v1/metrics/:slug/export');
 }
 
-if (!netlifyToml.includes('Cache-Control') || !netlifyToml.includes('stale-while-revalidate')) {
-    console.error('❌ Missing edge Cache-Control headers for export endpoints.');
+const hostingConfig = `${netlifyToml}\n${vercelJson}`;
+if (!hostingConfig.includes('Cache-Control') || !hostingConfig.includes('stale-while-revalidate')) {
+    console.error('❌ Missing Cache-Control headers for export endpoints.');
     failed = true;
 } else {
-    console.log('✅ Edge caching headers configured with stale-while-revalidate.');
+    console.log('✅ Export caching headers configured with stale-while-revalidate.');
 }
 
 // 2. Verify prerender / public bundle readiness

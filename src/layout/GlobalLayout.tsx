@@ -210,20 +210,20 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 PaperProps={{
                     sx: {
                         width: 280,
-                        bgcolor: 'rgba(2, 6, 23, 0.98)',
+                        bgcolor: themeMode === 'lively' ? 'rgba(253, 246, 227, 0.98)' : 'rgba(2, 6, 23, 0.98)',
                         backdropFilter: 'blur(12px)',
-                        borderRight: '1px solid rgba(255,255,255,0.08)',
+                        borderRight: themeMode === 'lively' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.08)',
                     },
                 }}
             >
-                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: '1px solid rgba(255,255,255,0.05)' }}>
-                    <span className="text-sm font-black text-white uppercase tracking-uppercase">Navigation</span>
+                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: themeMode === 'lively' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)' }}>
+                    <span className="text-sm font-black text-foreground uppercase tracking-uppercase">Navigation</span>
                     <button
                         onClick={() => setMobileDrawerOpen(false)}
-                        className="p-2 hover:bg-white/10 rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="p-2 hover:bg-muted rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary"
                         aria-label="Close navigation menu"
                     >
-                        <X size={20} className="text-white" />
+                        <X size={20} className="text-foreground" />
                     </button>
                 </Box>
                 <Box component="nav" sx={{ p: 2 }}>
@@ -243,9 +243,11 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                         borderRadius: 1,
                                         mb: 0.5,
                                         color: isActive ? 'primary.main' : 'text.secondary',
-                                        bgcolor: isActive ? 'rgba(59, 130, 246, 0.1)' : 'transparent',
+                                        bgcolor: isActive
+                                            ? (themeMode === 'lively' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
+                                            : 'transparent',
                                         '&:hover': {
-                                            bgcolor: 'rgba(255,255,255,0.05)',
+                                            bgcolor: themeMode === 'lively' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
                                             color: 'text.primary',
                                         }
                                     }}

@@ -36,11 +36,8 @@ export const TerminalHero: React.FC = () => {
     return (
         <section
             id="terminal-hero"
-            className="relative mb-10 overflow-hidden rounded-2xl border border-border bg-card dark:bg-slate-900/50 p-6 sm:p-8 shadow-sm dark:shadow-2xl backdrop-blur-xl"
+            className="relative mb-10 overflow-hidden rounded-lg border border-border bg-card dark:bg-slate-900/50 p-6 sm:p-8 shadow-sm dark:shadow-2xl backdrop-blur-xl"
         >
-            <div className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
-            <div className="pointer-events-none absolute -bottom-16 -left-16 h-48 w-48 rounded-full bg-amber-500/10 blur-3xl" />
-
             <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
                 <div className="max-w-3xl">
                     <div className="mb-3 flex flex-wrap items-center gap-2">
@@ -91,7 +88,7 @@ export const TerminalHero: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="flex shrink-0 flex-col gap-2 rounded-xl border border-border bg-card p-4 text-right shadow-sm">
+                <div className="flex shrink-0 flex-col gap-2 rounded-lg border border-border bg-card p-4 text-right shadow-sm">
                     <div className="flex items-center justify-end gap-2 text-[10px] font-black uppercase tracking-uppercase text-muted-foreground">
                         <Database size={12} />
                         Live Feed Status
@@ -111,7 +108,7 @@ export const TerminalHero: React.FC = () => {
                         { label: 'Sovereign risk', detail: 'Stress matrix', href: '#sovereign-risk' },
                         { label: 'Energy', detail: 'Security telemetry', href: '#energy-markets' },
                     ]}
-                    className="max-w-3xl"
+                    className="max-w-3xl rounded-lg"
                 />
             </div>
 
@@ -119,7 +116,7 @@ export const TerminalHero: React.FC = () => {
                 {pillars.map((pillar) => (
                     <div
                         key={pillar.label}
-                        className="rounded-xl border border-border bg-card p-4 transition-colors hover:border-primary/40 shadow-sm"
+                        className="rounded-lg border border-border bg-card p-4 transition-colors hover:border-primary/40 shadow-sm"
                     >
                         <div className={`mb-2 flex items-center gap-2 ${pillar.accent}`}>
                             <pillar.icon size={16} />

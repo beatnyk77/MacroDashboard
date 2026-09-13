@@ -2,10 +2,13 @@ import React, { useState } from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { Globe, ShieldAlert, FileText, LayoutDashboard, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useViewContext } from '@/context/ViewContext';
 
 export const MobileNav: React.FC = () => {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
+    const { themeMode } = useViewContext();
+    const isLively = themeMode === 'lively';
 
     return (
         <Paper sx={{
@@ -31,19 +34,20 @@ export const MobileNav: React.FC = () => {
                     }
                 }}
                 sx={{
-                    bgcolor: 'rgba(15, 23, 42, 0.8)',
+                    bgcolor: isLively ? 'rgba(253, 246, 227, 0.96)' : 'rgba(15, 23, 42, 0.8)',
                     backdropFilter: 'blur(16px)',
-                    borderTop: '1px solid rgba(255,255,255,0.05)',
+                    borderTop: isLively ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)',
                     width: '100%',
                     minWidth: 0,
+                    boxShadow: isLively ? '0 -8px 24px rgba(35, 48, 56, 0.08)' : 'none',
                     '& .MuiBottomNavigationAction-root': {
-                        color: 'rgba(255,255,255,0.4)',
+                        color: isLively ? '#3B4E59' : 'rgba(255,255,255,0.4)',
                         flex: '1 1 0',
                         minWidth: 0,
                         maxWidth: 'none',
                         padding: '6px 2px',
                         '&.Mui-selected': {
-                            color: '#3b82f6',
+                            color: isLively ? '#FF5B04' : '#3b82f6',
                         },
                         '& .MuiBottomNavigationAction-label': {
                             fontSize: '0.65rem',

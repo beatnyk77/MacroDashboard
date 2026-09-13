@@ -1,0 +1,16 @@
+.git
+.github
+.netlify
+.playwright-cli
+.vercel
+.vscode
+android
+app-store
+dist
+ios
+node_modules
+play-store
+scratch
+coverage
+*.log
+lighthouse-home.json
