@@ -51,6 +51,7 @@ const terminalNavItems = [
     { id: 'treasury-supply-radar', label: 'Treasury Supply Radar', path: '/labs/treasury-supply-radar', icon: <Database size={18} /> },
     { id: 'fx-carry-matrix', label: 'FX Carry Matrix', path: '/labs/fx-carry-matrix', icon: <Globe size={18} /> },
     { id: 'treasury-basis-trade', label: 'Treasury Basis Trade', path: '/labs/treasury-basis-trade', icon: <ShieldAlert size={18} /> },
+    { id: 'market-transmission', label: 'Market Transmission & Breadth', path: '/labs/market-transmission', icon: <Activity size={18} /> },
     { id: 'global-net-liquidity', label: 'Global Net Liquidity', path: '/labs/global-net-liquidity', icon: <Gauge size={18} /> },
 ];
 

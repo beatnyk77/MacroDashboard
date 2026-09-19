@@ -88,6 +88,7 @@ const TreasurySupplyRadar = lazy(() => import('@/pages/labs/TreasurySupplyRadar'
 const FxCarryMatrixLab = lazy(() => import('@/pages/labs/FxCarryMatrixLab').then(module => ({ default: module.FxCarryMatrixLab })));
 const TreasuryBasisTradeLab = lazy(() => import('@/pages/labs/TreasuryBasisTradeLab').then(module => ({ default: module.TreasuryBasisTradeLab })));
 const GlobalNetLiquidityLab = lazy(() => import('@/pages/labs/GlobalNetLiquidityLab').then(module => ({ default: module.GlobalNetLiquidityLab })));
+const MarketTransmissionLab = lazy(() => import('@/pages/labs/MarketTransmissionLab').then(module => ({ default: module.MarketTransmissionLab })));
 
 const LoadingFallback = () => (
     <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -187,6 +188,7 @@ function AppRoutes() {
                                         <Route path={trailRoute('/labs/fx-carry-matrix')} element={<FxCarryMatrixLab />} />
                                         <Route path={trailRoute('/labs/treasury-basis-trade')} element={<TreasuryBasisTradeLab />} />
                                         <Route path={trailRoute('/labs/global-net-liquidity')} element={<GlobalNetLiquidityLab />} />
+                                        <Route path={trailRoute('/labs/market-transmission')} element={<MarketTransmissionLab />} />
                                         <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
                                         <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
                                         <Route path={trailRoute('/labs/macro-precedents')} element={<MacroPrecedentsLab />} />

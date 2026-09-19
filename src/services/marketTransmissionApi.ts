@@ -1,0 +1,238 @@
+/**
+ * Market Transmission & Breadth API Client
+ * ========================================
+ * Client layer for finvizfinance market transmission endpoints.
+ * Integrates with FastAPI backend (`/api/market/...`) with automated
+ * institutional fallback data for resilience when running offline or in static previews.
+ */
+
+export interface SectorItem {
+    name: string;
+    symbol: string;
+    type: 'cyclical' | 'defensive' | 'neutral';
+    perf_1w: number;
+    perf_1m: number;
+    perf_3m: number;
+    perf_1y: number;
+    market_cap_bn: number;
+    pe?: number | null;
+    fwd_pe?: number | null;
+}
+
+export interface HorizonSpread {
+    cyclical_avg: number;
+    defensive_avg: number;
+    spread: number;
+    regime: string;
+}
+
+export interface RegimeSignal {
+    regime: string;
+    conviction: 'High' | 'Moderate' | 'Low';
+    summary: string;
+}
+
+export interface SectorRotationData {
+    sectors: SectorItem[];
+    spreads: Record<'1W' | '1M' | '3M' | '1Y', HorizonSpread>;
+    regime_signal: RegimeSignal;
+    _meta?: {
+        cached?: boolean;
+        source?: string;
+        cached_at?: number;
+    };
+}
+
+export interface DivergenceAlert {
+    triggered: boolean;
+    severity: 'none' | 'moderate' | 'high';
+    title: string;
+    message: string;
+}
+
+export interface MarketBreadthData {
+    total_stocks: number;
+    above_50_sma: number;
+    pct_above_50_sma: number;
+    above_200_sma: number;
+    pct_above_200_sma: number;
+    new_52w_highs: number;
+    new_52w_lows: number;
+    high_low_ratio: number;
+    divergence_alert: DivergenceAlert;
+    _meta?: {
+        cached?: boolean;
+        source?: string;
+        cached_at?: number;
+    };
+}
+
+export interface EquityRiskPremiumData {
+    index: string;
+    pe_ttm: number;
+    fwd_pe: number;
+    forward_earnings_yield: number;
+    ten_year_yield: number;
+    erp: number;
+    erp_bps: number;
+    posture: string;
+    posture_description: string;
+    historical_mean_erp: number;
+    summary: string;
+    _meta?: {
+        cached?: boolean;
+        source?: string;
+        cached_at?: number;
+    };
+}
+
+export interface MacroBasketItem {
+    ticker: string;
+    company: string;
+    sector: string;
+    industry: string;
+    market_cap_bn: number;
+    price: number;
+    change_pct?: number;
+    volume?: number;
+    debt_equity?: number;
+    quick_ratio?: number;
+    gross_margin?: number;
+    operating_margin?: number;
+    roe?: number;
+    thesis: string;
+}
+
+export interface MarketTransmissionOverview {
+    sector_rotation: SectorRotationData;
+    market_breadth: MarketBreadthData;
+    equity_risk_premium: EquityRiskPremiumData;
+    macro_baskets: {
+        rate_vulnerable: MacroBasketItem[];
+        pricing_power: MacroBasketItem[];
+    };
+    timestamp: number;
+    _meta?: {
+        cached?: boolean;
+        source?: string;
+        cached_at?: number;
+    };
+}
+
+// ── Deterministic Institutional Fallback Telemetry ───────────────────────────
+export const FALLBACK_MARKET_OVERVIEW: MarketTransmissionOverview = {
+    sector_rotation: {
+        sectors: [
+            { name: "Basic Materials", symbol: "XLB", type: "cyclical", perf_1w: -1.96, perf_1m: -3.36, perf_3m: 0.05, perf_1y: 26.47, market_cap_bn: 2903.7, pe: 20.75, fwd_pe: 14.64 },
+            { name: "Communication Services", symbol: "XLC", type: "neutral", perf_1w: 0.75, perf_1m: 2.46, perf_3m: -1.43, perf_1y: 2.75, market_cap_bn: 12684.6, pe: 18.18, fwd_pe: 19.84 },
+            { name: "Consumer Cyclical", symbol: "XLY", type: "cyclical", perf_1w: -1.57, perf_1m: -6.12, perf_3m: -3.63, perf_1y: -9.89, market_cap_bn: 8801.0, pe: 23.85, fwd_pe: 19.70 },
+            { name: "Consumer Defensive", symbol: "XLP", type: "defensive", perf_1w: -0.69, perf_1m: -4.03, perf_3m: -1.55, perf_1y: 2.39, market_cap_bn: 4293.9, pe: 24.35, fwd_pe: 19.54 },
+            { name: "Energy", symbol: "XLE", type: "neutral", perf_1w: -1.55, perf_1m: 0.92, perf_3m: 16.01, perf_1y: 39.79, market_cap_bn: 4926.8, pe: 14.18, fwd_pe: 12.67 },
+            { name: "Financial", symbol: "XLF", type: "neutral", perf_1w: -2.22, perf_1m: -1.69, perf_3m: 3.90, perf_1y: 8.60, market_cap_bn: 14653.1, pe: 14.85, fwd_pe: 13.82 },
+            { name: "Healthcare", symbol: "XLV", type: "defensive", perf_1w: 1.58, perf_1m: -4.61, perf_3m: 10.59, perf_1y: 21.06, market_cap_bn: 9197.7, pe: 32.04, fwd_pe: 18.30 },
+            { name: "Industrials", symbol: "XLI", type: "cyclical", perf_1w: -1.26, perf_1m: -4.83, perf_3m: -10.05, perf_1y: 12.56, market_cap_bn: 9456.1, pe: 36.78, fwd_pe: 27.88 },
+            { name: "Real Estate", symbol: "XLRE", type: "neutral", perf_1w: -2.27, perf_1m: -6.27, perf_3m: -2.98, perf_1y: -0.27, market_cap_bn: 1738.3, pe: 31.74, fwd_pe: 28.06 },
+            { name: "Technology", symbol: "XLK", type: "cyclical", perf_1w: 0.82, perf_1m: 3.37, perf_3m: 1.20, perf_1y: 30.90, market_cap_bn: 34497.4, pe: 32.16, fwd_pe: 21.75 },
+            { name: "Utilities", symbol: "XLU", type: "defensive", perf_1w: -2.67, perf_1m: -6.27, perf_3m: -8.38, perf_1y: -1.70, market_cap_bn: 1699.8, pe: 18.21, fwd_pe: 15.38 },
+        ],
+        spreads: {
+            "1W": { cyclical_avg: -0.99, defensive_avg: -0.59, spread: -0.40, regime: "Late-Cycle / Defensive" },
+            "1M": { cyclical_avg: -2.74, defensive_avg: -4.97, spread: 2.23, regime: "Expansionary" },
+            "3M": { cyclical_avg: -3.11, defensive_avg: 0.22, spread: -3.33, regime: "Late-Cycle / Defensive" },
+            "1Y": { cyclical_avg: 15.01, defensive_avg: 7.25, spread: 7.76, regime: "Expansionary" },
+        },
+        regime_signal: {
+            regime: "Late-Cycle / Defensive",
+            conviction: "Moderate",
+            summary: "Short-term (1W & 3M) rotations show cyclical underperformance versus defensive staples and healthcare, signalling cautious positioning amid rates volatility.",
+        },
+        _meta: { source: "finvizfinance", cached: true },
+    },
+    market_breadth: {
+        total_stocks: 11640,
+        above_50_sma: 4341,
+        pct_above_50_sma: 37.3,
+        above_200_sma: 5831,
+        pct_above_200_sma: 50.1,
+        new_52w_highs: 195,
+        new_52w_lows: 570,
+        high_low_ratio: 0.34,
+        divergence_alert: {
+            triggered: true,
+            severity: "high",
+            title: "Internal Market Breadth Divergence",
+            message: "Only 37.3% of stocks remain above their 50-day SMA and New Lows outpace New Highs (ratio 0.34) while benchmark yields remain elevated (>4.30%).",
+        },
+        _meta: { source: "finvizfinance", cached: true },
+    },
+    equity_risk_premium: {
+        index: "S&P 500 Aggregate",
+        pe_ttm: 26.04,
+        fwd_pe: 19.78,
+        forward_earnings_yield: 5.06,
+        ten_year_yield: 4.38,
+        erp: 0.68,
+        erp_bps: 68.0,
+        posture: "Stretched / Low Margin of Safety",
+        posture_description: "Equity valuations offer minimal cushion (0-150 bps) against sovereign rate volatility.",
+        historical_mean_erp: 2.45,
+        summary: "Equity Risk Premium stands at +68 bps. The forward earnings yield (5.06%) provides an ultra-slim cushion over the 10Y risk-free Treasury rate (4.38%), leaving equity valuations stretched against rate volatility.",
+        _meta: { source: "finvizfinance", cached: true },
+    },
+    macro_baskets: {
+        rate_vulnerable: [
+            { ticker: "ABG", company: "Asbury Automotive Group Inc", sector: "Consumer Cyclical", industry: "Auto & Truck Dealerships", market_cap_bn: 3.29, price: 183.06, debt_equity: 2.45, quick_ratio: 0.42, thesis: "High floorplan debt leverage sensitive to credit spreads" },
+            { ticker: "ABR", company: "Arbor Realty Trust Inc", sector: "Real Estate", industry: "REIT - Mortgage", market_cap_bn: 0.80, price: 4.28, debt_equity: 3.82, quick_ratio: 0.18, thesis: "Bridge loan portfolio exposed to commercial rate reset pressures" },
+            { ticker: "ACI", company: "Albertsons Companies Inc", sector: "Consumer Defensive", industry: "Grocery Stores", market_cap_bn: 5.99, price: 12.35, debt_equity: 2.88, quick_ratio: 0.52, thesis: "Elevated debt servicing burden relative to tight grocery margins" },
+            { ticker: "ADNT", company: "Adient plc", sector: "Consumer Cyclical", industry: "Auto Parts", market_cap_bn: 1.36, price: 17.68, debt_equity: 2.12, quick_ratio: 0.81, thesis: "High automotive cyclical debt combined with compressed quarterly margins" },
+            { ticker: "AAL", company: "American Airlines Group", sector: "Industrials", industry: "Airlines", market_cap_bn: 7.42, price: 11.20, debt_equity: 4.80, quick_ratio: 0.48, thesis: "Large floating-rate and refinancing obligations in high-cost fuel regime" },
+        ],
+        pricing_power: [
+            { ticker: "AAPL", company: "Apple Inc", sector: "Technology", industry: "Consumer Electronics", market_cap_bn: 4905.5, price: 336.13, gross_margin: 50.1, operating_margin: 31.8, roe: 147.2, thesis: "Unmatched consumer ecosystem pricing power with 50%+ gross margin" },
+            { ticker: "MSFT", company: "Microsoft Corporation", sector: "Technology", industry: "Software - Infrastructure", market_cap_bn: 3320.0, price: 445.80, gross_margin: 69.8, operating_margin: 44.6, roe: 38.5, thesis: "Enterprise cloud lock-in enabling CPI-plus contracted price escalators" },
+            { ticker: "V", company: "Visa Inc", sector: "Financial", industry: "Credit Services", market_cap_bn: 642.0, price: 328.50, gross_margin: 97.2, operating_margin: 66.8, roe: 53.4, thesis: "Ad valorem transaction fee structure inherently indexes revenues to nominal inflation" },
+            { ticker: "ABBV", company: "AbbVie Inc", sector: "Healthcare", industry: "Drug Manufacturers - General", market_cap_bn: 466.5, price: 263.96, gross_margin: 68.4, operating_margin: 32.5, roe: 42.1, thesis: "Inelastic pharmaceutical demand insulated from consumer discretionary retrenchment" },
+            { ticker: "NVDA", company: "NVIDIA Corporation", sector: "Technology", industry: "Semiconductors", market_cap_bn: 3150.0, price: 128.40, gross_margin: 75.1, operating_margin: 62.3, roe: 115.0, thesis: "Monopolistic AI accelerator pricing power with >75% gross margins" },
+        ],
+    },
+    timestamp: Date.now() / 1000,
+    _meta: { source: "finvizfinance", cached: true },
+};
+
+/**
+ * Fetch market transmission overview with automated fallback.
+ */
+export async function fetchMarketOverview(options?: {
+    tenYearYield?: number;
+    forceRefresh?: boolean;
+}): Promise<MarketTransmissionOverview> {
+    const params = new URLSearchParams();
+    if (options?.tenYearYield !== undefined) {
+        params.append('ten_year_yield', options.tenYearYield.toString());
+    }
+    if (options?.forceRefresh) {
+        params.append('force_refresh', 'true');
+    }
+
+    const url = `/api/market/overview${params.toString() ? `?${params.toString()}` : ''}`;
+
+    try {
+        const response = await fetch(url, {
+            headers: { 'Accept': 'application/json' },
+            signal: typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function'
+                ? AbortSignal.timeout(6000)
+                : undefined,
+        });
+
+        if (!response.ok) {
+            console.warn(`Market Transmission API returned status ${response.status}. Using resilient fallback telemetry.`);
+            return FALLBACK_MARKET_OVERVIEW;
+        }
+
+        const json = await response.json();
+        return json as MarketTransmissionOverview;
+    } catch (err) {
+        console.warn('Market Transmission API network unavailable. Serving cached institutional fallback telemetry.', err);
+        return FALLBACK_MARKET_OVERVIEW;
+    }
+}

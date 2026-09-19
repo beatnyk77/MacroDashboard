@@ -126,6 +126,14 @@ export default defineConfig({
             '@': path.resolve(__dirname, './src'),
         },
     },
+    server: {
+        proxy: {
+            '/api/market': {
+                target: 'http://127.0.0.1:8000',
+                changeOrigin: true,
+            },
+        },
+    },
     build: {
         rollupOptions: {
             output: {

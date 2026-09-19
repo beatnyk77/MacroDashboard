@@ -41,6 +41,9 @@ const RegimeAnchor = lazy(() =>
 );
 
 // Components — below-fold, lazy-loaded
+const MarketTransmissionModule = lazy(() =>
+    import('@/features/market-transmission/components/MarketTransmissionModule').then(m => ({ default: m.MarketTransmissionModule }))
+);
 const NetLiquidityRow = lazy(() => import('@/features/dashboard/components/rows/NetLiquidityRow').then(m => ({ default: m.NetLiquidityRow })));
 const USDebtMaturityWall = lazy(() => import('@/components/USDebtMaturityWall').then(m => ({ default: m.USDebtMaturityWall })));
 const CorporateDebtMaturityWall = lazy(() => import('@/components/CorporateDebtMaturityWall').then(m => ({ default: m.CorporateDebtMaturityWall })));
@@ -162,6 +165,11 @@ export const Terminal: React.FC = () => {
 
             {/* ── ALADDIN 4-PILLAR MACRO TRANSMISSION SWITCHBOARD ── */}
             <MacroTransmissionHUD />
+
+            {/* ── MARKET TRANSMISSION & BREADTH (FINVIZFINANCE ENGINE) ── */}
+            <Suspense fallback={<SectionLoadingFallback label="Market Transmission & Breadth" />}>
+                <MarketTransmissionModule className="mb-8" />
+            </Suspense>
 
             {/* ── FACTOR SENSITIVITY & SCENARIO SHOCK SIMULATOR ── */}
             <ScenarioShockSimulator />

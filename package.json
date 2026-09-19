@@ -27,6 +27,8 @@
     "backend:deploy:seo": "bash scripts/automate-backend.sh deploy --seo",
     "backend:all": "bash scripts/automate-backend.sh all",
     "backend:smoke": "bash scripts/automate-backend.sh smoke",
+    "market:serve": ".venv/bin/uvicorn api.market_server:app --host 0.0.0.0 --port 8000 --reload",
+    "test:python": ".venv/bin/pytest tests/test_finviz_service.py -v",
     "test": "vitest run",
     "preview": "vite preview"
   },
