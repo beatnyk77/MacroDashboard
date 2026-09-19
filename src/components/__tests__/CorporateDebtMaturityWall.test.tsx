@@ -67,10 +67,19 @@ describe('CorporateDebtMaturityWall', () => {
         const mockEqData = vi.fn().mockResolvedValue({ data: mockData, error: null });
         const mockSelectData = vi.fn().mockReturnValue({ eq: mockEqData });
 
-        let queryCount = 0;
-        (supabase.from as any).mockImplementation(() => {
-            queryCount++;
-            if (queryCount === 1) {
+        let maturityQueryCount = 0;
+        const mockZombieMaybeSingle = vi.fn().mockResolvedValue({
+            data: { confirmed_zombies_pct: 12.5 },
+            error: null,
+        });
+        const mockZombieSelect = vi.fn().mockReturnValue({ maybeSingle: mockZombieMaybeSingle });
+
+        (supabase.from as any).mockImplementation((table: string) => {
+            if (table === 'vw_corporate_zombie_stress_summary') {
+                return { select: mockZombieSelect };
+            }
+            maturityQueryCount++;
+            if (maturityQueryCount === 1) {
                 return { select: mockSelectDate };
             } else {
                 return { select: mockSelectData };
@@ -103,10 +112,19 @@ describe('CorporateDebtMaturityWall', () => {
             error: null,
         });
         const mockSelectData = vi.fn().mockReturnValue({ eq: mockEqData });
-        let queryCount = 0;
-        (supabase.from as any).mockImplementation(() => {
-            queryCount++;
-            return { select: queryCount === 1 ? mockSelectDate : mockSelectData };
+        const mockZombieMaybeSingle = vi.fn().mockResolvedValue({
+            data: null,
+            error: null,
+        });
+        const mockZombieSelect = vi.fn().mockReturnValue({ maybeSingle: mockZombieMaybeSingle });
+
+        let maturityQueryCount = 0;
+        (supabase.from as any).mockImplementation((table: string) => {
+            if (table === 'vw_corporate_zombie_stress_summary') {
+                return { select: mockZombieSelect };
+            }
+            maturityQueryCount++;
+            return { select: maturityQueryCount === 1 ? mockSelectDate : mockSelectData };
         });
 
         render(<CorporateDebtMaturityWall />);

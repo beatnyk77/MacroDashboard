@@ -6547,15 +6547,15 @@ export type Database = {
       }
       vw_corporate_zombie_stress_summary: {
         Row: {
-          total_active_issuers: number | null
-          scanned_issuers: number | null
           confirmed_zombies_count: number | null
           confirmed_zombies_pct: number | null
+          latest_observed_at: string | null
+          median_distress_cash_runway: number | null
           rollover_zombies_count: number | null
           rollover_zombies_pct: number | null
+          scanned_issuers: number | null
+          total_active_issuers: number | null
           total_debt_at_risk_usd: number | null
-          median_distress_cash_runway: number | null
-          latest_observed_at: string | null
         }
         Relationships: []
       }
