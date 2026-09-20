@@ -58,7 +58,7 @@ const terminalNavItems = [
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
-    const { themeMode, toggleThemeMode } = useViewContext();
+    const { themeMode, resolvedTheme, setThemeMode } = useViewContext();
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
@@ -139,26 +139,22 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-3 md:gap-4">
-                        {/* Theme Switcher */}
-                        <button
-                            type="button"
-                            onClick={toggleThemeMode}
-                            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-xs font-semibold border transition-all duration-200 border-border hover:bg-muted text-foreground shadow-sm"
-                            title={themeMode === 'lively' ? 'Switch to Classic Dark' : 'Switch to Lively Mode'}
-                            aria-label="Toggle theme mode"
-                        >
-                            {themeMode === 'lively' ? (
-                                <>
-                                    <Sun size={15} className="text-primary" />
-                                    <span className="hidden sm:inline font-mono text-[10px] font-bold text-primary tracking-wider">LIVELY</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Moon size={15} className="text-blue-400" />
-                                    <span className="hidden sm:inline font-mono text-[10px] font-bold text-slate-300 tracking-wider">DARK</span>
-                                </>
-                            )}
-                        </button>
+                        {/* Color theme */}
+                        <label className="flex min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-semibold text-foreground shadow-sm transition-colors hover:bg-muted">
+                            {resolvedTheme === 'light' ? <Sun size={15} className="text-primary" aria-hidden="true" /> : <Moon size={15} className="text-blue-400" aria-hidden="true" />}
+                            <span className="sr-only">Color theme</span>
+                            <select
+                                value={themeMode}
+                                onChange={(event) => setThemeMode(event.target.value as typeof themeMode)}
+                                aria-label="Color theme"
+                                title="Choose light, dark, or system color theme"
+                                className="cursor-pointer appearance-none bg-transparent font-mono text-[10px] font-bold tracking-wider text-foreground outline-none"
+                            >
+                                <option value="light">LIGHT</option>
+                                <option value="dark">DARK</option>
+                                <option value="system">SYSTEM</option>
+                            </select>
+                        </label>
 
                         {/* Hamburger menu button for mobile */}
                         <button
@@ -212,13 +208,13 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 PaperProps={{
                     sx: {
                         width: 280,
-                        bgcolor: themeMode === 'lively' ? 'rgba(253, 246, 227, 0.98)' : 'rgba(2, 6, 23, 0.98)',
+                        bgcolor: resolvedTheme === 'light' ? 'rgba(253, 246, 227, 0.98)' : 'rgba(2, 6, 23, 0.98)',
                         backdropFilter: 'blur(12px)',
-                        borderRight: themeMode === 'lively' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.08)',
+                        borderRight: resolvedTheme === 'light' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.08)',
                     },
                 }}
             >
-                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: themeMode === 'lively' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)' }}>
+                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: resolvedTheme === 'light' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)' }}>
                     <span className="text-sm font-black text-foreground uppercase tracking-uppercase">Navigation</span>
                     <button
                         onClick={() => setMobileDrawerOpen(false)}
@@ -246,10 +242,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                         mb: 0.5,
                                         color: isActive ? 'primary.main' : 'text.secondary',
                                         bgcolor: isActive
-                                            ? (themeMode === 'lively' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
+                                            ? (resolvedTheme === 'light' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
                                             : 'transparent',
                                         '&:hover': {
-                                            bgcolor: themeMode === 'lively' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
+                                            bgcolor: resolvedTheme === 'light' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
                                             color: 'text.primary',
                                         }
                                     }}

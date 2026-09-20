@@ -4,7 +4,7 @@
 
 @layer base {
     :root {
-        /* Default / Lively Light Mode Tokens (Ivory Cream, Gunmetal, Midnight Green, Orange Pantone, Sand Yellow, Light Silver) */
+        /* Default / Light Mode Tokens (Ivory Cream, Gunmetal, Mineral Teal, Orange) */
         --background: 44 87% 94%;
         /* Ivory Cream #FDF6E3 */
         --foreground: 203 23% 18%;
@@ -184,11 +184,11 @@
 
     body {
       overflow-y: auto;
-      font-family: 'Inter', 'Fira Sans', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
+      font-family: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
     }
 
     html[data-locale-hint='zh'] body {
-      font-family: system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', 'Inter', sans-serif;
+      font-family: 'Fira Sans', 'PingFang SC', 'Microsoft YaHei', 'Noto Sans SC', sans-serif;
     }
     
     html {
@@ -368,7 +368,7 @@
         @apply flex flex-col items-center text-center p-6 rounded-lg bg-white/[0.01] border border-white/5;
     }
 
-    /* ── High-Contrast Readability & Visibility for Lively Palette ── */
+    /* ── High-Contrast Readability & Visibility for Light Palette ── */
     .lively {
         color-scheme: light;
     }

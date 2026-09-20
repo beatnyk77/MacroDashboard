@@ -104,8 +104,8 @@ const LoadingFallback = () => (
 
 
 function AppRoutes() {
-    const { themeMode } = useViewContext();
-    const theme = useMemo(() => getTheme(themeMode === 'lively' ? 'light' : 'dark'), [themeMode]);
+    const { resolvedTheme } = useViewContext();
+    const theme = useMemo(() => getTheme(resolvedTheme), [resolvedTheme]);
 
     return (
         <ThemeProvider theme={theme}>

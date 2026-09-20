@@ -26,37 +26,37 @@ const getTheme = (mode: 'light' | 'dark') => {
         palette: {
             mode,
             background: {
-                default: mode === 'dark' ? '#0B101A' : '#FDF6E3', // Ivory Cream #FDF6E3
-                paper: mode === 'dark' ? '#131825' : '#FFFFFF',   // Crisp Paper White
+                default: mode === 'dark' ? '#070B10' : '#FDF6E3',
+                paper: mode === 'dark' ? '#0E141A' : '#FFFCF4',
             },
             text: {
-                primary: mode === 'dark' ? '#f8fafc' : '#233038', // Gunmetal #233038 (11.8:1 contrast on Ivory Cream)
-                secondary: mode === 'dark' ? '#94a3b8' : '#075056', // Midnight Green #075056 (7.5:1 contrast)
+                primary: mode === 'dark' ? '#E7EEF2' : '#17212B',
+                secondary: mode === 'dark' ? '#B6C4CC' : '#3B4E59',
             },
             primary: {
-                main: '#FF5B04', // Orange (Pantone) #FF5B04
-                light: '#FF7E38',
-                dark: '#CC4600',
+                main: mode === 'dark' ? '#FF7A33' : '#FF5D05',
+                light: mode === 'dark' ? '#FF9B6B' : '#FF7A33',
+                dark: mode === 'dark' ? '#C8551B' : '#C44700',
             },
             secondary: {
-                main: '#075056', // Midnight Green #075056
+                main: mode === 'dark' ? '#55D6C2' : '#0B5A68',
             },
-            divider: mode === 'dark' ? 'rgba(255, 255, 255, 0.06)' : '#D3DBDD', // Light Silver #D3DBDD
+            divider: mode === 'dark' ? '#2B3942' : '#C8D2D5',
             error: {
-                main: '#EF4444', // Crimson
+                main: mode === 'dark' ? '#FF9B9B' : '#B42318',
             },
             warning: {
-                main: '#F4D47C', // Sand Yellow #F4D47C
+                main: mode === 'dark' ? '#F6C56B' : '#9A400E',
             },
             success: {
-                main: '#075056', // Midnight Green
+                main: mode === 'dark' ? '#6CE7B1' : '#065F46',
             },
             action: {
                 hover: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(35, 48, 56, 0.04)',
             }
         },
         typography: {
-            fontFamily: '"Inter", "system-ui", "-apple-system", sans-serif',
+            fontFamily: '"Fira Sans", sans-serif',
             h1: { 
                 fontSize: typographyScale['4xl'],
                 fontWeight: 700, 
@@ -124,9 +124,9 @@ const getTheme = (mode: 'light' | 'dark') => {
                             ? '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1)'
                             : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
                         backgroundImage: 'none',
-                        backgroundColor: mode === 'dark' ? '#131825' : '#ffffff',
+                        backgroundColor: mode === 'dark' ? '#0E141A' : '#FFFCF4',
                         backdropFilter: 'blur(8px)',
-                        border: mode === 'dark' ? '1px solid rgba(255, 255, 255, 0.08)' : '1px solid rgba(0, 0, 0, 0.05)',
+                        border: mode === 'dark' ? '1px solid #2B3942' : '1px solid #C8D2D5',
                     },
                 },
             },

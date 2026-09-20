@@ -7,9 +7,6 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import { HelmetProvider } from 'react-helmet-async';
 import { initErrorReporting } from '@/lib/errorReporting';
 
-// Force dark mode
-document.documentElement.classList.add('dark');
-
 initErrorReporting();
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
