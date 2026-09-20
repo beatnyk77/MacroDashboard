@@ -67,7 +67,24 @@ const DATED_CHECKS = [
     latestMatching(paths, /^\/blog\/[^/]+\/$/, 'blog article'),
 ].filter(Boolean);
 
-const ALL_CHECKS = [...CHECKS, ...DATED_CHECKS];
+function checkForSitemapRoute(route) {
+    const normalized = route === '/' ? '/' : route.replace(/\/+$/, '/');
+    const relative = normalized === '/' ? 'index.html' : `${normalized.replace(/^\//, '').replace(/\/$/, '')}/index.html`;
+    return {
+        file: relative,
+        label: `sitemap route ${normalized}`,
+        expectCanonicalIncludes: normalized === '/' ? 'https://graphiquestor.com/' : normalized,
+        allowHomepageDescription: normalized === '/',
+    };
+}
+
+// Every indexable URL advertised to crawlers must have a prerendered document.
+// Representative checks alone allow large sections of the sitemap to regress
+// silently, especially programmatic metric and glossary pages.
+const SITEMAP_CHECKS = paths.map(checkForSitemapRoute);
+const ALL_CHECKS = [...new Map(
+    [...CHECKS, ...DATED_CHECKS, ...SITEMAP_CHECKS].map((check) => [check.file, check]),
+).values()];
 
 function readHtml(relPath) {
     const full = path.join(distDir, relPath);
@@ -109,8 +126,8 @@ for (const check of ALL_CHECKS) {
     // helmet-managed page canonical exists. Two canonicals = crawlers
     // pick unpredictably (often the wrong one).
     const canonicalCount = (html.match(/rel="canonical"/g) ?? []).length;
-    if (canonicalCount > 1) {
-        console.error(`✗ ${label}: ${canonicalCount} canonical tags (expected 1 — static fallback not stripped)`);
+    if (canonicalCount !== 1) {
+        console.error(`✗ ${label}: ${canonicalCount} canonical tags (expected exactly 1)`);
         failed++;
     }
 

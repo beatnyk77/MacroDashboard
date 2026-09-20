@@ -69,28 +69,135 @@ export const SEOManager: React.FC<SEOManagerProps> = ({
         ? 'noindex, follow'
         : robots;
 
-    // react-helmet-async often leaves the static index.html description tag
-    // (no data-rh) in place. Imperatively sync description so prerender captures
-    // unique SERP copy for crawlers.
+    // index.html is also the SPA fallback, so it contains homepage metadata for
+    // the first paint. Remove that fallback from hydrated routes and then write
+    // one authoritative head set. This keeps client navigation and prerendered
+    // HTML aligned even when Helmet leaves static tags in place.
     useEffect(() => {
-        if (isLayoutMode || !description) return;
-        const ensureMeta = (selector: string, attr: 'name' | 'property', key: string, value: string) => {
-            let el = document.head.querySelector(selector) as HTMLMetaElement | null;
-            if (!el) {
-                el = document.createElement('meta');
-                el.setAttribute(attr, key);
-                document.head.appendChild(el);
+        const syncHead = () => {
+        const selectors = [
+            'link[rel="canonical"]',
+            'meta[name="description"]',
+            'meta[property="og:title"]',
+            'meta[property="og:description"]',
+            'meta[property="og:type"]',
+            'meta[property="og:url"]',
+            'meta[property="og:image"]',
+            'meta[property="og:site_name"]',
+            'meta[property="og:locale"]',
+            'meta[name="twitter:title"]',
+            'meta[name="twitter:description"]',
+            'meta[name="twitter:card"]',
+            'meta[name="twitter:image"]',
+            'meta[name="twitter:site"]',
+            'meta[name="twitter:creator"]',
+            'meta[name="geo.region"]',
+            'meta[name="target_country"]',
+        ];
+
+        selectors.forEach((selector) => {
+            document.head
+                .querySelectorAll(`${selector}[data-default-seo="true"]`)
+                .forEach((element) => element.remove());
+        });
+
+        if (isLayoutMode) return;
+
+        const ensureElement = (
+            selector: string,
+            tagName: 'link' | 'meta',
+            attributes: Record<string, string>,
+        ) => {
+            document.head.querySelectorAll(selector).forEach((element, index) => {
+                if (index > 0) element.remove();
+            });
+            let element = document.head.querySelector(selector) as HTMLElement | null;
+            if (!element) {
+                element = document.createElement(tagName);
+                document.head.appendChild(element);
             }
-            el.setAttribute('content', value);
-            el.setAttribute('data-rh', 'true');
+            Object.entries(attributes).forEach(([key, value]) => element!.setAttribute(key, value));
+            element.setAttribute('data-rh', 'true');
         };
-        ensureMeta('meta[name="description"]', 'name', 'description', description);
-        ensureMeta('meta[property="og:description"]', 'property', 'og:description', description);
-        ensureMeta('meta[name="twitter:description"]', 'name', 'twitter:description', description);
-        if (fullTitle) {
-            document.title = fullTitle;
+
+        const metaEntries: Array<[
+            string,
+            'name' | 'property',
+            string,
+            string | undefined,
+        ]> = [
+            ['meta[name="description"]', 'name', 'description', description],
+            ['meta[property="og:title"]', 'property', 'og:title', fullTitle],
+            ['meta[property="og:description"]', 'property', 'og:description', description],
+            ['meta[property="og:type"]', 'property', 'og:type', ogType],
+            ['meta[property="og:url"]', 'property', 'og:url', resolvedCanonical],
+            ['meta[property="og:image"]', 'property', 'og:image', ogImage],
+            ['meta[property="og:site_name"]', 'property', 'og:site_name', BrandConfig.seo.siteName],
+            ['meta[property="og:locale"]', 'property', 'og:locale', ogLocale],
+            ['meta[name="twitter:title"]', 'name', 'twitter:title', fullTitle],
+            ['meta[name="twitter:description"]', 'name', 'twitter:description', description],
+            ['meta[name="twitter:card"]', 'name', 'twitter:card', 'summary_large_image'],
+            ['meta[name="twitter:image"]', 'name', 'twitter:image', ogImage],
+            ['meta[name="twitter:site"]', 'name', 'twitter:site', BrandConfig.twitter],
+            ['meta[name="twitter:creator"]', 'name', 'twitter:creator', BrandConfig.twitter],
+            ['meta[name="geo.region"]', 'name', 'geo.region', geoRegion],
+            ['meta[name="target_country"]', 'name', 'target_country', targetCountry],
+        ];
+
+        metaEntries.forEach(([selector, attribute, key, value]) => {
+            if (!value) return;
+            ensureElement(selector, 'meta', { [attribute]: key, content: value });
+        });
+
+        ensureElement('link[rel="canonical"]', 'link', {
+            rel: 'canonical',
+            href: resolvedCanonical,
+        });
+
+        document.head.querySelectorAll('meta[name="robots"]').forEach((element, index) => {
+            if (index > 0) element.remove();
+        });
+        const robotsMeta = document.head.querySelector('meta[name="robots"]') as HTMLMetaElement | null;
+        if (robotsMeta) {
+            robotsMeta.setAttribute('content', resolvedRobots);
+            robotsMeta.setAttribute('data-rh', 'true');
         }
-    }, [isLayoutMode, description, fullTitle]);
+
+        if (fullTitle) document.title = fullTitle;
+        };
+
+        syncHead();
+        // Helmet can reconcile its managed nodes after this effect. A second
+        // pass ensures those reconciliations cannot restore duplicate fallback
+        // tags or remove the route description.
+        const timer = window.setTimeout(syncHead, 100);
+        if (isLayoutMode) return () => window.clearTimeout(timer);
+
+        const observer = new MutationObserver(() => {
+            const descriptionNode = document.head.querySelector('meta[name="description"]');
+            const canonicalNode = document.head.querySelector('link[rel="canonical"]');
+            if (descriptionNode?.getAttribute('content') !== description || canonicalNode?.getAttribute('href') !== resolvedCanonical) {
+                syncHead();
+            }
+        });
+        observer.observe(document.head, { childList: true });
+
+        return () => {
+            window.clearTimeout(timer);
+            observer.disconnect();
+        };
+    }, [
+        description,
+        fullTitle,
+        geoRegion,
+        isLayoutMode,
+        ogImage,
+        ogLocale,
+        ogType,
+        resolvedCanonical,
+        resolvedRobots,
+        targetCountry,
+    ]);
 
     return (
         <Helmet defer={false}>
