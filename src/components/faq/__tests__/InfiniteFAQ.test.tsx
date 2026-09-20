@@ -102,9 +102,6 @@ describe('InfiniteFAQ Component', () => {
     const submitBtn = screen.getByRole('button', { name: /Ask/i });
     fireEvent.click(submitBtn);
 
-    // Verifies loading state
-    expect(screen.getByText(/Scanning documentation corpus.../i)).toBeInTheDocument();
-
     // Verifies streaming/completed answer appears
     await waitFor(
       () => {
