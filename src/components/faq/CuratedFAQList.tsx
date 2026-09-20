@@ -62,16 +62,16 @@ export const CuratedFAQList: React.FC<CuratedFAQListProps> = ({
       <div className="mb-4">
         <div className="flex items-center justify-between gap-2 mb-1">
           <div className="flex items-center gap-2">
-            <span className="w-2 h-2 rounded-sm bg-[#38bdf8]" />
-            <h3 className="font-['Space_Grotesk'] text-[15px] font-semibold text-[#e2e8f0] tracking-tight">
+            <span className="w-2 h-2 rounded-sm bg-sky-500 dark:bg-[#38bdf8]" />
+            <h3 className="font-['Space_Grotesk'] text-[15px] font-semibold text-slate-900 dark:text-[#e2e8f0] tracking-tight">
               {deskTitle}
             </h3>
           </div>
-          <span className="font-mono text-[10px] text-[#64748b] bg-[#0c1424] px-1.5 py-0.5 rounded-sm border border-[#1b2638]">
+          <span className="font-mono text-[10px] text-slate-500 dark:text-[#64748b] bg-slate-100 dark:bg-[#0c1424] px-1.5 py-0.5 rounded-sm border border-slate-300 dark:border-[#1b2638]">
             {filteredItems.length} {filteredItems.length === 1 ? 'ITEM' : 'ITEMS'}
           </span>
         </div>
-        <p className="text-[12px] text-[#8c909f] font-['Inter'] leading-relaxed">
+        <p className="text-[12px] text-slate-600 dark:text-[#8c909f] font-['Inter'] leading-relaxed">
           {subtitle}
         </p>
       </div>
@@ -79,18 +79,18 @@ export const CuratedFAQList: React.FC<CuratedFAQListProps> = ({
       {/* Filter and Control Bar */}
       <div className="flex items-center gap-2 mb-3">
         <div className="relative flex-1">
-          <Search className="w-3.5 h-3.5 text-[#64748b] absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-3.5 h-3.5 text-slate-500 dark:text-[#64748b] absolute left-2.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             value={searchQuery}
             onChange={e => setSearchQuery(e.target.value)}
             placeholder="Filter curated questions..."
-            className="w-full bg-[#070b14] border border-[#182333] focus:border-[#38bdf8]/60 rounded-md pl-8 pr-7 py-1.5 text-[12px] text-[#cbd5e1] placeholder-[#475569] font-mono focus:outline-none transition-colors"
+            className="w-full bg-white dark:bg-[#070b14] border border-slate-200 dark:border-[#182333] focus:border-sky-500/60 dark:focus:border-[#38bdf8]/60 rounded-md pl-8 pr-7 py-1.5 text-[12px] text-slate-800 dark:text-[#cbd5e1] placeholder-slate-400 dark:placeholder-[#475569] font-mono focus:outline-none transition-colors"
           />
           {searchQuery && (
             <button
               onClick={() => setSearchQuery('')}
-              className="absolute right-2 top-1/2 -translate-y-1/2 text-[#64748b] hover:text-[#94a3b8]"
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 dark:text-[#64748b] hover:text-slate-700 dark:hover:text-[#94a3b8]"
             >
               <X className="w-3 h-3" />
             </button>
@@ -101,7 +101,7 @@ export const CuratedFAQList: React.FC<CuratedFAQListProps> = ({
           type="button"
           onClick={toggleAll}
           title={openIds.size === items.length ? 'Collapse All' : 'Expand All'}
-          className="flex items-center gap-1 px-2 py-1.5 rounded-md bg-[#070b14] border border-[#182333] hover:border-[#27364f] text-[11px] font-mono text-[#8c909f] hover:text-[#cbd5e1] transition-colors"
+          className="flex items-center gap-1 px-2 py-1.5 rounded-md bg-white dark:bg-[#070b14] border border-slate-200 dark:border-[#182333] hover:border-slate-300 dark:hover:border-[#27364f] text-[11px] font-mono text-slate-600 dark:text-[#8c909f] hover:text-slate-900 dark:hover:text-[#cbd5e1] transition-colors"
         >
           <ChevronsUpDown className="w-3.5 h-3.5" />
           <span className="hidden sm:inline">
@@ -122,19 +122,19 @@ export const CuratedFAQList: React.FC<CuratedFAQListProps> = ({
             />
           ))
         ) : (
-          <div className="p-6 text-center rounded-md border border-dashed border-[#1e293b] bg-[#050810]/50 my-2">
-            <HelpCircle className="w-6 h-6 text-[#64748b] mx-auto mb-2 opacity-60" />
-            <p className="text-[12px] text-[#cbd5e1] font-medium mb-1">
+          <div className="p-6 text-center rounded-md border border-dashed border-slate-300 dark:border-[#1e293b] bg-slate-50/50 dark:bg-[#050810]/50 my-2">
+            <HelpCircle className="w-6 h-6 text-slate-400 dark:text-[#64748b] mx-auto mb-2 opacity-60" />
+            <p className="text-[12px] text-slate-700 dark:text-[#cbd5e1] font-medium mb-1">
               No static FAQ matches "{searchQuery}"
             </p>
-            <p className="text-[11px] text-[#64748b] mb-3">
+            <p className="text-[11px] text-slate-500 dark:text-[#64748b] mb-3">
               The short ones are here. For anything else, query our grounded RAG terminal.
             </p>
             {onAskAI && (
               <button
                 type="button"
                 onClick={() => onAskAI(searchQuery)}
-                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-[#0e213b] hover:bg-[#132c4f] border border-[#38bdf8]/40 text-[#38bdf8] text-[11px] font-mono transition-colors"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-sm bg-sky-50 dark:bg-[#0e213b] hover:bg-sky-100 dark:hover:bg-[#132c4f] border border-sky-200 dark:border-[#38bdf8]/40 text-sky-600 dark:text-[#38bdf8] text-[11px] font-mono transition-colors"
               >
                 <span>Ask AI: "{searchQuery}"</span>
                 <span>↵</span>

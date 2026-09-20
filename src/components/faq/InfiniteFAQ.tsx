@@ -88,10 +88,10 @@ export const InfiniteFAQ: React.FC<InfiniteFAQProps> = ({
   return (
     <section
       aria-label="Infinite FAQ Intelligence Module"
-      className={`relative w-full rounded-md bg-[#0b0f19]/90 border border-[#1e293b] p-4 sm:p-6 backdrop-blur-md transition-all shadow-xl shadow-black/40 ${className}`}
+      className={`relative w-full rounded-md bg-slate-50/90 dark:bg-[#0b0f19]/90 border border-slate-200 dark:border-[#1e293b] p-4 sm:p-6 backdrop-blur-md transition-all shadow-xl shadow-slate-300/50 dark:shadow-black/40 ${className}`}
     >
       {/* Decorative top hairline accent */}
-      <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-[#38bdf8]/40 to-transparent pointer-events-none" />
+      <div className="absolute top-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-sky-500/30 dark:via-[#38bdf8]/40 to-transparent pointer-events-none" />
 
       {/* Grid: 5 cols Left (Curated FAQ) & 7 cols Right (AI RAG Terminal) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">

@@ -52,6 +52,10 @@ const IndiaInstitutionalPositioningSection = lazy(() =>
     import('@/features/dashboard/components/sections/IndiaInstitutionalPositioningSection').then(m => ({ default: m.IndiaInstitutionalPositioningSection }))
 );
 
+const IndiaSavingsRiskCapitalSection = lazy(() =>
+    import('@/features/dashboard/components/sections/IndiaSavingsRiskCapitalSection').then(m => ({ default: m.IndiaSavingsRiskCapitalSection }))
+);
+
 // IndiaMacroDashboard removed — fabricated snapshot producer (credibility sprint)
 
 const SectionSkeleton = () => (
@@ -59,14 +63,14 @@ const SectionSkeleton = () => (
 );
 
 const SIGNAL_CARDS = [
-    { icon: Activity,   label: 'Macro Pulse',    desc: 'IIP, WPI, gold accumulation & BOP stress',         color: 'blue',    anchor: '#macro' },
-    { icon: BarChart2,  label: 'Credit Cycle',   desc: 'RBI credit impulse & banking stress clock',         color: 'amber',   anchor: '#credit' },
-    { icon: TrendingUp, label: 'Fiscal Health',  desc: 'Interest payments / revenue receipts ratio',        color: 'emerald', anchor: '#fiscal' },
-    { icon: Zap,        label: 'Liquidity',      desc: 'Rupee liquidity surplus/deficit & SOFR spread',     color: 'rose',    anchor: '#liquidity' },
-    { icon: Shield,     label: 'Debt Wall',      desc: 'G-Sec rollover risk by coupon bucket',              color: 'purple',  anchor: '#debt' },
-    { icon: BarChart3,  label: 'RBI FX Defense', desc: 'Forex reserves & RBI intervention posture',         color: 'blue',    anchor: '#monetary' },
-    { icon: MapPin,     label: 'State Fiscal',   desc: 'State fiscal coverage pending source validation',     color: 'emerald', anchor: '#state-fiscal' },
-    { icon: Landmark,   label: 'Money Market',   desc: 'Daily RBI money market terminal',                   color: 'amber',   anchor: '#monetary' },
+    { icon: TrendingUp, label: 'GDS', desc: 'Gross Domestic Savings (31.4% GDP)', color: 'emerald', anchor: '#risk-capital' },
+    { icon: MapPin, label: 'Physical Assets', desc: 'Dead-capital skew (52.8%) in real estate & gold', color: 'rose', anchor: '#risk-capital' },
+    { icon: BarChart2, label: 'Financial Assets', desc: 'Public equity & deposit bias (47.2%)', color: 'blue', anchor: '#risk-capital' },
+    { icon: Shield, label: 'Risk Capital', desc: 'Domestic venture penetration at just 0.38%', color: 'rose', anchor: '#risk-capital' },
+    { icon: Activity, label: 'Macro Pulse', desc: 'IIP, WPI, & BOP stress', color: 'blue', anchor: '#macro' },
+    { icon: Zap, label: 'Liquidity', desc: 'Rupee liquidity surplus/deficit & SOFR spread', color: 'purple', anchor: '#liquidity' },
+    { icon: BarChart3, label: 'RBI FX Defense', desc: 'Forex reserves & intervention posture', color: 'blue', anchor: '#monetary' },
+    { icon: Landmark, label: 'Money Market', desc: 'Daily RBI money market terminal', color: 'amber', anchor: '#monetary' },
 ];
 
 const colorMap: Record<string, string> = {
@@ -191,9 +195,17 @@ export const IntelIndiaPage: React.FC = () => {
                                 </h1>
                                 <FreshnessChip status={dataFreshness} lastUpdated={repoEvidence?.asOf || primaryMetric?.lastUpdated} sourceRef={repoEvidence?.sourceRef} provenance={repoEvidence?.provenance} isProvisional={repoEvidence?.isProvisional} />
                             </div>
-                            <p className="max-w-xl text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
-                                Published India macro evidence for RBI liquidity, growth, inflation, fiscal capacity, credit, external resilience, and sovereign funding.
-                            </p>
+                            <div className="space-y-4 max-w-2xl">
+                                <p className="text-muted-foreground text-sm md:text-base leading-relaxed font-medium">
+                                    Published India macro evidence for RBI liquidity, growth, inflation, fiscal capacity, credit, external resilience, and sovereign funding.
+                                </p>
+                                <div className="p-4 rounded-xl border border-rose-500/20 bg-rose-500/5">
+                                    <p className="text-sm font-semibold text-rose-500 mb-1">Structural Paradox</p>
+                                    <p className="text-xs text-muted-foreground leading-relaxed">
+                                        India boasts $1.18T in Gross Savings (~31.4% GDP), yet &lt;1.4% penetrates domestic innovation risk capital. 53% remains anchored in physical assets (gold &amp; real estate), while financial flows concentrate heavily in public equities and low-yielding commercial bank deposits.
+                                    </p>
+                                </div>
+                            </div>
                         </div>
                     </m.div>
 
@@ -201,8 +213,8 @@ export const IntelIndiaPage: React.FC = () => {
                     {/* Fast Signal Bar */}
                     <div className="flex flex-wrap gap-3 mt-6">
                         {[
-                            { href: '#macro',        label: 'Macro Pulse',    active: true },
-
+                            { href: '#risk-capital', label: 'Risk Capital Bottleneck', active: true },
+                            { href: '#macro',        label: 'Macro Pulse' },
                             { href: '#fiscal',       label: 'Fiscal Stress' },
                             { href: '#credit',       label: 'Credit Cycle' },
                             { href: '#monetary',     label: 'RBI & FX' },
@@ -259,6 +271,19 @@ export const IntelIndiaPage: React.FC = () => {
 
             {/* Content Sections */}
             <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
+                {/* Risk Capital & Savings */}
+                <section id="risk-capital">
+                    <LazyRender minHeight="400px" fallback={<SectionSkeleton />}>
+                        <SectionErrorBoundary name="India Savings & Risk Capital">
+                            <Suspense fallback={<SectionSkeleton />}>
+                                <IndiaSavingsRiskCapitalSection />
+                            </Suspense>
+                        </SectionErrorBoundary>
+                    </LazyRender>
+                </section>
+
+                <div className="border-t border-border" />
+
                 {/* India Macro Pulse */}
                 <section id="macro">
                     <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>

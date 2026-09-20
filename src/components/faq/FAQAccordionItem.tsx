@@ -31,8 +31,8 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
       id={item.id}
       className={`border rounded-md transition-colors duration-200 overflow-hidden ${
         isOpen
-          ? 'bg-[#080d1a] border-[#253852] shadow-sm shadow-[#38bdf8]/5'
-          : 'bg-[#070b14] border-[#182333] hover:border-[#223147]'
+          ? 'bg-white dark:bg-[#080d1a] border-slate-300 dark:border-[#253852] shadow-sm shadow-sky-500/5 dark:shadow-[#38bdf8]/5'
+          : 'bg-slate-50/50 dark:bg-[#070b14] border-slate-200 dark:border-[#182333] hover:border-slate-300 dark:hover:border-[#223147]'
       }`}
     >
       <div className="w-full px-4 py-3 flex items-start justify-between gap-3">
@@ -45,14 +45,14 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
         >
           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
             {item.category && (
-              <span className="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-sm bg-[#0f1d33] text-[#38bdf8] border border-[#1e324f]">
+              <span className="font-mono text-[10px] uppercase tracking-wider px-1.5 py-0.5 rounded-sm bg-sky-50 dark:bg-[#0f1d33] text-sky-600 dark:text-[#38bdf8] border border-sky-200 dark:border-[#1e324f]">
                 {item.category}
               </span>
             )}
             {item.tags?.map((t, idx) => (
               <span
                 key={idx}
-                className="font-mono text-[9px] text-[#64748b] bg-[#0d1524] px-1 rounded-sm"
+                className="font-mono text-[9px] text-slate-500 dark:text-[#64748b] bg-slate-100 dark:bg-[#0d1524] px-1 rounded-sm"
               >
                 #{t}
               </span>
@@ -60,7 +60,7 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
           </div>
           <h4
             className={`font-['Space_Grotesk'] text-[13px] font-medium leading-snug transition-colors ${
-              isOpen ? 'text-[#e2e8f0]' : 'text-[#cbd5e1] hover:text-[#f1f5f9]'
+              isOpen ? 'text-slate-900 dark:text-[#e2e8f0]' : 'text-slate-600 dark:text-[#cbd5e1] hover:text-slate-900 dark:hover:text-[#f1f5f9]'
             }`}
           >
             {item.question}
@@ -72,11 +72,11 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
             type="button"
             onClick={handleCopyLink}
             aria-label="Copy link to question"
-            className="p-1 rounded-sm text-[#64748b] hover:text-[#cbd5e1] hover:bg-[#111c2e] transition-colors"
+            className="p-1 rounded-sm text-slate-500 dark:text-[#64748b] hover:text-slate-700 dark:hover:text-[#cbd5e1] hover:bg-slate-200 dark:hover:bg-[#111c2e] transition-colors"
             title="Copy question link"
           >
             {copiedLink ? (
-              <Check className="w-3 h-3 text-[#10b981]" />
+              <Check className="w-3 h-3 text-emerald-500 dark:text-[#10b981]" />
             ) : (
               <LinkIcon className="w-3 h-3" />
             )}
@@ -85,7 +85,7 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
             type="button"
             onClick={onToggle}
             aria-label={isOpen ? 'Collapse answer' : 'Expand answer'}
-            className="p-1 text-[#64748b] hover:text-[#cbd5e1] focus:outline-none"
+            className="p-1 text-slate-500 dark:text-[#64748b] hover:text-slate-700 dark:hover:text-[#cbd5e1] focus:outline-none"
           >
             <motion.div
               animate={{ rotate: isOpen ? 180 : 0 }}
@@ -107,19 +107,19 @@ export const FAQAccordionItem: React.FC<FAQAccordionItemProps> = ({
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.25, ease: [0.04, 0.62, 0.23, 0.98] }}
-            className="overflow-hidden border-t border-[#1a2638]"
+            className="overflow-hidden border-t border-slate-200 dark:border-[#1a2638]"
           >
-            <div className="px-4 py-3.5 bg-[#050810]/70 text-[#cbd5e1]">
+            <div className="px-4 py-3.5 bg-slate-50/70 dark:bg-[#050810]/70 text-slate-700 dark:text-[#cbd5e1]">
               <StreamedMarkdownAnswer content={item.answer} />
 
               {item.citationUrl && (
-                <div className="mt-3 pt-2.5 border-t border-[#182333] flex items-center justify-between">
-                  <span className="text-[10px] font-mono text-[#64748b]">
+                <div className="mt-3 pt-2.5 border-t border-slate-200 dark:border-[#182333] flex items-center justify-between">
+                  <span className="text-[10px] font-mono text-slate-500 dark:text-[#64748b]">
                     OFFICIAL METHODOLOGY
                   </span>
                   <Link
                     to={item.citationUrl}
-                    className="inline-flex items-center gap-1 text-[11px] font-mono text-[#38bdf8] hover:text-[#7dd3fc] transition-colors"
+                    className="inline-flex items-center gap-1 text-[11px] font-mono text-sky-600 dark:text-[#38bdf8] hover:text-sky-700 dark:hover:text-[#7dd3fc] transition-colors"
                   >
                     <span>{item.citationLabel || 'View Document'}</span>
                     <ArrowUpRight className="w-3 h-3" />

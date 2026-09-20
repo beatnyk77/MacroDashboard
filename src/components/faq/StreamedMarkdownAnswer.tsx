@@ -29,37 +29,37 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
   let codeBlockCounter = 0;
 
   return (
-    <div className={`faq-markdown-stream text-[#d4e4fa] ${className}`}>
+    <div className={`faq-markdown-stream text-slate-800 dark:text-[#d4e4fa] ${className}`}>
       <ReactMarkdown
         remarkPlugins={[remarkGfm]}
         components={{
           h1: ({ children }) => (
-            <h1 className="text-base font-semibold font-['Space_Grotesk'] text-[#e2e8f0] mt-3 mb-2 tracking-tight">
+            <h1 className="text-base font-semibold font-['Space_Grotesk'] text-slate-900 dark:text-[#e2e8f0] mt-3 mb-2 tracking-tight">
               {children}
             </h1>
           ),
           h2: ({ children }) => (
-            <h2 className="text-sm font-semibold font-['Space_Grotesk'] text-[#38bdf8] mt-3 mb-1.5 tracking-tight uppercase tracking-wider text-[11px]">
+            <h2 className="text-sm font-semibold font-['Space_Grotesk'] text-sky-600 dark:text-[#38bdf8] mt-3 mb-1.5 tracking-tight uppercase tracking-wider text-[11px]">
               {children}
             </h2>
           ),
           h3: ({ children }) => (
-            <h3 className="text-[12px] font-medium font-['Space_Grotesk'] text-[#cbd5e1] mt-2 mb-1">
+            <h3 className="text-[12px] font-medium font-['Space_Grotesk'] text-slate-700 dark:text-[#cbd5e1] mt-2 mb-1">
               {children}
             </h3>
           ),
           p: ({ children }) => (
-            <p className="text-[13px] leading-[19px] text-[#cbd5e1] mb-2.5 font-['Inter']">
+            <p className="text-[13px] leading-[19px] text-slate-700 dark:text-[#cbd5e1] mb-2.5 font-['Inter']">
               {children}
             </p>
           ),
           ul: ({ children }) => (
-            <ul className="list-disc list-outside pl-4 mb-2.5 space-y-1 text-[12px] text-[#cbd5e1] marker:text-[#38bdf8]">
+            <ul className="list-disc list-outside pl-4 mb-2.5 space-y-1 text-[12px] text-slate-700 dark:text-[#cbd5e1] marker:text-sky-600 dark:text-[#38bdf8]">
               {children}
             </ul>
           ),
           ol: ({ children }) => (
-            <ol className="list-decimal list-outside pl-4 mb-2.5 space-y-1 text-[12px] text-[#cbd5e1] marker:text-[#38bdf8]">
+            <ol className="list-decimal list-outside pl-4 mb-2.5 space-y-1 text-[12px] text-slate-700 dark:text-[#cbd5e1] marker:text-sky-600 dark:text-[#38bdf8]">
               {children}
             </ol>
           ),
@@ -69,7 +69,7 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
             </li>
           ),
           blockquote: ({ children }) => (
-            <blockquote className="border-l-2 border-[#38bdf8] pl-3 py-1 my-2 bg-[rgba(56,189,248,0.04)] text-[12px] text-[#94a3b8] italic">
+            <blockquote className="border-l-2 border-sky-500 dark:border-[#38bdf8] pl-3 py-1 my-2 bg-sky-500/5 dark:bg-[rgba(56,189,248,0.04)] text-[12px] text-slate-600 dark:text-[#94a3b8] italic">
               {children}
             </blockquote>
           ),
@@ -81,7 +81,7 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
               return (
                 <Link
                   to={href}
-                  className="inline-flex items-center gap-1 text-[#38bdf8] hover:text-[#7dd3fc] underline underline-offset-2 decoration-[#38bdf8]/40 hover:decoration-[#38bdf8] font-medium transition-colors"
+                  className="inline-flex items-center gap-1 text-sky-600 dark:text-[#38bdf8] hover:text-sky-700 dark:hover:text-sky-600 dark:text-[#7dd3fc] underline underline-offset-2 decoration-sky-500/40 dark:decoration-[#38bdf8]/40 hover:decoration-sky-500 dark:hover:decoration-[#38bdf8] font-medium transition-colors"
                 >
                   {children}
                 </Link>
@@ -93,7 +93,7 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1 text-[#38bdf8] hover:text-[#7dd3fc] underline underline-offset-2 decoration-[#38bdf8]/40 transition-colors"
+                className="inline-flex items-center gap-1 text-sky-600 dark:text-[#38bdf8] hover:text-sky-700 dark:hover:text-sky-600 dark:text-[#7dd3fc] underline underline-offset-2 decoration-sky-500/40 dark:decoration-[#38bdf8]/40 transition-colors"
               >
                 <span>{children}</span>
                 <ExternalLink className="w-2.5 h-2.5 opacity-70" />
@@ -108,7 +108,7 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
             if (isInline) {
               return (
                 <code
-                  className="font-mono text-[11px] bg-[#0c1524] text-[#38bdf8] border border-[#1e2e47] px-1.5 py-0.5 rounded-sm"
+                  className="font-mono text-[11px] bg-slate-100 dark:bg-[#0c1524] text-sky-600 dark:text-[#38bdf8] border border-slate-300 dark:border-[#1e2e47] px-1.5 py-0.5 rounded-sm"
                   {...props}
                 >
                   {children}
@@ -120,18 +120,18 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
             const isCopied = copiedCodeIndex === currentIdx;
 
             return (
-              <div className="relative group my-2.5 rounded-md overflow-hidden border border-[#1e293b] bg-[#050914]">
-                <div className="flex items-center justify-between px-3 py-1.5 bg-[#0a1120] border-b border-[#1e293b] text-[10px] text-[#64748b] font-mono">
+              <div className="relative group my-2.5 rounded-md overflow-hidden border border-slate-200 dark:border-[#1e293b] bg-slate-50 dark:bg-[#050914]">
+                <div className="flex items-center justify-between px-3 py-1.5 bg-white dark:bg-[#0a1120] border-b border-slate-200 dark:border-[#1e293b] text-[10px] text-slate-500 dark:text-[#64748b] font-mono">
                   <span>{match ? match[1].toUpperCase() : 'CODE'}</span>
                   <button
                     onClick={() => handleCopyCode(codeString, currentIdx)}
-                    className="flex items-center gap-1 text-[#94a3b8] hover:text-white transition-colors"
+                    className="flex items-center gap-1 text-slate-600 dark:text-[#94a3b8] hover:text-slate-900 dark:hover:text-white transition-colors"
                     title="Copy code"
                   >
                     {isCopied ? (
                       <>
-                        <Check className="w-3 h-3 text-[#10b981]" />
-                        <span className="text-[#10b981]">Copied</span>
+                        <Check className="w-3 h-3 text-emerald-600 dark:text-[#10b981]" />
+                        <span className="text-emerald-600 dark:text-[#10b981]">Copied</span>
                       </>
                     ) : (
                       <>
@@ -141,7 +141,7 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
                     )}
                   </button>
                 </div>
-                <pre className="p-3 overflow-x-auto text-[11px] font-mono text-[#cbd5e1] leading-relaxed">
+                <pre className="p-3 overflow-x-auto text-[11px] font-mono text-slate-700 dark:text-[#cbd5e1] leading-relaxed">
                   <code>{children}</code>
                 </pre>
               </div>
@@ -154,14 +154,14 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
 
       {/* Streaming cursor */}
       {isStreaming && (
-        <span className="inline-block w-2 h-3.5 ml-1 bg-[#38bdf8] animate-pulse align-middle" />
+        <span className="inline-block w-2 h-3.5 ml-1 bg-sky-500 dark:bg-[#38bdf8] animate-pulse align-middle" />
       )}
 
       {/* Citations section */}
       {citations.length > 0 && !isStreaming && (
-        <div className="mt-4 pt-3 border-t border-[#1e293b]">
-          <div className="text-[10px] font-mono uppercase tracking-wider text-[#64748b] mb-1.5 flex items-center gap-1.5">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#38bdf8]" />
+        <div className="mt-4 pt-3 border-t border-slate-200 dark:border-[#1e293b]">
+          <div className="text-[10px] font-mono uppercase tracking-wider text-slate-500 dark:text-[#64748b] mb-1.5 flex items-center gap-1.5">
+            <span className="w-1.5 h-1.5 rounded-full bg-sky-500 dark:bg-[#38bdf8]" />
             Grounded Documentation Sources
           </div>
           <div className="flex flex-wrap gap-1.5">
@@ -169,10 +169,10 @@ export const StreamedMarkdownAnswer: React.FC<StreamedMarkdownAnswerProps> = ({
               <Link
                 key={idx}
                 to={cit.url}
-                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-[#081324] hover:bg-[#0c1e38] border border-[#1e324f] text-[11px] text-[#7dd3fc] font-mono transition-colors"
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-sm bg-sky-50 dark:bg-[#081324] hover:bg-sky-100 dark:hover:bg-[#0c1e38] border border-sky-200 dark:border-[#1e324f] text-[11px] text-sky-600 dark:text-[#7dd3fc] font-mono transition-colors"
               >
                 <span>{cit.title}</span>
-                <span className="text-[#475569]">→</span>
+                <span className="text-slate-400 dark:text-[#475569]">→</span>
               </Link>
             ))}
           </div>
