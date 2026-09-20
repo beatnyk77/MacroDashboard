@@ -54,6 +54,7 @@ const DeDollarizationGuide = lazy(() => import('@/pages/methods/DeDollarizationG
 const FedMonetizationPage = lazy(() => import('@/pages/methods/FedMonetizationPage').then(module => ({ default: module.FedMonetizationPage })));
 const IndiaCreditCyclePage = lazy(() => import('@/pages/methods/IndiaCreditCyclePage').then(module => ({ default: module.IndiaCreditCyclePage })));
 const ChinaDebtIcebergPage = lazy(() => import('@/pages/methods/ChinaDebtIcebergPage').then(module => ({ default: module.ChinaDebtIcebergPage })));
+const BarclaysFCIPage = lazy(() => import('@/pages/methods/BarclaysFCIPage').then(module => ({ default: module.BarclaysFCIPage })));
 const NetLiquidityGauge = lazy(() => import('@/pages/tools/NetLiquidityGauge').then(module => ({ default: module.NetLiquidityGauge })));
 const CrackSpreadWidget = lazy(() => import('@/pages/tools/CrackSpreadWidget').then(module => ({ default: module.CrackSpreadWidget })));
 const DailyRegimeSignal = lazy(() => import('@/pages/tools/DailyRegimeSignal').then(module => ({ default: module.DailyRegimeSignal })));
@@ -89,6 +90,7 @@ const FxCarryMatrixLab = lazy(() => import('@/pages/labs/FxCarryMatrixLab').then
 const TreasuryBasisTradeLab = lazy(() => import('@/pages/labs/TreasuryBasisTradeLab').then(module => ({ default: module.TreasuryBasisTradeLab })));
 const GlobalNetLiquidityLab = lazy(() => import('@/pages/labs/GlobalNetLiquidityLab').then(module => ({ default: module.GlobalNetLiquidityLab })));
 const MarketTransmissionLab = lazy(() => import('@/pages/labs/MarketTransmissionLab').then(module => ({ default: module.MarketTransmissionLab })));
+const FinancialConditionsLab = lazy(() => import('@/pages/labs/FinancialConditionsLab').then(module => ({ default: module.FinancialConditionsLab })));
 
 const LoadingFallback = () => (
     <Box role="status" aria-live="polite" sx={{ height: '100vh', display: 'flex', flexDirection: 'column', gap: 2, alignItems: 'center', justifyContent: 'center', bgcolor: 'background.default' }}>
@@ -149,6 +151,7 @@ function AppRoutes() {
                                         <Route path={trailRoute('/methods/fed-monetization-monitor')} element={<FedMonetizationPage />} />
                                         <Route path={trailRoute('/methods/india-credit-cycle-clock')} element={<IndiaCreditCyclePage />} />
                                         <Route path={trailRoute('/methods/china-debt-iceberg')} element={<ChinaDebtIcebergPage />} />
+                                        <Route path={trailRoute('/methods/barclays-financial-conditions-index')} element={<BarclaysFCIPage />} />
                                         <Route path={trailRoute('/intel/india')} element={<IntelIndiaPage />} />
                                         <Route path={trailRoute('/intel/china')} element={<IntelChinaPage />} />
                                         <Route path={trailRoute('/macro-observatory')} element={<MacroObservatory />} />
@@ -189,6 +192,7 @@ function AppRoutes() {
                                         <Route path={trailRoute('/labs/treasury-basis-trade')} element={<TreasuryBasisTradeLab />} />
                                         <Route path={trailRoute('/labs/global-net-liquidity')} element={<GlobalNetLiquidityLab />} />
                                         <Route path={trailRoute('/labs/market-transmission')} element={<MarketTransmissionLab />} />
+                                        <Route path={trailRoute('/labs/financial-conditions')} element={<FinancialConditionsLab />} />
                                         <Route path={trailRoute('/labs/china-15th-fyp')} element={<China15thFYPLab />} />
                                         <Route path={trailRoute('/labs/africa-macro')} element={<AfricaMacroPulseLab />} />
                                         <Route path={trailRoute('/labs/macro-precedents')} element={<MacroPrecedentsLab />} />

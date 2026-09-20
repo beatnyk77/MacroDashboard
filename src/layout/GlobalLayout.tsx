@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge, Sun, Moon } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge, Sun, Moon, Flame } from 'lucide-react';
 import { useViewContext } from '@/context/ViewContext';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -53,6 +53,7 @@ const terminalNavItems = [
     { id: 'treasury-basis-trade', label: 'Treasury Basis Trade', path: '/labs/treasury-basis-trade', icon: <ShieldAlert size={18} /> },
     { id: 'market-transmission', label: 'Market Transmission & Breadth', path: '/labs/market-transmission', icon: <Activity size={18} /> },
     { id: 'global-net-liquidity', label: 'Global Net Liquidity', path: '/labs/global-net-liquidity', icon: <Gauge size={18} /> },
+    { id: 'financial-conditions', label: 'Financial Conditions (FCI)', path: '/labs/financial-conditions', icon: <Flame size={18} /> },
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {

@@ -25,6 +25,7 @@ import TreasurySupplyRadar from './pages/labs/TreasurySupplyRadar';
 import FxCarryMatrixLab from './pages/labs/FxCarryMatrixLab';
 import { TreasuryBasisTradeLab } from './pages/labs/TreasuryBasisTradeLab';
 import { GlobalNetLiquidityLab } from './pages/labs/GlobalNetLiquidityLab';
+import { FinancialConditionsLab } from './pages/labs/FinancialConditionsLab';
 
 // Dummy data for mocks - prefixed with 'mock' for Vitest hoisting
 const mockDummyCollective = {
@@ -152,6 +153,8 @@ vi.mock('recharts', async () => {
         CartesianGrid: () => <div className="mock-grid" />,
         Tooltip: () => <div className="mock-tooltip" />,
         Cell: () => <div className="mock-cell" />,
+        ReferenceLine: () => <div className="mock-reference-line" />,
+        ReferenceArea: () => <div className="mock-reference-area" />,
     };
 });
 
@@ -365,5 +368,14 @@ describe('Smoke Tests', () => {
             </TestWrapper>
         );
         expect(await screen.findByRole('heading', { name: /Global Central Bank Net Liquidity/i }, { timeout: 10000 })).toBeInTheDocument();
+    }, 20000);
+
+    it('renders FinancialConditionsLab page without crashing', async () => {
+        render(
+            <TestWrapper route="/labs/financial-conditions">
+                <FinancialConditionsLab />
+            </TestWrapper>
+        );
+        expect(await screen.findByText(/Financial Conditions & Commodity Impulse Observatory/i, {}, { timeout: 10000 })).toBeInTheDocument();
     }, 20000);
 });

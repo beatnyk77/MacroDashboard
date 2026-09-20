@@ -522,6 +522,23 @@ export const INSTITUTIONAL_DESK_METRICS = {
   NET_LIQUIDITY_IMPULSE_26W_PCT:           'NET_LIQUIDITY_IMPULSE_26W_PCT',
 } as const;
 
+// ── Financial Conditions & Commodity Impulse ─────────────────────────────────
+
+export const FINANCIAL_CONDITIONS_METRICS = {
+  BARCLAYS_GLOBAL_FCI:                     'BARCLAYS_GLOBAL_FCI',
+  COMMODITIES_CYCLE_ZSCORE:                'COMMODITIES_CYCLE_ZSCORE',
+  FCI_CS_ZSCORE:                           'FCI_CS_ZSCORE',
+  FCI_R10Y_ZSCORE:                         'FCI_R10Y_ZSCORE',
+  FCI_SLOPE_ZSCORE:                        'FCI_SLOPE_ZSCORE',
+  FCI_FX_ZSCORE:                           'FCI_FX_ZSCORE',
+  FCI_EQUITY_ZSCORE:                       'FCI_EQUITY_ZSCORE',
+  US_HY_OAS:                               'US_HY_OAS',
+  US_YIELD_CURVE_10Y2Y:                    'US_YIELD_CURVE_10Y2Y',
+  US_BROAD_DOLLAR:                         'US_BROAD_DOLLAR',
+  US_SP500_INDEX:                          'US_SP500_INDEX',
+  GLOBAL_COMMODITIES_INDEX:                'GLOBAL_COMMODITIES_INDEX',
+} as const;
+
 // ── Flat registry — canonical import for all hook files ──────────────────────
 //
 // Usage in hooks:
@@ -555,6 +572,7 @@ export const METRIC_IDS = {
   ...MARKET_METRICS,
   ...COT_POSITIONING_METRICS,
   ...INSTITUTIONAL_DESK_METRICS,
+  ...FINANCIAL_CONDITIONS_METRICS,
 } as const;
 
 export type MetricId = typeof METRIC_IDS[keyof typeof METRIC_IDS];

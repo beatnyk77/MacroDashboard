@@ -3,6 +3,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { apiDocsMeta } from '@/lib/seoTemplates';
 import { CodeBlock } from '@/components/docs/CodeBlock';
 import { TrailLink as Link } from '@/components/TrailLink';
+import { InfiniteFAQ } from '@/components/faq';
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
 const NAV_SECTIONS = [
@@ -18,6 +19,7 @@ const NAV_SECTIONS = [
     { id: 'metric-reference', label: 'Metric IDs' },
     { id: 'use-cases', label: 'Use Cases' },
     { id: 'rate-limits', label: 'Rate Limits' },
+    { id: 'faq', label: 'Interactive FAQ' },
 ];
 
 // ─── Metric reference (40 rows) ───────────────────────────────────────────────
@@ -766,6 +768,15 @@ print(metrics)`} />
                             api@graphiquestor.com
                         </a>
                     </p>
+
+                    {/* Interactive Infinite FAQ */}
+                    <div id="faq" className="mt-16 scroll-mt-24">
+                        <InfiniteFAQ
+                            pageId="api-docs"
+                            title="Institutional API & Telemetry FAQ"
+                            subtitle="Common questions about programmatic endpoints, streaming SSE, and automated rate limits."
+                        />
+                    </div>
 
                     {/* Bottom CTA */}
                     <div className="mt-16 p-6 rounded-xl bg-blue-500/5 border border-blue-500/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
