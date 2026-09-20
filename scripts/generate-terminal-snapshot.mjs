@@ -9,6 +9,10 @@
 import { writeFileSync, mkdirSync, readFileSync } from 'fs';
 import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '.env.local' });
+dotenv.config({ path: '.env' });
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const OUT_PUBLIC = join(__dirname, '../public/data/terminal-snapshot.json');

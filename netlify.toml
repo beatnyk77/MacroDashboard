@@ -1,7 +1,5 @@
 [build]
-  # Puppeteer's postinstall Chrome download doesn't survive Netlify's ephemeral
-  # build cache, so we explicitly install Chrome before the build runs.
-  command = "npx puppeteer browsers install chrome && npm run build"
+  command = "npm run build:vercel"
   publish = "dist"
 
 # Deploy previews skip the Puppeteer prerender step for faster builds.

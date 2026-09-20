@@ -1,7 +1,98 @@
 {
-  "generatedAt": "2026-09-20T20:04:55.311Z",
-  "source": "build-time",
-  "available": false,
-  "reason": "Supabase env not set at build time — UI hydrates live client-side",
-  "metrics": []
+  "generatedAt": "2026-09-20T20:08:11.953Z",
+  "source": "vw_latest_metrics",
+  "available": true,
+  "reason": null,
+  "metrics": [
+    {
+      "metricId": "FED_BALANCE_SHEET",
+      "label": "Fed Balance Sheet",
+      "value": 6746548,
+      "display": "6.75T",
+      "asOf": "2026-09-16",
+      "staleness": "fresh",
+      "unit": null
+    },
+    {
+      "metricId": "RRP_BALANCE_BN",
+      "label": "ON RRP",
+      "value": 0.576,
+      "display": "0.58B",
+      "asOf": "2026-09-18",
+      "staleness": "fresh",
+      "unit": "USD bn"
+    },
+    {
+      "metricId": "TGA_BALANCE_BN",
+      "label": "TGA",
+      "value": 877028,
+      "display": "877.03B",
+      "asOf": "2026-09-16",
+      "staleness": "fresh",
+      "unit": "USD bn"
+    },
+    {
+      "metricId": "GOLD_PRICE_USD",
+      "label": "Gold",
+      "value": 4478.100098,
+      "display": "$4,478",
+      "asOf": "2026-08-28",
+      "staleness": "very_lagged",
+      "unit": "USD/oz"
+    },
+    {
+      "metricId": "DXY_INDEX",
+      "label": "DXY",
+      "value": 99.160004,
+      "display": "99.16",
+      "asOf": "2026-08-27",
+      "staleness": "very_lagged",
+      "unit": "index"
+    },
+    {
+      "metricId": "UST_10Y_YIELD",
+      "label": "UST 10Y",
+      "value": 4.94,
+      "display": "4.94",
+      "asOf": "2026-09-17",
+      "staleness": "fresh",
+      "unit": "%"
+    },
+    {
+      "metricId": "VIX_INDEX",
+      "label": "VIX",
+      "value": 14.51,
+      "display": "14.51",
+      "asOf": "2026-08-27",
+      "staleness": "very_lagged",
+      "unit": "index"
+    },
+    {
+      "metricId": "BRENT_CRUDE_PRICE",
+      "label": "Brent",
+      "value": 103.87,
+      "display": "$103.9",
+      "asOf": "2026-09-18",
+      "staleness": "fresh",
+      "unit": null
+    },
+    {
+      "metricId": "RATIO_M2_GOLD",
+      "label": "M2/Gold",
+      "value": 5.707052016900045,
+      "display": "5.71",
+      "asOf": "2026-07-01",
+      "staleness": "fresh",
+      "unit": "ratio"
+    },
+    {
+      "metricId": "RATIO_DEBT_GOLD",
+      "label": "Debt/Gold",
+      "value": 31.250200872777338,
+      "display": "31.25",
+      "asOf": "2026-01-30",
+      "staleness": "fresh",
+      "unit": "ratio"
+    }
+  ]
 }

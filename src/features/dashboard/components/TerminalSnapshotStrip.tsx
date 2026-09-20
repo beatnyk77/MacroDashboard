@@ -74,9 +74,20 @@ export interface TerminalSnapshotStripProps {
  * E4 — crawlable key telemetry strip.
  * Build embeds snapshot JSON; client hydrates fresher values when Supabase is available.
  */
+const FALLBACK_METRICS: SnapshotMetric[] = [
+    { metricId: 'FED_BALANCE_SHEET', label: 'Fed Balance Sheet', value: 0, display: '—', asOf: null, staleness: null, unit: null },
+    { metricId: 'RRP_BALANCE_BN', label: 'ON RRP', value: 0, display: '—', asOf: null, staleness: null, unit: 'USD bn' },
+    { metricId: 'TGA_BALANCE_BN', label: 'TGA', value: 0, display: '—', asOf: null, staleness: null, unit: 'USD bn' },
+    { metricId: 'GOLD_PRICE_USD', label: 'Gold', value: 0, display: '—', asOf: null, staleness: null, unit: 'USD' },
+    { metricId: 'DXY_INDEX', label: 'DXY', value: 0, display: '—', asOf: null, staleness: null, unit: null },
+    { metricId: 'UST_10Y_YIELD', label: 'UST 10Y', value: 0, display: '—', asOf: null, staleness: null, unit: '%' },
+    { metricId: 'VIX_INDEX', label: 'VIX', value: 0, display: '—', asOf: null, staleness: null, unit: null },
+    { metricId: 'BRENT_CRUDE_PRICE', label: 'Brent', value: 0, display: '—', asOf: null, staleness: null, unit: 'USD' },
+];
+
 export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ className }) => {
     const buildAsOf = snapshot.generatedAt?.slice(0, 10) ?? 'recent';
-    const metrics = snapshot.metrics ?? [];
+    const metrics = (snapshot.metrics && snapshot.metrics.length > 0) ? snapshot.metrics : FALLBACK_METRICS;
 
     return (
         <section
