@@ -64,6 +64,8 @@ const IndiaCreditCycleClock = lazy(() => import('@/features/dashboard/components
 const AfricaMacroSnapshot = lazy(() => import('@/features/dashboard/components/sections/AfricaMacroSnapshot').then(m => ({ default: m.AfricaMacroSnapshot })));
 const COTSqueezeRadarCard = lazy(() => import('@/components/COTSqueezeRadarCard').then(m => ({ default: m.COTSqueezeRadarCard })));
 const CrossAssetRadarCard = lazy(() => import('@/components/CrossAssetRadarCard').then(m => ({ default: m.CrossAssetRadarCard })));
+const FinancialConditionsCard = lazy(() => import('@/features/financial-conditions/components/FinancialConditionsCard').then(m => ({ default: m.FinancialConditionsCard })));
+const InfiniteFAQ = lazy(() => import('@/components/faq/InfiniteFAQ').then(m => ({ default: m.InfiniteFAQ })));
 
 
 export const Terminal: React.FC = () => {
@@ -422,6 +424,17 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
 
+                {/* Row 16.5: FINANCIAL CONDITIONS */}
+                <ModuleRow id="financial-conditions" label="FINANCIAL CONDITIONS" href="/labs/financial-conditions" labelColor="text-orange-500/80">
+                    <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
+                    <SectionErrorBoundary name="Financial Conditions Lab">
+                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                            <FinancialConditionsCard />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                    </LazyRender>
+                </ModuleRow>
+
                 {/* Row 17: REGIONAL HUBS */}
                 <ModuleRow label="REGIONAL HUBS" href="/labs" labelColor="text-blue-500/80">
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -461,6 +474,20 @@ export const Terminal: React.FC = () => {
                     </LazyRender>
                 </ModuleRow>
             </div>
+            
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-10">
+                <LazyRender minHeight="500px" fallback={<SectionLoadingFallback minHeight={500} />}>
+                    <SectionErrorBoundary name="Infinite FAQ">
+                        <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                            <InfiniteFAQ 
+                                title="Institutional RAG Terminal"
+                                subtitle="Ask domain-specific questions against our live macro datasets and methodology documentation."
+                            />
+                        </Suspense>
+                    </SectionErrorBoundary>
+                </LazyRender>
+            </div>
+
             <div className="mb-10 mt-8">
                 <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
                     <div className="mb-6">

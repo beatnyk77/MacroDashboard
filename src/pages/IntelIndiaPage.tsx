@@ -265,14 +265,9 @@ export const IntelIndiaPage: React.FC = () => {
                 </m.div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-16 relative z-10">
-                <IndiaEvidenceCockpit />
-            </div>
-
-            {/* Content Sections */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 pt-16 pb-12 relative z-10">
                 {/* Risk Capital & Savings */}
-                <section id="risk-capital">
+                <section id="risk-capital" className="mb-20">
                     <LazyRender minHeight="400px" fallback={<SectionSkeleton />}>
                         <SectionErrorBoundary name="India Savings & Risk Capital">
                             <Suspense fallback={<SectionSkeleton />}>
@@ -281,6 +276,12 @@ export const IntelIndiaPage: React.FC = () => {
                         </SectionErrorBoundary>
                     </LazyRender>
                 </section>
+
+                <IndiaEvidenceCockpit />
+            </div>
+
+            {/* Content Sections */}
+            <div className="max-w-7xl mx-auto px-4 sm:px-8 py-20 space-y-32">
 
                 <div className="border-t border-border" />
 
