@@ -1,10 +1,10 @@
 import React, { useMemo } from 'react';
-import { useParams, Navigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { TrailLink } from '@/components/TrailLink';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { RelatedContent } from '@/components/RelatedContent';
 import { SubscribeCard } from '@/components/SubscribeCard';
-import { toAbsoluteUrl, trailRoute } from '@/lib/urlPath';
+import { toAbsoluteUrl } from '@/lib/urlPath';
 import { Container, Typography, Box, Paper, Chip, Button, Divider } from '@mui/material';
 import { ArrowLeft, BookOpen, Activity, FlaskConical, Lightbulb, ArrowRight, Code } from 'lucide-react';
 import { glossaryData } from '@/features/glossary/glossaryData';
@@ -101,7 +101,28 @@ export const GlossaryTermPage: React.FC = () => {
     }, [termData, seo]);
 
     if (!termData) {
-        return <Navigate to={trailRoute('/glossary')} replace />;
+        return (
+            <>
+                <SEOManager
+                    title="Glossary Term Unavailable | GraphiQuestor"
+                    description="This glossary term is not part of the current GraphiQuestor research index. Return to the macro intelligence glossary."
+                    canonical="/glossary/"
+                    robots="noindex, follow"
+                />
+                <Box sx={{ py: 12, minHeight: '60vh' }}>
+                    <Container maxWidth="md">
+                        <Typography variant="overline" color="text.secondary">Glossary</Typography>
+                        <Typography variant="h3" component="h1" sx={{ mt: 1, mb: 2 }}>Term unavailable</Typography>
+                        <Typography color="text.secondary" sx={{ mb: 4 }}>
+                            This definition is not currently published in the GraphiQuestor glossary.
+                        </Typography>
+                        <Button component={TrailLink} to="/glossary" startIcon={<ArrowLeft size={18} />}>
+                            Return to Glossary
+                        </Button>
+                    </Container>
+                </Box>
+            </>
+        );
     }
 
     const related = glossaryData

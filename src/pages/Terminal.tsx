@@ -165,41 +165,26 @@ export const Terminal: React.FC = () => {
             {/* E4: build-time key telemetry for crawlers + live hydrate */}
             <TerminalSnapshotStrip />
 
-            {/* ── ALADDIN 4-PILLAR MACRO TRANSMISSION SWITCHBOARD ── */}
+            <div className="mb-5">
+                <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
+                    <RegimeAnchor />
+                </Suspense>
+            </div>
+
             <MacroTransmissionHUD />
 
-            {/* ── MARKET TRANSMISSION & BREADTH (FINVIZFINANCE ENGINE) ── */}
             <Suspense fallback={<SectionLoadingFallback label="Market Transmission & Breadth" />}>
-                <MarketTransmissionModule className="mb-8" />
+                <MarketTransmissionModule className="mb-5" />
             </Suspense>
 
-            {/* ── FACTOR SENSITIVITY & SCENARIO SHOCK SIMULATOR ── */}
             <ScenarioShockSimulator />
 
             <DeskContextStrip />
 
-            {/* ── FEATURED RESEARCH SILO ── */}
-            <div className="px-4 sm:px-6 lg:px-8 py-4 flex flex-wrap items-center gap-4 bg-card border-y border-border mb-6 shadow-sm">
-                <Link to="/methods/m2-gold-ratio" className="text-sm font-semibold text-amber-500 hover:underline">
-                    Featured: Global M2 to Gold Ratio Tracker
-                </Link>
-                <span className="text-border">|</span>
-                <Link to="/labs/central-bank-gold-purchases" className="text-sm font-semibold text-amber-500 hover:underline">
-                    Central Bank Gold Purchases
-                </Link>
-                <span className="text-border">|</span>
-                <Link to="/labs/macro-precedents" className="text-sm font-semibold text-primary hover:underline flex items-center gap-1.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    Macro Precedents & Benchmarks
-                </Link>
-            </div>
-
-            {/* ── REGIME ANCHOR — position 1, first data above-fold ── */}
-            {/* Full-bleed: uses negative margins to break out of px-4 sm:px-6 lg:px-8 */}
-            <div className="w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)] -mx-4 sm:-mx-6 lg:-mx-8 mb-0">
-                <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
-                    <RegimeAnchor />
-                </Suspense>
+            <div className="px-1 pb-2 pt-6 space-y-4">
+                <ChinaLocaleHint className="" />
+                <InstitutionalAccessStrip className="" />
+                <PremiumActionBar className="" />
             </div>
 
             <div className="flex flex-col pb-32">
@@ -228,13 +213,6 @@ export const Terminal: React.FC = () => {
                         <TodaysBriefPanel />
                     </SectionErrorBoundary>
                 </ModuleRow>
-
-                {/* ── GROWTH STRIP — after first 2 data rows so users get value first ── */}
-                <div className="px-1 pb-2 pt-6 space-y-4">
-                    <ChinaLocaleHint className="" />
-                    <InstitutionalAccessStrip className="" />
-                    <PremiumActionBar className="" />
-                </div>
 
 
                 {/* Row 3: GLOBAL LIQUIDITY COMPOSITE */}

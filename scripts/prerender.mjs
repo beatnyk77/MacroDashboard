@@ -589,6 +589,19 @@ function routeHasPrerender(cleanRoute) {
     return fs.existsSync(fp) && fs.statSync(fp).size > 5000;
 }
 
+function isIndexableSelfCanonicalRoute(route) {
+    if (isSitemapNoindexRoute(route)) return false;
+    const filePath = prerenderedFilePath(route);
+    if (!fs.existsSync(filePath)) return false;
+    const html = fs.readFileSync(filePath, 'utf8');
+    const robots = html.match(/<meta\s+name=["']robots["'][^>]*content=["']([^"']*)["']/i)?.[1] ?? '';
+    if (/noindex/i.test(robots)) return false;
+    const canonical = html.match(/<link\s+rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)?.[1]
+        ?? html.match(/<link\s+href=["']([^"']+)["'][^>]*rel=["']canonical["']/i)?.[1]
+        ?? '';
+    return canonical === sitemapLoc(route);
+}
+
 async function setupPage(browser) {
     const page = await browser.newPage();
     page.setDefaultTimeout(PAGE_TIMEOUT_MS);
@@ -822,7 +835,9 @@ async function run() {
 
         // Generate and save the final comprehensive sitemap
         console.log(`\nDiscovered and rendered ${visitedRoutes.size} unique pages.`);
-        const sitemapXml = generateSitemap(visitedRoutes);
+        const indexableRoutes = new Set([...visitedRoutes].filter(isIndexableSelfCanonicalRoute));
+        console.log(`Keeping ${indexableRoutes.size} self-canonical indexable pages in sitemap; filtered ${visitedRoutes.size - indexableRoutes.size} routes.`);
+        const sitemapXml = generateSitemap(indexableRoutes);
         const outSitemapPath = path.join(distDir, 'sitemap.xml');
         fs.writeFileSync(outSitemapPath, sitemapXml);
         console.log(`Successfully generated dynamic sitemap at ${outSitemapPath}`);

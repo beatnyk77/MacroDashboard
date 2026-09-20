@@ -24,7 +24,7 @@ GraphiQuestor.com is a structural macroeconomic surveillance terminal for capita
 - https://graphiquestor.com/methods/m2-gold-ratio/ — M2/Gold debasement signal
 - https://graphiquestor.com/labs/de-dollarization-gold/ — Live de-dollarization evidence library covering IMF COFER, official gold, Treasury holdings, settlement evidence, and market confirmation with source and freshness labels
 - https://graphiquestor.com/tools/ — Interactive macro tools (Net liquidity gauge, daily regime signal, gold ratios widget)
-- https://graphiquestor.com/glossary/ — 36 institutional definitions
+- https://graphiquestor.com/glossary/ — 45 institutional definitions
 - https://graphiquestor.com/methodology/ — Full metric calculation framework
 - https://graphiquestor.com/api-access/ — Commercial API ($299/mo)
 - https://graphiquestor.com/api-docs/ — REST API reference (metrics, regime, composites)

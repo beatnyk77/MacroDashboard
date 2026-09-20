@@ -95,6 +95,7 @@ export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ cl
                 'mb-8 rounded-2xl border border-border bg-card dark:bg-slate-900/40 p-4 sm:p-5 shadow-sm dark:shadow-2xl backdrop-blur-xl',
                 className
             )}
+            id="key-telemetry"
             aria-label="Terminal telemetry snapshot"
             data-seo-snapshot={snapshot.available ? 'live' : 'unavailable'}
         >

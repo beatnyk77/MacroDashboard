@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Database, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Gauge, Sun, Moon, Flame } from 'lucide-react';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Sun, Moon, BarChart3, Landmark } from 'lucide-react';
 import { useViewContext } from '@/context/ViewContext';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
@@ -25,35 +25,21 @@ interface GlobalLayoutProps {
 }
 
 const terminalNavItems = [
+    { id: 'observatory', label: 'Overview', path: '/', icon: <Radio size={18} />, group: 'OVERVIEW' },
     { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={18} />, group: 'INTELLIGENCE' },
-    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} /> },
-    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={18} /> },
-    { id: 'corporate-transmission', label: 'US SEC Transmission', path: '/corporate-transmission', icon: <FileSearch size={18} />, group: 'INTELLIGENCE' },
-    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} /> },
-    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Database size={18} /> },
-    { id: 'trackers', label: 'Macro Trackers', path: '/trackers', icon: <Search size={18} /> },
-    { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={18} /> },
-    { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={18} /> },
-    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={18} /> },
-    { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={18} /> },
-    { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={18} /> },
-    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={18} /> },
-    { id: 'macro-precedents', label: 'Precedents & Benchmarks', path: '/labs/macro-precedents', icon: <GitCompare size={18} /> },
-    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} /> },
-    { id: 'de-dollarization-guide', label: 'De-Dollarization Guide', path: '/methods/de-dollarization-guide', icon: <FileText size={18} /> },
-    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={18} /> },
-    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={18} /> },
-    { id: 'central-bank-gold', label: 'Central Bank Gold', path: '/labs/central-bank-gold-purchases', icon: <Activity size={18} /> },
-    { id: 'brics-trade', label: 'BRICS Trade Settlement', path: '/labs/brics-trade-settlement', icon: <Globe size={18} /> },
-    { id: 'us-treasury-holdings', label: 'US Treasury Holdings', path: '/labs/us-treasury-foreign-holdings', icon: <FileText size={18} /> },
-    { id: 'petrodollar-decay', label: 'Petrodollar Decay', path: '/labs/petrodollar-decay-indicators', icon: <Anchor size={18} /> },
-    { id: 'interbank-funding', label: 'Interbank Funding Stress', path: '/labs/interbank-funding', icon: <Activity size={18} /> },
-    { id: 'treasury-supply-radar', label: 'Treasury Supply Radar', path: '/labs/treasury-supply-radar', icon: <Database size={18} /> },
-    { id: 'fx-carry-matrix', label: 'FX Carry Matrix', path: '/labs/fx-carry-matrix', icon: <Globe size={18} /> },
-    { id: 'treasury-basis-trade', label: 'Treasury Basis Trade', path: '/labs/treasury-basis-trade', icon: <ShieldAlert size={18} /> },
-    { id: 'market-transmission', label: 'Market Transmission & Breadth', path: '/labs/market-transmission', icon: <Activity size={18} /> },
-    { id: 'global-net-liquidity', label: 'Global Net Liquidity', path: '/labs/global-net-liquidity', icon: <Gauge size={18} /> },
-    { id: 'financial-conditions', label: 'Financial Conditions (FCI)', path: '/labs/financial-conditions', icon: <Flame size={18} /> },
+    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={18} />, group: 'INTELLIGENCE' },
+    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={18} />, group: 'INTELLIGENCE' },
+    { id: 'markets', label: 'Markets', path: '/labs', icon: <BarChart3 size={18} />, group: 'MARKETS' },
+    { id: 'us-macro', label: 'US Fiscal & Rates', path: '/labs/us-macro-fiscal', icon: <Landmark size={18} />, group: 'MARKETS' },
+    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Anchor size={18} />, group: 'MARKETS' },
+    { id: 'china', label: 'China', path: '/intel/china', icon: <TrendingUp size={18} />, group: 'REGIONS' },
+    { id: 'india', label: 'India', path: '/intel/india', icon: <Globe size={18} />, group: 'REGIONS' },
+    { id: 'africa', label: 'Africa', path: '/labs/africa-macro', icon: <Globe size={18} />, group: 'REGIONS' },
+    { id: 'research', label: 'Research Labs', path: '/labs', icon: <Library size={18} />, group: 'RESEARCH' },
+    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={18} />, group: 'RESEARCH' },
+    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Search size={18} />, group: 'RESEARCH' },
+    { id: 'methods', label: 'Methods & Precedents', path: '/labs/macro-precedents', icon: <GitCompare size={18} />, group: 'RESEARCH' },
+    { id: 'corporate-transmission', label: 'SEC Transmission', path: '/corporate-transmission', icon: <FileSearch size={18} />, group: 'RESEARCH' },
 ];
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
@@ -226,42 +212,50 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 </Box>
                 <Box component="nav" sx={{ p: 2 }}>
                     <List dense>
-                        {terminalNavItems.map((item) => {
-                            const normPath = withoutTrailingSlash(location.pathname);
-                            const normItem = withoutTrailingSlash(item.path);
-                            const isActive = normPath === normItem || (normPath.startsWith(`${normItem}/`) && normItem !== '/');
-                            return (
-                                <ListItem
-                                    button
-                                    key={item.id}
-                                    onClick={() => setMobileDrawerOpen(false)}
-                                    component={TrailNavLink}
-                                    to={item.path}
-                                    sx={{
-                                        borderRadius: 1,
-                                        mb: 0.5,
-                                        color: isActive ? 'primary.main' : 'text.secondary',
-                                        bgcolor: isActive
-                                            ? (resolvedTheme === 'light' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
-                                            : 'transparent',
-                                        '&:hover': {
-                                            bgcolor: resolvedTheme === 'light' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
-                                            color: 'text.primary',
-                                        }
-                                    }}
-                                >
-                                    <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'text.secondary', minWidth: 40 }}>
-                                        {item.icon}
-                                    </ListItemIcon>
+                        {(['OVERVIEW', 'INTELLIGENCE', 'MARKETS', 'REGIONS', 'RESEARCH'] as const).map((group) => (
+                            <React.Fragment key={group}>
+                                <ListItem sx={{ px: 1, pt: 2, pb: 0.75 }}>
                                     <ListItemText
-                                        primary={item.label}
-                                        primaryTypographyProps={{
-                                            className: "text-xs font-black uppercase tracking-uppercase"
-                                        }}
+                                        primary={group}
+                                        primaryTypographyProps={{ className: 'text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground' }}
                                     />
                                 </ListItem>
-                            );
-                        })}
+                                {terminalNavItems.filter((item) => item.group === group).map((item) => {
+                                    const normPath = withoutTrailingSlash(location.pathname);
+                                    const normItem = withoutTrailingSlash(item.path);
+                                    const isActive = normPath === normItem || (normPath.startsWith(`${normItem}/`) && normItem !== '/');
+                                    return (
+                                        <ListItem
+                                            button
+                                            key={item.id}
+                                            onClick={() => setMobileDrawerOpen(false)}
+                                            component={TrailNavLink}
+                                            to={item.path}
+                                            sx={{
+                                                borderRadius: 1,
+                                                mb: 0.5,
+                                                color: isActive ? 'primary.main' : 'text.secondary',
+                                                bgcolor: isActive
+                                                    ? (resolvedTheme === 'light' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
+                                                    : 'transparent',
+                                                '&:hover': {
+                                                    bgcolor: resolvedTheme === 'light' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
+                                                    color: 'text.primary',
+                                                }
+                                            }}
+                                        >
+                                            <ListItemIcon sx={{ color: isActive ? 'primary.main' : 'text.secondary', minWidth: 40 }}>
+                                                {item.icon}
+                                            </ListItemIcon>
+                                            <ListItemText
+                                                primary={item.label}
+                                                primaryTypographyProps={{ className: "text-xs font-black uppercase tracking-uppercase" }}
+                                            />
+                                        </ListItem>
+                                    );
+                                })}
+                            </React.Fragment>
+                        ))}
                     </List>
                 </Box>
             </Drawer>

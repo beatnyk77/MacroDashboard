@@ -45,10 +45,9 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
     <div
       id={id}
       className={cn(
-        "w-[calc(100%+2rem)] sm:w-[calc(100%+3rem)] lg:w-[calc(100%+4rem)]",
-        "-mx-4 sm:-mx-6 lg:-mx-8",
-        "flex flex-col md:flex-row border-t border-b border-border",
-        alternateBg ? "bg-muted/20 dark:bg-white/[0.01]" : "bg-transparent"
+        "w-full flex flex-col md:flex-row rounded-xl border border-border overflow-hidden",
+        "mb-4",
+        alternateBg ? "bg-muted/20 dark:bg-white/[0.01]" : "bg-card/20"
       )}
     >
       {/* Left edge: vertical label bar (desktop only) */}
@@ -65,7 +64,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
       {/* Main content area */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top: thin horizontal rule (which is the parent border-t) with module label and links */}
-        <div className="flex items-center justify-between py-3 px-4 sm:px-6 lg:px-8 border-b border-border bg-muted/40 dark:bg-black/10">
+        <div className="flex items-center justify-between gap-4 py-3 px-4 sm:px-5 border-b border-border bg-muted/40 dark:bg-black/10">
           <div className="flex items-center gap-3">
             <span className={cn('label-mono', textColorClass)}>
               {label}
@@ -83,7 +82,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
         </div>
 
         {/* Children content area */}
-        <div className="px-4 sm:px-6 lg:px-8 py-6 flex flex-col gap-[var(--card-gap)]">
+        <div className="px-4 sm:px-5 py-5 flex flex-col gap-[var(--card-gap)]">
           <MotionCard delay={0}>{children}</MotionCard>
         </div>
       </div>

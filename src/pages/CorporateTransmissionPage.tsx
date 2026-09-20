@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { FreshnessChip, type FreshnessStatus } from '@/components/FreshnessChip';
+import { SEOManager } from '@/components/SEOManager';
 import {
   useCorporateTransmission,
   useCorporateTransmissionSummary,
@@ -89,7 +90,22 @@ export const CorporateTransmissionPage: React.FC = () => {
   };
 
   return (
-    <main className="min-h-screen bg-background px-4 py-8 text-foreground md:px-8">
+    <>
+      <SEOManager
+        title="Corporate Rollover Risk & Zombie Scanner"
+        description="SEC EDGAR corporate debt transmission telemetry with refinancing shock analysis, interest coverage, cash runway, and issuer-level evidence."
+        canonical="/corporate-transmission/"
+        jsonLd={{
+          '@context': 'https://schema.org',
+          '@type': 'Dataset',
+          name: 'Corporate Rollover Risk & Zombie Scanner',
+          description: 'SEC EDGAR corporate debt transmission telemetry and refinancing shock analysis.',
+          url: 'https://graphiquestor.com/corporate-transmission/',
+          creator: { '@type': 'Organization', name: 'GraphiQuestor' },
+          isAccessibleForFree: true,
+        }}
+      />
+      <main className="min-h-screen bg-background px-4 py-8 text-foreground md:px-8">
       <div className="mx-auto max-w-7xl space-y-6">
 
         {/* Top Header & Telemetry Status Bar */}
@@ -620,6 +636,7 @@ export const CorporateTransmissionPage: React.FC = () => {
         </footer>
 
       </div>
-    </main>
+      </main>
+    </>
   );
 };

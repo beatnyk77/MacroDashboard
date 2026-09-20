@@ -4,7 +4,8 @@ import { TrailNavLink } from '@/components/TrailLink';
 import { withoutTrailingSlash } from '@/lib/urlPath';
 import {
     Activity, Globe, TrendingUp, Anchor,
-    ShieldAlert, Database, Radio, FileText, Library, Newspaper, GitCompare, FileSearch
+    ShieldAlert, Radio, FileText, Library, Newspaper, GitCompare, FileSearch,
+    BarChart3, Search, Landmark
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -13,26 +14,25 @@ interface NavItem {
     label: string;
     path: string;
     icon: React.ReactNode;
-    group: 'CORE DESK' | 'REGIONAL' | 'STRUCTURAL';
+    group: 'OVERVIEW' | 'INTELLIGENCE' | 'MARKETS' | 'REGIONS' | 'RESEARCH';
 }
 
 const terminalNavItems: NavItem[] = [
-    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} />, group: 'CORE DESK' },
-    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} />, group: 'CORE DESK' },
-    { id: 'observatory', label: 'Global Macro Overview', path: '/', icon: <Radio size={14} />, group: 'CORE DESK' },
-    { id: 'sec-corporate-transmission', label: 'US SEC Transmission', path: '/corporate-transmission', icon: <FileSearch size={14} />, group: 'CORE DESK' },
-    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} />, group: 'CORE DESK' },
-    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Database size={14} />, group: 'CORE DESK' },
-    { id: 'labs', label: 'Thematic Labs', path: '/labs', icon: <Library size={14} />, group: 'STRUCTURAL' },
-    { id: 'us-macro', label: 'US Macro Pulse', path: '/labs/us-macro-fiscal', icon: <TrendingUp size={14} />, group: 'CORE DESK' },
-    { id: 'gov-financial-position', label: 'Gov Financial Position', path: '/labs/gov-financial-position', icon: <ShieldAlert size={14} />, group: 'CORE DESK' },
-    { id: 'china', label: 'China Macro Pulse', path: '/intel/china', icon: <TrendingUp size={14} />, group: 'REGIONAL' },
-    { id: 'india', label: 'India Macro Pulse', path: '/intel/india', icon: <Globe size={14} />, group: 'REGIONAL' },
-    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Database size={14} />, group: 'REGIONAL' },
-    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} />, group: 'STRUCTURAL' },
-    { id: 'macro-precedents', label: 'Precedents & Benchmarks', path: '/labs/macro-precedents', icon: <GitCompare size={14} />, group: 'STRUCTURAL' },
-    { id: 'de-dollarization', label: 'De-Dollarization & Gold', path: '/labs/de-dollarization-gold', icon: <Anchor size={14} />, group: 'STRUCTURAL' },
-    { id: 'africa', label: 'Africa Macro Pulse', path: '/labs/africa-macro', icon: <Globe size={14} />, group: 'REGIONAL' },
+    { id: 'observatory', label: 'Overview', path: '/', icon: <Radio size={14} />, group: 'OVERVIEW' },
+    { id: 'morning-brief', label: 'Morning Brief', path: '/macro-brief', icon: <Newspaper size={14} />, group: 'INTELLIGENCE' },
+    { id: 'regime-digest', label: 'Regime Digest', path: '/regime-digest', icon: <FileText size={14} />, group: 'INTELLIGENCE' },
+    { id: 'weekly-narrative', label: 'Weekly Narrative', path: '/weekly-narrative', icon: <FileText size={14} />, group: 'INTELLIGENCE' },
+    { id: 'markets', label: 'Markets', path: '/labs', icon: <BarChart3 size={14} />, group: 'MARKETS' },
+    { id: 'us-macro', label: 'US Fiscal & Rates', path: '/labs/us-macro-fiscal', icon: <Landmark size={14} />, group: 'MARKETS' },
+    { id: 'commodities', label: 'Energy & Commodities', path: '/labs/energy-commodities', icon: <Anchor size={14} />, group: 'MARKETS' },
+    { id: 'china', label: 'China', path: '/intel/china', icon: <TrendingUp size={14} />, group: 'REGIONS' },
+    { id: 'india', label: 'India', path: '/intel/india', icon: <Globe size={14} />, group: 'REGIONS' },
+    { id: 'africa', label: 'Africa', path: '/labs/africa-macro', icon: <Globe size={14} />, group: 'REGIONS' },
+    { id: 'research', label: 'Research Labs', path: '/labs', icon: <Library size={14} />, group: 'RESEARCH' },
+    { id: 'sovereign', label: 'Sovereign Stress', path: '/labs/sovereign-stress', icon: <ShieldAlert size={14} />, group: 'RESEARCH' },
+    { id: 'metrics', label: 'Metric Explorer', path: '/metrics', icon: <Search size={14} />, group: 'RESEARCH' },
+    { id: 'methods', label: 'Methods & Precedents', path: '/labs/macro-precedents', icon: <GitCompare size={14} />, group: 'RESEARCH' },
+    { id: 'sec-corporate-transmission', label: 'SEC Transmission', path: '/corporate-transmission', icon: <FileSearch size={14} />, group: 'RESEARCH' },
 ];
 
 export const TerminalSidebar: React.FC = () => {
@@ -50,7 +50,7 @@ export const TerminalSidebar: React.FC = () => {
             </div>
 
             <nav className="flex-1 px-3" aria-label="Main terminal navigation">
-                {(['CORE DESK', 'REGIONAL', 'STRUCTURAL'] as const).map((group) => (
+                {(['OVERVIEW', 'INTELLIGENCE', 'MARKETS', 'REGIONS', 'RESEARCH'] as const).map((group) => (
                     <div key={group} className="mb-5">
                         <h2 className="mb-2 px-4 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">{group}</h2>
                         <ul className="space-y-1">
