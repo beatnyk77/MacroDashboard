@@ -1,5 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
-import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.8';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
 interface ObservationRow {
@@ -38,7 +38,7 @@ export function computeRollingStats(values: number[], window = 756) {
   return results;
 }
 
-export async function doComputeFinancialConditions(supabase: any): Promise<IngestResult> {
+export async function doComputeFinancialConditions(supabase: SupabaseClient): Promise<IngestResult> {
   const metricIds = [
     'US_HY_OAS',
     'US_10Y_TIPS_YIELD',
@@ -98,24 +98,6 @@ export async function doComputeFinancialConditions(supabase: any): Promise<Inges
 
   // Compute 1-year changes (approx 52 weeks back)
   const LOOKBACK_WEEKS = 52;
-  const fciRows: Array<{
-    as_of_date: string;
-    fci: number;
-    commodity_cycle: number;
-    z_cs: number;
-    z_r10y: number;
-    z_slope: number;
-    z_fx: number;
-    z_sp500: number;
-  }> = [];
-
-  // Temporary arrays for collecting YoY deltas
-  const deltasCs: number[] = [];
-  const deltasR10y: number[] = [];
-  const deltasSlope: number[] = [];
-  const pctFx: number[] = [];
-  const pctSp500: number[] = [];
-  const pctComm: number[] = [];
 
   // Helper for forward-filling metric value
   const getLatestVal = (metric: string, dateIdx: number): number | null => {
@@ -218,7 +200,7 @@ export async function doComputeFinancialConditions(supabase: any): Promise<Inges
     const zSlope = (pt.dSlope - statSlope.mean) / statSlope.std;
     const zFx = (pt.pFx - statFx.mean) / statFx.std;
     const zSp = (pt.pSp500 - statSp.mean) / statSp.std;
-    const zComm = (pt.pComm - statComm.mean) / statComm.std;
+    const _zComm = (pt.pComm - statComm.mean) / statComm.std;
 
     // Barclays FCI Sign convention: + = Tighter
     // + Credit Spreads

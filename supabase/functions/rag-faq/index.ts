@@ -1,5 +1,6 @@
+// @ts-ignore
 import { serve } from 'https://deno.land/std@0.177.0/http/server.ts';
-import { findRelevantDocs, DocSection } from './knowledgeCorpus.ts';
+import { findRelevantDocs } from './knowledgeCorpus.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -20,7 +21,7 @@ serve(async (req: Request) => {
   }
 
   try {
-    const { question, pageId, docScope, history } = await req.json();
+    const { question, pageId: _pageId, docScope, history } = await req.json();
 
     if (!question || typeof question !== 'string' || !question.trim()) {
       return new Response(JSON.stringify({ error: 'Question is required' }), {
@@ -148,8 +149,9 @@ Guidelines:
           }
 
           sendEvent('done', { completed: true });
-        } catch (err: any) {
-          sendEvent('error', { message: err.message || 'Error generating RAG response' });
+        } catch (err: unknown) {
+          const errMsg = err instanceof Error ? err.message : 'Error generating RAG response';
+          sendEvent('error', { message: errMsg });
         } finally {
           controller.close();
         }
@@ -164,8 +166,9 @@ Guidelines:
         'Connection': 'keep-alive',
       },
     });
-  } catch (error: any) {
-    return new Response(JSON.stringify({ error: error.message || 'Internal server error' }), {
+  } catch (error: unknown) {
+    const errMsg = error instanceof Error ? error.message : 'Internal server error';
+    return new Response(JSON.stringify({ error: errMsg }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

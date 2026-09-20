@@ -1,7 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { renderHook, act } from '@testing-library/react';
 import { useRAGFAQ } from '../useRAGFAQ';
-import { FAQItem } from '@/types/faq';
+import { FAQItem } from '../../types/faq';
 
 const testItems: FAQItem[] = [
   {
