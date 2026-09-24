@@ -26,6 +26,9 @@ Disallow: /methods/regime-scoring/
 User-agent: Googlebot
 Allow: /
 
+User-agent: Mediapartners-Google
+Allow: /
+
 User-agent: Googlebot-Image
 Allow: /
 

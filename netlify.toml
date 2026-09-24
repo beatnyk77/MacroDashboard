@@ -69,6 +69,12 @@
 # credential/action risk. Revisit if auth is ever added (use a Netlify Edge
 # Function to inject frame-ancestors 'none' on non-/tools paths).
 [[headers]]
+  for = "/ads.txt"
+  [headers.values]
+    Content-Type = "text/plain; charset=utf-8"
+    Cache-Control = "public, max-age=3600"
+
+[[headers]]
   for = "/api/v1/metrics/*/export"
   [headers.values]
     Cache-Control = "public, max-age=3600, s-maxage=86400, stale-while-revalidate=86400"
