@@ -14,7 +14,10 @@
     { "source": "/trade/", "destination": "/", "permanent": true },
     { "source": "/trade/:path*", "destination": "/", "permanent": true },
     { "source": "/trade-fx", "destination": "/", "permanent": true },
-    { "source": "/trade-fx/", "destination": "/", "permanent": true }
+    { "source": "/trade-fx/", "destination": "/", "permanent": true },
+    { "source": "/countries", "destination": "/labs/sovereign-stress/", "permanent": true },
+    { "source": "/countries/", "destination": "/labs/sovereign-stress/", "permanent": true },
+    { "source": "/countries/:path*", "destination": "/labs/sovereign-stress/", "permanent": true }
   ],
   "rewrites": [
     { "source": "/:path((?!api/).*)", "destination": "/index.html" }

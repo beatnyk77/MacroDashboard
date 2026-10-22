@@ -25,9 +25,9 @@ export const GovFinancialPositionLab: React.FC = () => {
   return (
     <>
       <SEOManager
-        title="Government Financial Position Lab"
-        description="Institutional board for U.S. government GAAP net cost by agency, consolidated balance sheet, and monthly Treasury outlays by agency (MTS Table 5)."
-        keywords={['FRUSG', 'Statement of Net Cost', 'US balance sheet', 'agency outlays', 'fiscal data']}
+        title="MTS Table 5: Monthly Treasury Outlays by Agency"
+        description="Monthly Treasury Statement (MTS) Table 5 outlays by agency from the Fiscal Data API, alongside FRUSG net cost and the consolidated U.S. balance sheet."
+        keywords={['MTS Table 5', 'mts_table_5', 'Monthly Treasury Statement', 'fiscaldata API', 'agency outlays', 'FRUSG', 'Statement of Net Cost', 'US balance sheet']}
         jsonLd={[
           {
             '@context': 'https://schema.org',
@@ -35,7 +35,7 @@ export const GovFinancialPositionLab: React.FC = () => {
             name: 'Government Financial Position',
             description:
               'Institutional board for U.S. government GAAP net cost by agency, consolidated balance sheet, and monthly Treasury outlays by agency.',
-            url: 'https://graphiquestor.com/labs/gov-financial-position',
+            url: 'https://graphiquestor.com/labs/gov-financial-position/',
             isPartOf: { '@id': 'https://graphiquestor.com/#website' },
             breadcrumb: {
               '@type': 'BreadcrumbList',
@@ -45,7 +45,7 @@ export const GovFinancialPositionLab: React.FC = () => {
                   '@type': 'ListItem',
                   position: 2,
                   name: 'US Macro & Fiscal Lab',
-                  item: 'https://graphiquestor.com/labs/us-macro-fiscal',
+                  item: 'https://graphiquestor.com/labs/us-macro-fiscal/',
                 },
                 { '@type': 'ListItem', position: 3, name: 'Government Financial Position' },
               ],
@@ -57,7 +57,7 @@ export const GovFinancialPositionLab: React.FC = () => {
             name: 'U.S. Government Financial Position (FRUSG + MTS)',
             description:
               'FRUSG Statement of Net Cost, consolidated balance sheet, and MTS Table 5 agency outlays from U.S. Treasury Fiscal Data.',
-            url: 'https://graphiquestor.com/labs/gov-financial-position',
+            url: 'https://graphiquestor.com/labs/gov-financial-position/',
             isAccessibleForFree: true,
             license: 'https://creativecommons.org/licenses/by/4.0/',
             creator: PublisherOrganizationSchema,

@@ -16,8 +16,14 @@
 /trade/uk/* / 301
 /trade/uk / 301
 
-# Trailing-slash enforcement is handled client-side (TrailingSlashRedirect)
-# + prerender canonicals. Netlify TOML multi-path conditions are limited.
+# Retired country profile pages (removed 2026-09-01) → Sovereign Stress Lab
+/countries /labs/sovereign-stress/ 301
+/countries/ /labs/sovereign-stress/ 301
+/countries/* /labs/sovereign-stress/ 301
+
+# Trailing-slash 301s and real 404s are handled by the `seo-routing` edge function
+# (netlify/edge-functions/seo-routing.ts). Netlify redirect rules ignore trailing
+# slashes, so they cannot express /foo → /foo/ without looping.
 
 # SPA Fallback (Netlify/Vercel/others) — last rule wins for unmatched paths
 /* /index.html 200

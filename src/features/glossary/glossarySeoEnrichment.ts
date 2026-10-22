@@ -180,15 +180,16 @@ export const GLOSSARY_SEO_ENRICHMENT: Record<string, GlossarySeoEnrichment> = {
     },
 
     tga: {
-        seoTitle: 'Treasury General Account (TGA): Liquidity Impact',
+        seoTitle: 'WTREGEN: Treasury General Account (TGA) Explained',
         seoDescription:
-            'TGA explained: how Treasury General Account balances drain or inject bank reserves, WTREGEN, and net liquidity.',
+            "WTREGEN is FRED's weekly Treasury General Account series. Latest TGA balance, how TGA swings drain or add bank reserves, and its role in net liquidity.",
         seoKeywords: [
             'treasury general account',
             'TGA',
             'TGA balance',
             'treasury general account Fed',
             'WTREGEN',
+            'FRED WTREGEN',
             'TGA liquidity',
         ],
         h1: 'Treasury General Account (TGA)',

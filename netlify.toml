@@ -1,15 +1,18 @@
 [build]
-  command = "npm run build:vercel"
+  # Puppeteer's postinstall Chrome download doesn't survive Netlify's ephemeral
+  # build cache, so we explicitly install Chrome before the build runs.
+  # `npm run build` includes the prerender step; without it every URL serves the
+  # homepage shell (canonical = /) to crawlers.
+  command = "npx puppeteer browsers install chrome && npm run build"
   publish = "dist"
 
 # Deploy previews skip the Puppeteer prerender step for faster builds.
 # Previews still get a fully functional Vite SPA — prerendering only
 # matters for SEO on the production site.
 [context.deploy-preview]
-  command = "tsc && vite build"
+  command = "tsc && vite build && node scripts/generate-route-manifest.mjs --dist"
 
-# Trailing-slash enforcement: client-side via TrailingSlashRedirect + prerender canonicals.
-# Netlify TOML does not support multi-path conditions in one redirect block.
+# Trailing-slash 301s + real 404s: `seo-routing` edge function (self-registers via its config export).
 # Explicit SEO 301s (also in public/_redirects) — keep both in sync.
 
 [[redirects]]
@@ -48,14 +51,24 @@
   status = 301
   force = true
 
+[[redirects]]
+  from = "/countries"
+  to = "/labs/sovereign-stress/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/countries/*"
+  to = "/labs/sovereign-stress/"
+  status = 301
+  force = true
+
 [[edge_functions]]
   path = "/api/v1/metrics/*/export"
   function = "export-metric"
 
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# No blanket `/* → /index.html 200` here: public/_redirects carries it, and the build
+# (`generate-route-manifest --dist`) scopes it to real routes so unknown URLs return 404.
 
 [build.environment]
   NODE_VERSION = "20"
