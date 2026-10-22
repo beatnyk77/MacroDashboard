@@ -267,6 +267,19 @@ function ogCardJobs(routes) {
     ];
 }
 
+const OG_CARD_TIMEOUT_MS = 30_000;
+const OG_BUDGET_MS = Number(process.env.OG_BUDGET_MS || 60_000);
+
+function withTimeout(promise, ms, label) {
+    let timer;
+    return Promise.race([
+        promise,
+        new Promise((_, reject) => {
+            timer = setTimeout(() => reject(new Error(`${label} timed out after ${ms / 1000}s`)), ms);
+        }),
+    ]).finally(() => clearTimeout(timer));
+}
+
 async function captureOgCards(browser, routes, port) {
     if (process.env.SKIP_OG === '1' || process.env.SKIP_OG === 'true') {
         console.log('OG cards: SKIP_OG set — skipping screenshot pass.');
@@ -281,31 +294,52 @@ async function captureOgCards(browser, routes, port) {
     const ogDir = path.join(distDir, 'og');
     fs.mkdirSync(ogDir, { recursive: true });
 
+    const openCardPage = async () => {
+        const p = await browser.newPage();
+        await p.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
+        return p;
+    };
     let page;
     try {
-        page = await browser.newPage();
-        await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
+        page = await openCardPage();
     } catch (err) {
         console.warn('OG cards: could not open page — skipping:', err?.message ?? err);
         return;
     }
 
+    // A hung screenshot otherwise blocks for the full CDP protocolTimeout (120s) per card,
+    // which pushed the Netlify build past its time limit. Cards that miss the budget fall
+    // back to the default image via fixupMissingOgImages().
+    const startedAt = Date.now();
     let captured = 0;
     for (const job of jobs) {
+        if (Date.now() - startedAt > OG_BUDGET_MS) {
+            console.warn(`OG cards: ${OG_BUDGET_MS / 1000}s budget spent — remaining cards use the default image.`);
+            break;
+        }
         const url = `http://localhost:${port}/og-card/${job.kind}/${job.slug}?embed=true`;
         try {
-            await page.goto(url, GOTO_OPTS);
-            // Card flags data-og-ready once its Supabase query settles
-            await page.waitForFunction(
-                () => document.querySelector('[data-og-ready="true"]'),
-                { timeout: 15000 }
-            ).catch(() => console.warn(`OG cards: ${job.kind}/${job.slug} never signalled ready — capturing anyway`));
-            // Let fonts settle before capture
-            await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
-            await page.screenshot({ path: path.join(ogDir, job.file) });
+            await withTimeout((async () => {
+                await page.goto(url, GOTO_OPTS);
+                // Card flags data-og-ready once its Supabase query settles
+                await page.waitForFunction(
+                    () => document.querySelector('[data-og-ready="true"]'),
+                    { timeout: 15000 }
+                ).catch(() => console.warn(`OG cards: ${job.kind}/${job.slug} never signalled ready — capturing anyway`));
+                // Let fonts settle before capture
+                await page.evaluate(() => document.fonts?.ready ?? Promise.resolve());
+                await page.screenshot({ path: path.join(ogDir, job.file) });
+            })(), OG_CARD_TIMEOUT_MS, `OG card ${job.kind}/${job.slug}`);
             captured++;
         } catch (err) {
             console.warn(`OG cards: failed to capture ${job.kind}/${job.slug}:`, err?.message ?? err);
+            // The tab may still be stuck on the timed-out call; replace it.
+            await page.close().catch(() => {});
+            try {
+                page = await openCardPage();
+            } catch {
+                break;
+            }
         }
     }
     await page.close().catch(() => {});
@@ -612,6 +646,119 @@ async function setupPage(browser) {
     return page;
 }
 
+/**
+ * Render one route in `page`, write its HTML to dist, and return the hrefs it links to.
+ * Throws on capture failure so the caller can retry the route.
+ */
+async function renderRoute(page, cleanRoute, port) {
+    await page.goto(`http://localhost:${port}${cleanRoute}`, GOTO_OPTS);
+
+    // ES modules can finish downloading before React hydrates #root — an empty
+    // root means we'd capture the static index.html shell (wrong canonicals).
+    const appMounted = await page.waitForFunction(
+        () => {
+            const root = document.querySelector('#root');
+            return !!(root && root.childElementCount > 0);
+        },
+        { timeout: 20_000 }
+    ).catch(() => null);
+
+    if (!appMounted) {
+        console.warn(`⚠ React never mounted on ${cleanRoute} — page may capture static shell only.`);
+    }
+
+    // Beat for lazy routes, Suspense, and helmet flush
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // Then wait for the page-level SEOManager's Helmet tags (og:title with data-rh); the layout
+    // alone only sets canonical/robots. Under parallel tabs the fixed beat alone raced and
+    // captured pages mid Helmet update (missing og:title/og:image/twitter:card).
+    // Unique descriptions are enforced by patchMetaDescription() after capture.
+    const pageSeoReady = await page.waitForFunction(
+        () => !!document.head.querySelector('meta[property="og:title"][data-rh]'),
+        { timeout: 8_000 }
+    ).catch(() => null);
+    const helmetReady = pageSeoReady
+        ?? (await page.$('link[rel="canonical"][data-rh]').catch(() => null));
+
+    if (!pageSeoReady) {
+        console.warn(
+            `⚠ Page SEO tags never appeared on ${cleanRoute} — continuing; patchMetaDescription will still run.`
+        );
+    }
+    // Extra beat for lazy page SEOManager + imperative description sync
+    await new Promise((resolve) => setTimeout(resolve, 400));
+
+    // Data-driven pages (metric dossiers, live metric pages) mark themselves with
+    // data-prerender-await and flip data-prerender-ready once their queries settle —
+    // wait for it so crawlers get the data and SEO tags, not a loading state.
+    const awaitsData = await page.$('[data-prerender-await]').then(Boolean).catch(() => false);
+    if (awaitsData) {
+        const dataReady = await page.waitForSelector('[data-prerender-ready="true"]', { timeout: 25_000 }).catch(() => null);
+        if (!dataReady) console.warn(`⚠ ${cleanRoute}: page data never settled — capturing loading state.`);
+        await new Promise((resolve) => setTimeout(resolve, 300));
+    }
+
+    // Extract internal links from the rendered DOM
+    const newLinks = await page.evaluate(() => {
+        const anchors = Array.from(document.querySelectorAll('a'));
+        return anchors.map(a => a.getAttribute('href'));
+    }).catch(() => []);
+
+    // index.html ships static homepage meta (canonical, og:*, twitter:*,
+    // title, description) as an SPA fallback. When react-helmet has
+    // rendered a page-specific equivalent (data-rh="true"), the static
+    // twin is a DUPLICATE — conflicting canonicals/og:url confuse
+    // crawlers and social scrapers pick og tags unpredictably. Strip
+    // static tags that have a helmet-managed counterpart before capture.
+    if (helmetReady) {
+        await page.evaluate(() => {
+            const hasHelmet = (selector) =>
+                !!document.head.querySelector(`${selector}[data-rh]`);
+            const dropStatic = (selector) => {
+                if (!hasHelmet(selector)) return;
+                document.head
+                    .querySelectorAll(`${selector}:not([data-rh])`)
+                    .forEach((el) => el.remove());
+            };
+            dropStatic('link[rel="canonical"]');
+            dropStatic('meta[name="description"]');
+            ['og:title', 'og:description', 'og:type', 'og:url', 'og:image', 'og:site_name', 'og:locale']
+                .forEach((p) => dropStatic(`meta[property="${p}"]`));
+            ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator']
+                .forEach((n) => dropStatic(`meta[name="${n}"]`));
+        }).catch(() => {});
+    }
+
+    const html = await capturePageHtml(page);
+    if (!html) {
+        throw new Error('Failed to capture page HTML');
+    }
+    let finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
+    // Force unique meta description when Helmet left the static homepage blurb.
+    finalHtml = patchMetaDescription(finalHtml, cleanRoute);
+
+    // Always use prerenderedFilePath — never path.join(distDir, cleanRoute)
+    // when cleanRoute has a leading slash (POSIX path.join treats it as absolute).
+    const filePath = prerenderedFilePath(cleanRoute);
+    fs.mkdirSync(path.dirname(filePath), { recursive: true });
+    fs.writeFileSync(filePath, finalHtml);
+
+    // Guard: non-homepage routes must not ship homepage canonical (SPA shell capture).
+    if (cleanRoute !== '/') {
+        const canonMatch = finalHtml.match(/rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)
+            || finalHtml.match(/href=["']([^"']+)["'][^>]*rel=["']canonical["']/i);
+        const canon = canonMatch?.[1] ?? '';
+        if (canon === 'https://graphiquestor.com/' || canon === 'https://graphiquestor.com') {
+            console.warn(`⚠ ${cleanRoute}: captured homepage canonical — deleting bad prerender so SPA shell is not preferred over retry`);
+            try { fs.unlinkSync(filePath); } catch { /* ignore */ }
+            throw new Error(`Homepage canonical on ${cleanRoute}`);
+        }
+    }
+
+    return newLinks;
+}
+
 async function run() {
     const port = Number(process.env.PRERENDER_PORT || process.env.PORT || 4173);
     const server = app.listen(port, '127.0.0.1', async () => {
@@ -631,177 +778,106 @@ async function run() {
         }
         const routesToVisit = new Set(seedRoutes);
         const visitedRoutes = new Set();
-        
-        let page = null;
-        let pagesRenderedWithCurrentTab = 0;
-        
-        while (routesToVisit.size > 0) {
-            const route = Array.from(routesToVisit)[0];
-            routesToVisit.delete(route);
-            
-            const cleanRoute = normalizeVisitedRoute(route);
-            
-            if (visitedRoutes.has(cleanRoute)) continue;
-            visitedRoutes.add(cleanRoute);
-            
-            console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
-            
-            // Recreate tab every 5 renders to limit CDP/memory pressure
-            if (!page || pagesRenderedWithCurrentTab >= 5) {
-                if (page) {
-                    await page.close().catch(() => {});
-                }
-                try {
-                    page = await setupPage(browser);
-                    pagesRenderedWithCurrentTab = 0;
-                } catch (pageInitErr) {
-                    console.error('Failed to create new page context:', pageInitErr);
-                    page = null;
-                    if (isBrowserDead(pageInitErr)) {
-                        console.warn('Browser connection lost — relaunching Chrome...');
-                        try { await browser.close(); } catch { /* ignore */ }
-                        browser = await launchBrowser();
-                    }
-                    visitedRoutes.delete(cleanRoute);
-                    routesToVisit.add(route);
+        const attempts = new Map();
+        const MAX_ATTEMPTS = 3;
+        // Sequential rendering of ~650 routes exceeded Netlify's build time limit; render in parallel tabs.
+        const CONCURRENCY = Math.max(1, Number(process.env.PRERENDER_CONCURRENCY || 6));
+        const startedAt = Date.now();
+        // Hard wall-clock budget so the Netlify build (15 min command limit) always finishes.
+        // Seeds (sitemap, RSS, forced routes) are queued first, so they render before any
+        // crawl-discovered long-tail route; whatever misses the budget is still served by the SPA.
+        const BUDGET_MS = Number(process.env.PRERENDER_BUDGET_MS || 7 * 60_000);
+        const deadline = startedAt + BUDGET_MS;
+        let budgetSpent = false;
+        let inFlight = 0;
+        let relaunching = null;
+
+        // One shared Chrome. If it dies, the first worker to notice relaunches it and the
+        // others await the same promise instead of each spawning a browser.
+        const relaunchBrowser = async (dead) => {
+            if (!relaunching && browser === dead) {
+                relaunching = (async () => {
+                    console.warn('Browser connection lost — relaunching Chrome...');
+                    try { await dead.close(); } catch { /* ignore */ }
+                    browser = await launchBrowser();
+                })().finally(() => { relaunching = null; });
+            }
+            await relaunching;
+        };
+
+        const takeRoute = () => {
+            if (Date.now() > deadline) {
+                budgetSpent = true;
+                return null;
+            }
+            for (const route of routesToVisit) {
+                routesToVisit.delete(route);
+                const cleanRoute = normalizeVisitedRoute(route);
+                if (visitedRoutes.has(cleanRoute)) continue;
+                visitedRoutes.add(cleanRoute);
+                return cleanRoute;
+            }
+            return null;
+        };
+
+        const worker = async () => {
+            let tab = null;
+            let renderedWithTab = 0;
+            for (;;) {
+                const cleanRoute = takeRoute();
+                if (!cleanRoute) {
+                    // Queue empty: done only if no other worker can still discover links.
+                    if (inFlight === 0) break;
+                    await new Promise((resolve) => setTimeout(resolve, 50));
                     continue;
                 }
-            }
-
-            try {
-                await page.goto(`http://localhost:${port}${cleanRoute}`, GOTO_OPTS);
-                pagesRenderedWithCurrentTab++;
-
-                // ES modules can finish downloading before React hydrates #root — an empty
-                // root means we'd capture the static index.html shell (wrong canonicals).
-                const appMounted = await page.waitForFunction(
-                    () => {
-                        const root = document.querySelector('#root');
-                        return !!(root && root.childElementCount > 0);
-                    },
-                    { timeout: 20_000 }
-                ).catch(() => null);
-
-                if (!appMounted) {
-                    console.warn(`⚠ React never mounted on ${cleanRoute} — page may capture static shell only.`);
-                }
-
-                // Beat for lazy routes, Suspense, and helmet flush
-                await new Promise(resolve => setTimeout(resolve, 1500));
-
-                const DEFAULT_TITLE = 'Global Macro Intelligence Terminal | GraphiQuestor';
-                const DEFAULT_DESC_PREFIX = 'Institutional macro intelligence terminal tracking global liquidity';
-                // Wait for SPA mount + at least layout canonical. Unique descriptions are
-                // enforced by patchMetaDescription() after capture (Helmet often leaves the
-                // static homepage description tag without data-rh).
-                const helmetReady = await page.waitForFunction(
-                    (defaultTitle) => {
-                        const canon = document.head.querySelector('link[rel="canonical"][data-rh]');
-                        if (canon) return true;
-                        const title = document.querySelector('title')?.textContent?.trim() ?? '';
-                        return title.length > 0 && title !== defaultTitle;
-                    },
-                    { timeout: 12_000 },
-                    DEFAULT_TITLE
-                ).catch(() => null);
-
-                if (!helmetReady) {
-                    console.warn(
-                        `⚠ Helmet canonical/title never appeared on ${cleanRoute} — continuing; patchMetaDescription will still run.`
-                    );
-                }
-                // Extra beat for lazy page SEOManager + imperative description sync
-                await new Promise((resolve) => setTimeout(resolve, 400));
-
-                // Data-driven pages (metric dossiers, live metric pages) mark themselves with
-                // data-prerender-await and flip data-prerender-ready once their queries settle —
-                // wait for it so crawlers get the data and SEO tags, not a loading state.
-                const awaitsData = await page.$('[data-prerender-await]').then(Boolean).catch(() => false);
-                if (awaitsData) {
-                    const dataReady = await page.waitForSelector('[data-prerender-ready="true"]', { timeout: 25_000 }).catch(() => null);
-                    if (!dataReady) console.warn(`⚠ ${cleanRoute}: page data never settled — capturing loading state.`);
-                    await new Promise((resolve) => setTimeout(resolve, 300));
-                }
-
-                // Extract internal links from the rendered DOM
-                const newLinks = await page.evaluate(() => {
-                    const anchors = Array.from(document.querySelectorAll('a'));
-                    return anchors.map(a => a.getAttribute('href'));
-                }).catch(() => []);
-
-                // Add valid discovered links to the queue
-                for (const href of newLinks) {
-                    const cleanedHref = href ? normalizeVisitedRoute(href.split('#')[0].split('?')[0]) : '';
-                    if (isRoutable(withoutTrailingSlash(cleanedHref)) && !visitedRoutes.has(cleanedHref)) {
-                        routesToVisit.add(cleanedHref);
-                    }
-                }
-
-                // index.html ships static homepage meta (canonical, og:*, twitter:*,
-                // title, description) as an SPA fallback. When react-helmet has
-                // rendered a page-specific equivalent (data-rh="true"), the static
-                // twin is a DUPLICATE — conflicting canonicals/og:url confuse
-                // crawlers and social scrapers pick og tags unpredictably. Strip
-                // static tags that have a helmet-managed counterpart before capture.
-                if (helmetReady) {
-                    await page.evaluate(() => {
-                        const hasHelmet = (selector) =>
-                            !!document.head.querySelector(`${selector}[data-rh]`);
-                        const dropStatic = (selector) => {
-                            if (!hasHelmet(selector)) return;
-                            document.head
-                                .querySelectorAll(`${selector}:not([data-rh])`)
-                                .forEach((el) => el.remove());
-                        };
-                        dropStatic('link[rel="canonical"]');
-                        dropStatic('meta[name="description"]');
-                        ['og:title', 'og:description', 'og:type', 'og:url', 'og:image', 'og:site_name', 'og:locale']
-                            .forEach((p) => dropStatic(`meta[property="${p}"]`));
-                        ['twitter:card', 'twitter:title', 'twitter:description', 'twitter:image', 'twitter:site', 'twitter:creator']
-                            .forEach((n) => dropStatic(`meta[name="${n}"]`));
-                    }).catch(() => {});
-                }
-
-                const html = await capturePageHtml(page);
-                if (!html) {
-                    throw new Error('Failed to capture page HTML');
-                }
-                let finalHtml = html.startsWith('<!DOCTYPE') ? html : `<!DOCTYPE html>\n${html}`;
-                // Force unique meta description when Helmet left the static homepage blurb.
-                finalHtml = patchMetaDescription(finalHtml, cleanRoute);
-
-                // Always use prerenderedFilePath — never path.join(distDir, cleanRoute)
-                // when cleanRoute has a leading slash (POSIX path.join treats it as absolute).
-                const filePath = prerenderedFilePath(cleanRoute);
-                fs.mkdirSync(path.dirname(filePath), { recursive: true });
-                fs.writeFileSync(filePath, finalHtml);
-
-                // Guard: non-homepage routes must not ship homepage canonical (SPA shell capture).
-                if (cleanRoute !== '/') {
-                    const canonMatch = finalHtml.match(/rel=["']canonical["'][^>]*href=["']([^"']+)["']/i)
-                        || finalHtml.match(/href=["']([^"']+)["'][^>]*rel=["']canonical["']/i);
-                    const canon = canonMatch?.[1] ?? '';
-                    if (canon === 'https://graphiquestor.com/' || canon === 'https://graphiquestor.com') {
-                        console.warn(`⚠ ${cleanRoute}: captured homepage canonical — deleting bad prerender so SPA shell is not preferred over retry`);
-                        try { fs.unlinkSync(filePath); } catch { /* ignore */ }
-                        throw new Error(`Homepage canonical on ${cleanRoute}`);
-                    }
-                }
-            } catch (err) {
-                console.error(`Failed to prerender ${cleanRoute}:`, err);
+                inFlight++;
+                console.log(`Prerendering [${visitedRoutes.size}] ${cleanRoute}...`);
+                const tabBrowser = browser;
                 try {
-                    await page.close();
-                } catch (e) { /* ignore */ }
-                page = null;
-                if (isBrowserDead(err)) {
-                    console.warn('Browser connection lost during render — relaunching Chrome...');
-                    try { await browser.close(); } catch { /* ignore */ }
-                    browser = await launchBrowser();
+                    // Recreate tab every 5 renders to limit CDP/memory pressure
+                    if (!tab || renderedWithTab >= 5) {
+                        if (tab) await tab.close().catch(() => {});
+                        tab = null;
+                        tab = await setupPage(tabBrowser);
+                        renderedWithTab = 0;
+                    }
+                    renderedWithTab++;
+                    const newLinks = await renderRoute(tab, cleanRoute, port);
+                    for (const href of newLinks) {
+                        const cleanedHref = href ? normalizeVisitedRoute(href.split('#')[0].split('?')[0]) : '';
+                        if (isRoutable(withoutTrailingSlash(cleanedHref)) && !visitedRoutes.has(cleanedHref)) {
+                            routesToVisit.add(cleanedHref);
+                        }
+                    }
+                } catch (err) {
+                    console.error(`Failed to prerender ${cleanRoute}:`, err);
+                    if (tab) await tab.close().catch(() => {});
+                    tab = null;
+                    if (isBrowserDead(err)) await relaunchBrowser(tabBrowser);
+                    const n = (attempts.get(cleanRoute) ?? 0) + 1;
+                    attempts.set(cleanRoute, n);
+                    if (n < MAX_ATTEMPTS) {
+                        visitedRoutes.delete(cleanRoute);
+                        routesToVisit.add(cleanRoute);
+                    } else {
+                        console.error(`Giving up on ${cleanRoute} after ${n} attempts.`);
+                    }
+                } finally {
+                    inFlight--;
                 }
-                visitedRoutes.delete(cleanRoute);
-                routesToVisit.add(route);
             }
+            if (tab) await tab.close().catch(() => {});
+        };
+
+        await Promise.all(Array.from({ length: CONCURRENCY }, () => worker()));
+        console.log(`Rendered ${visitedRoutes.size} routes in ${Math.round((Date.now() - startedAt) / 1000)}s across ${CONCURRENCY} tabs.`);
+        if (budgetSpent) {
+            console.warn(`⚠ Prerender budget (${BUDGET_MS / 1000}s) spent — ${routesToVisit.size} discovered route(s) left to the SPA.`);
         }
+
+        let page = null;
+        let pagesRenderedWithCurrentTab = 0;
 
         // Retry any seed-route that never got a real prerender (browser crash mid-run)
         const missingSeeds = [...seedRoutes]
