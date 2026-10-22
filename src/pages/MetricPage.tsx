@@ -24,6 +24,8 @@ import { getConceptByMetricId } from '@/lib/conceptHub';
 import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
 import { metricPrimaryMeta, metricSnapshotMeta } from '@/lib/seoTemplates';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
+import { getDossier } from '@/features/dossier/dossierRegistry';
+import { DossierPage } from '@/features/dossier/components/DossierPage';
 
 /**
  * /metrics/:id — programmatic SEO pages for proprietary metrics (roadmap F5).
@@ -189,7 +191,7 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
 
     if (isLoading) {
         return (
-            <div className="mx-auto flex min-h-[520px] w-full max-w-4xl items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
+            <div data-prerender-await={metricId} className="mx-auto flex min-h-[520px] w-full max-w-4xl items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
                 <Activity size={14} className="animate-pulse" /> Loading metric
             </div>
         );
@@ -197,7 +199,7 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
 
     if (!latest) {
         return (
-            <div className="mx-auto w-full max-w-3xl px-4 py-20 text-center">
+            <div data-prerender-await={metricId} data-prerender-ready="true" className="mx-auto w-full max-w-3xl px-4 py-20 text-center">
                 <SEOManager title="Metric Not Found" description={`No live metric found for ${metricId}.`} robots="noindex, follow" />
                 <AlertTriangle className="mx-auto mb-4 text-amber-300" size={28} />
                 <h1 className="text-2xl font-black uppercase tracking-tight text-white">Metric unavailable</h1>
@@ -208,7 +210,7 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
     }
 
     return (
-        <div className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6">
+        <div data-prerender-await={metricId} data-prerender-ready="true" className="mx-auto w-full max-w-5xl px-4 py-12 sm:px-6">
             <SEOManager
                 title={`${title} | Live Metric`}
                 description={`Live GraphiQuestor metric ${metricId}: latest observation, history, source, cadence, and freshness state.`}
@@ -373,7 +375,17 @@ function buildJsonLd(entry: MetricEntry, hasSeries: boolean, latestDate?: string
     ];
 }
 
+/** Dossier-backed metrics render the full chart dossier; snapshots keep the citation layout. */
 export const MetricPage: React.FC = () => {
+    const { id, snapshotId } = useParams<{ id: string; snapshotId?: string }>();
+    const decodedId = id ? decodeURIComponent(id) : undefined;
+    const entry = METRICS_CATALOG.find(m => m.id === decodedId);
+    const dossier = getDossier(entry?.id);
+    if (entry && dossier && !snapshotId) return <DossierPage spec={dossier} entry={entry} />;
+    return <CatalogMetricPage />;
+};
+
+const CatalogMetricPage: React.FC = () => {
     const { id, snapshotId } = useParams<{ id: string; snapshotId?: string }>();
     const decodedId = id ? decodeURIComponent(id) : undefined;
     const entry = METRICS_CATALOG.find(m => m.id === decodedId);

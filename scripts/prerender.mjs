@@ -713,6 +713,16 @@ async function run() {
                 // Extra beat for lazy page SEOManager + imperative description sync
                 await new Promise((resolve) => setTimeout(resolve, 400));
 
+                // Data-driven pages (metric dossiers, live metric pages) mark themselves with
+                // data-prerender-await and flip data-prerender-ready once their queries settle —
+                // wait for it so crawlers get the data and SEO tags, not a loading state.
+                const awaitsData = await page.$('[data-prerender-await]').then(Boolean).catch(() => false);
+                if (awaitsData) {
+                    const dataReady = await page.waitForSelector('[data-prerender-ready="true"]', { timeout: 25_000 }).catch(() => null);
+                    if (!dataReady) console.warn(`⚠ ${cleanRoute}: page data never settled — capturing loading state.`);
+                    await new Promise((resolve) => setTimeout(resolve, 300));
+                }
+
                 // Extract internal links from the rendered DOM
                 const newLinks = await page.evaluate(() => {
                     const anchors = Array.from(document.querySelectorAll('a'));

@@ -332,30 +332,27 @@ export const METRICS_CATALOG: MetricEntry[] = [
         id: 'm2-gold-ratio',
         name: 'M2/Gold Ratio',
         category: 'De-Dollarization',
-        formula: 'M2/Gold Ratio = Global M2 (USD) / (Above-ground gold oz × Spot XAU/USD)',
+        formula: 'M2/Gold = US M2 money stock (USD billions) ÷ Gold price (USD per troy ounce), monthly',
         components: [
-            'Global M2 – Sum of US, Eurozone, China, Japan, UK broad money (FRED, ECB, PBoC, BoJ, BoE)',
-            'Above-ground gold – World Gold Council official stock estimate (~212,582 tonnes)',
-            'Spot XAU/USD – COMEX front-month gold settlement',
+            'M2SL – US M2 money stock, seasonally adjusted, monthly (Federal Reserve H.6)',
+            'Gold price – monthly last print of the stored gold price history, USD/oz',
+            'Both legs are aligned by calendar month before dividing',
         ],
-        intuition: `When fiat money supply expands faster than gold's market capitalisation, the ratio rises — 
-        signalling currency debasement without a corresponding hard-asset re-rating. The 2020 COVID stimulus 
-        pushed this ratio to a 30-year extreme; subsequent gold rallies compress it as hard assets catch up 
-        to monetary expansion. Institutional allocators treat sustained ratio elevation as a structural 
-        mean-reversion setup for gold versus cash.`,
-        institutionalUse: `Tracked by macro hedge funds and central bank reserve managers as a debasement 
-        gauge distinct from real-rate models. BIS researchers and WGC publications reference M2/gold 
-        normalisation in long-horizon gold allocation frameworks. GraphiQuestor's weekly Regime Digest 
-        cites this ratio when flagging hard-asset regime shifts.`,
+        intuition: `The ratio asks how many ounces of gold the US broad money stock would buy, scaled to billions of
+        dollars per ounce. It rises when money supply grows faster than the gold price and falls when gold reprices
+        faster than money. Low readings have historically coincided with gold re-ratings — around 1980 and again in
+        2011 — while the 2001 high marked the end of a two-decade gold bear market.`,
+        institutionalUse: `Allocators use it as a debasement gauge that is independent of real-rate models: it asks
+        whether gold has already repriced for the money created, rather than predicting what gold should do next.
+        GraphiQuestor's weekly Regime Digest cites the ratio when flagging hard-asset regime shifts.`,
         interpretation: [
-            { label: 'Extreme Debasement', condition: 'Ratio > 40-yr mean + 2σ', color: 'text-terminal-gold' },
-            { label: 'Elevated Fiat', condition: 'Above long-run mean', color: 'text-orange-400' },
-            { label: 'Neutral', condition: 'Within ±1σ of mean', color: 'text-terminal-muted' },
-            { label: 'Gold Rich', condition: 'Below mean − 1σ', color: 'text-terminal-emerald' },
+            { label: 'Gold cheap vs money', condition: 'Upper part of historical range', color: 'text-terminal-emerald' },
+            { label: 'Neutral', condition: 'Middle of historical range', color: 'text-terminal-muted' },
+            { label: 'Gold rich vs money', condition: 'Lower part of historical range', color: 'text-orange-400' },
         ],
         relatedPage: '/methods/m2-gold-ratio',
         relatedPageLabel: 'Deep Dive: M2/Gold Methodology',
-        sources: ['FRED', 'ECB', 'World Gold Council', 'BIS'],
+        sources: ['FRED (M2SL)', 'Gold price history (stored series)'],
     },
     {
         id: 'fed-monetization-ratio',
@@ -763,5 +760,374 @@ export const METRICS_CATALOG: MetricEntry[] = [
         relatedPageLabel: 'China Intel Terminal',
         sources: ['PBOC Statistical Bulletin', 'Ministry of Finance PRC', 'IMF Article IV'],
     },
+
+    // ── Dossier series (rendered by src/features/dossier) ─────────────────────
+    {
+        id: 'fed-balance-sheet',
+        name: 'Fed Balance Sheet (Total Assets)',
+        category: 'Liquidity',
+        formula: 'WALCL = Total assets of the Federal Reserve Banks, Wednesday level (H.4.1), USD',
+        components: [
+            'WALCL – Federal Reserve total assets, weekly Wednesday level (FRED)',
+            'Main holdings: Treasury securities, agency MBS, repo and lending facilities',
+        ],
+        intuition: `The Fed balance sheet expands when it buys securities or lends to banks and contracts when holdings
+        mature without replacement. Each expansion creates bank reserves; each runoff removes them. It is the gross
+        input to net liquidity before the Treasury's cash balance and reverse repo are subtracted.`,
+        institutionalUse: `Liquidity desks track the pace of QE and QT through WALCL and pair it with the TGA and
+        reverse repo to estimate how much of the change reaches bank reserves.`,
+        interpretation: [
+            { label: 'Expanding (QE or lending)', condition: 'Weekly change > 0', color: 'text-terminal-emerald' },
+            { label: 'Contracting (QT)', condition: 'Weekly change < 0', color: 'text-orange-400' },
+        ],
+        relatedPage: '/metrics/net-liquidity/',
+        relatedPageLabel: 'Fed net liquidity dossier',
+        sources: ['FRED (WALCL)', 'Federal Reserve H.4.1'],
+    },
+    {
+        id: 'tga-balance',
+        name: 'Treasury General Account Balance',
+        category: 'Liquidity',
+        formula: 'TGA = US Treasury operating cash held at the Federal Reserve (H.4.1, weekly average)',
+        components: [
+            'WTREGEN – Treasury General Account, weekly average, published in the Fed H.4.1 release',
+            'Daily Treasury Statement – operating cash balance used for intra-week moves',
+        ],
+        intuition: `The TGA is the government's checking account at the Fed. When the Treasury raises cash through
+        tax receipts or debt issuance faster than it spends, the balance rises and bank reserves fall by the same amount.
+        When it spends down the balance — typically under a binding debt ceiling — reserves flow back into the banking
+        system. Because these swings happen with no change in monetary policy, the TGA is one of the largest
+        non-policy drivers of dollar liquidity.`,
+        institutionalUse: `Liquidity desks track the TGA alongside the Fed balance sheet and reverse repo to estimate
+        net reserve supply. Treasury refunding announcements and debt-ceiling deadlines are read through their
+        expected effect on the TGA path.`,
+        interpretation: [
+            { label: 'Rebuild', condition: 'Balance rising — reserves drained', color: 'text-orange-400' },
+            { label: 'Drawdown', condition: 'Balance falling — reserves added', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/metrics/net-liquidity/',
+        relatedPageLabel: 'Fed net liquidity dossier',
+        sources: ['FRED (WTREGEN)', 'US Treasury Daily Treasury Statement'],
+    },
+    {
+        id: 'reverse-repo-balance',
+        name: 'Overnight Reverse Repo Balance',
+        category: 'Liquidity',
+        formula: 'ON RRP = Total overnight reverse repurchase agreements conducted by the NY Fed (daily)',
+        components: [
+            'RRPONTSYD – Overnight reverse repurchase agreements: Treasury securities sold by the Fed in temporary open market operations',
+            'Counterparties – mainly money market funds, plus GSEs and banks',
+        ],
+        intuition: `The reverse repo facility lets money market funds lend cash to the Fed overnight at a fixed rate.
+        Large balances mean surplus cash with nowhere better to go; as Treasury bill supply rises or the balance sheet
+        shrinks, that cash leaves the facility and is absorbed elsewhere. A balance near zero means the buffer that
+        cushioned quantitative tightening is spent, and further drains come out of bank reserves.`,
+        institutionalUse: `Funding strategists watch the facility as a buffer gauge: while it is large, QT and bill
+        issuance drain it rather than reserves. Once it is depleted, repo rates and the SOFR–EFFR spread become the
+        early warning for reserve scarcity.`,
+        interpretation: [
+            { label: 'Buffer available', condition: 'Balance well above zero', color: 'text-terminal-emerald' },
+            { label: 'Buffer depleted', condition: 'Balance near zero', color: 'text-orange-400' },
+        ],
+        relatedPage: '/metrics/net-liquidity/',
+        relatedPageLabel: 'Fed net liquidity dossier',
+        sources: ['FRED (RRPONTSYD)', 'Federal Reserve Bank of New York'],
+    },
+    {
+        id: 'us-m2-money-supply',
+        name: 'US M2 Money Supply',
+        category: 'Liquidity',
+        formula: 'M2 = Currency + demand deposits + other checkable deposits + savings deposits + small time deposits + retail money market funds',
+        components: [
+            'M2SL – M2 money stock, seasonally adjusted, monthly (Federal Reserve H.6)',
+            'The May 2020 redefinition moved savings deposits into M1; M2 coverage was largely unchanged',
+        ],
+        intuition: `M2 measures the broad stock of money households and firms can spend quickly. Its growth reflects bank
+        credit creation, fiscal transfers that land in deposits, and central-bank asset purchases. The 2020–21 surge and
+        the 2022–23 contraction — the first year-over-year decline since the series began in 1959 — are the clearest recent examples
+        of how policy reaches the deposit base.`,
+        institutionalUse: `Allocators use M2 as the denominator for debasement ratios (M2/gold, market cap/M2) and as
+        a slow-moving check on whether nominal growth is being financed by money creation.`,
+        interpretation: [],
+        relatedPage: '/metrics/m2-gold-ratio/',
+        relatedPageLabel: 'M2 to gold ratio dossier',
+        sources: ['FRED (M2SL)', 'Federal Reserve H.6'],
+    },
+    {
+        id: 'real-gold-price',
+        name: 'Inflation-Adjusted Gold Price',
+        category: 'Precious Metals',
+        formula: 'Real gold(t) = Gold price(t) × CPI(latest month) / CPI(t)',
+        components: [
+            'Gold price – monthly last print of the stored gold price history (USD/oz)',
+            'CPIAUCSL – US consumer price index, all urban consumers, seasonally adjusted',
+        ],
+        intuition: `Nominal gold records say little on their own: a dollar in 2011 bought more than a dollar today.
+        Deflating by CPI expresses every month's price in the purchasing power of the latest month, so past peaks
+        can be compared directly with the current price.`,
+        institutionalUse: `Real gold is used to judge whether a nominal record is also a real one, and alongside real
+        interest rates to separate a monetary bid for gold from a simple inflation pass-through.`,
+        interpretation: [],
+        relatedPage: '/metrics/m2-gold-ratio/',
+        relatedPageLabel: 'M2 to gold ratio dossier',
+        sources: ['Gold price history (stored series)', 'FRED (CPIAUCSL)'],
+    },
+    {
+        id: 'spx-gold-ratio',
+        name: 'S&P 500 to Gold Ratio',
+        category: 'Precious Metals',
+        formula: 'SPX/Gold = S&P 500 index level ÷ Gold price (USD/oz)',
+        components: [
+            'S&P 500 index level – daily close',
+            'Gold price – continuous front-month futures, USD/oz',
+        ],
+        intuition: `Dividing the S&P 500 by gold prices equities in ounces of gold rather than dollars. That removes the
+        common effect of dollar debasement and isolates the relative performance of productive assets against the
+        monetary hedge. A rising ratio means equities are outrunning gold; a falling one means gold is.`,
+        institutionalUse: `Multi-asset allocators use the ratio as a regime gauge between risk-on growth leadership and
+        defensive, hard-asset leadership.`,
+        interpretation: [
+            { label: 'Equities leading', condition: 'Ratio rising', color: 'text-terminal-emerald' },
+            { label: 'Gold leading', condition: 'Ratio falling', color: 'text-orange-400' },
+        ],
+        sources: ['S&P 500 (stored series)', 'Gold futures (stored series)'],
+    },
+    {
+        id: 'copper-gold-ratio',
+        name: 'Copper to Gold Ratio',
+        category: 'Precious Metals',
+        formula: 'Copper/Gold = Copper price (USD per metric ton) ÷ Gold price (USD per troy ounce), monthly',
+        components: [
+            'PCOPPUSDM – global copper price, USD per metric ton, monthly (IMF via FRED)',
+            'Gold price – monthly last print, USD/oz',
+            'Only USD-per-metric-ton observations are used; daily COMEX prints quoted in USD per pound are excluded rather than converted',
+        ],
+        intuition: `Copper is priced on industrial demand; gold on monetary and safe-haven demand. Their ratio rises when
+        markets price stronger growth and falls when they price fear or monetary hedging. Because both legs are
+        dollar-priced, the dollar's own moves largely cancel out.`,
+        institutionalUse: `Rates strategists compare the ratio with long-dated Treasury yields as a cross-check on
+        growth expectations; commodity desks use it to separate cyclical from defensive metal demand.`,
+        interpretation: [
+            { label: 'Growth bid', condition: 'Ratio rising', color: 'text-terminal-emerald' },
+            { label: 'Haven bid', condition: 'Ratio falling', color: 'text-orange-400' },
+        ],
+        sources: ['FRED (PCOPPUSDM)', 'Gold price history (stored series)'],
+    },
+    {
+        id: 'global-gold-reserve-share',
+        name: 'Gold Share of Global Reserves',
+        category: 'De-Dollarization',
+        formula: 'Gold share = Official gold holdings at market value ÷ Total official reserve assets × 100',
+        components: [
+            'Official gold holdings – central bank gold valued at market prices',
+            'Total reserve assets – foreign exchange reserves plus gold, SDRs, and IMF reserve position',
+        ],
+        intuition: `Gold's weight in reserves moves for two reasons: central banks buy or sell metal, and the gold price
+        revalues what they already hold. Since 2022, record official purchases and a rising price have pushed the share
+        up together, which is why it is read alongside the dollar's share of currency reserves.`,
+        institutionalUse: `Reserve managers and de-dollarization researchers track the share to see how much reserve
+        diversification is happening through gold rather than other currencies.`,
+        interpretation: [],
+        relatedPage: '/labs/central-bank-gold-purchases/',
+        relatedPageLabel: 'Central bank gold purchases lab',
+        sources: ['IMF International Financial Statistics', 'World Gold Council'],
+    },
+    {
+        id: 'interest-expense-to-gdp',
+        name: 'Federal Interest Expense to GDP',
+        category: 'Fiscal Health',
+        formula: 'Interest / GDP = Federal government interest payments (SAAR) ÷ Nominal GDP (SAAR) × 100',
+        components: [
+            'A091RC1Q027SBEA – federal government current expenditures: interest payments, quarterly SAAR',
+            'GDP – nominal gross domestic product, quarterly SAAR',
+        ],
+        intuition: `Scaling interest by GDP shows the cost of carrying federal debt relative to the economy that services
+        it. It rises when debt grows faster than output or when maturing debt rolls into higher rates, and it captures
+        both effects in one number.`,
+        institutionalUse: `Sovereign analysts compare it with the late-1980s and early-1990s highs and with other G7 issuers when
+        assessing debt sustainability and term-premium risk.`,
+        interpretation: [],
+        relatedPage: '/methods/fiscal-dominance-meter/',
+        relatedPageLabel: 'Fiscal dominance methodology',
+        sources: ['FRED (A091RC1Q027SBEA, GDP)', 'BEA NIPA'],
+    },
+    {
+        id: 'federal-interest-payments',
+        name: 'US Federal Interest Payments',
+        category: 'Fiscal Health',
+        formula: 'Federal government interest payments, seasonally adjusted annual rate (USD billions)',
+        components: [
+            'BEA NIPA federal current expenditures: interest payments',
+            'Quarterly observations, annualised',
+        ],
+        intuition: `This is the dollar cost of servicing federal debt. On a log scale its slope shows how quickly the
+        bill compounds as debt stock and average interest rates rise together, and it is the numerator of the fiscal
+        dominance measures on this site.`,
+        institutionalUse: `Used as the base input for interest-to-receipts and interest-to-GDP ratios and in
+        projections of how much new issuance is needed just to pay interest.`,
+        interpretation: [],
+        relatedPage: '/metrics/fiscal-dominance-meter/',
+        relatedPageLabel: 'Interest expense vs tax receipts',
+        sources: ['BEA NIPA', 'FRED'],
+    },
+    {
+        id: 'entitlements-to-receipts',
+        name: 'Entitlement Spending to Tax Receipts',
+        category: 'Fiscal Health',
+        formula: 'Entitlements / receipts = Major entitlement outlays ÷ Federal tax receipts × 100',
+        components: [
+            'Major entitlements – Social Security, Medicare, Medicaid, and related transfer programmes',
+            'Federal tax receipts – current tax receipts, quarterly SAAR',
+        ],
+        intuition: `Entitlements are paid automatically under existing law. The share of tax revenue they absorb shows how
+        much of the budget is committed before Congress votes on discretionary spending — and, combined with interest,
+        how little fiscal room is left in a downturn.`,
+        institutionalUse: `Fiscal analysts use it to frame structural deficits independently of the business cycle.`,
+        interpretation: [],
+        relatedPage: '/labs/us-macro-fiscal/',
+        relatedPageLabel: 'US macro and fiscal lab',
+        sources: ['BEA NIPA', 'FRED'],
+    },
+    {
+        id: 'mandatory-spending-to-receipts',
+        name: 'Mandatory Spending to Tax Receipts',
+        category: 'Fiscal Health',
+        formula: 'Mandatory / receipts = Mandatory federal outlays ÷ Federal tax receipts × 100',
+        components: [
+            'Mandatory outlays – spending governed by existing law rather than annual appropriations',
+            'Federal tax receipts – current tax receipts, quarterly SAAR',
+        ],
+        intuition: `Mandatory spending is the broader set of outlays that run on autopilot. When it exceeds a large share
+        of receipts, discretionary spending and interest are effectively financed by borrowing.`,
+        institutionalUse: `Sovereign credit analysts use it alongside interest-to-receipts to gauge how quickly fiscal
+        flexibility is eroding.`,
+        interpretation: [],
+        relatedPage: '/labs/us-macro-fiscal/',
+        relatedPageLabel: 'US macro and fiscal lab',
+        sources: ['BEA NIPA', 'FRED'],
+    },
+    {
+        id: 'us-debt-to-gdp',
+        name: 'US Federal Debt to GDP',
+        category: 'Fiscal Health',
+        formula: 'Debt / GDP = Total public debt outstanding ÷ Nominal GDP × 100',
+        components: [
+            'GFDEGDQ188S – federal debt: total public debt as a percent of GDP, quarterly',
+        ],
+        intuition: `Debt-to-GDP measures the stock of federal debt against the size of the economy. It steps up in
+        recessions, when deficits widen and output falls together, and declines only through sustained surpluses or
+        nominal growth that outpaces borrowing.`,
+        institutionalUse: `It is the standard cross-country sovereign leverage measure and the starting point for debt
+        sustainability analysis.`,
+        interpretation: [],
+        relatedPage: '/labs/sovereign-stress/',
+        relatedPageLabel: 'Sovereign stress lab',
+        sources: ['FRED (GFDEGDQ188S)', 'US Treasury', 'BEA'],
+    },
+    {
+        id: 'yield-curve-10y-2y',
+        name: '10Y–2Y Treasury Yield Spread',
+        category: 'Rates',
+        formula: 'Spread = 10-year Treasury constant-maturity yield − 2-year Treasury constant-maturity yield (bp)',
+        components: [
+            'T10Y2Y – 10-year minus 2-year Treasury constant maturity, daily (FRED)',
+            'Shown in basis points (1 percentage point = 100 bp)',
+        ],
+        intuition: `The 2-year yield is anchored by expected policy rates; the 10-year adds longer-run growth, inflation,
+        and term premium. When the curve inverts, markets expect policy to be tighter now than it will need to be later
+        — historically a sign that tight policy is restraining the economy.`,
+        institutionalUse: `It is the most widely cited recession-watch spread. Desks track both the depth and duration
+        of inversions and the re-steepening that typically follows the start of an easing cycle.`,
+        interpretation: [
+            { label: 'Inverted', condition: 'Spread < 0 bp', color: 'text-terminal-rose' },
+            { label: 'Flat', condition: '0–50 bp', color: 'text-orange-400' },
+            { label: 'Upward sloping', condition: 'Spread > 50 bp', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/metrics/treasury-10y-yield/',
+        relatedPageLabel: '10-year Treasury yield dossier',
+        sources: ['FRED (T10Y2Y)', 'US Treasury'],
+    },
+    {
+        id: 'real-fed-funds-rate',
+        name: 'Real Fed Funds Rate',
+        category: 'Rates',
+        formula: 'Real rate(t) = Effective fed funds rate(t) − CPI year-over-year inflation(t)',
+        components: [
+            'FEDFUNDS – effective federal funds rate, monthly average',
+            'CPI YoY – computed from CPIAUCSL as the 12-month percent change in the index',
+        ],
+        intuition: `The nominal policy rate says little about restraint without inflation alongside it. Subtracting
+        realised inflation shows whether money is costly or cheap in real terms: deeply negative in the 1970s and 2021,
+        strongly positive under Volcker and again after 2023.`,
+        institutionalUse: `Macro desks use the real policy rate to judge the stance of policy and as an input to gold
+        and long-duration asset valuation.`,
+        interpretation: [
+            { label: 'Restrictive', condition: 'Real rate > +1 pp', color: 'text-orange-400' },
+            { label: 'Neutral-ish', condition: '−1 to +1 pp', color: 'text-terminal-muted' },
+            { label: 'Accommodative', condition: 'Real rate < −1 pp', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/glossary/real-interest-rates/',
+        relatedPageLabel: 'Real interest rates explained',
+        sources: ['FRED (FEDFUNDS, CPIAUCSL)'],
+    },
+    {
+        id: 'breakeven-inflation-5y',
+        name: '5-Year Breakeven Inflation Rate',
+        category: 'Rates',
+        formula: 'Breakeven = 5-year nominal Treasury yield − 5-year TIPS real yield',
+        components: [
+            'T5YIE – 5-year breakeven inflation rate, daily (FRED)',
+            'Includes an inflation risk premium and TIPS liquidity effects, so it is not a pure expectation',
+        ],
+        intuition: `The breakeven is the inflation rate at which nominal Treasuries and TIPS deliver the same return. It is
+        the market's real-time price of medium-term inflation, and it moves fast when energy shocks or policy surprises
+        change the inflation outlook.`,
+        institutionalUse: `Central banks monitor it as a check on whether inflation expectations stay anchored; investors
+        use it to choose between nominal and inflation-linked bonds.`,
+        interpretation: [],
+        relatedPage: '/glossary/breakeven-inflation-rate/',
+        relatedPageLabel: 'Breakeven inflation explained',
+        sources: ['FRED (T5YIE)'],
+    },
+    {
+        id: 'high-yield-credit-spread',
+        name: 'US High-Yield Credit Spread',
+        category: 'Credit',
+        formula: 'HY OAS = Option-adjusted spread of the ICE BofA US High Yield Index over Treasuries (bp)',
+        components: [
+            'BAMLH0A0HYM2 – ICE BofA US High Yield Index option-adjusted spread, daily (FRED, reported in percent)',
+            'Shown in basis points',
+        ],
+        intuition: `The high-yield spread is the extra yield investors demand to hold sub-investment-grade corporate debt
+        instead of Treasuries. It compresses when default risk looks remote and widens quickly when funding conditions
+        tighten, making it one of the fastest market reads of credit stress.`,
+        institutionalUse: `Credit and macro desks use it as a risk-appetite gauge and as an input to financial conditions
+        indices.`,
+        interpretation: [],
+        sources: ['FRED (BAMLH0A0HYM2)', 'ICE Data Indices'],
+    },
+    {
+        id: 'sofr-effr-spread',
+        name: 'SOFR–EFFR Spread',
+        category: 'Liquidity',
+        formula: 'Spread = Secured Overnight Financing Rate − Effective Federal Funds Rate (bp)',
+        components: [
+            'SOFR – broad Treasury repo rate, daily (NY Fed)',
+            'EFFR – effective federal funds rate, daily (NY Fed)',
+        ],
+        intuition: `SOFR is a secured rate and usually trades at or below unsecured fed funds. When repo funding becomes
+        scarce — at quarter-ends, around tax dates, or as reserves fall toward scarcity — SOFR rises above EFFR. A
+        persistent positive spread is an early sign that the reserve buffer is running thin.`,
+        institutionalUse: `Funding desks and Fed watchers use it with the reverse repo balance to judge how close the
+        system is to reserve scarcity and to anticipate the end of balance-sheet runoff.`,
+        interpretation: [
+            { label: 'Repo pressure', condition: 'Spread > 0 bp', color: 'text-orange-400' },
+            { label: 'Normal', condition: 'Spread ≤ 0 bp', color: 'text-terminal-emerald' },
+        ],
+        relatedPage: '/labs/interbank-funding/',
+        relatedPageLabel: 'Interbank funding lab',
+        sources: ['Federal Reserve Bank of New York (SOFR, EFFR)'],
+    },
 ];
+
 
