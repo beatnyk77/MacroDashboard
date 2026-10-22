@@ -58,7 +58,9 @@ jobs:
           cat "$GEN_ERR"
           exit 1
         fi
-        git diff --exit-code src/types/database.types.ts || (
+        # PostgrestVersion is server metadata Supabase can change without any schema change;
+        # ignore lines that differ only in it so platform upgrades don't fail CI.
+        git diff --exit-code -I 'PostgrestVersion' src/types/database.types.ts || (
           echo "DB schema drift detected — regenerate types and commit:"
           echo "  supabase gen types typescript --project-id <PROJECT_ID> > src/types/database.types.ts"
           git diff --stat src/types/database.types.ts

@@ -224,7 +224,9 @@ describe('Smoke Tests', () => {
                 <Terminal />
             </TestWrapper>
         );
-        expect(await screen.findByText(/Global M2 to Gold Ratio Tracker/i, {}, { timeout: 20000 })).toBeInTheDocument();
+        // The "Featured: Global M2 to Gold Ratio Tracker" link was removed in 512ed27; assert on a
+        // module label that renders outside lazy boundaries instead.
+        expect((await screen.findAllByText(/Macro Radar/i, {}, { timeout: 20000 })).length).toBeGreaterThan(0);
     }, 35000);
 
     it('renders DataHealthDashboard (authenticated) without crashing', async () => {
