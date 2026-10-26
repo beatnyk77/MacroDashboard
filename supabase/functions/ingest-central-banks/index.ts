@@ -259,15 +259,17 @@ async function latestFred(seriesId: string, fredApiKey: string): Promise<{ value
  */
 async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string): Promise<number> {
   try {
-    const [walcl, rrp, tga] = await Promise.all([
+    // Native FRED units: WALCL and WTREGEN millions USD, RRPONTSYD billions USD,
+    // JPNASSETS 100 million JPY (read raw: BOJ_TOTAL_ASSETS_TRJPY is stored at the wrong scale).
+    const [walcl, rrp, tga, boj] = await Promise.all([
       latestFred('WALCL', fredApiKey),
       latestFred('RRPONTSYD', fredApiKey),
       latestFred('WTREGEN', fredApiKey),
+      latestFred('JPNASSETS', fredApiKey),
     ]);
-    const [ecb, eurUsd, boj, usdJpy, boe, gbpUsd] = await Promise.all([
+    const [ecb, eurUsd, usdJpy, boe, gbpUsd] = await Promise.all([
       latestObservation(supabase, 'ECB_TOTAL_ASSETS_MEUR'),
       latestObservation(supabase, 'FX_EUR_USD'),
-      latestObservation(supabase, 'BOJ_TOTAL_ASSETS_TRJPY'),
       latestObservation(supabase, 'FX_USD_JPY'),
       latestObservation(supabase, 'BOE_TOTAL_ASSETS_MN_GBP'),
       latestObservation(supabase, 'FX_GBP_USD'),
@@ -277,12 +279,12 @@ async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string
       return 0;
     }
 
-    const usNetLiqTr = (walcl.value - rrp.value * 1000 - tga.value * 1000) / 1_000_000;
+    const usNetLiqTr = (walcl.value - rrp.value * 1000 - tga.value) / 1_000_000;
     const ecbAssetsTr = (ecb.value * eurUsd.value) / 1_000_000;
-    const bojAssetsTr = boj.value / usdJpy.value;
+    const bojAssetsTr = boj.value / usdJpy.value / 10_000;
     const boeAssetsTr = (boe.value * gbpUsd.value) / 1_000_000;
     const globalNetLiquidityTr = Math.round((usNetLiqTr + ecbAssetsTr + bojAssetsTr + boeAssetsTr) * 100) / 100;
-    const inputDates = [walcl.date, rrp.date, tga.date, ecb.as_of_date, boj.as_of_date, boe.as_of_date];
+    const inputDates = [walcl.date, rrp.date, tga.date, ecb.as_of_date, boj.date, boe.as_of_date];
     const asOf = inputDates.sort()[0];
 
     const observation = {
@@ -298,7 +300,7 @@ async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string
           boj_usd_tr: Math.round(bojAssetsTr * 100) / 100,
           boe_usd_tr: Math.round(boeAssetsTr * 100) / 100,
         },
-        input_dates: { walcl: walcl.date, rrp: rrp.date, tga: tga.date, ecb: ecb.as_of_date, boj: boj.as_of_date, boe: boe.as_of_date },
+        input_dates: { walcl: walcl.date, rrp: rrp.date, tga: tga.date, ecb: ecb.as_of_date, boj: boj.date, boe: boe.as_of_date },
         unit: 'Trillion USD',
       },
     };
@@ -354,6 +356,6 @@ serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> 
   return {
     ok: true,
     counts: { upserted: totalUpserted },
-    meta: { source, processed, revision: '2026-10-26-real-inputs-only' },
+    meta: { source, processed, revision: '2026-10-27-composite-units' },
   };
 });

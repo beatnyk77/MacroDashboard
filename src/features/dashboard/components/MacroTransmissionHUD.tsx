@@ -25,6 +25,7 @@ export const MacroTransmissionHUD: React.FC = () => {
         MID.TGA_BALANCE,
         MID.RRP_BALANCE_BN,
         MID.FED_BALANCE_SHEET,
+        MID.US_HY_OAS,
     ]);
 
     // Format helper
@@ -47,14 +48,24 @@ export const MacroTransmissionHUD: React.FC = () => {
         const billions = isStoredInMillions ? raw / 1000 : raw;
         return billions.toLocaleString('en-US', { maximumFractionDigits: 1 });
     };
+    const fmtUsdBillions = (id: string) => {
+        const v = getUsdBillions(id);
+        return v === '—' ? v : `$${v}B`;
+    };
 
 
     // Derived 10Y and 2s10s display
-    const tenYield = metrics?.[MID.UST_10Y_YIELD]?.value ?? 4.38;
-    const curveSlope = metrics?.[MID.UST_10Y_2Y_SPREAD]?.value ?? 0.16;
-    const dxyVal = metrics?.[MID.DXY_INDEX]?.value ?? 105.4;
-    const goldVal = metrics?.[MID.GOLD_PRICE_USD]?.value ?? 2650;
-    const inrVal = metrics?.[MID.USD_INR_RATE]?.value ?? 86.4;
+    // null when the observation is missing — rendered as '—', never a placeholder number
+    const num = (id: string): number | null => {
+        const v = Number(metrics?.[id]?.value);
+        return metrics?.[id]?.value === undefined || Number.isNaN(v) ? null : v;
+    };
+    const tenYield = num(MID.UST_10Y_YIELD);
+    const curveSlope = num(MID.UST_10Y_2Y_SPREAD);
+    const dxyVal = num(MID.DXY_INDEX);
+    const goldVal = num(MID.GOLD_PRICE_USD);
+    const inrVal = num(MID.USD_INR_RATE);
+    const hyOasPct = num(MID.US_HY_OAS);
 
     const deskFilters: { id: DeskMode; label: string; icon: React.ReactNode }[] = [
         { id: 'all', label: 'All Exposures', icon: <Compass size={14} /> },
@@ -124,14 +135,14 @@ export const MacroTransmissionHUD: React.FC = () => {
                                 PILLAR 01 // DURATION
                             </span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
-                                {curveSlope >= 0 ? 'BEAR STEEPENING' : 'INVERTED DRAG'}
+                                {curveSlope === null ? '—' : curveSlope >= 0 ? 'BEAR STEEPENING' : 'INVERTED DRAG'}
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
-                                    {isLoading ? '4.38%' : `${tenYield.toFixed(2)}%`}
+                                    {isLoading || tenYield === null ? '—' : `${tenYield.toFixed(2)}%`}
                                 </span>
                                 <span className="text-xs font-mono font-semibold text-amber-600 dark:text-amber-400">
                                     US 10Y Yield
@@ -140,11 +151,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">2s10s Spread</span>
-                                    <span className="font-bold text-foreground">{curveSlope >= 0 ? `+${(curveSlope * 100).toFixed(0)}` : (curveSlope * 100).toFixed(0)} bps</span>
+                                    <span className="font-bold text-foreground">{curveSlope === null ? '—' : `${curveSlope >= 0 ? '+' : ''}${(curveSlope * 100).toFixed(0)} bps`}</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">Fed Funds</span>
-                                    <span className="font-bold text-foreground">{getVal(MID.FED_FUNDS_RATE, '5.33', '%')}</span>
+                                    <span className="font-bold text-foreground">{getVal(MID.FED_FUNDS_RATE, '—', '%')}</span>
                                 </div>
                             </div>
                         </div>
@@ -181,14 +192,14 @@ export const MacroTransmissionHUD: React.FC = () => {
                                 PILLAR 02 // FX & PLUMBING
                             </span>
                             <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
-                                {dxyVal > 104 ? 'DOLLAR SQUEEZE' : 'BALANCED SMILE'}
+                                {dxyVal === null ? '—' : dxyVal > 104 ? 'DOLLAR SQUEEZE' : 'BALANCED SMILE'}
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
-                                    {isLoading ? '105.4' : dxyVal.toFixed(1)}
+                                    {isLoading || dxyVal === null ? '—' : dxyVal.toFixed(1)}
                                 </span>
                                 <span className="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400">
                                     DXY Index
@@ -197,11 +208,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">USD/INR</span>
-                                    <span className="font-bold text-foreground">{inrVal.toFixed(2)}</span>
+                                    <span className="font-bold text-foreground">{inrVal === null ? '—' : inrVal.toFixed(2)}</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">Net Liquidity</span>
-                                    <span className="font-bold text-foreground">${getUsdBillions(MID.US_NET_LIQUIDITY_USD_BN, '6,140')}B</span>
+                                    <span className="font-bold text-foreground">{fmtUsdBillions(MID.US_NET_LIQUIDITY_USD_BN)}</span>
                                 </div>
                             </div>
                         </div>
@@ -245,7 +256,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
-                                    314 bps
+                                    {isLoading || hyOasPct === null ? '—' : `${Math.round(hyOasPct * 100)} bps`}
                                 </span>
                                 <span className="text-xs font-mono font-semibold text-rose-600 dark:text-rose-400">
                                     US HY OAS
@@ -258,7 +269,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">SOFR Spread</span>
-                                    <span className="font-bold text-foreground">{getVal(MID.SOFR_EFFR_SPREAD_BPS, '6.2', 'bps')}</span>
+                                    <span className="font-bold text-foreground">{getVal(MID.SOFR_EFFR_SPREAD_BPS, '—', 'bps')}</span>
                                 </div>
                             </div>
                         </div>
@@ -302,7 +313,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
-                                    {isLoading ? '$2,650' : `$${goldVal.toLocaleString('en-US')}`}
+                                    {isLoading || goldVal === null ? '—' : `$${goldVal.toLocaleString('en-US')}`}
                                 </span>
                                 <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">
                                     Gold Spot (USD)
@@ -311,11 +322,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">TGA Cash</span>
-                                    <span className="font-bold text-foreground">${getUsdBillions(MID.TGA_BALANCE, '780')}B</span>
+                                    <span className="font-bold text-foreground">{fmtUsdBillions(MID.TGA_BALANCE)}</span>
                                 </div>
                                 <div>
                                     <span className="text-[10px] block uppercase text-muted-foreground/70">Fed RRP</span>
-                                    <span className="font-bold text-foreground">${getUsdBillions(MID.RRP_BALANCE_BN, '145')}B</span>
+                                    <span className="font-bold text-foreground">{fmtUsdBillions(MID.RRP_BALANCE_BN)}</span>
                                 </div>
                             </div>
                         </div>
@@ -358,7 +369,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                     </span>
                     <ArrowRight size={13} className="text-muted-foreground" />
                     <span className="px-2 py-0.5 rounded bg-muted text-foreground border border-border">
-                        {selectedCatalyst === 'treasury' ? 'RRP Buffer Depletes ($145B)' : 'India/EU Trade Deficits Expand'}
+                        {selectedCatalyst === 'treasury' ? `RRP Buffer Depletes (${fmtUsdBillions(MID.RRP_BALANCE_BN)})` : 'India/EU Trade Deficits Expand'}
                     </span>
                     <ArrowRight size={13} className="text-muted-foreground" />
                     <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20">
