@@ -252,10 +252,12 @@ def write_observations_sql(rows: List[Dict[str, Any]], output_path: str) -> None
             + ")"
         )
 
+    # Joined outside the f-string: Python < 3.12 rejects backslashes in f-string expressions.
+    values_sql = ",\n".join(values)
     statement = f"""
 INSERT INTO public.metric_observations ({", ".join(columns)})
 VALUES
-{",\n".join(values)}
+{values_sql}
 ON CONFLICT (metric_id, as_of_date) DO UPDATE SET
   value = EXCLUDED.value,
   last_updated_at = EXCLUDED.last_updated_at,

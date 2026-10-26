@@ -1,0 +1,6 @@
+# Dependencies for .github/workflows/ingest-market-data.yml (Python 3.11).
+# openbb 5.x no longer bundles the equity router or yfinance provider that
+# ingest_openbb_market_data.py calls (obb.equity.price.historical, provider="yfinance").
+openbb>=4.7.2,<5
+yfinance>=1.7,<2
+requests>=2.31,<3
