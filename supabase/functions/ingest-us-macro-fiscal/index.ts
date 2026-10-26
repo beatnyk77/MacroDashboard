@@ -29,90 +29,81 @@ async function latestTenYearAuction(supabase: any): Promise<{ auction_date: stri
   return Number.isFinite(btc) && btc > 0 ? { auction_date: data[0].auction_date, bid_to_cover: btc } : null;
 }
 
+/** NY Fed primary dealer statistics: weekly net positions (USD millions) for one series key. */
+async function fetchNyFedDealerSeries(keyId: string): Promise<{ date: string; value: number }[]> {
+  const res = await fetch(`https://markets.newyorkfed.org/api/pd/get/${keyId}.json`);
+  if (!res.ok) return [];
+  const json = (await res.json()) as any;
+  return (json?.pd?.timeseries ?? [])
+    .map((r: any) => ({ date: r.asofdate, value: parseFloat(r.value) }))
+    .filter((r: any) => r.date && Number.isFinite(r.value))
+    .sort((a: any, b: any) => (a.date < b.date ? 1 : -1))
+    .slice(0, 30);
+}
+
+async function upsertSeries(supabase: any, metricId: string, rows: { date: string; value: number }[], divisor: number, metadata: Record<string, unknown>): Promise<number> {
+  const obs = rows.map((r) => ({
+    metric_id: metricId,
+    as_of_date: r.date,
+    value: Math.round((r.value / divisor) * 100) / 100,
+    last_updated_at: new Date().toISOString(),
+    metadata,
+  }));
+  if (obs.length === 0) return 0;
+  const { error } = await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
+  if (error) {
+    console.error(`[TreasurySupply] Upsert failed for ${metricId}:`, error.message);
+    return 0;
+  }
+  return obs.length;
+}
+
 async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Promise<number> {
   let count = 0;
-  let dealerInventory: { date: string; value: number } | null = null;
 
-  const seriesMap = [
-    { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'H0RESH4CGNWW', divisor: 1000 },
-    { id: 'PRIMARY_DEALER_UST_INVENTORY_BN', fredId: 'PDINTT', divisor: 1000 },
-  ];
-
-  for (const s of seriesMap) {
-    try {
-      const url = `https://api.stlouisfed.org/fred/series/observations?series_id=${s.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=30`;
-      const res = await fetch(url);
-      if (!res.ok) continue;
+  // Foreign official custody holdings of marketable Treasuries (H.4.1, weekly, USD millions).
+  // H0RESH4CGNWW, used previously, was discontinued on FRED in Nov 2012.
+  try {
+    const url = `https://api.stlouisfed.org/fred/series/observations?series_id=WMTSECL1&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=30`;
+    const res = await fetch(url);
+    if (res.ok) {
       const json = (await res.json()) as any;
-      const obs = (json.observations ?? [])
-        .map((o: any) => {
-          const val = parseFloat(o.value);
-          if (isNaN(val)) return null;
-          return {
-            metric_id: s.id,
-            as_of_date: o.date,
-            value: Math.round((val / s.divisor) * 100) / 100,
-            last_updated_at: new Date().toISOString(),
-            metadata: { source: 'FRED', series_id: s.fredId },
-          };
-        })
-        .filter((o: any) => o !== null);
-
-      if (obs.length > 0) {
-        const { error } = await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
-        if (!error) {
-          count += obs.length;
-          if (s.id === 'PRIMARY_DEALER_UST_INVENTORY_BN') dealerInventory = { date: obs[0].as_of_date, value: obs[0].value };
-        }
-      }
-    } catch (e: any) {
-      console.error(`[TreasurySupply] Error fetching ${s.id}:`, e.message);
+      const rows = (json.observations ?? [])
+        .map((o: any) => ({ date: o.date, value: parseFloat(o.value) }))
+        .filter((o: any) => Number.isFinite(o.value));
+      count += await upsertSeries(supabase, 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', rows, 1000, { source: 'FRED', series_id: 'WMTSECL1' });
     }
+  } catch (e: any) {
+    console.error('[TreasurySupply] Error fetching WMTSECL1:', e.message);
   }
 
-  // Both inputs must be real observations; no defaults are substituted.
+  // Primary dealer net positions in Treasuries excl. TIPS (NY Fed, weekly, USD millions).
+  // The FRED id used previously (PDINTT) does not exist.
+  try {
+    const rows = await fetchNyFedDealerSeries('PDPOSGST-TOT');
+    count += await upsertSeries(supabase, 'PRIMARY_DEALER_UST_INVENTORY_BN', rows, 1000, { source: 'NY Fed Primary Dealer Statistics', series_id: 'PDPOSGST-TOT' });
+  } catch (e: any) {
+    console.error('[TreasurySupply] Error fetching NY Fed PDPOSGST-TOT:', e.message);
+  }
+
+  // Latest real 10-Year auction bid-to-cover (no default when none is available).
   const auction = await latestTenYearAuction(supabase);
-  if (!auction) {
-    console.warn('[TreasurySupply] No 10-Year auction result available; skipping bid-to-cover and absorption stress.');
-    return count;
+  if (auction) {
+    await supabase.from('metric_observations').upsert([{
+      metric_id: 'UST_AUCTION_BID_TO_COVER_10Y',
+      as_of_date: auction.auction_date,
+      value: auction.bid_to_cover,
+      last_updated_at: new Date().toISOString(),
+      metadata: { source: 'us_treasury_auctions', term: '10-Year' },
+    }], { onConflict: 'metric_id, as_of_date' });
+    count += 1;
+  } else {
+    console.warn('[TreasurySupply] No 10-Year auction result available; bid-to-cover not written.');
   }
 
-  await supabase.from('metric_observations').upsert([{
-    metric_id: 'UST_AUCTION_BID_TO_COVER_10Y',
-    as_of_date: auction.auction_date,
-    value: auction.bid_to_cover,
-    last_updated_at: new Date().toISOString(),
-    metadata: { source: 'us_treasury_auctions', term: '10-Year' },
-  }], { onConflict: 'metric_id, as_of_date' });
-  count += 1;
-
-  if (!dealerInventory) {
-    console.warn('[TreasurySupply] No primary dealer inventory observation; skipping absorption stress.');
-    return count;
-  }
-
-  // Composite PRIMARY_DEALER_ABSORPTION_STRESS (0-100), dated to the newer of its two inputs.
-  const stressScore = Math.min(100, Math.max(0, Math.round(
-    ((dealerInventory.value - 180) / 2.5) + ((2.65 - auction.bid_to_cover) * 50)
-  )));
-  const asOf = dealerInventory.date > auction.auction_date ? dealerInventory.date : auction.auction_date;
-
-  await supabase.from('metric_observations').upsert([{
-    metric_id: 'PRIMARY_DEALER_ABSORPTION_STRESS',
-    as_of_date: asOf,
-    value: stressScore,
-    last_updated_at: new Date().toISOString(),
-    metadata: {
-      formula: 'Dealer Inventory Strain + 10Y Auction Tail Severity',
-      inputs: {
-        primary_dealer_inventory_bn: dealerInventory.value,
-        primary_dealer_inventory_date: dealerInventory.date,
-        bid_to_cover_10y: auction.bid_to_cover,
-        auction_date_10y: auction.auction_date,
-      },
-    },
-  }], { onConflict: 'metric_id, as_of_date' });
-  count += 1;
+  // PRIMARY_DEALER_ABSORPTION_STRESS is no longer computed: its thresholds ((inventory - 180) / 2.5)
+  // were tuned to placeholder inputs and saturate at 100 on real NY Fed positions (~$440B).
+  // It stays unavailable until the score is recalibrated on real history.
 
   return count;
 }
