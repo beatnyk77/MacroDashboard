@@ -35,19 +35,22 @@ export const useUSTreasuryAuctions = () => {
     });
 };
 
+// Freshness comes from the auction rows themselves: ingest-us-macro?task=auctions logs to
+// ingestion_logs under the shared 'ingest-us-macro' name, so no log row identifies an auctions
+// run. updated_at is bumped by trigger on every upsert, so its max is the last successful write.
 export const useAuctionHealth = () => {
   return useQuery({
     queryKey: ['auction-ingestion-health'],
     queryFn: async () => {
       const { data, error } = await supabase
-        .from('ingestion_runs')
-        .select('*')
-        .eq('job_name', 'ingest-us-macro-auctions')
-        .order('started_at', { ascending: false })
+        .from('us_treasury_auctions')
+        .select('updated_at, auction_date')
+        .order('updated_at', { ascending: false })
         .limit(1);
 
       if (error) throw error;
-      return data[0];
+      const row = data[0];
+      return row ? { finished_at: row.updated_at as string, latest_auction_date: row.auction_date as string } : undefined;
     },
     refetchInterval: 1000 * 30, // Poll every 30s during sync
   });

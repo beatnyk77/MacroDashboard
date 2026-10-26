@@ -19,27 +19,27 @@ export function useIngestionHealth() {
         'generate-monthly-regime-digest'
       ];
       
-      const { data, error } = await supabase
-        .from('ingestion_runs')
-        .select('job_name, status, finished_at')
-        .in('job_name', jobs)
-        .order('finished_at', { ascending: false });
+      // serveIngest functions log to ingestion_logs; ingestion_runs has not been written since
+      // 2026-08. One query per job so a frequently-running job cannot crowd the others out.
+      const results = await Promise.all(jobs.map(async (job): Promise<IngestionRun | null> => {
+        const { data, error } = await supabase
+          .from('ingestion_logs')
+          .select('completed_at')
+          .eq('function_name', job)
+          .eq('status', 'success')
+          .not('completed_at', 'is', null)
+          .order('completed_at', { ascending: false })
+          .limit(1);
 
-      if (error) {
-        console.warn('[useIngestionHealth] fetch failed:', error.message);
-        return [];
-      }
-
-      // Get latest success per job
-      const latestSuccess: Record<string, IngestionRun> = {};
-      // TODO(types): ingestion_runs.status is string in schema; cast to known union at runtime
-      (data as unknown as IngestionRun[]).forEach((run) => {
-        if (run.status === 'success' && !latestSuccess[run.job_name]) {
-          latestSuccess[run.job_name] = run;
+        if (error) {
+          console.warn(`[useIngestionHealth] fetch failed for ${job}:`, error.message);
+          return null;
         }
-      });
+        const row = data?.[0];
+        return row ? { job_name: job, status: 'success', finished_at: row.completed_at as string } : null;
+      }));
 
-      return Object.values(latestSuccess);
+      return results.filter((run): run is IngestionRun => run !== null);
     },
     refetchInterval: 1000 * 60 * 5, // 5 minutes
     staleTime: 1000 * 60, // 1 minute
