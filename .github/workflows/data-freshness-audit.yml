@@ -1,0 +1,60 @@
+name: Data Freshness Audit (read-only)
+
+# Read-only diagnostics: pg_cron jobs, their recent runs, recent edge-function HTTP
+# responses (pg_net), deployed edge functions, and per-metric freshness. Writes nothing.
+on:
+  workflow_dispatch:
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Install psql
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq postgresql-client
+
+      - name: Deployed edge functions (Management API)
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+        run: |
+          set -euo pipefail
+          curl -s -H "Authorization: Bearer ${SUPABASE_ACCESS_TOKEN}" \
+            "https://api.supabase.com/v1/projects/${SUPABASE_PROJECT_ID}/functions" \
+            | python3 -c "import json,sys; fs=json.load(sys.stdin); print(len(fs),'functions'); [print(f\"{f['slug']:44} v{f.get('version')} {f.get('status')} updated={str(f.get('updated_at'))[:10]}\") for f in sorted(fs,key=lambda f:f['slug'])]"
+
+      - name: Cron jobs, runs, and pg_net responses
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+          export PGOPTIONS='-c default_transaction_read_only=on'
+          DB="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+          q() { echo; echo "=== $1 ==="; psql "$DB" -v ON_ERROR_STOP=1 -P pager=off -c "$2"; }
+
+          q "cron jobs" "
+            SELECT jobid, jobname, schedule, active,
+                   COALESCE(substring(command from 'functions/v1/([a-z0-9-]+)'), left(regexp_replace(command, '\s+', ' ', 'g'), 70)) AS target
+            FROM cron.job ORDER BY jobname;"
+
+          q "cron runs per job (last 14 days)" "
+            SELECT j.jobname,
+                   count(*) FILTER (WHERE d.status = 'succeeded') AS ok,
+                   count(*) FILTER (WHERE d.status <> 'succeeded') AS failed,
+                   max(d.start_time)::timestamp(0) AS last_run,
+                   left(max(d.return_message) FILTER (WHERE d.status <> 'succeeded'), 90) AS sample_error
+            FROM cron.job j
+            LEFT JOIN cron.job_run_details d ON d.jobid = j.jobid AND d.start_time > now() - interval '14 days'
+            GROUP BY j.jobname ORDER BY j.jobname;"
+
+          q "pg_net edge responses by status (last 3 days)" "
+            SELECT status_code, count(*), left(max(content), 120) AS sample
+            FROM net._http_response WHERE created > now() - interval '3 days'
+            GROUP BY status_code ORDER BY 2 DESC;" || true
+
+          q "metrics without a recent observation, by last write date" "
+            SELECT max(last_updated_at)::date AS last_write, count(*) AS metrics, string_agg(metric_id, ', ' ORDER BY metric_id) AS ids
+            FROM vw_latest_metrics WHERE staleness_flag <> 'fresh'
+            GROUP BY last_updated_at::date ORDER BY 1 DESC NULLS LAST;"
