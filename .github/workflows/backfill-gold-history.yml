@@ -1,0 +1,50 @@
+name: Backfill Gold History (World Bank Pink Sheet)
+
+# One-off / on-demand: fills months missing from GOLD_PRICE_USD and RATIO_M2_GOLD
+# (Jul 1969 – Apr 1983 at time of writing) from the World Bank monthly gold price.
+# Insert-only; validates against stored data before writing. See scripts/backfill_gold_history.py.
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (validate without writing to Supabase)'
+        type: boolean
+        required: false
+        default: true
+
+concurrency:
+  group: backfill-gold-history
+  cancel-in-progress: false
+
+jobs:
+  backfill:
+    name: Backfill gold price history
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install "openpyxl>=3.1,<4"
+
+      - name: Run backfill
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL || secrets.VITE_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY || secrets.SUPABASE_SERVICE_KEY }}
+          SUPABASE_PROJECT_REF: debdriyzfcwvgrhzzzre
+        run: |
+          set -euo pipefail
+          ARGS=()
+          if [ "${{ inputs.dry_run }}" = "true" ]; then
+            ARGS+=(--dry-run)
+          fi
+          python scripts/backfill_gold_history.py "${ARGS[@]}"
