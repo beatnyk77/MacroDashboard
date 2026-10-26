@@ -60,6 +60,10 @@ jobs:
             FROM net._http_response WHERE created > now() - interval '3 days'
             GROUP BY status_code ORDER BY 2 DESC;" || true
 
+          q "latest edge-function responses (pg_net)" "
+            SELECT created::timestamp(0), status_code, left(content, 400) AS body
+            FROM net._http_response ORDER BY created DESC LIMIT 12;" || true
+
           q "metrics without a recent observation, by last write date" "
             SELECT max(last_updated_at)::date AS last_write, count(*) AS metrics, string_agg(metric_id, ', ' ORDER BY metric_id) AS ids
             FROM vw_latest_metrics WHERE staleness_flag <> 'fresh'

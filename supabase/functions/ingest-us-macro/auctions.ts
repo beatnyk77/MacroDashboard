@@ -143,13 +143,15 @@ export async function processAuctions(supabase: SupabaseClient) {
         // Recent results from TreasuryDirect fill FiscalData's publication lag. Best-effort:
         // if it is unreachable, FiscalData alone is used as before.
         let directRows: any[] = [];
+        let directError: string | null = null;
         try {
             const tdResponse = await withTimeout(fetch(TREASURY_DIRECT_URL), 20000, 'TreasuryDirect Fetch') as Response;
             if (tdResponse.ok) directRows = await tdResponse.json();
-            else console.warn(`TreasuryDirect API returned ${tdResponse.status}; using FiscalData only`);
+            else directError = `HTTP ${tdResponse.status}`;
         } catch (tdError: any) {
-            console.warn(`TreasuryDirect unavailable (${tdError.message}); using FiscalData only`);
+            directError = tdError.message;
         }
+        if (directError) console.warn(`TreasuryDirect unavailable (${directError}); using FiscalData only`);
 
         if (fiscalRows.length === 0 && directRows.length === 0) {
             return { success: true, count: 0, message: 'No new auction data found' };
@@ -157,6 +159,13 @@ export async function processAuctions(supabase: SupabaseClient) {
 
         const results: AuctionRecord[] = [];
         const sourceByKey = new Map<string, string>();
+        const sourceDetails = (rows: AuctionRecord[]) => ({
+            fiscaldata_rows: fiscalRows.length,
+            treasurydirect_rows: directRows.length,
+            treasurydirect_error: directError,
+            latest_auction_date: rows.reduce((max, r) => (r.auction_date > max ? r.auction_date : max), ''),
+            filled_from_treasurydirect: [...sourceByKey.values()].filter((v) => v === 'live_api:treasurydirect').length,
+        });
         // FiscalData first so it stays canonical wherever both sources have results.
         const candidates = [
             ...fiscalRows.map((r) => ({ raw: fromFiscalData(r), source: 'live_api:fiscaldata' })),
@@ -192,10 +201,10 @@ export async function processAuctions(supabase: SupabaseClient) {
                     .upsert(metricRows, { onConflict: 'metric_id, as_of_date' });
                 if (metricError) throw metricError;
             }
-            return { success: true, count: results.length };
+            return { success: true, count: results.length, details: sourceDetails(results) };
         }
 
-        return { success: true, count: 0 };
+        return { success: true, count: 0, details: sourceDetails(results) };
     } catch (error: any) {
         console.error('Auctions processing error:', error);
         return { success: false, error: error.message };
