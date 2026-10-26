@@ -16,10 +16,22 @@ async function fetchTipsYield(fredApiKey: string): Promise<{ date: string; value
   return rows;
 }
 
+/** Latest real 10-Year auction (written by ingest-us-macro?task=auctions). */
+async function latestTenYearAuction(supabase: any): Promise<{ auction_date: string; bid_to_cover: number } | null> {
+  const { data, error } = await supabase
+    .from('us_treasury_auctions')
+    .select('auction_date, bid_to_cover')
+    .eq('term', '10-Year')
+    .order('auction_date', { ascending: false })
+    .limit(1);
+  if (error || !data?.length) return null;
+  const btc = Number(data[0].bid_to_cover);
+  return Number.isFinite(btc) && btc > 0 ? { auction_date: data[0].auction_date, bid_to_cover: btc } : null;
+}
+
 async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Promise<number> {
   let count = 0;
-  let dealerInventoryBn = 285;
-  const bidToCover = 2.48;
+  let dealerInventory: { date: string; value: number } | null = null;
 
   const seriesMap = [
     { id: 'FOREIGN_OFFICIAL_UST_CUSTODY_BN', fredId: 'H0RESH4CGNWW', divisor: 1000 },
@@ -50,7 +62,7 @@ async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Pr
         const { error } = await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
         if (!error) {
           count += obs.length;
-          if (s.id === 'PRIMARY_DEALER_UST_INVENTORY_BN') dealerInventoryBn = obs[0].value;
+          if (s.id === 'PRIMARY_DEALER_UST_INVENTORY_BN') dealerInventory = { date: obs[0].as_of_date, value: obs[0].value };
         }
       }
     } catch (e: any) {
@@ -58,31 +70,48 @@ async function fetchTreasurySupplyMetrics(supabase: any, fredApiKey: string): Pr
     }
   }
 
-  // 10Y Bid to Cover observation
-  const today = new Date().toISOString().split('T')[0];
-  const bidToCoverObs = [{
+  // Both inputs must be real observations; no defaults are substituted.
+  const auction = await latestTenYearAuction(supabase);
+  if (!auction) {
+    console.warn('[TreasurySupply] No 10-Year auction result available; skipping bid-to-cover and absorption stress.');
+    return count;
+  }
+
+  await supabase.from('metric_observations').upsert([{
     metric_id: 'UST_AUCTION_BID_TO_COVER_10Y',
-    as_of_date: today,
-    value: bidToCover,
+    as_of_date: auction.auction_date,
+    value: auction.bid_to_cover,
     last_updated_at: new Date().toISOString(),
-    metadata: { source: 'US_TREASURY_AUCTION' }
-  }];
-  await supabase.from('metric_observations').upsert(bidToCoverObs, { onConflict: 'metric_id, as_of_date' });
+    metadata: { source: 'us_treasury_auctions', term: '10-Year' },
+  }], { onConflict: 'metric_id, as_of_date' });
   count += 1;
 
-  // Composite PRIMARY_DEALER_ABSORPTION_STRESS (0-100)
-  const stressScore = Math.min(100, Math.max(0, Math.round(
-    ((dealerInventoryBn - 180) / 2.5) + ((2.65 - bidToCover) * 50)
-  )));
+  if (!dealerInventory) {
+    console.warn('[TreasurySupply] No primary dealer inventory observation; skipping absorption stress.');
+    return count;
+  }
 
-  const stressObs = [{
+  // Composite PRIMARY_DEALER_ABSORPTION_STRESS (0-100), dated to the newer of its two inputs.
+  const stressScore = Math.min(100, Math.max(0, Math.round(
+    ((dealerInventory.value - 180) / 2.5) + ((2.65 - auction.bid_to_cover) * 50)
+  )));
+  const asOf = dealerInventory.date > auction.auction_date ? dealerInventory.date : auction.auction_date;
+
+  await supabase.from('metric_observations').upsert([{
     metric_id: 'PRIMARY_DEALER_ABSORPTION_STRESS',
-    as_of_date: today,
+    as_of_date: asOf,
     value: stressScore,
     last_updated_at: new Date().toISOString(),
-    metadata: { formula: 'Dealer Inventory Strain + 10Y Auction Tail Severity' }
-  }];
-  await supabase.from('metric_observations').upsert(stressObs, { onConflict: 'metric_id, as_of_date' });
+    metadata: {
+      formula: 'Dealer Inventory Strain + 10Y Auction Tail Severity',
+      inputs: {
+        primary_dealer_inventory_bn: dealerInventory.value,
+        primary_dealer_inventory_date: dealerInventory.date,
+        bid_to_cover_10y: auction.bid_to_cover,
+        auction_date_10y: auction.auction_date,
+      },
+    },
+  }], { onConflict: 'metric_id, as_of_date' });
   count += 1;
 
   return count;

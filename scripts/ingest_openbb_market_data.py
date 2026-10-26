@@ -43,6 +43,16 @@ MARKET_BASKET = [
         "source_url": "https://www.cmegroup.com/markets/metals/precious/gold.html",
     },
     {
+        # Same SI=F close the series was already built from (verified 2026-06-17: 70.696);
+        # feeds RATIO_GOLD_SILVER via populate_gold_ratios().
+        "metric_id": "SILVER_PRICE_USD",
+        "name": "Silver Continuous Futures",
+        "symbol": "SI=F",
+        "unit": "USD/oz",
+        "unit_multiplier": 1.0,
+        "source_url": "https://www.cmegroup.com/markets/metals/precious/silver.html",
+    },
+    {
         "metric_id": "OIL_BRENT_PRICE_USD",
         "name": "Brent Crude Oil Futures",
         "symbol": "BZ=F",

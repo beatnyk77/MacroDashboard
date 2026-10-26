@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from 'vitest';
 import { processFiscal, toFiscalCapacityObservations, toMetricObservations } from './fiscal.ts';
-import { toTenYearAuctionMetricObservations } from './auctions.ts';
+import { fromTreasuryDirect, processAuctions, toAuctionRecord, toTenYearAuctionMetricObservations } from './auctions.ts';
 
 describe('US fiscal FRED ingestion', () => {
     it('maps both comparison series to canonical metric observations', () => {
@@ -110,3 +110,106 @@ describe('US Treasury auction metric ingestion', () => {
         ]));
     });
 });
+
+// Real 2026-10-15 8-Week bill as published by both sources (amounts in USD).
+const FISCALDATA_8W = {
+    auction_date: '2026-10-15', security_type: 'Bill', security_term: '8-Week', original_security_term: '8-Week',
+    bid_to_cover_ratio: '2.260000', high_yield: 'null', total_tendered: '244853623300', total_accepted: '112075623300',
+    primary_dealer_accepted: '48345400000', indirect_bidder_accepted: '47892307000', direct_bidder_accepted: '5817520000',
+};
+const TREASURYDIRECT_8W = {
+    competitiveAuctionCloseDate: '2026-10-15T00:00:00', securityType: 'Bill', securityTerm: '8-Week', originalSecurityTerm: '8-Week',
+    bidToCoverRatio: '2.26', highYield: '', grandTotalParRecognized: '244853623300', grandTotalParAwarded: '112075623300',
+    primaryDealersCompetitiveParAwarded: '48345400000', indirectBiddersCompetitiveParAwarded: '47892307000',
+    directBiddersCompetitiveParAwarded: '5817520000',
+};
+// Auctioned after FiscalData's last published results: FiscalData row has null results.
+const FISCALDATA_5Y_PENDING = {
+    auction_date: '2026-10-22', security_type: 'Note', security_term: '5-Year', original_security_term: '5-Year',
+    bid_to_cover_ratio: 'null', high_yield: 'null', total_tendered: 'null', total_accepted: 'null',
+    primary_dealer_accepted: 'null', indirect_bidder_accepted: 'null', direct_bidder_accepted: 'null',
+};
+const TREASURYDIRECT_5Y = {
+    competitiveAuctionCloseDate: '2026-10-22T00:00:00', securityType: 'Note', securityTerm: '5-Year', originalSecurityTerm: '5-Year',
+    bidToCoverRatio: '2.41', highYield: '2.367', grandTotalParRecognized: '63000000000', grandTotalParAwarded: '26000000000',
+    primaryDealersCompetitiveParAwarded: '3900000000', indirectBiddersCompetitiveParAwarded: '18200000000',
+    directBiddersCompetitiveParAwarded: '3900000000',
+};
+
+function mockSupabase() {
+    const upserts: Record<string, any[]> = {};
+    return {
+        upserts,
+        client: {
+            from: (table: string) => ({
+                upsert: (rows: any[]) => {
+                    upserts[table] = rows;
+                    return Promise.resolve({ error: null });
+                },
+            }),
+        } as any,
+    };
+}
+
+describe('US Treasury auction sources', () => {
+    it('maps TreasuryDirect fields to the same record FiscalData produces', () => {
+        const fromDirect = toAuctionRecord(fromTreasuryDirect(TREASURYDIRECT_8W));
+        expect(fromDirect).toEqual(expect.objectContaining({
+            auction_date: '2026-10-15', security_type: 'Bill', term: '8-Week', bid_to_cover: 2.26,
+            total_tendered: 244853623300, total_accepted: 112075623300, high_yield: null,
+        }));
+        expect(fromDirect!.primary_dealer_pct).toBeCloseTo(43.1364, 3);
+        expect(fromDirect!.indirect_bidder_pct).toBeCloseTo(42.7321, 3);
+    });
+
+    it('skips auctions whose results are not published yet', () => {
+        expect(toAuctionRecord({
+            auctionDate: '2026-10-22', securityType: 'Note', securityTerm: '5-Year', originalTerm: '5-Year',
+            bidToCover: 'null', highYield: 'null', totalTendered: 'null', totalAccepted: 'null',
+            primaryDealerAccepted: 'null', indirectBidderAccepted: 'null', directBidderAccepted: 'null',
+        })).toBeNull();
+    });
+
+    it('keeps FiscalData canonical and fills its publication lag from TreasuryDirect', async () => {
+        vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(String(url).includes('fiscaldata')
+                ? { data: [FISCALDATA_5Y_PENDING, FISCALDATA_8W] }
+                : [TREASURYDIRECT_5Y, { ...TREASURYDIRECT_8W, bidToCoverRatio: '9.99' }]),
+        })));
+        const { client, upserts } = mockSupabase();
+        const result = await processAuctions(client);
+        vi.unstubAllGlobals();
+
+        expect(result).toEqual(expect.objectContaining({ success: true, count: 2 }));
+        const rows = upserts['us_treasury_auctions'];
+        expect(rows.find((r) => r.term === '8-Week').bid_to_cover).toBe(2.26);
+        expect(rows.find((r) => r.term === '5-Year')).toEqual(expect.objectContaining({ auction_date: '2026-10-22', bid_to_cover: 2.41 }));
+    });
+
+    it('falls back to FiscalData alone when TreasuryDirect is unavailable', async () => {
+        vi.stubGlobal('fetch', vi.fn((url: string) => String(url).includes('fiscaldata')
+            ? Promise.resolve({ ok: true, json: () => Promise.resolve({ data: [FISCALDATA_8W] }) })
+            : Promise.reject(new Error('network down'))));
+        const { client, upserts } = mockSupabase();
+        const result = await processAuctions(client);
+        vi.unstubAllGlobals();
+
+        expect(result).toEqual(expect.objectContaining({ success: true, count: 1 }));
+        expect(upserts['us_treasury_auctions']).toHaveLength(1);
+    });
+
+    it('labels 10-Year metric observations with the source that supplied them', async () => {
+        const tenYearDirect = { ...TREASURYDIRECT_5Y, securityTerm: '10-Year', originalSecurityTerm: '10-Year' };
+        vi.stubGlobal('fetch', vi.fn((url: string) => Promise.resolve({
+            ok: true,
+            json: () => Promise.resolve(String(url).includes('fiscaldata') ? { data: [] } : [tenYearDirect]),
+        })));
+        const { client, upserts } = mockSupabase();
+        await processAuctions(client);
+        vi.unstubAllGlobals();
+
+        expect(upserts['metric_observations'].every((r) => r.source_ref === 'live_api:treasurydirect')).toBe(true);
+    });
+});
+

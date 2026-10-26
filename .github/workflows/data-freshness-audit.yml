@@ -1,9 +1,15 @@
-name: Data Freshness Audit (read-only)
+name: Data Freshness Audit
 
-# Read-only diagnostics: pg_cron jobs, their recent runs, recent edge-function HTTP
-# responses (pg_net), deployed edge functions, and per-metric freshness. Writes nothing.
+# Diagnostics: pg_cron jobs, their recent runs, recent edge-function HTTP responses (pg_net),
+# deployed edge functions, and per-metric freshness. The audit queries run read-only.
+# Optionally triggers named edge functions now, with the same auth headers as their cron jobs.
 on:
   workflow_dispatch:
+    inputs:
+      invoke_functions:
+        description: 'Comma-separated function paths to trigger now (e.g. ingest-us-macro?task=auctions). Empty = audit only.'
+        required: false
+        default: ''
 
 jobs:
   audit:
@@ -58,3 +64,34 @@ jobs:
             SELECT max(last_updated_at)::date AS last_write, count(*) AS metrics, string_agg(metric_id, ', ' ORDER BY metric_id) AS ids
             FROM vw_latest_metrics WHERE staleness_flag <> 'fresh'
             GROUP BY last_updated_at::date ORDER BY 1 DESC NULLS LAST;"
+
+      - name: Trigger requested functions
+        if: ${{ inputs.invoke_functions != '' }}
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+          INVOKE_FUNCTIONS: ${{ inputs.invoke_functions }}
+        run: |
+          set -euo pipefail
+          ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+          DB="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+          IFS=',' read -ra FNS <<< "$INVOKE_FUNCTIONS"
+          for fn in "${FNS[@]}"; do
+            fn="$(echo "$fn" | xargs)"
+            [[ "$fn" =~ ^[a-z0-9-]+(\?[a-z0-9_=&-]+)?$ ]] || { echo "::error::invalid function path: $fn"; exit 1; }
+            echo "Triggering $fn"
+            # psql expands :'fn' (quoted literal) only in SQL read from stdin, not in -c.
+            psql "$DB" -v ON_ERROR_STOP=1 -v fn="$fn" -t -A <<SQL
+              SELECT net.http_post(
+                url := 'https://' || '${SUPABASE_PROJECT_ID}' || '.supabase.co/functions/v1/' || :'fn',
+                headers := jsonb_build_object(
+                  'Content-Type', 'application/json',
+                  'Authorization', 'Bearer ' || COALESCE(
+                    (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SUPABASE_SERVICE_ROLE_KEY' LIMIT 1),
+                    (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'SERVICE_ROLE_KEY' LIMIT 1)),
+                  'x-cron-secret', (SELECT decrypted_secret FROM vault.decrypted_secrets WHERE name = 'CRON_SECRET' LIMIT 1)),
+                body := '{}'::jsonb,
+                timeout_milliseconds := 150000);
+          SQL
+          done
+

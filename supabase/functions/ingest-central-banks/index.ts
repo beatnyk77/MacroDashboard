@@ -142,43 +142,20 @@ async function ingestPBOC(supabase: any, fredApiKey: string): Promise<number> {
     }
   }
 
-  const today = new Date().toISOString().split('T')[0];
-  const asOfDate = fetchedValues['M2_GROWTH']?.date || today;
-  const mlf_rate = 2.00;
-  const reverse_repo_7d = 1.50;
-  const rrr_rate_large = 9.50;
-  const fed_funds = 4.33;
-  const m2Growth = fetchedValues['M2_GROWTH']?.value ?? 7.0;
-  const pbocVsFedGap = parseFloat((mlf_rate - fed_funds).toFixed(4));
-  let regime_label = 'Neutral';
-  if (m2Growth > 8.0 || mlf_rate < 2.2) regime_label = 'Easing';
-  else if (m2Growth < 6.0 || mlf_rate > 3.0) regime_label = 'Tightening';
-  const net_liquidity_signal = parseFloat((m2Growth - 6.5).toFixed(4));
-
-  const pbocRecord = {
-    date: asOfDate,
-    mlf_rate,
-    rrr_rate_large,
-    reverse_repo_7d,
-    m2_growth_yoy: m2Growth,
-    net_liquidity_signal,
-    regime_label,
-    pboc_vs_fed_gap: pbocVsFedGap,
-    source: 'FRED/PBoC',
-    last_updated_at: new Date().toISOString(),
-  };
-
-  await supabase.from('china_pboc_ops').upsert(pbocRecord, { onConflict: 'date' });
+  // Only fetched observations are written. The PBOC policy rates (MLF, 7-day reverse repo,
+  // RRR, policy rate) have no live source here; they were previously hard-coded constants
+  // re-dated to every run, so they are no longer written, and neither is anything derived
+  // from them (PBOC-vs-Fed gap, regime label, china_pboc_ops row).
+  const m2 = fetchedValues['M2_GROWTH'];
+  if (!m2) {
+    console.warn('[CentralBanks/PBOC] No China M2 observation from FRED; nothing written.');
+    return 0;
+  }
 
   const metricUpserts = [
-    { metric_id: 'CN_M2_GROWTH', value: m2Growth, as_of_date: asOfDate },
-    { metric_id: 'CN_MLF_RATE', value: mlf_rate, as_of_date: asOfDate },
-    { metric_id: 'CN_RRR_LARGE', value: rrr_rate_large, as_of_date: asOfDate },
-    { metric_id: 'CN_REVERSE_REPO_7D', value: reverse_repo_7d, as_of_date: asOfDate },
-    { metric_id: 'CN_PBOC_FED_GAP', value: pbocVsFedGap, as_of_date: asOfDate },
-    { metric_id: 'CN_NET_LIQUIDITY', value: net_liquidity_signal, as_of_date: asOfDate },
-    { metric_id: 'CN_POLICY_RATE', value: mlf_rate, as_of_date: asOfDate },
-  ].map((r) => ({ ...r, last_updated_at: new Date().toISOString() }));
+    { metric_id: 'CN_M2_GROWTH', value: m2.value, as_of_date: m2.date },
+    { metric_id: 'CN_NET_LIQUIDITY', value: parseFloat((m2.value - 6.5).toFixed(4)), as_of_date: m2.date },
+  ].map((r) => ({ ...r, last_updated_at: new Date().toISOString(), metadata: { source: 'FRED', series_id: 'MYAGM2CNM189N' } }));
 
   const { error } = await supabase.from('metric_observations').upsert(metricUpserts, { onConflict: 'metric_id, as_of_date' });
   if (error) throw error;
@@ -260,56 +237,68 @@ async function ingestBOEAndFX(supabase: any, fredApiKey: string): Promise<number
   return results.length;
 }
 
+/** Latest stored observation, or null — never a default. */
+async function latestObservation(supabase: any, metricId: string): Promise<{ value: number; as_of_date: string } | null> {
+  const { data } = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', metricId)
+    .order('as_of_date', { ascending: false }).limit(1).maybeSingle();
+  const value = Number(data?.value);
+  return data && Number.isFinite(value) ? { value, as_of_date: data.as_of_date } : null;
+}
+
+async function latestFred(seriesId: string, fredApiKey: string): Promise<{ value: number; date: string } | null> {
+  const res = await fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=${seriesId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=10`)
+    .then((r) => r.json()).catch(() => null);
+  const obs = (res?.observations ?? []).find((o: any) => o.value !== '.' && Number.isFinite(parseFloat(o.value)));
+  return obs ? { value: parseFloat(obs.value), date: obs.date } : null;
+}
+
+/**
+ * Fed net liquidity + ECB + BOJ + BOE balance sheets in USD trillions. Written only when every
+ * input is a real observation; previously each input had a hard-coded fallback and a constant
+ * PBOC term (30.52T CNY), so that term is excluded. Dated to the oldest input.
+ */
 async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string): Promise<number> {
   try {
-    // Fetch latest Fed components
-    const [walclRes, rrpRes, tgaRes] = await Promise.all([
-      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=WALCL&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
-      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=RRPONTSYD&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
-      fetch(`https://api.stlouisfed.org/fred/series/observations?series_id=WTREGEN&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=1`).then(r => r.json()).catch(() => null),
+    const [walcl, rrp, tga] = await Promise.all([
+      latestFred('WALCL', fredApiKey),
+      latestFred('RRPONTSYD', fredApiKey),
+      latestFred('WTREGEN', fredApiKey),
     ]);
+    const [ecb, eurUsd, boj, usdJpy, boe, gbpUsd] = await Promise.all([
+      latestObservation(supabase, 'ECB_TOTAL_ASSETS_MEUR'),
+      latestObservation(supabase, 'FX_EUR_USD'),
+      latestObservation(supabase, 'BOJ_TOTAL_ASSETS_TRJPY'),
+      latestObservation(supabase, 'FX_USD_JPY'),
+      latestObservation(supabase, 'BOE_TOTAL_ASSETS_MN_GBP'),
+      latestObservation(supabase, 'FX_GBP_USD'),
+    ]);
+    if (!walcl || !rrp || !tga || !ecb || !eurUsd || !boj || !usdJpy || !boe || !gbpUsd) {
+      console.warn('[CentralBanks/GlobalLiquidityComposite] Missing input observation; composite not written.');
+      return 0;
+    }
 
-    const fedAssetsMn = parseFloat(walclRes?.observations?.[0]?.value || '6840000');
-    const rrpMn = parseFloat(rrpRes?.observations?.[0]?.value || '180000') * 1000;
-    const tgaMn = parseFloat(tgaRes?.observations?.[0]?.value || '740000') * 1000;
-    const usNetLiqTr = ((fedAssetsMn - rrpMn - tgaMn) / 1000000); // in Trillions USD (~5.9T)
-
-    // Latest ECB assets in Millions EUR (~6,420,000 MEUR)
-    const ecbRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'ECB_TOTAL_ASSETS_MEUR').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const eurUsdRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_EUR_USD').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const ecbAssetsTr = ((ecbRes.data?.value || 6420000) * (eurUsdRes.data?.value || 1.085)) / 1000000; // ~6.96T USD
-
-    // Latest BOJ assets in Trillions JPY (~752 TRJPY)
-    const bojRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'BOJ_TOTAL_ASSETS_TRJPY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const usdJpyRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_USD_JPY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const bojAssetsTr = (bojRes.data?.value || 752) / (usdJpyRes.data?.value || 152.0); // ~4.94T USD
-
-    // Latest BOE assets in Millions GBP (~892,000 MN GBP)
-    const boeRes = await supabase.from('metric_observations').select('value, as_of_date').eq('metric_id', 'BOE_TOTAL_ASSETS_MN_GBP').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const gbpUsdRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_GBP_USD').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const boeAssetsTr = ((boeRes.data?.value || 892000) * (gbpUsdRes.data?.value || 1.28)) / 1000000; // ~1.14T USD
-
-    // PBOC Total Assets proxy (~30.5 Trillion CNY / 7.24 USDCNY ~ 4.21T USD)
-    const usdCnyRes = await supabase.from('metric_observations').select('value').eq('metric_id', 'FX_USD_CNY').order('as_of_date', { ascending: false }).limit(1).maybeSingle();
-    const pbocAssetsTr = 30.52 / (usdCnyRes.data?.value || 7.24); // ~4.21T USD
-
-    const globalNetLiquidityTr = Math.round((usNetLiqTr + ecbAssetsTr + bojAssetsTr + boeAssetsTr + pbocAssetsTr) * 100) / 100;
-    const today = new Date().toISOString().split('T')[0];
+    const usNetLiqTr = (walcl.value - rrp.value * 1000 - tga.value * 1000) / 1_000_000;
+    const ecbAssetsTr = (ecb.value * eurUsd.value) / 1_000_000;
+    const bojAssetsTr = boj.value / usdJpy.value;
+    const boeAssetsTr = (boe.value * gbpUsd.value) / 1_000_000;
+    const globalNetLiquidityTr = Math.round((usNetLiqTr + ecbAssetsTr + bojAssetsTr + boeAssetsTr) * 100) / 100;
+    const inputDates = [walcl.date, rrp.date, tga.date, ecb.as_of_date, boj.as_of_date, boe.as_of_date];
+    const asOf = inputDates.sort()[0];
 
     const observation = {
       metric_id: 'GLOBAL_NET_LIQUIDITY_USD_TR',
-      as_of_date: today,
+      as_of_date: asOf,
       value: globalNetLiquidityTr,
       last_updated_at: new Date().toISOString(),
       metadata: {
-        formula: 'Fed Net (WALCL - RRP - TGA) + ECB (USD) + BOJ (USD) + BOE (USD) + PBOC (USD)',
+        formula: 'Fed Net (WALCL - RRP - TGA) + ECB (USD) + BOJ (USD) + BOE (USD)',
         components: {
           us_net_liq_tr: Math.round(usNetLiqTr * 100) / 100,
           ecb_usd_tr: Math.round(ecbAssetsTr * 100) / 100,
           boj_usd_tr: Math.round(bojAssetsTr * 100) / 100,
           boe_usd_tr: Math.round(boeAssetsTr * 100) / 100,
-          pboc_usd_tr: Math.round(pbocAssetsTr * 100) / 100,
         },
+        input_dates: { walcl: walcl.date, rrp: rrp.date, tga: tga.date, ecb: ecb.as_of_date, boj: boj.as_of_date, boe: boe.as_of_date },
         unit: 'Trillion USD',
       },
     };
@@ -319,67 +308,6 @@ async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string
     return 1;
   } catch (err: any) {
     console.error('[CentralBanks/GlobalLiquidityComposite] Error:', err.message);
-    return 0;
-  }
-}
-
-async function ingestFxCarryAndBasis(supabase: any, _fredApiKey: string): Promise<number> {
-  try {
-    const today = new Date().toISOString().split('T')[0];
-    const eurSwapBasis = -18.4;
-    const jpySwapBasis = -42.8;
-
-    // G7 Real Policy Rate Matrix calculation (Policy Rate - CPI YoY)
-    const g7Matrix = [
-      { economy: 'United States', policyRate: 4.33, cpiYoY: 2.7, realRate: 1.63 },
-      { economy: 'Eurozone', policyRate: 3.25, cpiYoY: 2.2, realRate: 1.05 },
-      { economy: 'Japan', policyRate: 0.25, cpiYoY: 2.8, realRate: -2.55 },
-      { economy: 'United Kingdom', policyRate: 4.75, cpiYoY: 2.6, realRate: 2.15 },
-      { economy: 'Canada', policyRate: 3.75, cpiYoY: 2.0, realRate: 1.75 },
-    ];
-
-    // JPY Carry Unwind Risk Score (0-100)
-    // High US-JP yield gap + negative JPY swap basis spread + rate hike expectations = high unwind risk
-    const jpyUnwindScore = Math.min(100, Math.max(0, Math.round(
-      (Math.abs(jpySwapBasis) * 0.95) + ((4.33 - 0.25) * 6.5)
-    )));
-
-    const observations = [
-      {
-        metric_id: 'EURUSD_3M_SWAP_BASIS_BPS',
-        as_of_date: today,
-        value: eurSwapBasis,
-        last_updated_at: new Date().toISOString(),
-        metadata: { unit: 'bps', benchmark: '3M Cross Currency Basis Swap' }
-      },
-      {
-        metric_id: 'JPYUSD_3M_SWAP_BASIS_BPS',
-        as_of_date: today,
-        value: jpySwapBasis,
-        last_updated_at: new Date().toISOString(),
-        metadata: { unit: 'bps', benchmark: '3M Cross Currency Basis Swap' }
-      },
-      {
-        metric_id: 'G7_REAL_POLICY_RATE_MATRIX',
-        as_of_date: today,
-        value: 1.63, // US Real Rate anchor
-        last_updated_at: new Date().toISOString(),
-        metadata: { matrix: g7Matrix }
-      },
-      {
-        metric_id: 'JPY_CARRY_UNWIND_RISK_SCORE',
-        as_of_date: today,
-        value: jpyUnwindScore,
-        last_updated_at: new Date().toISOString(),
-        metadata: { formula: 'Normalized 3M Swap Basis + US-JP Real Yield Differential' }
-      }
-    ];
-
-    const { error } = await supabase.from('metric_observations').upsert(observations, { onConflict: 'metric_id, as_of_date' });
-    if (error) throw error;
-    return observations.length;
-  } catch (err: any) {
-    console.error('[CentralBanks/FxCarry] Error:', err.message);
     return 0;
   }
 }
@@ -419,10 +347,9 @@ serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> 
     totalUpserted += await computeGlobalLiquidityComposite(supabase, fredApiKey);
     processed.push('boe_fx_global_composite');
   }
-  if (source === 'fx_carry' || source === 'all') {
-    totalUpserted += await ingestFxCarryAndBasis(supabase, fredApiKey);
-    processed.push('fx_carry_matrix');
-  }
+  // fx_carry (3M swap bases, G7 real-rate matrix, JPY carry-unwind score) was removed on
+  // 2026-10-26: it wrote hard-coded constants as daily observations. Those metrics stay
+  // unavailable until a real cross-currency basis source is wired in.
 
   return {
     ok: true,
