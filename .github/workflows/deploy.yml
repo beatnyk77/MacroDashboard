@@ -39,6 +39,16 @@ jobs:
     - name: Type check
       run: npx tsc --noEmit
 
+    # The scheduled ingestion workflows run these on Python 3.11; a 3.12-only syntax error
+    # (backslash in an f-string) kept them failing silently from September 2026.
+    - name: Use Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Compile ingestion scripts (Python 3.11)
+      run: python -m py_compile scripts/ingest_openbb_market_data.py scripts/ingest_cftc_cot.py scripts/backfill_gold_history.py
+
     - name: Setup Supabase CLI
       uses: supabase/setup-cli@v1
       with:

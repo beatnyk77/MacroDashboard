@@ -335,7 +335,7 @@ export const METRICS_CATALOG: MetricEntry[] = [
         formula: 'M2/Gold = US M2 money stock (USD billions) ÷ Gold price (USD per troy ounce), monthly',
         components: [
             'M2SL – US M2 money stock, seasonally adjusted, monthly (Federal Reserve H.6)',
-            'Gold price – monthly last print of the stored gold price history, USD/oz',
+            'Gold price – monthly last print of the stored gold price history, USD/oz (Jul 1969–Apr 1983 from the World Bank Pink Sheet)',
             'Both legs are aligned by calendar month before dividing',
         ],
         intuition: `The ratio asks how many ounces of gold the US broad money stock would buy, scaled to billions of
@@ -352,7 +352,7 @@ export const METRICS_CATALOG: MetricEntry[] = [
         ],
         relatedPage: '/methods/m2-gold-ratio',
         relatedPageLabel: 'Deep Dive: M2/Gold Methodology',
-        sources: ['FRED (M2SL)', 'Gold price history (stored series)'],
+        sources: ['FRED (M2SL)', 'Gold price history (stored series)', 'World Bank Pink Sheet (CC BY 4.0)'],
     },
     {
         id: 'fed-monetization-ratio',
@@ -859,18 +859,18 @@ export const METRICS_CATALOG: MetricEntry[] = [
         category: 'Precious Metals',
         formula: 'Real gold(t) = Gold price(t) × CPI(latest month) / CPI(t)',
         components: [
-            'Gold price – monthly last print of the stored gold price history (USD/oz)',
+            'Gold price – monthly last print of the stored gold price history (USD/oz); Jul 1969–Apr 1983 from the World Bank Pink Sheet monthly average of the London PM fix',
             'CPIAUCSL – US consumer price index, all urban consumers, seasonally adjusted',
         ],
-        intuition: `Nominal gold records say little on their own: a dollar in 2011 bought more than a dollar today.
-        Deflating by CPI expresses every month's price in the purchasing power of the latest month, so past peaks
-        can be compared directly with the current price.`,
+        intuition: `Nominal gold records say little on their own: $675, the January 1980 monthly average, bought far
+        more than $675 does today. Deflating by CPI expresses every month's price in the purchasing power of the
+        latest month, so the 1980 and 2011 peaks can be compared directly with the current price.`,
         institutionalUse: `Real gold is used to judge whether a nominal record is also a real one, and alongside real
         interest rates to separate a monetary bid for gold from a simple inflation pass-through.`,
         interpretation: [],
         relatedPage: '/metrics/m2-gold-ratio/',
         relatedPageLabel: 'M2 to gold ratio dossier',
-        sources: ['Gold price history (stored series)', 'FRED (CPIAUCSL)'],
+        sources: ['Gold price history (stored series)', 'World Bank Pink Sheet (CC BY 4.0)', 'FRED (CPIAUCSL)'],
     },
     {
         id: 'spx-gold-ratio',

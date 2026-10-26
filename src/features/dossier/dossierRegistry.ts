@@ -147,9 +147,9 @@ export const DOSSIERS: DossierSpec[] = [
         id: 'm2-gold-ratio',
         pillar: 'Gold & reserves',
         seoTitle: 'M2 to Gold Ratio Chart Since 1959: Is Gold Cheap vs Money?',
-        seoDescription: 'US M2 money supply divided by the gold price since 1959 — percentile, last time at this level, and what the ratio did after Lehman, the 2011 gold high, and 2020.',
+        seoDescription: 'US M2 money supply divided by the gold price since 1959 — percentile, last time at this level, and what the ratio did after the Nixon shock, the 1980 peak, the 2011 gold high, and 2020.',
         h1: 'M2 to gold ratio: chart and history since 1959',
-        // Computed from components: the stored RATIO_M2_GOLD series has no observations Jun 1969–May 1983.
+        // Computed from components: the stored RATIO_M2_GOLD series skips individual months after 2010.
         source: { kind: 'ratio', numerator: MID.US_M2, denominator: MID.GOLD_PRICE_USD },
         liveMetricId: MID.RATIO_M2_GOLD,
         unit: 'ratio',
@@ -158,14 +158,14 @@ export const DOSSIERS: DossierSpec[] = [
         episodes: ['nixonShock', 'goldPeak1980', 'dotcomPeak', 'lehman', 'goldPeak2011', 'covidQe', 'russiaReserves'],
         compare: ['real-gold-price', 'spx-gold-ratio', 'us-m2-money-supply'],
         glossary: { to: '/glossary/m2-gold-ratio/', label: 'M2/gold ratio' },
-        upstream: [fred('M2SL'), { label: 'Gold price history (stored series)', url: 'https://graphiquestor.com/data-sources/' }],
+        upstream: [fred('M2SL'), { label: 'World Bank Pink Sheet (gold, 1960 onward)', url: 'https://www.worldbank.org/en/research/commodity-markets' }],
     },
     {
         id: 'real-gold-price',
         pillar: 'Gold & reserves',
-        seoTitle: 'Inflation-Adjusted Gold Price Chart: Gold in Today’s Dollars',
-        seoDescription: 'Gold in today’s dollars — the nominal price deflated by US CPI, monthly. Compare the 2011 peak with today on a like-for-like basis, with percentile and episode outcomes.',
-        h1: 'Gold price adjusted for inflation',
+        seoTitle: 'Inflation-Adjusted Gold Price Chart Since 1947',
+        seoDescription: 'Gold in today’s dollars — the nominal price deflated by US CPI, monthly since 1947. Compare the 1980 and 2011 peaks with today on a like-for-like basis.',
+        h1: 'Gold price adjusted for inflation since 1947',
         source: { kind: 'real', metricId: MID.GOLD_PRICE_USD, deflator: MID.US_CPI_INDEX },
         unit: 'usd-oz',
         decimals: 0,
@@ -173,7 +173,7 @@ export const DOSSIERS: DossierSpec[] = [
         unitNote: 'in latest-month CPI dollars',
         episodes: ['nixonShock', 'oilEmbargo', 'goldPeak1980', 'dotcomPeak', 'lehman', 'goldPeak2011', 'covidQe', 'russiaReserves'],
         compare: ['m2-gold-ratio', 'real-fed-funds-rate', 'gold-silver-ratio'],
-        upstream: [fred('CPIAUCSL'), { label: 'Gold price history (stored series)', url: 'https://graphiquestor.com/data-sources/' }],
+        upstream: [fred('CPIAUCSL'), { label: 'World Bank Pink Sheet (gold, 1960 onward)', url: 'https://www.worldbank.org/en/research/commodity-markets' }],
     },
     {
         id: 'spx-gold-ratio',
@@ -204,7 +204,7 @@ export const DOSSIERS: DossierSpec[] = [
         episodes: ['ltcm', 'dotcomPeak', 'lehman', 'goldPeak2011', 'covidQe', 'hikingCycle2022'],
         compare: ['spx-gold-ratio', 'yield-curve-10y-2y', 'gold-silver-ratio'],
         glossary: { to: '/glossary/copper-gold-ratio/', label: 'Copper/gold ratio' },
-        upstream: [fred('PCOPPUSDM'), { label: 'Gold price history (stored series)', url: 'https://graphiquestor.com/data-sources/' }],
+        upstream: [fred('PCOPPUSDM'), { label: 'World Bank Pink Sheet (gold, 1960 onward)', url: 'https://www.worldbank.org/en/research/commodity-markets' }],
     },
     {
         id: 'gold-silver-ratio',
