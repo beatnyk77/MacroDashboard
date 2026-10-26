@@ -2,24 +2,24 @@ import React from 'react';
 import { Box, Grid, Typography, useTheme, Paper, Skeleton, Chip } from '@mui/material';
 import { useBoJBalanceSheet } from '@/hooks/useBoJBalanceSheet';
 import { Sparkline } from '@/components/Sparkline';
-
-const SCALE_FACTOR = 10000; // Convert 100M JPY to Trillion JPY
-const JPY_USD_RATE = 150; // Approx exchange rate
+import { useLatestMetric } from '@/hooks/useLatestMetric';
+import { METRIC_IDS as MID } from '@/constants/metricIds';
 
 export const BoJBalanceSheetCard: React.FC = () => {
     const { data, isLoading } = useBoJBalanceSheet();
+    const { data: usdJpy } = useLatestMetric(MID.FX_USD_JPY);
     const theme = useTheme();
 
+    // BOJ_*_TRJPY metrics are stored in trillion JPY.
     const formatValue = (val: number | undefined) => {
         if (val === undefined || val === null) return '-';
-        return (val / SCALE_FACTOR).toFixed(1);
+        return val.toFixed(1);
     };
 
     const getUsdValue = (val: number | undefined): string => {
-        if (val === undefined || val === null) return '-';
-        const trillionsYen = val / SCALE_FACTOR;
-        const trillionsUsd = trillionsYen / JPY_USD_RATE;
-        return `$${trillionsUsd.toFixed(2)}T`;
+        const rate = usdJpy?.value;
+        if (val === undefined || val === null || !rate) return '-';
+        return `$${(val / rate).toFixed(2)}T`;
     };
 
     if (isLoading) return <Skeleton variant="rectangular" height={120} sx={{ borderRadius: 2 }} />;

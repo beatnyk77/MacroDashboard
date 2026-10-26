@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, no-inner-declarations */
 import { createClient } from '@supabase/supabase-js';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
+import { BOJ_MONETARY_BASE_URL, BojObservation, fromBojMonetaryBase, fromFredJpnAssets } from './boj.ts';
 
 async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries = 3): Promise<Response> {
   let lastError: Error | null = null;
@@ -38,35 +39,25 @@ async function fetchWithRetry(url: string, options: RequestInit = {}, maxRetries
 }
 
 async function ingestBOJ(supabase: any, fredApiKey: string): Promise<number> {
-  const metricsMap = [
-    { id: 'BOJ_TOTAL_ASSETS_TRJPY', fredId: 'JPNASSETS' },
-    { id: 'BOJ_MONETARY_BASE_TRJPY', fredId: 'JPNBASE' },
-  ];
-  const results: any[] = [];
-  for (const item of metricsMap) {
-    try {
-      const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=${item.fredId}&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
-      const response = await fetchWithRetry(fredUrl);
-      const data = await response.json();
-      if (data.observations) {
-        data.observations.forEach((obs: any) => {
-          const value = parseFloat(obs.value);
-          if (!isNaN(value)) {
-            results.push({
-              metric_id: item.id,
-              as_of_date: obs.date,
-              value: value / 1000000,
-              last_updated_at: new Date().toISOString(),
-            });
-          }
-        });
-      }
-    } catch (e: any) {
-      console.error(`[CentralBanks/BOJ] Error for ${item.id}:`, e.message);
-    }
+  const results: BojObservation[] = [];
+  try {
+    const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=JPNASSETS&api_key=${fredApiKey}&file_type=json&sort_order=desc&limit=5`;
+    const data = await (await fetchWithRetry(fredUrl)).json();
+    results.push(...fromFredJpnAssets(data.observations ?? []));
+  } catch (e: any) {
+    console.error('[CentralBanks/BOJ] Error for BOJ_TOTAL_ASSETS_TRJPY:', e.message);
+  }
+  try {
+    // Full history each run (~350 monthly rows): keeps every stored month on the BoJ series.
+    const body = await (await fetchWithRetry(BOJ_MONETARY_BASE_URL)).json();
+    results.push(...fromBojMonetaryBase(body));
+  } catch (e: any) {
+    console.error('[CentralBanks/BOJ] Error for BOJ_MONETARY_BASE_TRJPY:', e.message);
   }
   if (results.length > 0) {
-    const { error } = await supabase.from('metric_observations').upsert(results, { onConflict: 'metric_id, as_of_date' });
+    const fetchedAt = new Date().toISOString();
+    const rows = results.map((r) => ({ ...r, last_updated_at: fetchedAt }));
+    const { error } = await supabase.from('metric_observations').upsert(rows, { onConflict: 'metric_id, as_of_date' });
     if (error) throw error;
   }
   return results.length;
@@ -260,7 +251,7 @@ async function latestFred(seriesId: string, fredApiKey: string): Promise<{ value
 async function computeGlobalLiquidityComposite(supabase: any, fredApiKey: string): Promise<number> {
   try {
     // Native FRED units: WALCL and WTREGEN millions USD, RRPONTSYD billions USD,
-    // JPNASSETS 100 million JPY (read raw: BOJ_TOTAL_ASSETS_TRJPY is stored at the wrong scale).
+    // JPNASSETS 100 million JPY.
     const [walcl, rrp, tga, boj] = await Promise.all([
       latestFred('WALCL', fredApiKey),
       latestFred('RRPONTSYD', fredApiKey),
@@ -356,6 +347,6 @@ serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> 
   return {
     ok: true,
     counts: { upserted: totalUpserted },
-    meta: { source, processed, revision: '2026-10-27-composite-units' },
+    meta: { source, processed, revision: '2026-10-27-boj-trillion-jpy' },
   };
 });

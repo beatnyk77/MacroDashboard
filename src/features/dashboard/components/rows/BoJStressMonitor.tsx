@@ -341,7 +341,7 @@ export const BoJStressMonitor: React.FC = () => {
         .select('as_of_date, value')
         .eq('metric_id', 'BOJ_TOTAL_ASSETS_TRJPY')
         .order('as_of_date', { ascending: false })
-        .limit(104); // roughly 2 years
+        .limit(24); // 2 years of monthly observations
       if (error) throw error;
       if (!data) return [];
       return data.map(d => ({ date: d.as_of_date, totalAssetsT: d.value }));
@@ -358,7 +358,7 @@ export const BoJStressMonitor: React.FC = () => {
         .select('as_of_date, value')
         .eq('metric_id', 'BOJ_MONETARY_BASE_TRJPY')
         .order('as_of_date', { ascending: false })
-        .limit(104);
+        .limit(24);
       if (error) throw error;
       if (!data) return [];
       return data.map(d => ({ date: d.as_of_date, monetaryBaseT: d.value })); 
@@ -398,8 +398,8 @@ export const BoJStressMonitor: React.FC = () => {
     const sortedAssets = [...assetsData].sort((a, b) => a.date.localeCompare(b.date));
     const result: DataPoint[] = [];
     
-    // Assuming roughly weekly index spacing. Offset by 13 points = 3 months
-    const PERIOD_OFFSET = 13;
+    // BoJ balance-sheet series are monthly: offset by 3 points = 3 months
+    const PERIOD_OFFSET = 3;
 
     for (let i = 0; i < sortedAssets.length; i++) {
       const row = sortedAssets[i];
