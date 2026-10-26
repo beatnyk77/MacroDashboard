@@ -354,6 +354,6 @@ serveIngest('ingest-central-banks', async (req: Request): Promise<IngestResult> 
   return {
     ok: true,
     counts: { upserted: totalUpserted },
-    meta: { source, processed },
+    meta: { source, processed, revision: '2026-10-26-real-inputs-only' },
   };
 });
