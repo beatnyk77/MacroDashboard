@@ -7601,6 +7601,7 @@ export type Database = {
         }
         Returns: undefined
       }
+      sync_us_net_liquidity: { Args: never; Returns: undefined }
     }
     Enums: {
       fyp_section: "pillar" | "target" | "milestone" | "correlation"
