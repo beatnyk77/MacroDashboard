@@ -74,17 +74,17 @@ export const PriceTerminalCard: React.FC = () => {
     }
 
     return (
-        <Card className="bg-black/40 border-white/12 backdrop-blur-md">
-            <CardHeader className="pb-2 bg-white/[0.02] border-b border-white/5 px-4 lg:px-6">
+        <Card className="bg-background/40 border-border backdrop-blur-md">
+            <CardHeader className="pb-2 bg-white/[0.02] border-b border-border px-4 lg:px-6">
                 <div className="flex items-center justify-between gap-4">
-                    <CardTitle className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+                    <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                         Commodity Price Terminal
                     </CardTitle>
                     {headerFreshness && (
                         <FreshnessChip status={headerFreshness.state} lastUpdated={headerFreshness.lastUpdated} />
                     )}
                 </div>
-                <p className="text-[10px] text-muted-foreground/40 uppercase tracking-wide mt-1">
+                <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
                     FRED daily · Updated via ingest-fred
                 </p>
             </CardHeader>
@@ -94,9 +94,9 @@ export const PriceTerminalCard: React.FC = () => {
                         const entry = priceBySymbol.get(symbol);
                         if (!entry) {
                             return (
-                                <div key={symbol} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+                                <div key={symbol} className="p-3 rounded-xl bg-white/[0.02] border border-border space-y-2">
                                     <span className="text-xs font-bold text-muted-foreground">{symbol}</span>
-                                    <span className="text-sm font-black text-muted-foreground/30 uppercase tracking-wide">Unavailable</span>
+                                    <span className="text-sm font-semibold text-terminal-dim uppercase tracking-wider">Unavailable</span>
                                 </div>
                             );
                         }
@@ -110,7 +110,7 @@ export const PriceTerminalCard: React.FC = () => {
                         };
 
                         return (
-                            <div key={symbol} className="p-3 rounded-xl bg-white/[0.02] border border-white/5 space-y-2">
+                            <div key={symbol} className="p-3 rounded-xl bg-white/[0.02] border border-border space-y-2">
                                 <div className="flex justify-between items-start gap-2">
                                     <span className="text-xs font-bold text-muted-foreground">{symbol}</span>
                                     {change > 0 ? (
@@ -122,7 +122,7 @@ export const PriceTerminalCard: React.FC = () => {
                                     )}
                                 </div>
                                 <div className="flex flex-col">
-                                    <span className="text-lg font-black tracking-heading">
+                                    <span className="text-lg font-bold tracking-heading">
                                         ${latest.price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                     </span>
                                     <div className="flex items-center gap-2 flex-wrap">
@@ -132,7 +132,7 @@ export const PriceTerminalCard: React.FC = () => {
                                         )}>
                                             {change >= 0 ? '+' : ''}{change.toFixed(2)}%
                                         </span>
-                                        <span className="text-xs font-medium text-muted-foreground/40">
+                                        <span className="text-xs font-medium text-terminal-dim">
                                             Z: {zScore.toFixed(1)}
                                         </span>
                                     </div>

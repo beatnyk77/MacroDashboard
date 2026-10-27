@@ -1,11 +1,11 @@
-import { useMemo, Suspense, lazy } from 'react';
+import { Suspense, lazy } from 'react';
 import { LazyMotion, domAnimation } from 'framer-motion';
 import { ThemeProvider, CssBaseline, Box, CircularProgress } from '@mui/material';
 import { QueryClientProvider } from '@tanstack/react-query';
 import { queryClient } from '@/lib/queryClient';
-import getTheme from '@/theme';
+import terminalTheme from '@/theme';
 import { GlobalLayout } from '@/layout/GlobalLayout';
-import { ViewProvider, useViewContext } from '@/context/ViewContext';
+import { ViewProvider } from '@/context/ViewContext';
 import { GlobalErrorBoundary } from '@/components/GlobalErrorBoundary';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { TrailingSlashRedirect } from '@/components/TrailingSlashRedirect';
@@ -104,11 +104,8 @@ const LoadingFallback = () => (
 
 
 function AppRoutes() {
-    const { resolvedTheme } = useViewContext();
-    const theme = useMemo(() => getTheme(resolvedTheme), [resolvedTheme]);
-
     return (
-        <ThemeProvider theme={theme}>
+        <ThemeProvider theme={terminalTheme}>
             <CssBaseline />
             <BrowserRouter>
                 <TrailingSlashRedirect />

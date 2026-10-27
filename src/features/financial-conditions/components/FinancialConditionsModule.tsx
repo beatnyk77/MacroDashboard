@@ -19,7 +19,7 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
 
   if (isLoading || !data) {
     return (
-      <div className="w-full h-96 rounded-2xl border border-border/50 bg-card/40 flex items-center justify-center">
+      <div className="w-full h-96 rounded-xl border border-border bg-card/40 flex items-center justify-center">
         <div className="flex items-center gap-3 text-muted-foreground font-mono text-xs">
           <Activity className="animate-spin text-primary" size={16} />
           SYNCHRONIZING BARCLAYS FCI &amp; COMMODITY CYCLES...
@@ -68,14 +68,14 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
   return (
     <div className={cn('space-y-8', className)}>
       {/* Executive Intelligence Banner */}
-      <div className="p-6 rounded-2xl bg-[#0a0f1d]/90 backdrop-blur-xl border border-border/60 shadow-xl space-y-4">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border/40 pb-4">
+      <div className="p-6 rounded-xl bg-card/90 backdrop-blur-xl border border-border shadow-xl space-y-4">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-border pb-4">
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <span className="p-1.5 rounded-lg bg-orange-500/10 text-orange-400 border border-orange-500/20">
                 <Flame size={18} />
               </span>
-              <h2 className="text-lg font-black uppercase tracking-wider text-foreground">
+              <h2 className="text-lg font-semibold uppercase tracking-wider text-foreground">
                 Barclays FCI &amp; Commodity Cycle Transmission Desk
               </h2>
             </div>
@@ -96,7 +96,7 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
 
         {/* Narrative Synthesis */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
-          <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+          <div className="p-4 rounded-xl bg-muted/20 border border-border space-y-1.5">
             <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Info size={13} className="text-primary" />
               The Core Thesis
@@ -106,7 +106,7 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+          <div className="p-4 rounded-xl bg-muted/20 border border-border space-y-1.5">
             <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Layers size={13} className="text-cyan-400" />
               Transmission Mechanism
@@ -116,7 +116,7 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
             </p>
           </div>
 
-          <div className="p-4 rounded-xl bg-muted/20 border border-border/40 space-y-1.5">
+          <div className="p-4 rounded-xl bg-muted/20 border border-border space-y-1.5">
             <div className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider flex items-center gap-1.5">
               <Clock size={13} className="text-emerald-400" />
               Current State ({lastUpdated})
@@ -135,17 +135,17 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
       <FCIComponentBreakdown components={components} />
 
       {/* Structural Precedent Timeline */}
-      <div className="p-6 rounded-2xl bg-[#0a0f1d]/90 backdrop-blur-xl border border-border/60 shadow-xl space-y-5">
-        <div className="flex items-center justify-between border-b border-border/40 pb-4">
+      <div className="p-6 rounded-xl bg-card/90 backdrop-blur-xl border border-border shadow-xl space-y-5">
+        <div className="flex items-center justify-between border-b border-border pb-4">
           <div className="space-y-1">
-            <h3 className="text-base font-black uppercase tracking-wider text-foreground">
+            <h3 className="text-base font-semibold uppercase tracking-wider text-foreground">
               Historical Cycle Precedents (2006 – 2026)
             </h3>
             <p className="text-xs text-muted-foreground">
               Cross-asset validation proving the mechanical link across four distinct macroeconomic regimes.
             </p>
           </div>
-          <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded text-[10px] font-mono font-bold bg-primary/10 text-primary border border-primary/20">
+          <span className="hidden sm:inline-flex items-center gap-1 px-2.5 py-1 rounded text-[11px] font-mono font-bold bg-primary/10 text-primary border border-primary/20">
             <CheckCircle2 size={12} />
             VERIFIED REGIMES
           </span>
@@ -155,20 +155,20 @@ export const FinancialConditionsModule: React.FC<{ className?: string }> = ({ cl
           {historicalPrecedents.map((prec) => (
             <div
               key={prec.era}
-              className="p-4 rounded-xl bg-card/50 border border-border/50 space-y-2"
+              className="p-4 rounded-xl bg-card/50 border border-border space-y-2"
             >
               <div className="flex items-center justify-between">
-                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-muted text-foreground border border-border/40">
+                <span className="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-muted text-foreground border border-border">
                   {prec.era}
                 </span>
-                <div className="flex items-center gap-2 text-[10px] font-mono">
+                <div className="flex items-center gap-2 text-[11px] font-mono">
                   <span className="text-orange-400">FCI: {prec.fciPeak}</span>
                   <span>·</span>
                   <span className="text-blue-400">Comm: {prec.commPeak}</span>
                 </div>
               </div>
 
-              <h4 className="text-xs font-black uppercase tracking-wider text-foreground">
+              <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">
                 {prec.title}
               </h4>
 

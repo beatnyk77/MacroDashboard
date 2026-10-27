@@ -22,7 +22,6 @@ export interface MajorEconomyReserves {
 export interface MajorEconomyRow {
     code: string;
     name: string;
-    flag: string;
     gdp_nominal: number;
     gdp_ppp: number;
     growth: number;
@@ -38,13 +37,13 @@ export interface MajorEconomyRow {
     private_gfcf_pct?: number; // US only
 }
 
-const COUNTRY_CONFIG: Record<string, { name: string; flag: string }> = {
-    US: { name: 'United States', flag: '🇺🇸' },
-    CN: { name: 'China', flag: '🇨🇳' },
-    IN: { name: 'India', flag: '🇮🇳' },
-    JP: { name: 'Japan', flag: '🇯🇵' },
-    EU: { name: 'Eurozone', flag: '🇪🇺' },
-    RU: { name: 'Russia', flag: '🇷🇺' }
+const COUNTRY_CONFIG: Record<string, { name: string }> = {
+    US: { name: 'United States' },
+    CN: { name: 'China' },
+    IN: { name: 'India' },
+    JP: { name: 'Japan' },
+    EU: { name: 'Eurozone' },
+    RU: { name: 'Russia' }
 };
 
 export function useMajorEconomies() {
@@ -118,7 +117,6 @@ export function useMajorEconomies() {
                 return {
                     code,
                     name: COUNTRY_CONFIG[code].name,
-                    flag: COUNTRY_CONFIG[code].flag,
                     gdp_nominal: Number(gdpNom?.value || 0),
                     gdp_ppp: Number(gdpPpp?.value || 0),
                     growth: Number(growth?.value || 0),

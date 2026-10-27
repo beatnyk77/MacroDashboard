@@ -7,6 +7,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const faqItems = [
   {
@@ -82,11 +83,11 @@ export const BarclaysFCIPage: React.FC = () => {
             label="INSTITUTIONAL METHODOLOGY"
             size="small"
             sx={{
-              bgcolor: 'rgba(249, 115, 22, 0.1)',
-              color: '#f97316',
-              border: '1px solid rgba(249, 115, 22, 0.3)',
-              fontWeight: 800,
-              fontSize: '0.65rem',
+              bgcolor: alpha(CHART_COLORS.orange, 0.1),
+              color: CHART_COLORS.orange,
+              border: `1px solid ${alpha(CHART_COLORS.orange, 0.3)}`,
+              fontWeight: 700,
+              fontSize: '0.6875rem',
             }}
           />
         </Box>
@@ -100,15 +101,15 @@ export const BarclaysFCIPage: React.FC = () => {
             p: 4,
             my: 5,
             borderRadius: 3,
-            bgcolor: '#0a0f1d',
+            bgcolor: CHART_COLORS.surface,
             border: '1px solid',
             borderColor: 'divider',
           }}
         >
-          <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 800, letterSpacing: '0.1em' }}>
+          <Typography variant="overline" sx={{ color: 'primary.main', fontWeight: 700, letterSpacing: '0.1em' }}>
             MATHEMATICAL FORMULATION
           </Typography>
-          <Typography variant="h5" sx={{ fontWeight: 900, mt: 1, mb: 2, color: 'text.primary' }}>
+          <Typography variant="h5" sx={{ fontWeight: 700, mt: 1, mb: 2, color: 'text.primary' }}>
             The Barclays Equal-Weighted Z-Score Index
           </Typography>
           <Typography variant="body2" sx={{ color: 'text.secondary', mb: 3 }}>
@@ -124,9 +125,9 @@ export const BarclaysFCIPage: React.FC = () => {
               borderRadius: 2,
               border: '1px solid',
               borderColor: 'divider',
-              fontFamily: 'monospace',
+              fontFamily: CHART_FONT_FAMILY,
               fontSize: '0.85rem',
-              color: '#f97316',
+              color: CHART_COLORS.orange,
               overflowX: 'auto',
               lineHeight: 1.8,
             }}
@@ -137,7 +138,7 @@ export const BarclaysFCIPage: React.FC = () => {
 
         {/* 5 Pillars Table */}
         <Box sx={{ my: 5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, mb: 2 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 2 }}>
             Pillar Decomposition &amp; Sign Conventions
           </Typography>
           <div className="overflow-x-auto">
@@ -196,7 +197,7 @@ export const BarclaysFCIPage: React.FC = () => {
 
         {/* FAQ Section */}
         <Box sx={{ my: 5 }}>
-          <Typography variant="h6" sx={{ fontWeight: 800, mb: 3 }}>
+          <Typography variant="h6" sx={{ fontWeight: 700, mb: 3 }}>
             Frequently Asked Questions
           </Typography>
           <div className="space-y-4">

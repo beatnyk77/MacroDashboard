@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, Sun, Moon, BarChart3, Landmark } from 'lucide-react';
-import { useViewContext } from '@/context/ViewContext';
+import { Activity, Menu, X, Globe, TrendingUp, Anchor, ShieldAlert, Radio, FileText, Library, Newspaper, FileSearch, Search, GitCompare, BarChart3, Landmark } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
 import { useLocation, useSearchParams } from 'react-router-dom';
 import { TrailNavLink } from '@/components/TrailLink';
@@ -19,6 +18,7 @@ import { AnalyticsBeacon } from '@/components/AnalyticsBeacon';
 import { CommandPalette } from '@/components/CommandPalette/CommandPalette';
 import { Button } from '@/components/ui/button';
 import { Drawer, List, ListItem, ListItemIcon, ListItemText, Box } from '@mui/material';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface GlobalLayoutProps {
     children: React.ReactNode;
@@ -44,7 +44,6 @@ const terminalNavItems = [
 
 export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
     const { data: regime } = useRegime();
-    const { themeMode, resolvedTheme, setThemeMode } = useViewContext();
     const [cmdKOpen, setCmdKOpen] = useState(false);
     const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
     const location = useLocation();
@@ -87,8 +86,8 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     position: 'absolute',
                     top: '-40px',
                     left: 0,
-                    backgroundColor: '#F59E0B',
-                    color: '#0F172A',
+                    backgroundColor: CHART_COLORS.gold,
+                    color: CHART_COLORS.panel,
                     padding: '8px 12px',
                     zIndex: 100,
                     transition: 'top 0.3s',
@@ -110,10 +109,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 size={28}
                                 className={regimeColorClass}
                             />
-                            <div className="hidden sm:block text-2xl font-black tracking-heading leading-none">
+                            <div className="hidden sm:block text-2xl font-bold tracking-heading leading-none">
                                 <span className="text-foreground">{BrandConfig.namePrefix}</span>
                                 <span className="text-primary">{BrandConfig.nameSuffix}</span>
-                                <div className="text-xs font-bold text-muted-foreground tracking-uppercase mt-1 uppercase">
+                                <div className="text-xs font-semibold text-muted-foreground tracking-wider mt-1 uppercase">
                                     {BrandConfig.tagline}
                                 </div>
                             </div>
@@ -125,23 +124,6 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                     </div>
 
                     <div className="flex items-center gap-3 md:gap-4">
-                        {/* Color theme */}
-                        <label className="flex min-h-11 items-center gap-1.5 rounded-md border border-border px-2.5 text-xs font-semibold text-foreground shadow-sm transition-colors hover:bg-muted">
-                            {resolvedTheme === 'light' ? <Sun size={15} className="text-primary" aria-hidden="true" /> : <Moon size={15} className="text-blue-400" aria-hidden="true" />}
-                            <span className="sr-only">Color theme</span>
-                            <select
-                                value={themeMode}
-                                onChange={(event) => setThemeMode(event.target.value as typeof themeMode)}
-                                aria-label="Color theme"
-                                title="Choose light, dark, or system color theme"
-                                className="cursor-pointer appearance-none bg-transparent font-mono text-[10px] font-bold tracking-wider text-foreground outline-none"
-                            >
-                                <option value="light">LIGHT</option>
-                                <option value="dark">DARK</option>
-                                <option value="system">SYSTEM</option>
-                            </select>
-                        </label>
-
                         {/* Hamburger menu button for mobile */}
                         <button
                             className="lg:hidden flex items-center justify-center w-10 h-10 rounded-lg bg-muted hover:bg-muted/80 border border-border text-foreground transition-colors focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
@@ -158,7 +140,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
 
                         {regime && (
                             <div className={cn(
-                                "flex items-center px-2 py-0.5 rounded border text-xs font-black tracking-uppercase uppercase h-6",
+                                "flex items-center px-2 py-0.5 rounded border text-xs font-semibold tracking-wider uppercase h-6",
                                 regimeColorClass,
                                 regimeColorClass.replace('text-', 'bg-').replace('500', '500/10'),
                                 regimeColorClass.replace('text-', 'border-').replace('500', '500/30')
@@ -175,7 +157,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 if (el) el.scrollIntoView({ behavior: 'smooth' });
                                 else window.location.href = '/#weekly-narrative';
                             }}
-                            className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white font-black uppercase tracking-wider text-sm px-3 py-2 min-h-11"
+                            className="hidden lg:flex bg-blue-600 hover:bg-blue-700 text-white font-semibold uppercase tracking-wider text-sm px-3 py-2 min-h-11"
                         >
                             Subscribe
                         </Button>
@@ -194,14 +176,14 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                 PaperProps={{
                     sx: {
                         width: 280,
-                        bgcolor: resolvedTheme === 'light' ? 'rgba(253, 246, 227, 0.98)' : 'rgba(2, 6, 23, 0.98)',
+                        bgcolor: alpha(CHART_COLORS.surface, 0.98),
                         backdropFilter: 'blur(12px)',
-                        borderRight: resolvedTheme === 'light' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.08)',
+                        borderRight: `1px solid ${WHITE_ALPHA.line}`,
                     },
                 }}
             >
-                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: resolvedTheme === 'light' ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)' }}>
-                    <span className="text-sm font-black text-foreground uppercase tracking-uppercase">Navigation</span>
+                <Box sx={{ p: 3, display: 'flex', alignItems: 'center', justifyContent: 'space-between', borderBottom: `1px solid ${WHITE_ALPHA.line}` }}>
+                    <span className="text-sm font-semibold text-foreground uppercase tracking-wider">Navigation</span>
                     <button
                         onClick={() => setMobileDrawerOpen(false)}
                         className="p-2 hover:bg-muted rounded-md transition-colors focus-visible:ring-2 focus-visible:ring-primary"
@@ -217,7 +199,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                 <ListItem sx={{ px: 1, pt: 2, pb: 0.75 }}>
                                     <ListItemText
                                         primary={group}
-                                        primaryTypographyProps={{ className: 'text-[10px] font-black uppercase tracking-[0.18em] text-muted-foreground' }}
+                                        primaryTypographyProps={{ className: 'text-[11px] font-semibold uppercase tracking-wider text-muted-foreground' }}
                                     />
                                 </ListItem>
                                 {terminalNavItems.filter((item) => item.group === group).map((item) => {
@@ -236,10 +218,10 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                                 mb: 0.5,
                                                 color: isActive ? 'primary.main' : 'text.secondary',
                                                 bgcolor: isActive
-                                                    ? (resolvedTheme === 'light' ? 'rgba(255, 91, 4, 0.1)' : 'rgba(59, 130, 246, 0.1)')
+                                                    ? alpha(CHART_COLORS.westSoft, 0.1)
                                                     : 'transparent',
                                                 '&:hover': {
-                                                    bgcolor: resolvedTheme === 'light' ? 'rgba(244, 212, 124, 0.22)' : 'rgba(255,255,255,0.05)',
+                                                    bgcolor: WHITE_ALPHA.faint,
                                                     color: 'text.primary',
                                                 }
                                             }}
@@ -249,7 +231,7 @@ export const GlobalLayout: React.FC<GlobalLayoutProps> = ({ children }) => {
                                             </ListItemIcon>
                                             <ListItemText
                                                 primary={item.label}
-                                                primaryTypographyProps={{ className: "text-xs font-black uppercase tracking-uppercase" }}
+                                                primaryTypographyProps={{ className: "text-xs font-semibold uppercase tracking-wider" }}
                                             />
                                         </ListItem>
                                     );

@@ -1,6 +1,8 @@
 import React from 'react';
 import { Box, Typography, Grid, Tooltip, Skeleton, Stack } from '@mui/material';
 import { useMajorEconomies } from '@/hooks/useMajorEconomies';
+import { CountryCode } from '@/components/CountryCode';
+import { CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface HeatmapTileProps {
     label: string;
@@ -14,10 +16,10 @@ const HeatmapTile: React.FC<HeatmapTileProps> = ({ label, value, suffix = '', st
 
     const getStatusColor = () => {
         switch (status) {
-            case 'safe': return '#10b981';
-            case 'warning': return '#f59e0b';
-            case 'danger': return '#ef4444';
-            default: return 'rgba(255,255,255,0.05)';
+            case 'safe': return CHART_COLORS.expansion;
+            case 'warning': return CHART_COLORS.gold;
+            case 'danger': return CHART_COLORS.stress;
+            default: return WHITE_ALPHA.faint;
         }
     };
 
@@ -44,8 +46,8 @@ const HeatmapTile: React.FC<HeatmapTileProps> = ({ label, value, suffix = '', st
                 }
             }}>
                 <Typography variant="overline" sx={{
-                    fontSize: '0.6rem',
-                    fontWeight: 800,
+                    fontSize: '0.6875rem',
+                    fontWeight: 700,
                     color: 'text.disabled',
                     lineHeight: 1,
                     mb: 0.5,
@@ -54,7 +56,7 @@ const HeatmapTile: React.FC<HeatmapTileProps> = ({ label, value, suffix = '', st
                     {label}
                 </Typography>
                 <Typography variant="body2" sx={{
-                    fontWeight: 900,
+                    fontWeight: 700,
                     color: isNeutral ? 'text.secondary' : color,
                     fontSize: '0.85rem'
                 }}>
@@ -96,9 +98,9 @@ export const LiquidityHeatmapGrid: React.FC = () => {
                                 width: 8,
                                 height: 8,
                                 borderRadius: '50%',
-                                bgcolor: i === 0 ? '#10b981' : (i === 1 ? '#f59e0b' : '#ef4444')
+                                bgcolor: i === 0 ? CHART_COLORS.expansion : (i === 1 ? CHART_COLORS.gold : CHART_COLORS.stress)
                             }} />
-                            <Typography variant="caption" sx={{ fontSize: '0.6rem', color: 'text.disabled', fontWeight: 700 }}>{l}</Typography>
+                            <Typography variant="caption" sx={{ fontSize: '0.6875rem', color: 'text.disabled', fontWeight: 700 }}>{l}</Typography>
                         </Box>
                     ))}
                 </Box>
@@ -109,15 +111,15 @@ export const LiquidityHeatmapGrid: React.FC = () => {
                     <Box key={country.code} sx={{
                         p: 1.5,
                         borderRadius: 2,
-                        bgcolor: 'rgba(255,255,255,0.02)',
+                        bgcolor: WHITE_ALPHA.ghost,
                         border: '1px solid',
                         borderColor: 'divider'
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', mb: 1.5, gap: 1 }}>
-                            <Typography sx={{ fontSize: '1rem' }}>{country.flag}</Typography>
-                            <Typography variant="subtitle2" sx={{ fontWeight: 900 }}>{country.name}</Typography>
+                            <CountryCode code={country.code} />
+                            <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{country.name}</Typography>
                             <Box sx={{ ml: 'auto', display: 'flex', alignItems: 'center', gap: 0.5, opacity: 0.5 }}>
-                                <Typography variant="caption" sx={{ fontSize: '0.6rem', fontWeight: 600 }}>{country.last_updated ? new Date(country.last_updated).toLocaleDateString() : 'N/A'}</Typography>
+                                <Typography variant="caption" sx={{ fontSize: '0.6875rem', fontWeight: 600 }}>{country.last_updated ? new Date(country.last_updated).toLocaleDateString() : 'N/A'}</Typography>
                             </Box>
                         </Box>
 

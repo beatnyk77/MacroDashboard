@@ -74,7 +74,7 @@ export const GfpKpiStrip: React.FC = () => {
   return (
     <section className="space-y-3">
       <div className="flex flex-wrap items-center gap-3">
-        <h2 className="text-sm font-black uppercase tracking-widest text-white">
+        <h2 className="text-sm font-semibold uppercase tracking-wider text-white">
           Government Financial Position
           {cards.fy != null ? ` · FY${cards.fy}` : ''}
         </h2>
@@ -83,22 +83,22 @@ export const GfpKpiStrip: React.FC = () => {
           <FreshnessChip status={status} lastUpdated={cards.recordDate} />
         )}
       </div>
-      <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest">
+      <p className="text-[11px] text-terminal-dim uppercase tracking-wider">
         {GFP_BASIS.accrual}
       </p>
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
         {cards.items.map((item) => (
           <div
             key={item.label}
-            className="p-4 rounded-xl border border-white/5 bg-white/[0.02] space-y-1"
+            className="p-4 rounded-xl border border-border bg-white/[0.02] space-y-1"
           >
-            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
               {item.label}
             </div>
-            <div className="text-xl md:text-2xl font-black font-mono text-white tabular-nums">
+            <div className="text-xl md:text-2xl font-bold font-mono text-white tabular-nums">
               {item.value}
             </div>
-            <div className="text-[10px] uppercase tracking-wider text-muted-foreground/40">
+            <div className="text-[11px] uppercase tracking-wider text-terminal-dim">
               {item.hint}
             </div>
           </div>

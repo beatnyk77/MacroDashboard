@@ -9,6 +9,7 @@ import {
 import { Scale, Info } from 'lucide-react';
 import { useUSDebtGoldBacking } from '@/hooks/useUSDebtGoldBacking';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 export const USDebtGoldBackingCard: React.FC = () => {
     const { data, isLoading } = useUSDebtGoldBacking();
@@ -44,8 +45,8 @@ export const USDebtGoldBackingCard: React.FC = () => {
             <Box>
                 <Box sx={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', mb: 2 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Scale size={20} style={{ color: '#eab308' }} />
-                        <Typography variant="overline" sx={{ fontWeight: 800, letterSpacing: '0.1em', color: 'text.secondary' }}>
+                        <Scale size={20} style={{ color: CHART_COLORS.gold }} />
+                        <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: '0.1em', color: 'text.secondary' }}>
                             PAPER vs HARD MONEY
                         </Typography>
                     </Box>
@@ -55,7 +56,7 @@ export const USDebtGoldBackingCard: React.FC = () => {
                             href="/methods/debt-gold-z-score/"
                         />
                         <Tooltip title="US Total Public Debt vs Market Value of US Treasury Gold Reserves.">
-                            <Info size={16} style={{ color: '#64748b', cursor: 'help' }} />
+                            <Info size={16} style={{ color: CHART_COLORS.tick, cursor: 'help' }} />
                         </Tooltip>
                     </Box>
                 </Box>
@@ -65,7 +66,7 @@ export const USDebtGoldBackingCard: React.FC = () => {
                         DEBT COVERAGE RATIO (INVERSE)
                     </Typography>
                     <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
-                        <Typography variant="h3" sx={{ fontWeight: 800, color: 'error.main' }}>
+                        <Typography variant="h3" sx={{ fontWeight: 700, color: 'error.main' }}>
                             {debtCoverageRatio.toFixed(1)}x
                         </Typography>
                         <Typography variant="body2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
@@ -77,17 +78,17 @@ export const USDebtGoldBackingCard: React.FC = () => {
                     </Typography>
                 </Box>
 
-                <Box sx={{ p: 2, bgcolor: 'rgba(255,215,0,0.05)', borderRadius: 1, border: '1px solid rgba(255,215,0,0.1)' }}>
+                <Box sx={{ p: 2, bgcolor: alpha(CHART_COLORS.gold, 0.05), borderRadius: 1, border: '1px solid rgba(255,215,0,0.1)' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="caption" sx={{ fontWeight: 800, color: 'primary.main' }}>
+                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'primary.main' }}>
                             ZERO DEFICIT PRICE
                         </Typography>
                     </Box>
-                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', fontFamily: 'monospace' }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', fontFamily: 'Fira Code, monospace' }}>
                         {formatCurrency(impliedPrice)}
-                        <span style={{ fontSize: '0.8rem', color: '#64748b', marginLeft: '4px' }}>/oz</span>
+                        <span style={{ fontSize: '0.8rem', color: CHART_COLORS.tick, marginLeft: '4px' }}>/oz</span>
                     </Typography>
-                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.65rem', mt: 0.5, display: 'block' }}>
+                    <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.6875rem', mt: 0.5, display: 'block' }}>
                         Gold price required to back 100% of US Debt.
                     </Typography>
                 </Box>

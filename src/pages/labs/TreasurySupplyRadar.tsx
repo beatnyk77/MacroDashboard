@@ -5,12 +5,13 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-  ChevronRight,
   ArrowLeft,
   Layers,
   Landmark
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { TrailLink } from '@/components/TrailLink';
+import { LabPageHeader } from '@/components/LabPageHeader';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
@@ -90,32 +91,16 @@ export const TreasurySupplyRadar: React.FC = () => {
         ]}
       />
 
-      <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-        {/* Breadcrumbs */}
-        <div className="mb-8">
-          <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-            <a href="/" className="hover:text-white transition-colors">Home</a>
-            <ChevronRight size={10} />
-            <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
-            <ChevronRight size={10} />
-            <span className="text-slate-400">Treasury Supply Radar</span>
-          </nav>
-        </div>
-
-        {/* Hero Header */}
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-            <Layers size={12} /> Sovereign Debt Refunding Telemetry
-          </div>
-          <div className="flex items-center gap-4 mb-4">
-            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-              Treasury Supply & <span className="text-indigo-400">Custody Radar</span>
-            </h1>
-            <FreshnessChip status={dataFreshness.state} lastUpdated={stressMetric?.lastUpdated} />
-          </div>
-          <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-            Surveillance of primary dealer net coupon inventory, foreign central bank custody at the Fed, and Treasury auction bid-to-cover tail telemetry.
-          </p>
+      <div className="page-shell">
+        <LabPageHeader
+          trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+          current="Treasury Supply Radar"
+          badge="Sovereign Debt Refunding Telemetry"
+          badgeIcon={<Layers size={12} />}
+          title={<>Treasury Supply & <span className="text-blue-400">Custody Radar</span></>}
+          status={<FreshnessChip status={dataFreshness.state} lastUpdated={stressMetric?.lastUpdated} />}
+          thesis="Surveillance of primary dealer net coupon inventory, foreign central bank custody at the Fed, and Treasury auction bid-to-cover tail telemetry."
+        >
           <DeskConceptPill
             title="How US Treasury Supply & Dealer Absorption Works"
             readingTime="45-sec brief"
@@ -127,19 +112,19 @@ export const TreasurySupplyRadar: React.FC = () => {
               { label: "Auction Tails", status: "normal", detail: "> +1.0 bps indicates Treasury had to offer yield discounts to sell debt" },
             ]}
           />
-        </div>
+        </LabPageHeader>
 
         {/* Metric Cards Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* Dealer Absorption Stress Score */}
-          <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl backdrop-blur-xl relative overflow-hidden">
+          <div className="p-6 bg-card/60 border border-border rounded-xl backdrop-blur-xl relative overflow-hidden">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Dealer Absorption Stress</span>
-              <span className={`px-2 py-0.5 text-[9px] font-black rounded-full border ${badge.bg}`}>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Dealer Absorption Stress</span>
+              <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full border ${badge.bg}`}>
                 {badge.label}
               </span>
             </div>
-            <div className="text-4xl font-black text-white tracking-tight mb-2">
+            <div className="text-4xl font-bold text-white tracking-tight mb-2">
               {absorptionScore !== null ? Math.round(absorptionScore) : '—'}{absorptionScore !== null && <span className="text-base text-muted-foreground font-normal"> / 100</span>}
             </div>
             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-3">
@@ -210,16 +195,16 @@ export const TreasurySupplyRadar: React.FC = () => {
         </div>
 
         {/* Refunding & Auction Tail Matrix Table */}
-        <div className="mb-16 p-8 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-xl">
+        <div className="mb-16 p-8 bg-white/[0.02] border border-border rounded-xl backdrop-blur-xl">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <Landmark className="text-indigo-400" size={24} />
               <div>
-                <h2 className="text-xl font-black text-white uppercase tracking-heading">Treasury Auction Tail & Allocation Telemetry</h2>
+                <h2 className="text-xl font-bold text-white uppercase tracking-heading">Treasury Auction Tail & Allocation Telemetry</h2>
                 <p className="text-xs text-muted-foreground font-medium">Recent benchmark coupon auction results and primary dealer takedown share</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
+            <span className="text-[11px] font-mono text-indigo-400 bg-indigo-500/10 px-3 py-1 rounded-full border border-indigo-500/20">
               UPDATED: AUG 2026 REFUNDING
             </span>
           </div>
@@ -227,7 +212,7 @@ export const TreasurySupplyRadar: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm font-medium">
               <thead>
-                <tr className="border-b border-white/10 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <tr className="border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   <th className="pb-4">Tenor</th>
                   <th className="pb-4">Auction Date</th>
                   <th className="pb-4">Bid-to-Cover</th>
@@ -236,7 +221,7 @@ export const TreasurySupplyRadar: React.FC = () => {
                   <th className="pb-4">Dealer Takedown</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-200">
+              <tbody className="divide-y divide-border text-slate-200">
                 {auctionTailData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 font-bold text-white flex items-center gap-2">
@@ -258,8 +243,8 @@ export const TreasurySupplyRadar: React.FC = () => {
         </div>
 
         {/* Methodology Analysis & Structural Text Block */}
-        <article className="p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Methodology Analysis">
-          <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Methodology: Treasury Supply Absorption & Foreign Holdings</h2>
+        <article className="p-12 bg-white/[0.02] border border-border rounded-xl" aria-label="Methodology Analysis">
+          <h2 className="text-xl font-bold text-white uppercase tracking-wider mb-6">Methodology: Treasury Supply Absorption & Foreign Holdings</h2>
           <div className="space-y-4 text-sm text-muted-foreground leading-relaxed font-medium">
             <p>
               The <strong>Treasury Supply & Foreign Custody Radar</strong> monitors the structural balance between US sovereign debt issuance and institutional absorption capacity. As the US federal deficit requires multi-trillion annual Treasury refunding, foreign official buyers (central banks in Asia and Europe) have reduced their proportional share of Treasury debt.
@@ -271,15 +256,15 @@ export const TreasurySupplyRadar: React.FC = () => {
         </article>
 
         {/* Navigation Footer */}
-        <div className="mt-24 pt-12 border-t border-white/5 text-center">
+        <div className="mt-24 pt-12 border-t border-border text-center">
           <Button
             variant="ghost"
-            className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+            className="text-muted-foreground font-semibold uppercase tracking-wider hover:text-white transition-colors"
             asChild
           >
-            <a href="/macro-observatory/" className="flex items-center gap-2">
+            <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
               <ArrowLeft size={18} /> Back to Observatory
-            </a>
+            </TrailLink>
           </Button>
         </div>
 

@@ -23,17 +23,17 @@ const CompactPulseMetric: React.FC<{
     status?: 'safe' | 'warning' | 'danger',
     description?: string
 }> = ({ label, value, unit, delta, trend, status, description }) => (
-    <div className="group/metric p-4 rounded-2xl bg-white/[0.01] border border-white/5 hover:bg-white/[0.03] transition-all duration-300">
+    <div className="group/metric p-4 rounded-xl bg-white/[0.01] border border-border hover:bg-white/[0.03] transition-all duration-300">
         <div className="flex justify-between items-start mb-2">
             <div className="flex items-center gap-2">
-                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{label}</span>
                 {description && (
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <Info className="w-3 h-3 text-muted-foreground/20 hover:text-muted-foreground/50 transition-colors" />
+                                <Info className="w-3 h-3 text-muted-foreground/20 hover:text-terminal-dim transition-colors" />
                             </TooltipTrigger>
-                            <TooltipContent className="bg-slate-950 border-white/12 p-2 text-xs max-w-[150px]">
+                            <TooltipContent className="bg-card border-border p-2 text-xs max-w-[150px]">
                                 {description}
                             </TooltipContent>
                         </Tooltip>
@@ -51,12 +51,12 @@ const CompactPulseMetric: React.FC<{
         </div>
         <div className="flex items-baseline justify-between">
             <div className="flex items-baseline gap-1">
-                <span className="text-xl font-black text-white/90 tabular-nums tracking-heading">{value}</span>
-                <span className="text-xs font-bold text-white/20 uppercase tracking-uppercase">{unit}</span>
+                <span className="text-xl font-bold text-white/90 tabular-nums tracking-heading">{value}</span>
+                <span className="text-xs font-semibold text-white/20 uppercase tracking-wider">{unit}</span>
             </div>
             {delta && (
                 <div className={cn(
-                    "text-xs font-black tabular-nums tracking-heading flex items-center gap-0.5",
+                    "text-xs font-bold tabular-nums tracking-heading flex items-center gap-0.5",
                     trend === 'up' ? "text-emerald-500" : "text-rose-500"
                 )}>
                     {delta}
@@ -82,13 +82,13 @@ export const IndiaMacroPulseSection: React.FC = () => {
     return (
         <div className="space-y-16">
             {/* Main Header with Contextual Action */}
-            <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-white/5 pb-8">
+            <div className="flex flex-col md:flex-row justify-between items-end gap-6 border-b border-border pb-8">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
                         <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
                             <Activity className="text-blue-500 w-5 h-5" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
+                        <h2 className="text-2xl font-bold tracking-heading text-white uppercase italic">
                             India <span className="text-blue-500">Macro Pulse</span>
                         </h2>
                     </div>
@@ -99,9 +99,9 @@ export const IndiaMacroPulseSection: React.FC = () => {
 
                 <button
                     onClick={() => setIsExpanded(!isExpanded)}
-                    className="flex items-center gap-3 px-6 py-2.5 rounded-2xl bg-white/5 hover:bg-white/10 border border-white/12 transition-all group"
+                    className="flex items-center gap-3 px-6 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 border border-border transition-all group"
                 >
-                    <span className="text-xs font-black uppercase tracking-uppercase text-white/70 group-hover:text-white">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-white/70 group-hover:text-white">
                         {isExpanded ? 'Collapse Pulse' : 'Expand Full Engine'}
                     </span>
                     {isExpanded ? <ChevronUp className="w-4 h-4 text-blue-500" /> : <ChevronDown className="w-4 h-4 text-blue-500" />}
@@ -118,15 +118,15 @@ export const IndiaMacroPulseSection: React.FC = () => {
                 <div className="space-y-6">
                     <div className="flex items-center gap-4">
                         <div className="h-[2px] w-8 bg-blue-500" />
-                        <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Energy & Efficiency Terminal</h4>
+                        <h4 className="text-xs font-semibold text-white/90 uppercase tracking-wider">Energy & Efficiency Terminal</h4>
                     </div>
 
-                    <div className="grid grid-cols-1 xl:grid-cols-1 gap-8 p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5">
+                    <div className="grid grid-cols-1 xl:grid-cols-1 gap-8 p-8 rounded-xl bg-white/[0.01] border border-border">
                         <SectionErrorBoundary name="Energy Statistics">
                             <EnergySection />
                         </SectionErrorBoundary>
 
-                        <div className="border-t border-white/5 pt-8">
+                        <div className="border-t border-border pt-8">
                             <SectionErrorBoundary name="Composite Metrics">
                                 <CompositeMetricsSection />
                             </SectionErrorBoundary>
@@ -143,7 +143,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                     <div className="space-y-6">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-amber-500" />
-                            <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Economic Activity Pulse</h4>
+                            <h4 className="text-xs font-semibold text-white/90 uppercase tracking-wider">Economic Activity Pulse</h4>
                         </div>
                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                             <CompactPulseMetric
@@ -189,7 +189,7 @@ export const IndiaMacroPulseSection: React.FC = () => {
                         <SectionErrorBoundary name="Annual Survey of Industries">
                             <ASISection />
                         </SectionErrorBoundary>
-                        <div className="border-t border-white/5 pt-16">
+                        <div className="border-t border-border pt-16">
                             <SectionErrorBoundary name="UPI Autopay Failure">
                                 <UPIAutopayFailureCard />
                             </SectionErrorBoundary>

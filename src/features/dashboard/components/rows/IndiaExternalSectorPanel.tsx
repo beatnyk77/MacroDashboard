@@ -16,8 +16,8 @@ export const IndiaExternalSectorPanel: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[400px] w-full bg-white/[0.02] animate-pulse rounded-[2.5rem] flex items-center justify-center border border-white/5">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest font-mono">
+            <div className="h-[400px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center border border-border">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider font-mono">
                     Analyzing India External Sector & Capital Flows...
                 </span>
             </div>
@@ -44,20 +44,20 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                 {/* 2x2 Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {/* METRIC 1: India 10Y G-Sec */}
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1 block">Yield telemetry</span>
-                        <h3 className="text-lg font-black text-white uppercase tracking-heading">India FX Reserves</h3>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1 block">Yield telemetry</span>
+                        <h3 className="text-lg font-semibold text-white uppercase tracking-heading">India FX Reserves</h3>
                             </div>
-                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-white/5">
+                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-border">
                                 <Landmark className="w-5 h-5 text-amber-500" />
                             </div>
                         </div>
 
                         <div className="mb-6">
                             <div className="flex items-baseline gap-1">
-                                <span className="text-4xl md:text-5xl font-black text-white tracking-heading tabular-nums">
+                                <span className="text-4xl md:text-5xl font-bold text-white tracking-heading tabular-nums">
                                     {reserves?.value != null ? `${reserves.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '--'}
                                 </span>
                             </div>
@@ -72,8 +72,8 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">USD million · FRED</span>
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">USD million · FRED</span>
                             <DataProvenanceBadge
                                 source="RBI DBIE"
                                 lastVerified={reserves?.lastUpdated}
@@ -83,46 +83,46 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                     </div>
 
                     {/* METRIC 2: US 10Y Treasury */}
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1 block">Arbitrage & Carry</span>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1 block">Arbitrage & Carry</span>
                                 <div className="flex items-center gap-2">
-                                    <h3 className="text-lg font-black text-white uppercase tracking-heading">US 10Y Treasury</h3>
+                                    <h3 className="text-lg font-semibold text-white uppercase tracking-heading">US 10Y Treasury</h3>
                                 </div>
                             </div>
-                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-white/5">
+                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-border">
                                 <ArrowUpRight className="w-5 h-5 text-blue-400" />
                             </div>
                         </div>
 
                         <div className="mb-6 space-y-4">
                             <div>
-                                <span className="text-4xl md:text-5xl font-black text-white tracking-heading tabular-nums">
+                                <span className="text-4xl md:text-5xl font-bold text-white tracking-heading tabular-nums">
                                     {us10y?.value != null ? `${us10y.value.toFixed(2)}%` : '--'}
                                 </span>
                             </div>
 
                             <div className="flex flex-col items-start gap-2">
-                                <span className="px-3 py-1 rounded-md text-[10px] font-black tracking-widest border font-mono text-blue-300 bg-blue-500/10 border-blue-500/20">LIVE TREASURY CURVE INPUT</span>
-                                <p className="text-xs font-bold text-muted-foreground/60 leading-relaxed italic">FRED 10-year Treasury yield used as the external funding reference.</p>
+                                <span className="px-3 py-1 rounded-md text-[11px] font-bold tracking-wider border font-mono text-blue-300 bg-blue-500/10 border-blue-500/20">LIVE TREASURY CURVE INPUT</span>
+                                <p className="text-xs font-bold text-muted-foreground leading-relaxed italic">FRED 10-year Treasury yield used as the external funding reference.</p>
                             </div>
                         </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Proprietary Signal</span>
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Proprietary Signal</span>
                             <DataProvenanceBadge source="FRED" lastVerified={us10y?.lastUpdated} size="sm" />
                         </div>
                     </div>
 
                     {/* METRIC 3: Reserve Coverage */}
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1 block">Balance of Payments</span>
-                                <h3 className="text-lg font-black text-white uppercase tracking-heading">Reserve Coverage</h3>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1 block">Balance of Payments</span>
+                                <h3 className="text-lg font-semibold text-white uppercase tracking-heading">Reserve Coverage</h3>
                             </div>
-                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-white/5">
+                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-border">
                                 <DollarSign className="w-5 h-5 text-emerald-500" />
                             </div>
                         </div>
@@ -132,14 +132,14 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                                 <>
                                     <div className="flex items-baseline gap-1">
                                         <span className={cn(
-                                            "text-4xl md:text-5xl font-black tracking-heading tabular-nums",
+                                            "text-4xl md:text-5xl font-bold tracking-heading tabular-nums",
                                             coverage.value >= 6 ? "text-emerald-400" : coverage.value >= 4 ? "text-amber-400" : "text-rose-400"
                                         )}>
                                             {coverage.value.toFixed(2)}
                                         </span>
-                                        <span className="text-xs font-bold text-muted-foreground/40 font-mono">USD</span>
+                                        <span className="text-xs font-bold text-terminal-dim font-mono">USD</span>
                                     </div>
-                                    <p className="text-xs font-bold text-muted-foreground/50 mt-2">
+                                    <p className="text-xs font-bold text-terminal-dim mt-2">
                                         Months of imports covered
                                     </p>
                                 </>
@@ -155,8 +155,8 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">External Account</span>
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">External Account</span>
                             {coverage?.value != null && (
                                 <DataProvenanceBadge
                                     source="RBI DBIE"
@@ -168,13 +168,13 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                     </div>
 
                     {/* METRIC 4: FII Cash Flow */}
-                    <div className="p-8 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
+                    <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all flex flex-col justify-between group relative overflow-hidden">
                         <div className="flex justify-between items-start mb-6">
                             <div>
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1 block">Trade flows</span>
-                                <h3 className="text-lg font-black text-white uppercase tracking-heading">FII Cash Equity Flow</h3>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1 block">Trade flows</span>
+                                <h3 className="text-lg font-semibold text-white uppercase tracking-heading">FII Cash Equity Flow</h3>
                             </div>
-                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-white/5">
+                            <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-all border border-border">
                                 <DollarSign className="w-5 h-5 text-cyan-400" />
                             </div>
                         </div>
@@ -184,12 +184,12 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                                 <>
                                     <div className="flex items-baseline gap-1">
                                         <span className={cn(
-                                            "text-4xl md:text-5xl font-black tracking-heading tabular-nums",
+                                            "text-4xl md:text-5xl font-bold tracking-heading tabular-nums",
                                             fii.value >= 0 ? "text-emerald-400" : "text-rose-400"
                                         )}>
                                             {fii.value >= 0 ? '+' : ''}{fii.value.toFixed(2)}
                                         </span>
-                                        <span className="text-xs font-bold text-muted-foreground/40 font-mono">USD</span>
+                                        <span className="text-xs font-bold text-terminal-dim font-mono">USD</span>
                                     </div>
                                         {fii.delta !== null && (
                                         <p className={cn(
@@ -213,8 +213,8 @@ export const IndiaExternalSectorPanel: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="pt-4 border-t border-white/5 flex items-center justify-between">
-                            <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Goods & Services</span>
+                        <div className="pt-4 border-t border-border flex items-center justify-between">
+                            <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Goods & Services</span>
                             {fii?.value != null && (
                                 <DataProvenanceBadge
                                     source="RBI DBIE"

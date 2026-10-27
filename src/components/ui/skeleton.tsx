@@ -36,7 +36,7 @@ export function Skeleton({
 // Specialized skeleton components for common UI patterns
 export function MetricCardSkeleton() {
 	return (
-		<div className="rounded-lg border border-border/50 bg-card/40 p-6 space-y-4">
+		<div className="rounded-lg border border-border bg-card/40 p-6 space-y-4">
 			<Skeleton variant="text" height={32} width="60%" />
 			<Skeleton variant="text" height={48} width="80%" />
 			<Skeleton variant="rectangular" height={120} className="mt-4" />
@@ -57,7 +57,7 @@ export function ChartSkeleton({
 export function CardSkeleton({ lines = 3 }: { lines?: number }) {
 	const widths = ['90%', '85%', '95%', '80%', '88%']
 	return (
-		<div className="rounded-lg border border-border/50 bg-card/40 p-6 space-y-4">
+		<div className="rounded-lg border border-border bg-card/40 p-6 space-y-4">
 			<Skeleton variant="text" height={24} width="40%" />
 			{Array.from({ length: lines }).map((_, i) => (
 				<Skeleton key={i} variant="text" height={16} width={widths[i % widths.length]} />

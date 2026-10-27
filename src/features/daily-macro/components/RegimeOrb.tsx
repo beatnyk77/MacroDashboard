@@ -1,5 +1,6 @@
 import React from 'react';
 import type { MacroRegime } from '../services/macroSignalEngine';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface RegimeOrbProps {
   regime: MacroRegime;
@@ -13,27 +14,27 @@ interface RegimeOrbProps {
 const REGIME_CONFIG = {
   RISK_ON: {
     label: 'Risk-On',
-    color: '#10b981',
-    bg: 'rgba(16, 185, 129, 0.08)',
-    border: 'rgba(16, 185, 129, 0.3)',
-    glow: 'rgba(16, 185, 129, 0.15)',
-    pulse: '#10b981',
+    color: CHART_COLORS.expansion,
+    bg: alpha(CHART_COLORS.expansion, 0.08),
+    border: alpha(CHART_COLORS.expansion, 0.3),
+    glow: alpha(CHART_COLORS.expansion, 0.15),
+    pulse: CHART_COLORS.expansion,
   },
   NEUTRAL: {
     label: 'Neutral',
-    color: '#f59e0b',
-    bg: 'rgba(245, 158, 11, 0.08)',
-    border: 'rgba(245, 158, 11, 0.3)',
-    glow: 'rgba(245, 158, 11, 0.12)',
-    pulse: '#f59e0b',
+    color: CHART_COLORS.gold,
+    bg: alpha(CHART_COLORS.gold, 0.08),
+    border: alpha(CHART_COLORS.gold, 0.3),
+    glow: alpha(CHART_COLORS.gold, 0.12),
+    pulse: CHART_COLORS.gold,
   },
   RISK_OFF: {
     label: 'Risk-Off',
-    color: '#f43f5e',
-    bg: 'rgba(244, 63, 94, 0.08)',
-    border: 'rgba(244, 63, 94, 0.3)',
-    glow: 'rgba(244, 63, 94, 0.15)',
-    pulse: '#f43f5e',
+    color: CHART_COLORS.east,
+    bg: alpha(CHART_COLORS.east, 0.08),
+    border: alpha(CHART_COLORS.east, 0.3),
+    glow: alpha(CHART_COLORS.east, 0.15),
+    pulse: CHART_COLORS.east,
   },
 };
 
@@ -56,11 +57,11 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
 
   return (
     <div
-      className={`relative flex flex-col items-center justify-center p-6 rounded-3xl transition-all duration-700 overflow-hidden ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
+      className={`relative flex flex-col items-center justify-center p-6 rounded-xl transition-all duration-700 overflow-hidden ${refreshing ? 'opacity-40 blur-[1px]' : 'opacity-100'}`}
       style={{
         background: `radial-gradient(circle at 50% 50%, ${cfg.glow} 0%, transparent 80%)`,
         border: `1px solid ${cfg.border}`,
-        boxShadow: `0 8px 32px rgba(0,0,0,0.4), inset 0 1px 1px ${cfg.border}`,
+        boxShadow: `0 8px 32px ${alpha(CHART_COLORS.black, 0.4)}, inset 0 1px 1px ${cfg.border}`,
         minWidth: 200,
       }}
     >
@@ -84,7 +85,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
       {/* Regime changed badge */}
       {regime_changed && (
         <div
-          className="absolute top-3 right-3 text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full"
+          className="absolute top-3 right-3 text-[11px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full"
           style={{ background: cfg.color + '22', color: cfg.color, border: `1px solid ${cfg.border}` }}
         >
           FLIP
@@ -100,7 +101,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
             cy="60"
             r={radius}
             fill="none"
-            stroke="rgba(255,255,255,0.06)"
+            stroke={WHITE_ALPHA.faint}
             strokeWidth="8"
             strokeDasharray={`${circumference * 0.75} ${circumference * 0.25}`}
             strokeLinecap="round"
@@ -123,12 +124,12 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
         {/* Center text */}
         <div className="absolute inset-0 flex flex-col items-center justify-center">
           <span
-            className="text-3xl font-black tabular-nums leading-none"
+            className="text-3xl font-bold tabular-nums leading-none"
             style={{ color: cfg.color }}
           >
             {Math.round(score)}
           </span>
-          <span className="text-[9px] text-white/40 font-bold uppercase tracking-wider mt-0.5">
+          <span className="text-[11px] text-terminal-dim font-semibold uppercase tracking-wider mt-0.5">
             Score
           </span>
         </div>
@@ -136,7 +137,7 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
 
       {/* Regime label */}
       <div
-        className="mt-2 text-sm font-black uppercase tracking-wider"
+        className="mt-2 text-sm font-semibold uppercase tracking-wider"
         style={{ color: cfg.color }}
       >
         {cfg.label}
@@ -150,8 +151,8 @@ export const RegimeOrb: React.FC<RegimeOrbProps> = ({
       {/* Delta */}
       {deltaAbs > 0.5 && (
         <div
-          className="mt-3 text-[11px] font-black tabular-nums px-2 py-0.5 rounded bg-white/5 border border-white/5"
-          style={{ color: deltaPositive ? '#10b981' : '#f43f5e' }}
+          className="mt-3 text-[11px] font-bold tabular-nums px-2 py-0.5 rounded bg-white/5 border border-border"
+          style={{ color: deltaPositive ? CHART_COLORS.expansion : CHART_COLORS.east }}
         >
           {deltaPositive ? '▲' : '▼'} {deltaAbs.toFixed(1)}
         </div>

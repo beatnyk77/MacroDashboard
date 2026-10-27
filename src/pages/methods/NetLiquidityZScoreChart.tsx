@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const netLiqData = [
     { date: 'Jan 2020', value: 0.3, zscore: 0.4 },
@@ -21,12 +24,12 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
     if (active && payload && payload.length) {
         const z = payload[0].value;
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(59,130,246,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={z > 0 ? '#22c55e' : '#ef4444'}>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <TerminalTooltipRow label="Z-score" valueClassName={z > 0 ? 'text-emerald-400' : 'text-red-400'}>
                     Z = {z > 0 ? '+' : ''}{z.toFixed(2)}σ
-                </Typography>
-            </Box>
+                </TerminalTooltipRow>
+            </TerminalTooltipShell>
         );
     }
     return null;
@@ -34,27 +37,27 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 
 export const NetLiquidityZScoreChart: React.FC = () => (
     <>
-        <ResponsiveContainer width="100%" height={260}>
+        <MacroChartContainer height={CHART_HEIGHTS.standard}>
             <AreaChart data={netLiqData} margin={{ top: 10, right: 20, left: -10, bottom: 0 }}>
                 <defs>
                     <linearGradient id="nlGrad" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                        <stop offset="5%" stopColor={CHART_COLORS.west} stopOpacity={0.3} />
+                        <stop offset="95%" stopColor={CHART_COLORS.west} stopOpacity={0} />
                     </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="date" tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[-2.5, 3]} />
+                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" />
+                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} domain={[-2.5, 3]} />
                 <Tooltip content={<CustomTooltip />} />
-                <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" />
-                <ReferenceLine y={1.5} stroke="#22c55e" strokeDasharray="5 5" strokeOpacity={0.5} />
-                <ReferenceLine y={-1.5} stroke="#ef4444" strokeDasharray="5 5" strokeOpacity={0.5} />
-                <Area type="monotone" dataKey="zscore" stroke="#3b82f6" fill="url(#nlGrad)" strokeWidth={2} dot={false} />
+                <ReferenceLine y={0} stroke={WHITE_ALPHA.soft} />
+                <ReferenceLine y={1.5} stroke={CHART_COLORS.expansion} strokeDasharray="5 5" strokeOpacity={0.5} />
+                <ReferenceLine y={-1.5} stroke={CHART_COLORS.stress} strokeDasharray="5 5" strokeOpacity={0.5} />
+                <Area type="monotone" dataKey="zscore" stroke={CHART_COLORS.west} fill="url(#nlGrad)" strokeWidth={2} dot={false} />
             </AreaChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
         <Box display="flex" gap={3} mt={2} flexWrap="wrap">
-            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 20, height: 2, bgcolor: '#22c55e', opacity: 0.5 }}/><Typography variant="caption" color="text.secondary">+1.5σ Bull threshold</Typography></Box>
-            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 20, height: 2, bgcolor: '#ef4444', opacity: 0.5 }}/><Typography variant="caption" color="text.secondary">−1.5σ Bear threshold</Typography></Box>
+            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 20, height: 2, bgcolor: CHART_COLORS.expansion, opacity: 0.5 }}/><Typography variant="caption" color="text.secondary">+1.5σ Bull threshold</Typography></Box>
+            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 20, height: 2, bgcolor: CHART_COLORS.stress, opacity: 0.5 }}/><Typography variant="caption" color="text.secondary">−1.5σ Bear threshold</Typography></Box>
         </Box>
     </>
 );

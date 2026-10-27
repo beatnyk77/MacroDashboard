@@ -14,7 +14,7 @@ export const SnapshotTimeline: React.FC<SnapshotTimelineProps> = ({ snapshots, c
     return (
         <div className={cn("space-y-4", className)}>
             <h3 className="text-sm font-medium text-white/80">Publication History</h3>
-            <div className="relative border-l border-white/10 ml-3 space-y-6">
+            <div className="relative border-l border-border ml-3 space-y-6">
                 {snapshots.map((snapshot, idx) => {
                     // We assume snapshots might not have snapshot_id in the interface, 
                     // but we might pass it as part of the payload or use published_at as key
@@ -43,12 +43,12 @@ export const SnapshotTimeline: React.FC<SnapshotTimelineProps> = ({ snapshots, c
                                             : 'Draft'}
                                     </span>
                                     
-                                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 border border-white/10 text-white/50 uppercase tracking-wider">
+                                    <span className="text-xs px-2 py-0.5 rounded-full bg-white/5 border border-border text-white/50 uppercase tracking-wider">
                                         {snapshot.data_status}
                                     </span>
                                 </div>
                                 
-                                <div className="text-sm text-white/40">
+                                <div className="text-sm text-terminal-dim">
                                     Observed: {snapshot.observed_at ? new Date(snapshot.observed_at).toLocaleDateString() : 'N/A'}
                                 </div>
                                 

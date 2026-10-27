@@ -2,14 +2,7 @@ import React from 'react';
 import { Box, Grid, Typography, useTheme, Paper } from '@mui/material';
 import { useInstitutionalFeatures, CreditPulse } from '@/hooks/useInstitutionalFeatures';
 import { TrendingUp, TrendingDown, Minus } from 'lucide-react';
-
-const FLAG_MAP: Record<string, string> = {
-    US: '🇺🇸',
-    CN: '🇨🇳',
-    IN: '🇮🇳',
-    EU: '🇪🇺',
-    JP: '🇯🇵'
-};
+import { WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const CreditSubCard: React.FC<{ data: CreditPulse }> = ({ data }) => {
     const theme = useTheme();
@@ -31,7 +24,7 @@ const CreditSubCard: React.FC<{ data: CreditPulse }> = ({ data }) => {
     return (
         <Paper sx={{
             p: 2,
-            bgcolor: 'rgba(255,255,255,0.02)',
+            bgcolor: WHITE_ALPHA.ghost,
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: 2,
@@ -40,21 +33,20 @@ const CreditSubCard: React.FC<{ data: CreditPulse }> = ({ data }) => {
             flexDirection: 'column',
             justifyContent: 'space-between',
             '&:hover': {
-                bgcolor: 'rgba(255,255,255,0.04)',
+                bgcolor: WHITE_ALPHA.ghost,
                 transform: 'translateY(-2px)',
                 transition: 'all 0.2s'
             }
         }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 1 }}>
                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                    <Typography sx={{ fontSize: '1.2rem' }}>{FLAG_MAP[data.country_code]}</Typography>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800 }}>{data.country_code}</Typography>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700 }}>{data.country_code}</Typography>
                 </Box>
                 <Box sx={{ color: getColor() }}>{getIcon()}</Box>
             </Box>
 
             <Box>
-                <Typography variant="h6" sx={{ fontWeight: 800, fontFamily: 'monospace' }}>
+                <Typography variant="h6" sx={{ fontWeight: 700, fontFamily: 'Fira Code, monospace' }}>
                     {data.impulse_z_score.toFixed(1)}
                 </Typography>
                 <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600, textTransform: 'uppercase' }}>
@@ -62,7 +54,7 @@ const CreditSubCard: React.FC<{ data: CreditPulse }> = ({ data }) => {
                 </Typography>
             </Box>
 
-            <Box sx={{ mt: 1, pt: 1, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <Box sx={{ mt: 1, pt: 1, borderTop: `1px solid ${WHITE_ALPHA.faint}` }}>
                 <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block' }}>
                     12m Change: {data.change_12m.toLocaleString()}
                 </Typography>

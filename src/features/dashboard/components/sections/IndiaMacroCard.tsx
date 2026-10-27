@@ -6,15 +6,15 @@ import { TrendingUp, TrendingDown, Activity, IndianRupee } from 'lucide-react';
 
 const MetricValue: React.FC<{ label: string; value: number | undefined | null; unit: string; trend?: number }> = ({ label, value, unit, trend }) => (
     <div className="flex flex-col">
-        <span className="text-xs font-black uppercase tracking-uppercase text-white/30 mb-1.5">{label}</span>
+        <span className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-1.5">{label}</span>
         <div className="flex items-baseline gap-1.5">
-            <span className="text-2xl font-black text-white font-mono tracking-heading">
+            <span className="text-2xl font-bold text-white font-mono tracking-heading">
                 {value !== undefined && value !== null ? value.toFixed(1) : '---'}
             </span>
-            <span className="text-xs font-bold text-white/40 uppercase tracking-uppercase">{unit}</span>
+            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{unit}</span>
         </div>
         {trend !== undefined && (
-            <div className={cn("flex items-center gap-1 text-xs font-black mt-1.5 uppercase tracking-uppercase", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
+            <div className={cn("flex items-center gap-1 text-xs font-semibold mt-1.5 uppercase tracking-wider", trend > 0 ? "text-emerald-400" : "text-rose-400")}>
                 {trend > 0 ? <TrendingUp size={10} /> : <TrendingDown size={10} />}
                 <span>{Math.abs(trend)}% vs PREV</span>
             </div>
@@ -59,37 +59,37 @@ export const IndiaMacroCard: React.FC = () => {
                             <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20 shadow-lg shadow-orange-500/5">
                                 <IndianRupee className="w-5 h-5 text-orange-400" />
                             </div>
-                            <h3 className="text-2xl font-black text-white tracking-heading">INDIA MACRO</h3>
+                            <h3 className="text-2xl font-bold text-white tracking-heading">INDIA MACRO</h3>
                         </div>
-                        <p className="text-xs font-black text-white/30 uppercase tracking-uppercase">
+                        <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                             MoSPI Institutional Feed
                         </p>
                     </div>
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-white/12 backdrop-blur-md">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/5 border border-border backdrop-blur-md">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xs font-black text-emerald-400/80 uppercase tracking-uppercase">Live Signal</span>
+                        <span className="text-xs font-semibold text-emerald-400/80 uppercase tracking-wider">Live Signal</span>
                     </div>
                 </div>
 
                 {/* Economic Misery Index - Hero Metric */}
-                <div className="mb-10 p-6 lg:p-8 rounded-3xl bg-white/[0.02] border border-white/[0.05] backdrop-blur-md relative overflow-hidden group/hero">
+                <div className="mb-10 p-6 lg:p-8 rounded-xl bg-white/[0.02] border border-white/[0.05] backdrop-blur-md relative overflow-hidden group/hero">
                     <div className="absolute -top-4 -right-4 opacity-[0.03] group-hover/hero:opacity-[0.06] transition-opacity duration-700">
                         <Activity className="w-48 h-48 text-white rotate-12" />
                     </div>
 
-                    <span className="text-xs font-black uppercase tracking-[0.25em] text-orange-400/60 block mb-4">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-orange-400/60 block mb-4">
                         Economic Misery Index
                     </span>
                     <div className="flex items-baseline gap-4">
                         <span className={cn(
-                            "text-6xl font-black font-mono tracking-heading",
+                            "text-6xl font-bold font-mono tracking-heading",
                             miseryIndex > 12 ? "text-rose-500" : (miseryIndex < 8 ? "text-emerald-500" : "text-amber-500")
                         )}>
                             {miseryIndex.toFixed(1)}
                         </span>
                         <div className="flex flex-col">
-                            <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">Aggregated</span>
-                            <span className="text-xs font-bold text-white/30 uppercase tracking-uppercase">(CPI + Unemp)</span>
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Aggregated</span>
+                            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">(CPI + Unemp)</span>
                         </div>
                     </div>
                 </div>
@@ -120,7 +120,7 @@ export const IndiaMacroCard: React.FC = () => {
             </div>
 
             {/* Premium Glow Border */}
-            <div className="absolute inset-0 border border-white/12 rounded-3xl pointer-events-none group-hover:border-white/20 transition-colors duration-500" />
+            <div className="absolute inset-0 border border-border rounded-xl pointer-events-none group-hover:border-white/20 transition-colors duration-500" />
         </div>
     );
 };

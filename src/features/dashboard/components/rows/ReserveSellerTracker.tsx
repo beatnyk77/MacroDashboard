@@ -1,12 +1,6 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
-import { 
-    ResponsiveContainer, 
-    AreaChart, 
-    Area, 
-    XAxis, 
-    YAxis 
-} from 'recharts';
+import { AreaChart, Area, XAxis, YAxis } from 'recharts';
 import { 
     AlertTriangle, 
     TrendingDown, 
@@ -19,12 +13,14 @@ import {
 import { useReserveSellerData, ReserveSellerCountry } from '@/hooks/useReserveSellerData';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
+import { CountryCode } from '@/components/CountryCode';
 
 const CountrySparkline: React.FC<{ data: any[], color: string, dataKey: string }> = ({ data, color, dataKey }) => {
     const gradId = React.useId();
     return (
-        <div className="h-12 w-32">
-            <ResponsiveContainer width="100%" height="100%">
+        <MacroChartContainer height={CHART_HEIGHTS.sparkline} className="w-32">
                 <AreaChart data={data}>
                     <defs>
                         <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
@@ -43,8 +39,7 @@ const CountrySparkline: React.FC<{ data: any[], color: string, dataKey: string }
                     <XAxis dataKey="date" hide />
                     <YAxis domain={['auto', 'auto']} hide />
                 </AreaChart>
-            </ResponsiveContainer>
-        </div>
+        </MacroChartContainer>
     );
 };
 
@@ -52,13 +47,6 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
     // Signal: Oil > 80 AND TIC Holdings decreasing (QoQ)
     const isSellingSignal = oilPrice > 80 && country.tic_delta_qoq < 0;
     
-    const FLAG_MAP: Record<string, string> = {
-        JP: '🇯🇵', CN: '🇨🇳', IN: '🇮🇳', SA: '🇸🇦',
-        KR: '🇰🇷', TW: '🇹🇼', SG: '🇸🇬', HK: '🇭🇰',
-        GB: '🇬🇧', AE: '🇦🇪', BR: '🇧🇷', CH: '🇨🇭',
-        LU: '🇱🇺', KY: '🇰🇾'
-    };
-
     return (
         <m.div 
             initial={{ opacity: 0, x: -20 }}
@@ -68,12 +56,10 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
         >
             {/* Country Identity */}
             <div className="md:col-span-3 flex items-center gap-4">
-                <div className="text-2xl opacity-80">
-                    {FLAG_MAP[country.country_code] || '🏳️'}
-                </div>
+                <CountryCode code={country.country_code} size="md" className="opacity-80" />
                 <div>
-                    <h4 className="text-sm font-black text-foreground uppercase tracking-uppercase">{country.country_label}</h4>
-                    <span className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">
+                    <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider">{country.country_label}</h4>
+                    <span className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider">
                         {country.country_type}
                     </span>
                 </div>
@@ -83,14 +69,14 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             <div className="md:col-span-3 flex items-center justify-between px-4">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <Landmark size={12} className="text-blue-600 dark:text-blue-400" />
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-uppercase">UST Holdings</span>
+                        <Landmark size={12} className=" text-blue-400" />
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">UST Holdings</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-black text-foreground tabular-nums">${country.latest_tic.toFixed(1)}B</span>
+                        <span className="text-lg font-bold text-foreground tabular-nums">${country.latest_tic.toFixed(1)}B</span>
                         <div className={cn(
-                            "text-[10px] font-black tabular-nums flex items-center",
-                            country.tic_delta_qoq >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                            "text-[11px] font-bold tabular-nums flex items-center",
+                            country.tic_delta_qoq >= 0 ? " text-emerald-400" : " text-rose-400"
                         )}>
                             {country.tic_delta_qoq >= 0 ? <TrendingUp size={10} className="mr-0.5" /> : <TrendingDown size={10} className="mr-0.5" />}
                             {Math.abs(country.tic_delta_qoq).toFixed(1)}%
@@ -99,7 +85,7 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
                 </div>
                 <CountrySparkline 
                     data={country.tic_holdings} 
-                    color={country.tic_delta_qoq >= 0 ? "#10b981" : "#f43f5e"} 
+                    color={country.tic_delta_qoq >= 0 ? CHART_COLORS.expansion : CHART_COLORS.east} 
                     dataKey="value" 
                 />
             </div>
@@ -108,14 +94,14 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             <div className="md:col-span-3 flex items-center justify-between px-4 border-l border-border">
                 <div className="space-y-1">
                     <div className="flex items-center gap-2">
-                        <BarChart3 size={12} className="text-indigo-600 dark:text-indigo-400" />
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-uppercase">Total Reserves</span>
+                        <BarChart3 size={12} className=" text-indigo-400" />
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Total Reserves</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-lg font-black text-foreground tabular-nums">${country.latest_fx.toFixed(1)}B</span>
+                        <span className="text-lg font-bold text-foreground tabular-nums">${country.latest_fx.toFixed(1)}B</span>
                         <div className={cn(
-                            "text-[10px] font-black tabular-nums flex items-center",
-                            country.fx_delta_qoq >= 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                            "text-[11px] font-bold tabular-nums flex items-center",
+                            country.fx_delta_qoq >= 0 ? " text-emerald-400" : " text-rose-400"
                         )}>
                             {country.fx_delta_qoq >= 0 ? <TrendingUp size={10} className="mr-0.5" /> : <TrendingDown size={10} className="mr-0.5" />}
                             {Math.abs(country.fx_delta_qoq).toFixed(1)}%
@@ -124,7 +110,7 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
                 </div>
                 <CountrySparkline 
                     data={country.fx_reserves} 
-                    color="#6366f1" 
+                    color={CHART_COLORS.indigo} 
                     dataKey="value" 
                 />
             </div>
@@ -132,13 +118,13 @@ const SellerRow: React.FC<{ country: ReserveSellerCountry, oilPrice: number }> =
             {/* Signal Logic Area */}
             <div className="md:col-span-3 flex justify-end items-center gap-3 pr-4">
                 {isSellingSignal ? (
-                    <div className="animate-pulse flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-700 dark:text-rose-400 font-bold">
+                    <div className="animate-pulse flex items-center gap-2 px-3 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/30 text-rose-400 font-bold">
                         <ShieldAlert size={14} />
-                        <span className="text-[10px] font-black uppercase tracking-uppercase">Selling to fund Oil</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">Selling to fund Oil</span>
                     </div>
                 ) : (
                     <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-muted/50 border border-border text-muted-foreground">
-                        <span className="text-[10px] font-black uppercase tracking-uppercase">Neutral Accumulation</span>
+                        <span className="text-[11px] font-semibold uppercase tracking-wider">Neutral Accumulation</span>
                     </div>
                 )}
             </div>
@@ -154,7 +140,7 @@ export const ReserveSellerTracker: React.FC = () => {
     const { countries, oilPrice, latestOil } = data;
 
     return (
-        <Card className="p-8 bg-card backdrop-blur-3xl border-border shadow-sm relative overflow-hidden rounded-[2.5rem] w-full mt-8">
+        <Card className="p-8 bg-card backdrop-blur-3xl border-border shadow-sm relative overflow-hidden rounded-xl w-full mt-8">
             {/* Background Decorative Element */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] rounded-full -mr-48 -mt-48" />
 
@@ -166,8 +152,8 @@ export const ReserveSellerTracker: React.FC = () => {
                             <div className="p-2 rounded-xl bg-orange-500/10 border border-orange-500/20">
                                 <AlertTriangle className="text-orange-500 w-5 h-5" />
                             </div>
-                            <h2 className="text-2xl font-black tracking-heading text-foreground uppercase italic">
-                                Reserve-Seller <span className="text-orange-600 dark:text-orange-500">Tracker</span>
+                            <h2 className="text-2xl font-bold tracking-heading text-foreground uppercase italic">
+                                Reserve-Seller <span className=" text-orange-500">Tracker</span>
                             </h2>
                         </div>
                         <p className="text-muted-foreground text-sm max-w-xl leading-relaxed">
@@ -176,29 +162,29 @@ export const ReserveSellerTracker: React.FC = () => {
                     </div>
 
                     {/* Oil Context Card */}
-                    <div className="bg-muted/40 border border-border rounded-2xl p-4 flex items-center gap-4 min-w-[240px]">
-                        <div className="p-2.5 rounded-xl bg-background text-orange-600 dark:text-orange-400">
+                    <div className="bg-muted/40 border border-border rounded-xl p-4 flex items-center gap-4 min-w-[240px]">
+                        <div className="p-2.5 rounded-xl bg-background text-orange-400">
                             <Droplets size={20} />
                         </div>
                         <div className="flex-1">
-                            <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Global Energy Context</div>
+                            <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Global Energy Context</div>
                             <div className="flex items-end gap-2">
-                                <span className="text-xl font-black text-foreground tabular-nums">${latestOil.toFixed(2)}</span>
-                                <span className="text-[10px] font-bold text-muted-foreground uppercase pb-1">Brent / BBL</span>
+                                <span className="text-xl font-bold text-foreground tabular-nums">${latestOil.toFixed(2)}</span>
+                                <span className="text-[11px] font-semibold text-muted-foreground uppercase pb-1">Brent / BBL</span>
                             </div>
                         </div>
                         <div className="h-10 w-16 opacity-50">
-                             <ResponsiveContainer width="100%" height="100%">
+                             <MacroChartContainer height="fill">
                                 <AreaChart data={oilPrice}>
                                     <Area
                                         type="monotone"
                                         dataKey="value"
-                                        stroke="#f97316"
+                                        stroke={CHART_COLORS.orange}
                                         fill="transparent"
                                         strokeWidth={1}
                                     />
                                 </AreaChart>
-                            </ResponsiveContainer>
+                            </MacroChartContainer>
                         </div>
                     </div>
                 </div>
@@ -218,9 +204,9 @@ export const ReserveSellerTracker: React.FC = () => {
                 <div className="mt-8 flex flex-wrap gap-6 items-center">
                     <div className="flex items-center gap-2">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-pulse" />
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Active Signal: Selling Condition Met</span>
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Active Signal: Selling Condition Met</span>
                     </div>
-                    <p className="text-[10px] text-muted-foreground font-medium italic underline underline-offset-4 decoration-border">
+                    <p className="text-[11px] text-muted-foreground font-medium italic underline underline-offset-4 decoration-border">
                         *UST Holdings derived from TIC Long-Term Securities. Reserves represent official gross FX excluding Gold.
                     </p>
                 </div>

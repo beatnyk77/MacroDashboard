@@ -24,12 +24,12 @@ function Pillar({
     accent?: string;
 }) {
     return (
-        <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5 flex flex-col gap-2">
-            <span className={cn('text-[9px] font-black uppercase tracking-[0.25em]', accent ?? 'text-white/30')}>
+        <div className="p-6 rounded-xl bg-white/[0.02] border border-border flex flex-col gap-2">
+            <span className={cn('text-[11px] font-semibold uppercase tracking-wider', accent ?? 'text-terminal-dim')}>
                 {label}
             </span>
-            <div className="text-2xl font-black italic tracking-heading text-white">{value}</div>
-            {sub && <div className="text-[10px] font-bold text-white/40 uppercase tracking-wide">{sub}</div>}
+            <div className="text-2xl font-bold italic tracking-heading text-white">{value}</div>
+            {sub && <div className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">{sub}</div>}
         </div>
     );
 }
@@ -43,17 +43,17 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
 
     return (
         <div className={cn(
-            'w-full rounded-[2rem] bg-black/40 border backdrop-blur-xl overflow-hidden',
-            regime.isAnyStale ? 'border-amber-500/20' : 'border-white/10',
+            'w-full rounded-xl bg-background/40 border backdrop-blur-xl overflow-hidden',
+            regime.isAnyStale ? 'border-amber-500/20' : 'border-border',
         )}>
             {/* Header bar */}
-            <div className="flex items-center justify-between px-8 py-3 bg-white/[0.02] border-b border-white/5">
+            <div className="flex items-center justify-between px-8 py-3 bg-white/[0.02] border-b border-border">
                 <div className="flex items-center gap-3">
                     <Activity size={10} className="text-amber-500/50" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.3em] text-white/30">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                         Energy Market Regime
                     </span>
-                    <div className={cn('px-3 py-1 rounded-full border text-[9px] font-black uppercase tracking-widest', regimeColor)}>
+                    <div className={cn('px-3 py-1 rounded-full border text-[11px] font-semibold uppercase tracking-wider', regimeColor)}>
                         {regime.wtiRegime}
                     </div>
                 </div>
@@ -71,7 +71,7 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
             {regime.isAnyStale && (
                 <div className="px-8 py-2 bg-amber-500/10 border-b border-amber-500/10 flex items-center gap-3">
                     <AlertTriangle size={12} className="text-amber-500" />
-                    <span className="text-[10px] font-bold text-amber-500/80 uppercase tracking-tight">
+                    <span className="text-[11px] font-semibold text-amber-500/80 uppercase tracking-tight">
                         One or more signals may be delayed — showing last known state.
                     </span>
                 </div>
@@ -137,11 +137,11 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
 
             {/* Narrative footer */}
             <div className="px-8 pb-6">
-                <div className="px-6 py-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-white/25 block mb-1">
+                <div className="px-6 py-4 rounded-xl bg-white/[0.02] border border-border">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim block mb-1">
                         Regime Synthesis
                     </span>
-                    <p className="text-[11px] font-bold text-white/60 uppercase tracking-wide leading-relaxed">
+                    <p className="text-[11px] font-semibold text-white/60 uppercase tracking-wider leading-relaxed">
                         {regime.overallNarrative}
                     </p>
                 </div>

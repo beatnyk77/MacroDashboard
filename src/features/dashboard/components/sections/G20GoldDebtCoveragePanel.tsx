@@ -4,17 +4,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useGoldDebtCoverageG20, G20GoldDebtRow } from '@/hooks/useGoldDebtCoverageG20';
 import { ComposableMap, Geographies, Geography } from 'react-simple-maps';
 import { scaleQuantize } from 'd3-scale';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, Cell } from 'recharts';
+import { DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, CHART_RAMPS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { Landmark, TrendingDown, ShieldAlert } from 'lucide-react';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CountryCode } from '@/components/CountryCode';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
-
-const COUNTRY_FLAGS: Record<string, string> = {
-    'US': '🇺🇸', 'UK': '🇬🇧', 'GB': '🇬🇧', 'FR': '🇫🇷', 'DE': '🇩🇪', 'IT': '🇮🇹',
-    'CA': '🇨🇦', 'JP': '🇯🇵', 'CN': '🇨🇳', 'IN': '🇮🇳', 'RU': '🇷🇺', 'BR': '🇧🇷',
-    'ZA': '🇿🇦', 'AU': '🇦🇺', 'KR': '🇰🇷', 'MX': '🇲🇽', 'ID': '🇮🇩', 'TR': '🇹🇷',
-    'SA': '🇸🇦', 'AR': '🇦🇷', 'EU': '🇪🇺'
-};
 
 const COUNTRY_NAMES: Record<string, string> = {
     'US': 'United States', 'UK': 'United Kingdom', 'GB': 'United Kingdom', 'FR': 'France', 'DE': 'Germany', 'IT': 'Italy',
@@ -55,7 +52,7 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
     }, [selectedCountryCode, data]);
 
     const colorScale = useMemo(() => {
-        if (!data?.latest || data.latest.length === 0) return scaleQuantize<string>().range(['#1e293b']);
+        if (!data?.latest || data.latest.length === 0) return scaleQuantize<string>().range([CHART_COLORS.line]);
 
         // Higher debt per oz -> red risk
         return scaleQuantize<string>()
@@ -64,25 +61,25 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
             // We should use the Coverage Ratio (which is % and FX-invariant!) for the map colors!
             // Lower coverage = higher risk (red), Higher coverage = robust (green)
             .domain([0, 15]) // 0% to 15% coverage roughly covers G20
-            .range(['#9f1239', '#be123c', '#f59e0b', '#10b981', '#059669']); // deep red to green
+            .range([...CHART_RAMPS.coverage]); // deep red to green
     }, [data]);
 
     const getCoverageColor = (coverage: number) => {
-        if (coverage > 10) return '#10b981'; // Green
-        if (coverage > 4) return '#f59e0b'; // Yellow
-        return '#f43f5e'; // Red
+        if (coverage > 10) return CHART_COLORS.expansion; // Green
+        if (coverage > 4) return CHART_COLORS.gold; // Yellow
+        return CHART_COLORS.east; // Red
     };
 
     if (isLoading) {
-        return <Skeleton className="h-[600px] w-full rounded-[2.5rem] bg-white/5" />;
+        return <Skeleton className="h-[600px] w-full rounded-xl bg-white/5" />;
     }
 
     if (isError) {
         return (
-            <Card className="p-8 bg-black/40 backdrop-blur-xl border-rose-500/10 h-[400px] flex items-center justify-center rounded-[2.5rem]">
+            <Card className="p-8 bg-background/40 backdrop-blur-xl border-rose-500/10 h-[400px] flex items-center justify-center rounded-xl">
                 <div className="text-center text-rose-400">
                     <ShieldAlert size={32} className="mx-auto mb-4 opacity-50" />
-                    <p className="font-black uppercase tracking-uppercase text-xs mb-2">Relay Divergence</p>
+                    <p className="font-semibold uppercase tracking-wider text-xs mb-2">Relay Divergence</p>
                     <p className="text-xs text-rose-400/60 font-medium max-w-xs mx-auto italic">
                         {error instanceof Error ? error.message : 'Sovereign feed encountered a runtime error.'}
                     </p>
@@ -93,8 +90,8 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
 
     if (!data?.latest || data.latest.length === 0) {
         return (
-            <Card className="p-8 bg-black/40 backdrop-blur-xl border-white/5 h-[400px] flex items-center justify-center rounded-[2.5rem]">
-                <div className="text-center text-muted-foreground/50">
+            <Card className="p-8 bg-background/40 backdrop-blur-xl border-border h-[400px] flex items-center justify-center rounded-xl">
+                <div className="text-center text-terminal-dim">
                     <ShieldAlert size={32} className="mx-auto mb-4 opacity-50" />
                     <p>Sovereign coverage data unavailable.</p>
                 </div>
@@ -106,14 +103,14 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
     const sortedRows = [...data.latest].sort((a, b) => a.coverage_ratio - b.coverage_ratio);
 
     return (
-        <Card className="p-6 md:p-10 bg-[#050505] relative overflow-hidden rounded-[2.5rem] border border-white/5 shadow-2xl">
+        <Card className="p-6 md:p-10 bg-background relative overflow-hidden rounded-xl border border-border shadow-2xl">
             {/* Header */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-10 z-10 relative">
                 <div className="space-y-3">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-black uppercase tracking-uppercase shadow-[0_0_20px_rgba(244,63,94,0.15)]">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-semibold uppercase tracking-wider shadow-[0_0_20px_rgba(244,63,94,0.15)]">
                         <Landmark size={12} /> Systemic Solvency
                     </div>
-                    <h3 className="text-3xl lg:text-4xl font-black text-white tracking-heading uppercase italic drop-shadow-md">
+                    <h3 className="text-3xl lg:text-4xl font-bold text-white tracking-heading uppercase italic drop-shadow-md">
                         G20 <span className="text-transparent bg-clip-text bg-gradient-to-br from-amber-200 to-amber-500">Gold</span> Debt Coverage
                     </h3>
                     <p className="text-sm font-medium text-muted-foreground max-w-2xl leading-relaxed">
@@ -124,8 +121,8 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
 
                 {/* Narrative Insight */}
                 {selectedCountryData && (
-                    <div className="flex-1 bg-amber-500/5 border border-amber-500/20 rounded-2xl p-4 md:max-w-xs animate-in fade-in slide-in-from-right-4">
-                        <div className="text-xs font-black text-amber-500 uppercase tracking-uppercase mb-2 flex items-center gap-2">
+                    <div className="flex-1 bg-amber-500/5 border border-amber-500/20 rounded-xl p-4 md:max-w-xs animate-in fade-in slide-in-from-right-4">
+                        <div className="text-xs font-semibold text-amber-500 uppercase tracking-wider mb-2 flex items-center gap-2">
                             <ShieldAlert size={10} /> Solvency Insight
                         </div>
                         <p className="text-xs text-amber-200/70 leading-relaxed italic">
@@ -138,9 +135,9 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 relative z-10">
                 {/* Map Section */}
                 <div className="lg:col-span-2 space-y-6">
-                    <div className="relative rounded-3xl bg-slate-950/50 border border-white/[0.03] overflow-hidden group" style={{ height: '450px' }}>
+                    <div className="relative rounded-xl bg-card/60 border border-white/[0.03] overflow-hidden group" style={{ height: '450px' }}>
                         <div className="absolute top-4 left-4 z-10 pointer-events-none">
-                            <span className="text-xs font-black text-white/30 uppercase tracking-uppercase">Sovereign Heatmap (Coverage %)</span>
+                            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Sovereign Heatmap (Coverage %)</span>
                         </div>
                         <div style={{ width: '100%', height: '100%' }}>
                             <ComposableMap
@@ -162,12 +159,12 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                                     geography={geo}
                                                     onMouseEnter={() => countryData && setHoveredCountry(countryData)}
                                                     onMouseLeave={() => setHoveredCountry(null)}
-                                                    fill={countryData ? colorScale(countryData.coverage_ratio) : "#0f172a"}
-                                                    stroke={isHovered ? "#ffffff" : "rgba(255,255,255,0.05)"}
+                                                    fill={countryData ? colorScale(countryData.coverage_ratio) : CHART_COLORS.panel}
+                                                    stroke={isHovered ? CHART_COLORS.white : WHITE_ALPHA.faint}
                                                     strokeWidth={isHovered ? 1.5 : 0.5}
                                                     style={{
                                                         default: { outline: 'none', transition: 'all 200ms' },
-                                                        hover: { outline: 'none', fill: countryData ? colorScale(countryData.coverage_ratio) : '#1e293b', cursor: countryData ? 'pointer' : 'default' },
+                                                        hover: { outline: 'none', fill: countryData ? colorScale(countryData.coverage_ratio) : CHART_COLORS.line, cursor: countryData ? 'pointer' : 'default' },
                                                         pressed: { outline: 'none' }
                                                     }}
                                                 />
@@ -179,25 +176,25 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                         </div>
 
                         {hoveredCountry && (
-                            <div className="absolute bottom-6 left-6 p-5 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/12 shadow-2xl z-50 min-w-[240px] animate-in fade-in slide-in-from-bottom-2">
-                                <div className="flex items-center gap-3 mb-3 border-b border-white/12 pb-2">
-                                    <span className="text-2xl">{COUNTRY_FLAGS[hoveredCountry.country_code]}</span>
-                                    <h4 className="text-sm font-black text-white uppercase tracking-uppercase">{COUNTRY_NAMES[hoveredCountry.country_code] || hoveredCountry.country_code}</h4>
+                            <div className="absolute bottom-6 left-6 p-5 rounded-xl bg-background/90 backdrop-blur-xl border border-border shadow-2xl z-50 min-w-[240px] animate-in fade-in slide-in-from-bottom-2">
+                                <div className="flex items-center gap-3 mb-3 border-b border-border pb-2">
+                                    <CountryCode code={hoveredCountry.country_code} size="lg" />
+                                    <h4 className="text-sm font-semibold text-white uppercase tracking-wider">{COUNTRY_NAMES[hoveredCountry.country_code] || hoveredCountry.country_code}</h4>
                                 </div>
                                 <div className="space-y-3">
                                     <div>
-                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mb-0.5">Gold Coverage</div>
-                                        <div className="font-black text-lg" style={{ color: getCoverageColor(hoveredCountry.coverage_ratio) }}>
+                                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">Gold Coverage</div>
+                                        <div className="font-bold text-lg" style={{ color: getCoverageColor(hoveredCountry.coverage_ratio) }}>
                                             {hoveredCountry.coverage_ratio.toFixed(2)}%
                                         </div>
                                     </div>
                                     <div>
-                                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mb-0.5">Debt per Gold Ounce</div>
+                                        <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">Debt per Gold Ounce</div>
                                         <div className="font-mono text-sm text-white/90">
                                             {formatCurrency(hoveredCountry.debt_per_oz_local, hoveredCountry.fx_rate_local_per_usd)}
                                         </div>
                                     </div>
-                                    <div className="pt-2 border-t border-white/5">
+                                    <div className="pt-2 border-t border-border">
                                         <p className="text-xs text-amber-500/80 leading-tight italic">
                                             Local gold price must reach {formatCurrency(hoveredCountry.implied_gold_price_usd * hoveredCountry.fx_rate_local_per_usd, hoveredCountry.fx_rate_local_per_usd)} to fully back sovereign debt.
                                         </p>
@@ -210,24 +207,24 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                     {/* Country Detail Card & Trend */}
                     {selectedCountryData && (
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-in fade-in zoom-in-95">
-                            <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03] flex flex-col justify-between">
+                            <div className="bg-card/60 p-6 rounded-xl border border-white/[0.03] flex flex-col justify-between">
                                 <div className="flex items-center gap-3 mb-6">
-                                    <span className="text-3xl">{COUNTRY_FLAGS[selectedCountryData.country_code]}</span>
+                                    <CountryCode code={selectedCountryData.country_code} size="lg" />
                                     <div>
-                                        <h4 className="text-lg font-black text-white uppercase tracking-heading italic">{COUNTRY_NAMES[selectedCountryData.country_code]}</h4>
-                                        <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase">{selectedCountryData.country_code} / SOVEREIGN AUDIT</p>
+                                        <h4 className="text-lg font-semibold text-white uppercase tracking-heading italic">{COUNTRY_NAMES[selectedCountryData.country_code]}</h4>
+                                        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{selectedCountryData.country_code} / SOVEREIGN AUDIT</p>
                                     </div>
                                 </div>
                                 
                                 <div className="grid grid-cols-2 gap-6">
                                     <div>
-                                        <p className="text-xs font-black text-white/40 uppercase tracking-uppercase mb-1">Inverse Coverage</p>
-                                        <p className="text-xl font-black text-rose-500">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</p>
+                                        <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">Inverse Coverage</p>
+                                        <p className="text-xl font-bold text-rose-500">{(selectedCountryData.inverse_coverage_ratio).toFixed(1)}x</p>
                                         <p className="text-xs text-muted-foreground italic">Debt to Gold Value</p>
                                     </div>
                                     <div>
-                                        <p className="text-xs font-black text-white/40 uppercase tracking-uppercase mb-1">Debt / Gold Oz</p>
-                                        <p className="text-xl font-black text-amber-400 font-mono">
+                                        <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">Debt / Gold Oz</p>
+                                        <p className="text-xl font-bold text-amber-400 font-mono">
                                             {formatCurrency(selectedCountryData.debt_per_oz_local, selectedCountryData.fx_rate_local_per_usd)}
                                         </p>
                                         <p className="text-xs text-muted-foreground italic">Local Currency Units</p>
@@ -235,15 +232,14 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03]">
+                            <div className="bg-card/60 p-6 rounded-xl border border-white/[0.03]">
                                 <div className="flex items-center justify-between mb-4">
-                                    <h4 className="text-xs font-black text-white/50 uppercase tracking-uppercase flex items-center gap-2">
+                                    <h4 className="text-xs font-semibold text-white/50 uppercase tracking-wider flex items-center gap-2">
                                         <TrendingDown size={12} className="text-amber-500" /> Coverage Trend (30D)
                                     </h4>
-                                    <span className="text-xs font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
+                                    <span className="text-xs font-semibold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20">Active Ingestion</span>
                                 </div>
-                                <div className="h-[100px] w-full">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                <MacroChartContainer height={CHART_HEIGHTS.compact}>
                                         <BarChart data={countryHistory}>
                                             <Bar dataKey="coverage_ratio" radius={[2, 2, 0, 0]}>
                                                 {countryHistory.map((entry, index) => (
@@ -251,9 +247,8 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                                 ))}
                                             </Bar>
                                         </BarChart>
-                                    </ResponsiveContainer>
-                                </div>
-                                <div className="mt-2 flex justify-between text-xs font-black text-white/20 uppercase tracking-uppercase">
+                                </MacroChartContainer>
+                                <div className="mt-2 flex justify-between text-xs font-semibold text-white/20 uppercase tracking-wider">
                                     <span>T-30 Days</span>
                                     <span>Current</span>
                                 </div>
@@ -263,24 +258,23 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                 </div>
 
                 {/* Top 10 Red Zone Bar Chart */}
-                <div className="bg-slate-950/50 p-6 rounded-3xl border border-white/[0.03] space-y-6">
+                <div className="bg-card/60 p-6 rounded-xl border border-white/[0.03] space-y-6">
                     <div className="flex items-center gap-2">
                         <TrendingDown size={16} className="text-rose-500" />
-                        <h4 className="text-xs font-black uppercase text-white/70 tracking-uppercase">Highest Fiat Dilution</h4>
+                        <h4 className="text-xs font-semibold uppercase text-white/70 tracking-wider">Highest Fiat Dilution</h4>
                     </div>
-                    <div className="h-[380px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height={CHART_HEIGHTS.tall}>
                             <BarChart data={sortedRows.slice(0, 10)} layout="vertical" margin={{ top: 0, right: 0, left: 10, bottom: 0 }}>
                                 <XAxis type="number" hide />
                                 <YAxis
+                                    {...DEFAULT_YAXIS_PROPS}
                                     dataKey="country_code"
                                     type="category"
                                     axisLine={false}
-                                    tickLine={false}
                                     tick={(props) => {
                                         const { x, y, payload } = props;
                                         return (
-                                            <text x={x - 10} y={y} dy={4} fill="#fff" fontSize={11} fontWeight={800} textAnchor="end" className="uppercase drop-shadow-md">
+                                            <text x={x - 10} y={y} dy={4} fill="#fff" fontSize={11} fontWeight={700} textAnchor="end" className="uppercase drop-shadow-md">
                                                 {payload.value}
                                             </text>
                                         );
@@ -288,13 +282,13 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     width={40}
                                 />
                                 <RechartsTooltip
-                                    cursor={{ fill: 'rgba(255,255,255,0.02)' }}
+                                    cursor={{ fill: WHITE_ALPHA.ghost }}
                                     content={({ active, payload }) => {
                                         if (!active || !payload?.length) return null;
                                         const data = payload[0].payload as G20GoldDebtRow;
                                         return (
-                                            <div className="bg-black border border-white/12 p-3 rounded-lg shadow-xl backdrop-blur-md">
-                                                <div className="font-black text-xs text-white/70 mb-1">{COUNTRY_NAMES[data.country_code]}</div>
+                                            <div className={TOOLTIP_SHELL_CLASS}>
+                                                <div className="font-semibold text-xs text-slate-400 mb-1">{COUNTRY_NAMES[data.country_code]}</div>
                                                 <div className="font-mono text-sm text-rose-400">{data.coverage_ratio.toFixed(2)}% Coverage</div>
                                             </div>
                                         );
@@ -306,23 +300,22 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     ))}
                                 </Bar>
                             </BarChart>
-                        </ResponsiveContainer>
-                    </div>
+                    </MacroChartContainer>
                 </div>
             </div>
 
             {/* Terminal Table */}
-            <div className="mt-8 rounded-3xl border border-white/5 bg-black/40 overflow-hidden">
+            <div className="mt-8 rounded-xl border border-border bg-background/40 overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full text-left border-collapse">
                         <thead>
-                            <tr className="bg-white/[0.02] border-b border-white/5">
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground w-16">Rank</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground">Sovereign</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground text-right">Coverage %</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground text-right hidden sm:table-cell">Inverse Ratio</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground text-right hidden lg:table-cell">Gold (Tonnes)</th>
-                                <th className="px-6 py-4 text-xs font-black uppercase tracking-uppercase text-muted-foreground text-right">Debt / Gold Oz (Local)</th>
+                            <tr className="bg-white/[0.02] border-b border-border">
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground w-16">Rank</th>
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Sovereign</th>
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Coverage %</th>
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right hidden sm:table-cell">Inverse Ratio</th>
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right hidden lg:table-cell">Gold (Tonnes)</th>
+                                <th className="px-6 py-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground text-right">Debt / Gold Oz (Local)</th>
                             </tr>
                         </thead>
                         <tbody className="divide-y divide-white/[0.02]">
@@ -333,14 +326,14 @@ export const G20GoldDebtCoveragePanel: React.FC = () => {
                                     onClick={() => setSelectedCountryCode(row.country_code)}
                                 >
                                     <td className="px-6 py-4">
-                                        <span className="text-xs font-black text-white/30 tabular-nums">{String(idx + 1).padStart(2, '0')}</span>
+                                        <span className="text-xs font-bold text-terminal-dim tabular-nums">{String(idx + 1).padStart(2, '0')}</span>
                                     </td>
                                     <td className="px-6 py-4">
                                         <div className="flex items-center gap-3">
-                                            <span className="text-xl opacity-80 group-hover:opacity-100 transition-opacity">{COUNTRY_FLAGS[row.country_code] || '🌐'}</span>
+                                            <CountryCode code={row.country_code} size="md" className="opacity-80 group-hover:opacity-100 transition-opacity" />
                                             <div>
                                                 <div className="text-sm font-bold text-white/90">{COUNTRY_NAMES[row.country_code] || row.country_code}</div>
-                                                <div className="text-xs font-bold text-muted-foreground uppercase">{row.country_code}</div>
+                                                <div className="text-xs font-semibold text-muted-foreground uppercase">{row.country_code}</div>
                                             </div>
                                         </div>
                                     </td>

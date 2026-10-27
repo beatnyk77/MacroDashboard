@@ -25,6 +25,7 @@ import { getConceptByGlossarySlug } from '@/lib/conceptHub';
 import { ConceptHierarchyBanner } from '@/components/seo/ConceptHierarchyBanner';
 import { glossarySpokeMeta } from '@/lib/seoTemplates';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const GlossaryTermPage: React.FC = () => {
     const { slug } = useParams<{ slug: string }>();
@@ -281,11 +282,11 @@ export const GlossaryTermPage: React.FC = () => {
                             size="small"
                             color="primary"
                             variant="outlined"
-                            sx={{ fontWeight: 700, borderRadius: 1, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.65rem' }}
+                            sx={{ fontWeight: 700, borderRadius: 1, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.6875rem' }}
                         />
                     </Box>
 
-                    <Typography component="h1" variant="h2" sx={{ fontWeight: 900, color: 'text.primary', mb: 3 }}>
+                    <Typography component="h1" variant="h2" sx={{ fontWeight: 700, color: 'text.primary', mb: 3 }}>
                         {displayH1}
                     </Typography>
 
@@ -293,7 +294,7 @@ export const GlossaryTermPage: React.FC = () => {
                     <Typography
                         component="h2"
                         variant="subtitle2"
-                        sx={{ fontWeight: 800, textTransform: 'uppercase', color: 'text.disabled', letterSpacing: 1.5, mb: 2 }}
+                        sx={{ fontWeight: 700, textTransform: 'uppercase', color: 'text.disabled', letterSpacing: 1.5, mb: 2 }}
                     >
                         Definition
                     </Typography>
@@ -330,12 +331,12 @@ export const GlossaryTermPage: React.FC = () => {
                             <Typography
                                 component="h2"
                                 variant="subtitle2"
-                                sx={{ fontWeight: 800, textTransform: 'uppercase', color: 'text.disabled', letterSpacing: 1.5, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}
+                                sx={{ fontWeight: 700, textTransform: 'uppercase', color: 'text.disabled', letterSpacing: 1.5, mb: 2, display: 'flex', alignItems: 'center', gap: 1 }}
                             >
                                 <FlaskConical size={16} /> Formula / Calculation
                             </Typography>
-                            <Paper variant="outlined" sx={{ p: 3, bgcolor: 'rgba(0,0,0,0.02)', borderRadius: 2, borderStyle: 'dashed' }}>
-                                <Typography sx={{ fontFamily: 'JetBrains Mono, monospace', fontSize: '1.1rem', color: 'primary.main', fontWeight: 600, whiteSpace: 'pre-line' }}>
+                            <Paper variant="outlined" sx={{ p: 3, bgcolor: alpha(CHART_COLORS.black, 0.02), borderRadius: 2, borderStyle: 'dashed' }}>
+                                <Typography sx={{ fontFamily: 'Fira Code, monospace', fontSize: '1.1rem', color: 'primary.main', fontWeight: 600, whiteSpace: 'pre-line' }}>
                                     {termData.formula}
                                 </Typography>
                             </Paper>
@@ -347,7 +348,7 @@ export const GlossaryTermPage: React.FC = () => {
                             <Typography
                                 component="h2"
                                 variant="h5"
-                                sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
+                                sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
                             >
                                 <Activity size={22} className="text-blue-400" /> 2026 Macro Context
                             </Typography>
@@ -364,7 +365,7 @@ export const GlossaryTermPage: React.FC = () => {
                             <Typography
                                 component="h2"
                                 variant="h5"
-                                sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
+                                sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
                             >
                                 <Lightbulb size={24} className="text-amber-500" /> Why It Matters
                             </Typography>
@@ -383,7 +384,7 @@ export const GlossaryTermPage: React.FC = () => {
                     </Box>
 
                     {termData.methodsPage && (
-                        <Box sx={{ mt: 4, p: 4, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.2)' }}>
+                        <Box sx={{ mt: 4, p: 4, bgcolor: alpha(CHART_COLORS.gold, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.2)}` }}>
                             <Typography variant="body2" color="text.secondary" mb={2}>
                                 This metric has a detailed methodology article covering its formula, data sources, and institutional use cases.
                             </Typography>
@@ -392,7 +393,7 @@ export const GlossaryTermPage: React.FC = () => {
                                 to={termData.methodsPage}
                                 endIcon={<ArrowRight size={15} />}
                                 variant="outlined"
-                                sx={{ borderColor: 'rgba(245,158,11,0.4)', color: '#f59e0b', '&:hover': { borderColor: '#f59e0b', bgcolor: 'rgba(245,158,11,0.08)' } }}
+                                sx={{ borderColor: alpha(CHART_COLORS.gold, 0.4), color: CHART_COLORS.gold, '&:hover': { borderColor: CHART_COLORS.gold, bgcolor: alpha(CHART_COLORS.gold, 0.08) } }}
                             >
                                 Read Full Methodology
                             </Button>
@@ -402,7 +403,7 @@ export const GlossaryTermPage: React.FC = () => {
                     {/* Visible FAQ block for enriched terms */}
                     {seo?.faqItems && seo.faqItems.length > 0 && (
                         <Box sx={{ mt: 8, mb: 6 }}>
-                            <Typography component="h2" variant="h6" sx={{ fontWeight: 800, mb: 4 }}>
+                            <Typography component="h2" variant="h6" sx={{ fontWeight: 700, mb: 4 }}>
                                 Frequently Asked Questions
                             </Typography>
                             <Box display="flex" flexDirection="column" gap={3}>
@@ -421,7 +422,7 @@ export const GlossaryTermPage: React.FC = () => {
                     )}
 
                     <Box sx={{ mt: 8, mb: 6 }}>
-                        <Typography component="h2" variant="h6" sx={{ fontWeight: 800, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Typography component="h2" variant="h6" sx={{ fontWeight: 700, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <BookOpen size={20} /> Related Concepts
                         </Typography>
                         <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={3}>
@@ -435,10 +436,10 @@ export const GlossaryTermPage: React.FC = () => {
                                         p: 2.5,
                                         textDecoration: 'none',
                                         transition: 'all 0.2s',
-                                        '&:hover': { borderColor: 'primary.main', transform: 'translateY(-4px)', boxShadow: '0 4px 20px rgba(0,0,0,0.05)' }
+                                        '&:hover': { borderColor: 'primary.main', transform: 'translateY(-4px)', boxShadow: `0 4px 20px ${alpha(CHART_COLORS.black, 0.05)}` }
                                     }}
                                 >
-                                    <Typography component="p" variant="subtitle2" sx={{ fontWeight: 800, color: 'text.primary', mb: 1 }}>
+                                    <Typography component="p" variant="subtitle2" sx={{ fontWeight: 700, color: 'text.primary', mb: 1 }}>
                                         {term.term}
                                     </Typography>
                                     <Typography variant="caption" sx={{ color: 'text.secondary', display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', lineClamp: 2 }}>
@@ -458,7 +459,7 @@ export const GlossaryTermPage: React.FC = () => {
 
                     <Paper sx={{ p: 4, borderRadius: 3, bgcolor: 'text.primary', color: 'background.paper', position: 'relative', overflow: 'hidden', mb: 4 }}>
                         <Activity size={100} style={{ position: 'absolute', right: -20, bottom: -20, opacity: 0.1 }} />
-                        <Typography component="p" variant="h5" sx={{ fontWeight: 900, mb: 1 }}>
+                        <Typography component="p" variant="h5" sx={{ fontWeight: 700, mb: 1 }}>
                             Track {termData.term} live
                         </Typography>
                         <Typography variant="body2" sx={{ opacity: 0.7, mb: 3, maxWidth: '80%' }}>
@@ -471,7 +472,7 @@ export const GlossaryTermPage: React.FC = () => {
                                 variant="contained"
                                 color="primary"
                                 size="large"
-                                sx={{ fontWeight: 800, px: 4, borderRadius: 2 }}
+                                sx={{ fontWeight: 700, px: 4, borderRadius: 2 }}
                             >
                                 Open Terminal
                             </Button>
@@ -481,7 +482,7 @@ export const GlossaryTermPage: React.FC = () => {
                                 variant="outlined"
                                 size="large"
                                 startIcon={<Code size={16} />}
-                                sx={{ fontWeight: 700, px: 3, borderRadius: 2, borderColor: 'rgba(255,255,255,0.3)', color: 'inherit', '&:hover': { borderColor: 'rgba(255,255,255,0.6)' } }}
+                                sx={{ fontWeight: 700, px: 3, borderRadius: 2, borderColor: WHITE_ALPHA.dim, color: 'inherit', '&:hover': { borderColor: WHITE_ALPHA.mid } }}
                             >
                                 API Access
                             </Button>

@@ -13,7 +13,7 @@ export const China15thFYPTeaserRow: React.FC = () => {
     const navigate = useNavigate();
 
     if (isLoading) {
-        return <Skeleton className="w-full h-24 rounded-2xl bg-card/50" />;
+        return <Skeleton className="w-full h-24 rounded-xl bg-card/50" />;
     }
 
     const targets = data?.filter(item => item.section === 'target').slice(0, 4) || [];
@@ -34,12 +34,12 @@ export const China15thFYPTeaserRow: React.FC = () => {
             <CardContent className="p-0">
                 <div className="flex flex-col md:flex-row items-stretch">
                     {/* Hero Side */}
-                    <div className="md:w-1/4 p-6 flex flex-col justify-center border-b md:border-b-0 md:border-r border-white/5 bg-red-500/5">
+                    <div className="md:w-1/4 p-6 flex flex-col justify-center border-b md:border-b-0 md:border-r border-border bg-red-500/5">
                         <div className="flex items-center gap-2 mb-2">
                             <Flag className="text-red-500" size={16} />
-                            <span className="text-xs font-black uppercase tracking-uppercase text-red-400">Policy Intelligence</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-red-400">Policy Intelligence</span>
                         </div>
-                        <h2 className="text-lg font-black tracking-heading text-white leading-tight">
+                        <h2 className="text-lg font-bold tracking-heading text-white leading-tight">
                             China 15th <br />
                             <span className="text-red-500">Five-Year Plan</span>
                         </h2>
@@ -54,12 +54,12 @@ export const China15thFYPTeaserRow: React.FC = () => {
                             const Icon = iconMap[target.metadata?.icon] || Flag;
                             return (
                                 <div key={target.id} className="flex items-center gap-3 p-2 rounded-xl hover:bg-white/5 transition-colors cursor-default">
-                                    <div className="p-2 rounded-lg bg-slate-800/80 text-red-400">
+                                    <div className="p-2 rounded-lg bg-secondary/60 text-red-400">
                                         <Icon size={16} />
                                     </div>
                                     <div>
-                                        <div className="text-xs font-black uppercase text-muted-foreground/50 tracking-uppercase">{target.label}</div>
-                                        <div className="text-sm font-black text-white">{target.value_target}</div>
+                                        <div className="text-xs font-semibold uppercase text-terminal-dim tracking-wider">{target.label}</div>
+                                        <div className="text-sm font-bold text-white">{target.value_target}</div>
                                     </div>
                                 </div>
                             );
@@ -69,10 +69,10 @@ export const China15thFYPTeaserRow: React.FC = () => {
                     {/* CTA Side */}
                     <div 
                         onClick={() => navigate('/labs/china-15th-fyp')}
-                        className="p-6 flex items-center justify-center bg-white/5 hover:bg-white/10 cursor-pointer transition-colors border-t md:border-t-0 border-white/5"
+                        className="p-6 flex items-center justify-center bg-white/5 hover:bg-white/10 cursor-pointer transition-colors border-t md:border-t-0 border-border"
                     >
                         <div className="flex items-center gap-2 group-hover:translate-x-1 transition-transform">
-                            <span className="text-xs font-black uppercase tracking-uppercase text-red-400">Mission Control</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider text-red-400">Mission Control</span>
                             <ArrowRight size={14} className="text-red-400" />
                         </div>
                     </div>

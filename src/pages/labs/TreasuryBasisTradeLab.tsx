@@ -5,20 +5,18 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-  ChevronRight,
-  ArrowLeft,
   Activity,
   Flame,
   Scale,
   ShieldAlert,
   FileText
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
 import { DeskConceptPill } from '@/components/DeskConceptPill';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 export const TreasuryBasisTradeLab: React.FC = () => {
   const { data: riskMetric } = useLatestMetric(MID.TREASURY_BASIS_BLOWOUT_RISK);
@@ -110,45 +108,22 @@ export const TreasuryBasisTradeLab: React.FC = () => {
         ]}
       />
 
-      <div className="min-h-screen bg-[#050814] text-slate-100 p-4 md:p-6 lg:p-8 font-sans">
-        {/* Breadcrumb Navigation */}
-        <div className="max-w-7xl mx-auto mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 text-slate-400 hover:text-white"
-              onClick={() => window.history.back()}
-            >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              Observatory
-            </Button>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-slate-400">Fixed Income & Repo Plumbing</span>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-cyan-400 font-mono">DESK 05: BASIS TRADE LEVERAGE</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <FreshnessChip status={dataFreshness.state} />
-            <DataProvenanceBadge source="CFTC / FRBNY / FRED" />
-          </div>
-        </div>
-
-        {/* Hero & Risk Dial */}
-        <div className="max-w-7xl mx-auto mb-8 bg-[#090e1f]/80 backdrop-blur-md border border-slate-800/80 rounded-lg p-6 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-800/60 border border-slate-700/60 text-xs text-cyan-400 font-mono">
-                <Scale className="w-3.5 h-3.5" />
-                <span>ARBITRAGE LEVERAGE & REPO STRESS MONITOR</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white font-mono">
-                Treasury Cash-Futures Basis Trade & Leverage Fragility
-              </h1>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Institutional telemetry monitoring hedge fund cash-futures basis trade leverage, CFTC speculative net short positioning in 10Y/Ultra Treasury contracts, and repo collateral financing friction.
-              </p>
+      <div className="page-shell">
+        <LabPageHeader
+          trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+          current="Treasury Basis Trade"
+          badge="Arbitrage Leverage & Repo Stress Monitor"
+          badgeIcon={<Scale className="w-3 h-3" />}
+          title="Treasury Cash-Futures Basis Trade & Leverage Fragility"
+          status={(
+            <>
+              <FreshnessChip status={dataFreshness.state} />
+              <DataProvenanceBadge source="CFTC / FRBNY / FRED" />
+            </>
+          )}
+          thesis="Institutional telemetry monitoring hedge fund cash-futures basis trade leverage, CFTC speculative net short positioning in 10Y/Ultra Treasury contracts, and repo collateral financing friction."
+        >
+          <div className="mt-4">
               <DeskConceptPill
                 title="How the Treasury Basis Trade Works"
                 readingTime="40-sec brief"
@@ -160,10 +135,13 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                   { label: "CFTC Short", status: "normal", detail: "> $800B indicates extreme hedge fund leverage concentration" },
                 ]}
               />
-            </div>
+          </div>
+        </LabPageHeader>
 
-            {/* Composite Dial Box */}
-            <div className="flex items-center gap-4 bg-[#0d142b] border border-slate-800 rounded-lg p-4 min-w-[280px]">
+        {/* Composite Dial */}
+        <div className="mb-8">
+            
+            <div className="flex items-center gap-4 bg-terminal-header border border-border rounded-lg p-4 min-w-[280px]">
               <div className="relative flex items-center justify-center w-20 h-20">
                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                   <path
@@ -185,7 +163,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                 </svg>
                 <div className="absolute inset-0 flex flex-col items-center justify-center">
                   <span className="text-2xl font-bold font-mono text-white">{riskScore !== null ? Math.round(riskScore) : '—'}</span>
-                  <span className="text-[9px] uppercase tracking-wider text-slate-400">{riskScore !== null ? 'SCORE' : 'N/A'}</span>
+                  <span className="text-[11px] uppercase tracking-wider text-slate-400">{riskScore !== null ? 'SCORE' : 'N/A'}</span>
                 </div>
               </div>
 
@@ -199,12 +177,10 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
         </div>
 
-
         {/* 4 Core Metric Cards */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             metric={riskMetric ?? undefined}
             label="Basis Blowout Risk Index"
@@ -272,8 +248,8 @@ export const TreasuryBasisTradeLab: React.FC = () => {
         </div>
 
         {/* Interactive Basis Unwind Fragility Matrix */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
-          <div className="lg:col-span-8 bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-5">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-8">
+          <div className="lg:col-span-8 bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-5">
             <div className="flex items-center justify-between mb-4">
               <div>
                 <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
@@ -293,7 +269,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs font-mono">
                 <thead>
-                  <tr className="border-b border-slate-800 text-slate-400">
+                  <tr className="border-b border-border text-slate-400">
                     <th className="py-2 px-2 text-slate-400">Repo Shock</th>
                     <th className="py-2 px-2 text-center text-slate-300">2.0% Haircut</th>
                     <th className="py-2 px-2 text-center text-slate-300">3.5% Haircut</th>
@@ -306,8 +282,8 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                   {fragilityMatrix.map((row, idx) => (
                     <tr key={idx} className="hover:bg-slate-800/30 transition-colors">
                       <td className="py-2 px-2 font-bold text-amber-400 whitespace-nowrap">{row.repoShock}</td>
-                      <td className="py-2 px-2 text-center text-slate-300 bg-slate-900/20">{row.h2}</td>
-                      <td className="py-2 px-2 text-center text-slate-300 bg-slate-900/40">{row.h35}</td>
+                      <td className="py-2 px-2 text-center text-slate-300 bg-card/40">{row.h2}</td>
+                      <td className="py-2 px-2 text-center text-slate-300 bg-card/40">{row.h35}</td>
                       <td className="py-2 px-2 text-center text-amber-300/90 bg-amber-500/5">{row.h5}</td>
                       <td className="py-2 px-2 text-center text-rose-300/90 bg-rose-500/10 font-bold">{row.h75}</td>
                       <td className="py-2 px-2 text-center text-rose-400 bg-rose-500/20 font-bold">{row.h10}</td>
@@ -317,14 +293,14 @@ export const TreasuryBasisTradeLab: React.FC = () => {
               </table>
             </div>
 
-            <div className="mt-3 flex items-center justify-between text-[11px] text-slate-500 font-mono">
+            <div className="mt-3 flex items-center justify-between text-[11px] text-terminal-dim font-mono">
               <span>*Assumes $820B gross basis exposure with 38x average fund leverage</span>
               <span className="text-amber-400/80">Threshold Warning: Haircuts &gt; 5% trigger severe non-linear liquidation</span>
             </div>
           </div>
 
           {/* Shadow Repo & Borrowing Anatomy */}
-          <div className="lg:col-span-4 bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-5 flex flex-col justify-between">
+          <div className="lg:col-span-4 bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-5 flex flex-col justify-between">
             <div>
               <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2 mb-3">
                 <ShieldAlert className="w-4 h-4 text-cyan-400" />
@@ -340,7 +316,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                     <span>FICC Sponsored Repo</span>
                     <span className="text-cyan-400 font-bold">$980B (40%)</span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-2">
+                  <div className="w-full bg-secondary rounded-full h-2">
                     <div className="bg-cyan-500 h-2 rounded-full" style={{ width: '40%' }} />
                   </div>
                 </div>
@@ -350,7 +326,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                     <span>Bilateral Non-Cleared Repo</span>
                     <span className="text-amber-400 font-bold">$820B (33%)</span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-2">
+                  <div className="w-full bg-secondary rounded-full h-2">
                     <div className="bg-amber-500 h-2 rounded-full" style={{ width: '33%' }} />
                   </div>
                 </div>
@@ -360,14 +336,14 @@ export const TreasuryBasisTradeLab: React.FC = () => {
                     <span>Prime Broker Synthetic TRS</span>
                     <span className="text-rose-400 font-bold">$650B (27%)</span>
                   </div>
-                  <div className="w-full bg-slate-800 rounded-full h-2">
+                  <div className="w-full bg-secondary rounded-full h-2">
                     <div className="bg-rose-500 h-2 rounded-full" style={{ width: '27%' }} />
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="mt-6 pt-4 border-t border-slate-800/80 text-[11px] text-slate-400 space-y-1">
+            <div className="mt-6 pt-4 border-t border-border text-[11px] text-slate-400 space-y-1">
               <div className="flex justify-between">
                 <span>Dealer Balance Sheet Buffer:</span>
                 <span className="text-emerald-400 font-mono">16% Remaining</span>
@@ -381,18 +357,18 @@ export const TreasuryBasisTradeLab: React.FC = () => {
         </div>
 
         {/* Historical Basis Blowout Chronology */}
-        <div className="max-w-7xl mx-auto bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-5 mb-8">
+        <div className="bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-5 mb-8">
           <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2 mb-4">
             <Activity className="w-4 h-4 text-emerald-400" />
             HISTORICAL BASIS DISLOCATION & FUNDING STRESS CHRONOLOGY
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {historicalEvents.map((ev, i) => (
-              <div key={i} className="bg-[#0c1226] border border-slate-800/80 rounded p-4 flex flex-col justify-between">
+              <div key={i} className="bg-card border border-border rounded p-4 flex flex-col justify-between">
                 <div>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-xs font-mono font-bold text-slate-400">{ev.period}</span>
-                    <span className={`text-[10px] font-mono px-1.5 py-0.5 rounded border ${ev.severityColor}`}>
+                    <span className={`text-[11px] font-mono px-1.5 py-0.5 rounded border ${ev.severityColor}`}>
                       {ev.severity}
                     </span>
                   </div>
@@ -405,7 +381,7 @@ export const TreasuryBasisTradeLab: React.FC = () => {
         </div>
 
         {/* Institutional Intelligence Context & Methodology */}
-        <div className="max-w-7xl mx-auto bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-6 mb-8 text-xs text-slate-400 space-y-3">
+        <div className="bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-6 mb-8 text-xs text-slate-400 space-y-3">
           <div className="flex items-center gap-2 text-slate-200 font-mono font-bold text-sm">
             <FileText className="w-4 h-4 text-cyan-400" />
             INSTITUTIONAL METHODOLOGY & TRANSMISSION MECHANISM

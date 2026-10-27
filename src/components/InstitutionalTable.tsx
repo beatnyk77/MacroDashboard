@@ -64,7 +64,7 @@ function TableLoadingSkeleton({ density }: { density: 'compact' | 'default' }) {
     const cellPadding = DENSITY_CELL[density];
 
     return (
-        <div className="divide-y divide-white/5" aria-hidden="true">
+        <div className="divide-y divide-border" aria-hidden="true">
             {SKELETON_WIDTHS.map((width, rowIndex) => (
                 <div key={rowIndex} className={cn('flex items-center gap-4', cellPadding)}>
                     <div className={cn('h-3 rounded-full bg-white/5 animate-pulse', width)} />
@@ -100,7 +100,7 @@ export function InstitutionalTable<T>({
     const cellPadding = DENSITY_CELL[density];
     const headerClass = cn(
         'label-mono bg-transparent',
-        stickyHeader && 'sticky top-0 z-10 bg-slate-950/90 backdrop-blur-md'
+        stickyHeader && 'sticky top-0 z-10 bg-card/90 backdrop-blur-md'
     );
 
     const containerStyle = maxHeight ? { maxHeight } : undefined;
@@ -119,13 +119,13 @@ export function InstitutionalTable<T>({
     return (
         <div
             className={cn(
-                'w-full rounded-2xl border border-white/5 bg-slate-950/60 backdrop-blur overflow-auto',
+                'w-full rounded-xl border border-border bg-card/60 backdrop-blur overflow-auto',
                 className
             )}
             style={containerStyle}
         >
             {caption && (
-                <div className="px-4 pt-4 pb-2 border-b border-white/5">
+                <div className="px-4 pt-4 pb-2 border-b border-border">
                     {caption}
                 </div>
             )}
@@ -139,7 +139,7 @@ export function InstitutionalTable<T>({
             ) : (
                 <Table>
                     <TableHeader>
-                        <TableRow className="border-b border-white/5 hover:bg-transparent">
+                        <TableRow className="border-b border-border hover:bg-transparent">
                             {columns.map((column) => {
                                 const align = column.align ?? 'left';
                                 const isSorted = sortKey === column.id;
@@ -173,7 +173,7 @@ export function InstitutionalTable<T>({
                             })}
                         </TableRow>
                     </TableHeader>
-                    <TableBody className="divide-y divide-white/5">
+                    <TableBody className="divide-y divide-border">
                         {data.map((row, index) => {
                             const rowKey = getRowKey(row);
                             const isSelected = selectedRowKey === rowKey;
@@ -182,7 +182,7 @@ export function InstitutionalTable<T>({
                                 <TableRow
                                     key={rowKey}
                                     className={cn(
-                                        'border-white/5 transition-colors duration-200',
+                                        'border-border transition-colors duration-200',
                                         onRowClick && 'cursor-pointer',
                                         isSelected ? 'bg-white/[0.04]' : 'hover:bg-white/[0.02]',
                                         getRowClassName?.(row)
@@ -214,7 +214,7 @@ export function InstitutionalTable<T>({
             )}
 
             {footer && !isLoading && !error && data.length > 0 && (
-                <div className="px-4 py-3 border-t border-white/5">
+                <div className="px-4 py-3 border-t border-border">
                     {footer}
                 </div>
             )}
@@ -228,7 +228,7 @@ const BADGE_TONE_CLASS: Record<BadgeTone, string> = {
     safe: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20',
     warning: 'text-amber-400 bg-amber-500/10 border-amber-500/20',
     danger: 'text-rose-400 bg-rose-500/10 border-rose-500/20',
-    neutral: 'text-muted-foreground bg-white/5 border-white/10',
+    neutral: 'text-muted-foreground bg-white/5 border-border',
     info: 'text-blue-400 bg-blue-500/10 border-blue-500/20',
 };
 
@@ -250,7 +250,7 @@ export function InstitutionalBadgeCell({
     return (
         <span
             className={cn(
-                'inline-flex items-center px-1.5 py-0.5 rounded border text-xs font-semibold uppercase tracking-uppercase',
+                'inline-flex items-center px-1.5 py-0.5 rounded border text-xs font-semibold uppercase tracking-wider',
                 BADGE_TONE_CLASS[tone]
             )}
         >

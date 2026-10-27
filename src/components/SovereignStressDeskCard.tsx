@@ -36,14 +36,14 @@ export const SovereignStressDeskCard: React.FC = () => {
   };
 
   return (
-    <Card className="w-full bg-card border border-border backdrop-blur-md rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
+    <Card className="w-full bg-card border border-border backdrop-blur-md rounded-xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <CardHeader className="p-5 border-b border-border bg-muted/40 dark:bg-gradient-to-r dark:from-slate-950/80 dark:via-slate-900/40 dark:to-slate-950/80">
+      <CardHeader className="p-5 border-b border-border bg-muted/40 bg-gradient-to-r from-slate-950/80 via-slate-900/40 to-slate-950/80">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2.5">
-              <div className="w-2.5 h-2.5 bg-purple-500 dark:bg-purple-400 animate-pulse shadow-[0_0_8px_rgba(192,132,252,0.7)]" />
-              <CardTitle className="font-mono text-base md:text-lg font-bold text-foreground uppercase tracking-tight">
+              <div className="w-2.5 h-2.5 bg-purple-400 animate-pulse shadow-[0_0_8px_rgba(192,132,252,0.7)]" />
+              <CardTitle className="font-mono text-base md:text-lg font-semibold text-foreground uppercase tracking-tight">
                 Sovereign Stress & Cross-Border Capital Flows Desk
               </CardTitle>
             </div>
@@ -60,8 +60,8 @@ export const SovereignStressDeskCard: React.FC = () => {
         {/* 3 Top Gauges */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4 pt-1">
           {/* Gauge 1: Foreign UST Holdings */}
-          <div className="bg-card dark:bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+          <div className=" bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
+            <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
               Total Foreign UST Holdings
             </span>
             <div className="flex items-baseline justify-between mt-1">
@@ -71,14 +71,14 @@ export const SovereignStressDeskCard: React.FC = () => {
                   : '—'}
               </span>
               {gauges.asOfDate && (
-                <span className="text-[10px] font-mono text-muted-foreground">({gauges.asOfDate})</span>
+                <span className="text-[11px] font-mono text-muted-foreground">({gauges.asOfDate})</span>
               )}
             </div>
           </div>
 
           {/* Gauge 2: China (PBoC) Held */}
-          <div className="bg-card dark:bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+          <div className=" bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
+            <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
               China (PBoC) Held
             </span>
             <div className="flex items-baseline justify-between mt-1">
@@ -88,7 +88,7 @@ export const SovereignStressDeskCard: React.FC = () => {
               {gauges.chinaYoYPct !== null && (
                 <span
                   className={`text-xs font-mono font-semibold ${
-                    gauges.chinaYoYPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                    gauges.chinaYoYPct >= 0 ? ' text-emerald-400' : ' text-rose-400'
                   }`}
                 >
                   {gauges.chinaYoYPct >= 0 ? '+' : ''}{gauges.chinaYoYPct.toFixed(1)}% YoY
@@ -98,8 +98,8 @@ export const SovereignStressDeskCard: React.FC = () => {
           </div>
 
           {/* Gauge 3: Japan (BoJ) Held */}
-          <div className="bg-card dark:bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
-            <span className="text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+          <div className=" bg-slate-950/60 border border-border p-3.5 flex flex-col justify-between rounded-xl shadow-sm">
+            <span className="text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
               Japan (BoJ) Held
             </span>
             <div className="flex items-baseline justify-between mt-1">
@@ -111,7 +111,7 @@ export const SovereignStressDeskCard: React.FC = () => {
               {gauges.japanYoYPct !== null && (
                 <span
                   className={`text-xs font-mono font-semibold ${
-                    gauges.japanYoYPct >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                    gauges.japanYoYPct >= 0 ? ' text-emerald-400' : ' text-rose-400'
                   }`}
                 >
                   {gauges.japanYoYPct >= 0 ? '+' : ''}{gauges.japanYoYPct.toFixed(1)}% YoY
@@ -131,7 +131,7 @@ export const SovereignStressDeskCard: React.FC = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`px-3.5 py-1.5 text-xs font-mono tracking-wider uppercase transition-all whitespace-nowrap rounded-md ${
                   isActive
-                    ? 'bg-purple-500/15 text-purple-700 dark:text-purple-300 border border-purple-500/40 shadow-sm'
+                    ? 'bg-purple-500/15 text-purple-300 border border-purple-500/40 shadow-sm'
                     : 'text-muted-foreground bg-card hover:bg-muted hover:text-foreground border border-border'
                 }`}
               >
@@ -151,7 +151,7 @@ export const SovereignStressDeskCard: React.FC = () => {
         ) : activeTab === 'TIC Foreign Treasury Flows Matrix' ? (
           <div className="divide-y divide-border">
             {/* Header */}
-            <div className="hidden lg:grid grid-cols-12 gap-3 px-6 py-2.5 bg-muted/40 text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+            <div className="hidden lg:grid grid-cols-12 gap-3 px-6 py-2.5 bg-muted/40 text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
               <div className="col-span-3">Sovereign / Jurisdiction</div>
               <div className="col-span-2 text-right">Holdings ($ Bn)</div>
               <div className="col-span-2 text-right">MoM Δ</div>
@@ -172,13 +172,13 @@ export const SovereignStressDeskCard: React.FC = () => {
           </div>
         ) : (
           <div className="p-6 space-y-4">
-            <div className="bg-card dark:bg-slate-950/60 border border-border p-4 rounded-xl shadow-sm">
+            <div className=" bg-slate-950/60 border border-border p-4 rounded-xl shadow-sm">
               <div className="flex justify-between items-baseline">
-                <span className="text-xs font-mono text-cyan-600 dark:text-cyan-300 font-bold uppercase">
+                <span className="text-xs font-mono text-cyan-300 font-semibold uppercase">
                   Central Bank Liquidity Swap Lines Outstanding
                 </span>
                 {fundingStress.swapLinesDate && (
-                  <span className="text-[10px] font-mono text-muted-foreground">
+                  <span className="text-[11px] font-mono text-muted-foreground">
                     As of {fundingStress.swapLinesDate}
                   </span>
                 )}
@@ -189,7 +189,7 @@ export const SovereignStressDeskCard: React.FC = () => {
                     ? `$${fundingStress.swapLinesOutstandingMn.toLocaleString()} Mn`
                     : '—'}
                 </span>
-                <span className="text-xs font-mono text-emerald-600 dark:text-emerald-400 font-semibold">
+                <span className="text-xs font-mono text-emerald-400 font-semibold">
                   (Fed Weekly Series SWPT)
                 </span>
               </div>
@@ -227,7 +227,7 @@ const TICRow: React.FC<{ row: SovereignHolderFlow }> = ({ row }) => {
         {/* Country */}
         <div className="col-span-3">
           <div className="font-mono text-sm font-semibold text-foreground">{row.country}</div>
-          <div className="text-[10px] font-mono text-muted-foreground">
+          <div className="text-[11px] font-mono text-muted-foreground">
             {row.pctOfTotalForeign !== null ? `${row.pctOfTotalForeign.toFixed(1)}% of foreign total` : ''}
           </div>
         </div>
@@ -248,7 +248,7 @@ const TICRow: React.FC<{ row: SovereignHolderFlow }> = ({ row }) => {
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center font-mono">
           <span className="text-[11px] text-muted-foreground lg:hidden">MoM:</span>
           {row.momChangePct !== null ? (
-            <span className={`text-xs font-semibold ${isMomPos ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+            <span className={`text-xs font-semibold ${isMomPos ? ' text-emerald-400' : ' text-rose-400'}`}>
               {isMomPos ? '+' : ''}{row.momChangePct.toFixed(1)}%
             </span>
           ) : (
@@ -260,7 +260,7 @@ const TICRow: React.FC<{ row: SovereignHolderFlow }> = ({ row }) => {
         <div className="col-span-2 lg:text-right flex lg:block justify-between items-center font-mono">
           <span className="text-[11px] text-muted-foreground lg:hidden">YoY:</span>
           {row.yoyChangePct !== null ? (
-            <span className={`text-xs font-semibold ${isYoyPos ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'}`}>
+            <span className={`text-xs font-semibold ${isYoyPos ? ' text-emerald-400' : ' text-rose-400'}`}>
               {isYoyPos ? '+' : ''}{row.yoyChangePct.toFixed(1)}%
             </span>
           ) : (
@@ -270,7 +270,7 @@ const TICRow: React.FC<{ row: SovereignHolderFlow }> = ({ row }) => {
 
         {/* Strategic Motivation */}
         <div className="col-span-3 text-left lg:text-right">
-          <span className="text-[10px] font-mono text-foreground bg-muted px-2 py-0.5 border border-border rounded">
+          <span className="text-[11px] font-mono text-foreground bg-muted px-2 py-0.5 border border-border rounded">
             {row.strategicMotivation}
           </span>
         </div>

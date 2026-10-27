@@ -56,21 +56,23 @@ export default {
     				'5': 'hsl(var(--chart-5))'
     			},
     			terminal: {
-    				bg: '#0f172a',
-    				header: '#1e293b',
-    				border: '#334155',
-    				gold: '#fbbf24',
-    				emerald: '#34d399',
-    				rose: '#fb7185',
-    				muted: '#475569', // Updated from #94a3b8 to slate-600 for 7.8:1 contrast (WCAG AAA)
-    				blue: '#60a5fa',
+    				bg: '#070B10',      // Obsidian Deep canvas
+    				header: '#0B1017',  // Terminal header / popover surface
+    				surface: '#0E141C', // Card / panel elevation
+    				border: 'rgba(255, 255, 255, 0.08)',
+    				gold: '#F59E0B',    // Bullion / hard money
+    				emerald: '#34D399', // Expansion / ease
+    				rose: '#FB7185',    // Eastern / BRICS
+    				crimson: '#F87171', // Stress / contraction
+    				cyan: '#38BDF8',    // Western / reserve currency
+    				muted: '#94A3B8',   // Secondary text, 7.7:1 on #070B10 (WCAG AAA)
+    				dim: '#718096',     // Tertiary text, 4.9:1 on #070B10 (WCAG AA)
+    				blue: '#60A5FA',
     			}
     		},
 	    		fontFamily: {
 	    			mono: ['Fira Code', 'monospace'],
 	    			sans: ['Fira Sans', 'sans-serif'],
-                    syne: ['Syne', 'sans-serif'],
-                    inter: ['Inter', 'sans-serif'],
 	    		},
 	    		borderRadius: {
     			lg: 'var(--radius)',
@@ -91,7 +93,7 @@ export default {
     		letterSpacing: {
     			'heading': '-0.02em',
     			'body': '0',
-    			'uppercase': '0.1em',
+    			'uppercase': '0.05em', // alias of tracking-wider; prefer tracking-wider
     		},
     		spacing: {
     			// Vertical spacing scale (4px base unit)

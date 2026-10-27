@@ -60,7 +60,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
     const tableColumns = useMemo(() => columns, []);
 
     return (
-        <div className={cn('p-6 rounded-[2rem] bg-black/40 border border-white/5 backdrop-blur-sm flex flex-col', className)}>
+        <div className={cn('p-6 rounded-xl bg-background/40 border border-border backdrop-blur-sm flex flex-col', className)}>
             <InstitutionalTable
                 data={topRefiners}
                 columns={tableColumns}
@@ -71,7 +71,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
                 emptyDescription="Global refining capacity observations are not yet populated."
                 caption={(
                     <div>
-                        <h3 className="text-sm font-black text-blue-500 uppercase tracking-uppercase flex items-center gap-2">
+                        <h3 className="text-sm font-semibold text-blue-500 uppercase tracking-wider flex items-center gap-2">
                             <Trophy size={14} /> Refining Alpha Ranking
                         </h3>
                         <p className="section-label mt-1">Top 10 Global Assets by Scale</p>
@@ -85,7 +85,7 @@ export const TopRefinersTable: React.FC<{ className?: string }> = ({ className }
                         </div>
                         <button
                             type="button"
-                            className="text-xs text-blue-500/60 hover:text-blue-400 font-black uppercase flex items-center gap-1 transition-colors duration-200"
+                            className="text-xs text-blue-500/60 hover:text-blue-400 font-semibold uppercase flex items-center gap-1 transition-colors duration-200"
                         >
                             Detailed Report <ArrowUpRight size={10} />
                         </button>

@@ -3,7 +3,7 @@ import { useUSTreasuryAuctions, USTreasuryAuction, useAuctionHealth, useAuctionS
 import { AreaChart, Area, Tooltip, ReferenceLine, ReferenceArea } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import { CHART_HEIGHTS } from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
 import { format, formatDistanceToNow } from 'date-fns';
 import { Info, TrendingUp, ChevronDown, ChevronUp, AlertTriangle, RefreshCw, Activity, ShieldCheck, Clock } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -13,13 +13,14 @@ import { Tooltip as UITooltip, TooltipContent, TooltipProvider, TooltipTrigger }
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
 
 // ── Constants & Helpers ─────────────────────────────────────────────
 
 const REGIMES = {
-  WEAK: { min: 0, max: 1.0, color: 'text-rose-500', bg: 'bg-rose-500', fill: '#f43f5e', label: 'Weak Demand' },
-  NORMAL: { min: 1.0, max: 1.6, color: 'text-amber-500', bg: 'bg-amber-500', fill: '#f59e0b', label: 'Neutral' },
-  STRONG: { min: 1.6, max: 2.5, color: 'text-emerald-500', bg: 'bg-emerald-500', fill: '#10b981', label: 'Strong Demand' }
+  WEAK: { min: 0, max: 1.0, color: 'text-rose-500', bg: 'bg-rose-500', fill: CHART_COLORS.east, label: 'Weak Demand' },
+  NORMAL: { min: 1.0, max: 1.6, color: 'text-amber-500', bg: 'bg-amber-500', fill: CHART_COLORS.gold, label: 'Neutral' },
+  STRONG: { min: 1.6, max: 2.5, color: 'text-emerald-500', bg: 'bg-emerald-500', fill: CHART_COLORS.expansion, label: 'Strong Demand' }
 };
 
 const getRegime = (score: number) => {
@@ -75,7 +76,7 @@ const TenorChip: React.FC<{
   return (
     <div className="flex items-center gap-3 px-3 py-2 rounded-xl bg-card border border-border hover:bg-muted/60 transition-colors min-w-[140px] shadow-sm">
       <div className="flex flex-col">
-        <span className="text-[10px] font-black text-muted-foreground uppercase">{term}</span>
+        <span className="text-[11px] font-semibold text-muted-foreground uppercase">{term}</span>
         {hasData && score != null && regime ? (
           <span className={cn("text-sm font-bold tabular-nums", regime.color)}>
             {score.toFixed(2)}
@@ -90,7 +91,7 @@ const TenorChip: React.FC<{
         {history.length >= 2 && regime ? (
           <MicroSparkline data={history} color={regime.fill} />
         ) : (
-          <span className="text-[9px] font-mono text-muted-foreground uppercase">No auction</span>
+          <span className="text-[11px] font-mono text-muted-foreground uppercase">No auction</span>
         )}
       </div>
     </div>
@@ -102,8 +103,8 @@ const TailStatusInfo: React.FC = () => (
     <UITooltip>
       <TooltipTrigger>
         <div className="flex items-center gap-1.5 cursor-help">
-          <span className="text-[10px] font-black text-muted-foreground uppercase tracking-uppercase">Tail Status</span>
-          <Info size={10} className="text-muted-foreground/60" />
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Tail Status</span>
+          <Info size={10} className="text-muted-foreground" />
         </div>
       </TooltipTrigger>
       <TooltipContent className="max-w-[200px] text-[11px] leading-relaxed bg-popover text-popover-foreground border-border p-3 shadow-2xl">
@@ -211,26 +212,26 @@ export const USTreasuryDemandGauge: React.FC = () => {
   const hasTailAlert = hasPrimary && isTailAlert(current);
 
   return (
-    <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-slate-950 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-800/50">
+    <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-900 to-slate-950 rounded-xl shadow-sm shadow-2xl overflow-hidden border border-border">
       <div className="p-6 md:p-8 space-y-8">
         {/* Institutional Header */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-1">
             <div className="flex items-center gap-3">
-              <TrendingUp className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
+              <TrendingUp className="w-7 h-7 text-emerald-400" />
               <h2 className="text-2xl md:text-3xl font-bold text-foreground tracking-tight">
                 Treasury Auction Demand
               </h2>
               {isSyncing ? (
-                <Badge variant="outline" className="animate-pulse bg-blue-500/10 text-blue-700 dark:text-blue-400 border-blue-500/20 gap-1.5 py-1">
+                <Badge variant="outline" className="animate-pulse bg-blue-500/10 text-blue-400 border-blue-500/20 gap-1.5 py-1">
                   <Activity size={10} /> Syncing
                 </Badge>
               ) : isStale ? (
-                <Badge variant="outline" className="bg-amber-500/10 text-amber-700 dark:text-amber-400 border-amber-500/20 gap-1.5 py-1">
+                <Badge variant="outline" className="bg-amber-500/10 text-amber-400 border-amber-500/20 gap-1.5 py-1">
                   <Clock size={10} /> Data Stale
                 </Badge>
               ) : (
-                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 border-emerald-500/20 gap-1.5 py-1">
+                <Badge variant="outline" className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 gap-1.5 py-1">
                   <ShieldCheck size={10} /> Live Intelligence
                 </Badge>
               )}
@@ -242,7 +243,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
 
           <div className="flex items-center gap-4">
             <div className="text-right hidden md:block">
-              <div className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Last Intelligence Sync</div>
+              <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Last Intelligence Sync</div>
               <div className="text-xs font-bold text-foreground tabular-nums">
                 {health?.finished_at ? formatDistanceToNow(new Date(health.finished_at), { addSuffix: true }) : 'Unknown'}
               </div>
@@ -255,7 +256,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
               className="rounded-full bg-card hover:bg-muted border-border transition-all gap-2 h-9 px-4 text-foreground shadow-sm"
             >
               <RefreshCw size={14} className={cn(isSyncing && "animate-spin")} />
-              <span className="text-xs font-bold uppercase tracking-wider">{isSyncing ? 'Syncing...' : 'Force Sync'}</span>
+              <span className="text-xs font-semibold uppercase tracking-wider">{isSyncing ? 'Syncing...' : 'Force Sync'}</span>
             </Button>
           </div>
         </div>
@@ -263,13 +264,13 @@ export const USTreasuryDemandGauge: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-10 gap-8">
           {/* PRIMARY SCORE & COLLAPSIBLE DETAILS */}
           <div className={cn(
-            "lg:col-span-6 flex flex-col gap-6 p-8 rounded-3xl border backdrop-blur-3xl relative overflow-hidden transition-all duration-1000 shadow-sm",
-            hasTailAlert ? "bg-rose-500/[0.05] border-rose-500/20 shadow-[0_0_50px_rgba(244,63,94,0.05)]" : "bg-muted/40 dark:bg-white/[0.02] border-border dark:border-white/10"
+            "lg:col-span-6 flex flex-col gap-6 p-8 rounded-xl border backdrop-blur-3xl relative overflow-hidden transition-all duration-1000 shadow-sm",
+            hasTailAlert ? "bg-rose-500/[0.05] border-rose-500/20 shadow-[0_0_50px_rgba(244,63,94,0.05)]" : "bg-white/[0.02] border-border"
           )}>
             <div className="relative z-10 space-y-6">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-black text-muted-foreground uppercase tracking-widest">10-Year Benchmark Score</span>
-                <div className={cn("px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest bg-card border border-border shadow-sm", regime.color)}>
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">10-Year Benchmark Score</span>
+                <div className={cn("px-4 py-1.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-card border border-border shadow-sm", regime.color)}>
                   {regime.label}
                 </div>
               </div>
@@ -279,11 +280,11 @@ export const USTreasuryDemandGauge: React.FC = () => {
                 <m.span 
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className={cn("text-7xl font-black tracking-tight transition-all duration-1000", hasPrimary ? regime.color : "text-slate-500")}
+                  className={cn("text-7xl font-bold tracking-tight transition-all duration-1000", hasPrimary ? regime.color : "text-terminal-dim")}
                 >
                   {hasPrimary ? currentScore.toFixed(2) : '—'}
                 </m.span>
-                <span className="text-lg font-bold text-muted-foreground/50 uppercase tracking-tighter">/ 2.50 Limit</span>
+                <span className="text-lg font-semibold text-terminal-dim uppercase tracking-tighter">/ 2.50 Limit</span>
               </div>
               {!hasPrimary && (
                 <p className="text-xs text-amber-500 font-mono">
@@ -305,7 +306,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     className={cn("h-full transition-all duration-1000 shadow-[0_0_15px_rgba(255,255,255,0.2)]", regime.bg)}
                   />
                 </div>
-                <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                <div className="flex justify-between text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   <span>Weak</span>
                   <span>Neutral</span>
                   <span>Strong</span>
@@ -365,10 +366,10 @@ export const USTreasuryDemandGauge: React.FC = () => {
           </div>
 
           {/* TREND CHART */}
-          <div className="lg:col-span-4 flex flex-col gap-6 p-8 rounded-3xl bg-card border border-border backdrop-blur-3xl overflow-hidden shadow-sm">
+          <div className="lg:col-span-4 flex flex-col gap-6 p-8 rounded-xl bg-card border border-border backdrop-blur-3xl overflow-hidden shadow-sm">
             <div className="space-y-1">
-              <h3 className="text-xs font-black text-muted-foreground uppercase tracking-widest">1-Year Absorption Trend</h3>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase">10-Year Auction Record</p>
+              <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">1-Year Absorption Trend</h3>
+              <p className="text-[11px] font-semibold text-muted-foreground uppercase">10-Year Auction Record</p>
             </div>
 
             <div className="flex-1">
@@ -385,21 +386,21 @@ export const USTreasuryDemandGauge: React.FC = () => {
                       if (active && payload && payload.length) {
                         const d = payload[0].payload;
                         return (
-                          <div className="p-3 rounded-xl bg-popover text-popover-foreground border border-border backdrop-blur-md shadow-2xl space-y-2 min-w-[140px]">
-                            <div className="flex items-center justify-between text-[10px] font-black text-muted-foreground pb-1 border-b border-border uppercase">
+                          <div className={`${TOOLTIP_SHELL_CLASS} min-w-[140px]`}>
+                            <div className="flex items-center justify-between text-[11px] font-semibold text-slate-400 pb-1 border-b border-border uppercase">
                               <span>{format(new Date(d.date), 'MMM d, yyyy')}</span>
                             </div>
                             <div className="flex justify-between gap-4">
-                              <span className="text-[10px] text-muted-foreground uppercase font-black">Score</span>
-                              <span className={cn("text-xs font-black", getRegime(d.score).color)}>{d.score.toFixed(2)}</span>
+                              <span className="text-[11px] text-slate-400 uppercase font-semibold">Score</span>
+                              <span className={cn("text-xs font-semibold", getRegime(d.score).color)}>{d.score.toFixed(2)}</span>
                             </div>
                             <div className="flex justify-between gap-4">
-                              <span className="text-[10px] text-muted-foreground uppercase font-black">BTC</span>
-                              <span className="text-xs text-foreground font-black">{d.btc.toFixed(2)}x</span>
+                              <span className="text-[11px] text-slate-400 uppercase font-semibold">BTC</span>
+                              <span className="text-xs text-slate-100 font-semibold">{d.btc.toFixed(2)}x</span>
                             </div>
                             <div className="flex justify-between gap-4">
-                              <span className="text-[10px] text-muted-foreground uppercase font-black">Indirect</span>
-                              <span className="text-xs text-foreground font-black">{d.indirect.toFixed(1)}%</span>
+                              <span className="text-[11px] text-slate-400 uppercase font-semibold">Indirect</span>
+                              <span className="text-xs text-slate-100 font-semibold">{d.indirect.toFixed(1)}%</span>
                             </div>
                           </div>
                         );
@@ -408,7 +409,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
                     }}
                   />
                   <ReferenceLine y={1.0} stroke="hsl(var(--border))" strokeDasharray="3 3" strokeOpacity={0.4} />
-                  <ReferenceArea y1={0} y2={1.0} fill="#f43f5e" fillOpacity={0.05} />
+                  <ReferenceArea y1={0} y2={1.0} fill={CHART_COLORS.east} fillOpacity={0.05} />
                   <Area
                     type="monotone"
                     dataKey="score"
@@ -422,11 +423,11 @@ export const USTreasuryDemandGauge: React.FC = () => {
             </div>
             
             <div className="flex items-center justify-between pt-4 border-t border-border">
-              <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Thresholds</span>
+              <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Thresholds</span>
               <div className="flex gap-4">
-                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-rose-500" /> <span className="text-[10px] text-muted-foreground uppercase font-bold">Weak</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> <span className="text-[10px] text-muted-foreground uppercase font-bold">Neut</span></div>
-                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> <span className="text-[10px] text-muted-foreground uppercase font-bold">Strong</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-rose-500" /> <span className="text-[11px] text-muted-foreground uppercase font-semibold">Weak</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> <span className="text-[11px] text-muted-foreground uppercase font-semibold">Neut</span></div>
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> <span className="text-[11px] text-muted-foreground uppercase font-semibold">Strong</span></div>
               </div>
             </div>
           </div>
@@ -434,7 +435,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
 
         {/* CROSS-TENOR DEMAND SNAPSHOT */}
         <div className="space-y-4">
-          <h3 className="text-xs font-black text-muted-foreground uppercase tracking-[0.2em]">Cross-tenor demand snapshot (latest auctions)</h3>
+          <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Cross-tenor demand snapshot (latest auctions)</h3>
           <div className="flex flex-wrap gap-3">
             {processedData.others.map((item, idx) => (
               <TenorChip 
@@ -481,7 +482,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
               a potential precursor to systemic de-dollarization or forced monetization by the Federal Reserve.
             </p>
           </div>
-          <div className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border text-[10px] font-bold text-muted-foreground uppercase tracking-widest whitespace-nowrap">
+          <div className="shrink-0 flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider whitespace-nowrap">
             <Info size={12} className="text-blue-500" />
             Source: U.S. Treasury (FiscalData API)
           </div>
@@ -493,7 +494,7 @@ export const USTreasuryDemandGauge: React.FC = () => {
 
 const DetailRow: React.FC<{ label: string; value: string }> = ({ label, value }) => (
   <div className="flex items-center justify-between">
-    <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">{label}</span>
+    <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
     <span className="text-xs font-bold text-foreground tabular-nums">{value}</span>
   </div>
 );

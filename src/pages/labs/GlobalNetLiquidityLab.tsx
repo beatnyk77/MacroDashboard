@@ -2,11 +2,10 @@ import React from 'react';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
+import { LabPageHeader } from '@/components/LabPageHeader';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-  ChevronRight,
-  ArrowLeft,
   Globe,
   TrendingUp,
   Database,
@@ -14,7 +13,6 @@ import {
   ArrowDownRight,
   FileText
 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
@@ -77,45 +75,22 @@ export const GlobalNetLiquidityLab: React.FC = () => {
         ]}
       />
 
-      <div className="min-h-screen bg-[#050814] text-slate-100 p-4 md:p-6 lg:p-8 font-sans">
-        {/* Breadcrumb Navigation */}
-        <div className="max-w-7xl mx-auto mb-6 flex items-center justify-between">
-          <div className="flex items-center gap-2 text-xs text-slate-400">
-            <Button
-              variant="ghost"
-              size="sm"
-              className="h-7 px-2 text-slate-400 hover:text-white"
-              onClick={() => window.history.back()}
-            >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              Observatory
-            </Button>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-slate-400">Money Markets & Global Liquidity</span>
-            <ChevronRight className="w-3 h-3 text-slate-600" />
-            <span className="text-emerald-400 font-mono">DESK 06: GLOBAL LIQUIDITY ENGINE</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <FreshnessChip status={dataFreshness.state} />
-            <DataProvenanceBadge source="Fed / ECB / BOJ / PBOC / BIS" />
-          </div>
-        </div>
-
-        {/* Hero & Dual Impulse Speedometer */}
-        <div className="max-w-7xl mx-auto mb-8 bg-[#090e1f]/80 backdrop-blur-md border border-slate-800/80 rounded-lg p-6 relative overflow-hidden shadow-2xl">
-          <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 rounded-full blur-3xl pointer-events-none" />
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-2 max-w-2xl">
-              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded bg-slate-800/60 border border-slate-700/60 text-xs text-emerald-400 font-mono">
-                <Globe className="w-3.5 h-3.5" />
-                <span>CROSS-BORDER CENTRAL BANK LIQUIDITY IMPULSE</span>
-              </div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-white font-mono">
-                Global Central Bank Net Liquidity Engine
-              </h1>
-              <p className="text-sm text-slate-300 leading-relaxed">
-                Decomposing the Big 4 central banks (Fed, ECB, BoJ, PBoC) converted to US Dollars, adjusted for Treasury General Account cash accumulation and Reverse Repo sterilization.
-              </p>
+      <div className="page-shell">
+        <LabPageHeader
+          trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+          current="Global Liquidity Engine"
+          badge="Cross-Border Central Bank Liquidity Impulse"
+          badgeIcon={<Globe className="w-3 h-3" />}
+          title="Global Central Bank Net Liquidity Engine"
+          status={(
+            <>
+              <FreshnessChip status={dataFreshness.state} />
+              <DataProvenanceBadge source="Fed / ECB / BOJ / PBOC / BIS" />
+            </>
+          )}
+          thesis="Decomposing the Big 4 central banks (Fed, ECB, BoJ, PBoC) converted to US Dollars, adjusted for Treasury General Account cash accumulation and Reverse Repo sterilization."
+        >
+          <div className="mt-4">
               <DeskConceptPill
                 title="How Global Central Bank Net Liquidity Works"
                 readingTime="45-sec brief"
@@ -127,10 +102,13 @@ export const GlobalNetLiquidityLab: React.FC = () => {
                   { label: "Big 4 Aggregate", status: "caution", detail: "Global synchronized balance sheet contraction" },
                 ]}
               />
-            </div>
+          </div>
+        </LabPageHeader>
 
-            {/* Dual Impulse Gauge Box */}
-            <div className="flex items-center gap-6 bg-[#0d142b] border border-slate-800 rounded-lg p-4 min-w-[320px]">
+        {/* Dual Impulse Gauge */}
+        <div className="mb-8">
+            
+            <div className="flex items-center gap-6 bg-terminal-header border border-border rounded-lg p-4 min-w-[320px]">
               <div className="space-y-1 text-center">
                 <span className="text-[11px] text-slate-400 font-mono block">13-WEEK IMPULSE</span>
                 <div className="flex items-center justify-center gap-1">
@@ -139,7 +117,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
                     {impulse13w !== null ? `${impulse13w > 0 ? '+' : ''}${impulse13w.toFixed(1)}%` : '—'}
                   </span>
                 </div>
-                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono border ${
+                <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-mono border ${
                   impulse13w !== null
                     ? (impulse13w >= 0 ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-rose-500/30 bg-rose-500/10 text-rose-400')
                     : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
@@ -148,7 +126,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
                 </span>
               </div>
 
-              <div className="w-[1px] h-12 bg-slate-800" />
+              <div className="w-[1px] h-12 bg-secondary" />
 
               <div className="space-y-1 text-center">
                 <span className="text-[11px] text-slate-400 font-mono block">26-WEEK IMPULSE</span>
@@ -158,7 +136,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
                     {impulse26w !== null ? `${impulse26w > 0 ? '+' : ''}${impulse26w.toFixed(1)}%` : '—'}
                   </span>
                 </div>
-                <span className={`inline-block px-2 py-0.5 rounded text-[10px] font-mono border ${
+                <span className={`inline-block px-2 py-0.5 rounded text-[11px] font-mono border ${
                   impulse26w !== null
                     ? (impulse26w >= 0 ? 'border-emerald-500/30 bg-emerald-500/10 text-emerald-400' : 'border-amber-500/30 bg-amber-500/10 text-amber-400')
                     : 'border-slate-500/30 bg-slate-500/10 text-slate-400'
@@ -167,11 +145,10 @@ export const GlobalNetLiquidityLab: React.FC = () => {
                 </span>
               </div>
             </div>
-          </div>
         </div>
 
         {/* 4 Core Metric Cards */}
-        <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <MetricCard
             metric={globalLiqMetric ?? undefined}
             label="Big 4 Global Net Liquidity"
@@ -239,7 +216,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
         </div>
 
         {/* Central Bank Decomposition Table */}
-        <div className="max-w-7xl mx-auto bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-5 mb-8">
+        <div className="bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-5 mb-8">
           <div className="flex items-center justify-between mb-4">
             <div>
               <h2 className="text-base font-bold text-white font-mono flex items-center gap-2">
@@ -258,7 +235,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400">
+                <tr className="border-b border-border text-slate-400">
                   <th className="py-2.5 px-3">Central Bank</th>
                   <th className="py-2.5 px-3">Local Balance</th>
                   <th className="py-2.5 px-3">USD FX Rate</th>
@@ -286,7 +263,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
         </div>
 
         {/* Cross-Asset Liquidity Transmission Matrix */}
-        <div className="max-w-7xl mx-auto bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-5 mb-8">
+        <div className="bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-5 mb-8">
           <h3 className="text-sm font-bold text-white font-mono flex items-center gap-2 mb-3">
             <TrendingUp className="w-4 h-4 text-emerald-400" />
             CROSS-ASSET LIQUIDITY TRANSMISSION MATRIX (SENSITIVITY BETAS)
@@ -298,7 +275,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs font-mono">
               <thead>
-                <tr className="border-b border-slate-800 text-slate-400">
+                <tr className="border-b border-border text-slate-400">
                   <th className="py-2.5 px-3">Asset Class Benchmark</th>
                   <th className="py-2.5 px-3">Liquidity Beta (β)</th>
                   <th className="py-2.5 px-3 text-emerald-400">Impulse &gt; 0 (Expansion Phase)</th>
@@ -322,7 +299,7 @@ export const GlobalNetLiquidityLab: React.FC = () => {
         </div>
 
         {/* Institutional Methodology Box */}
-        <div className="max-w-7xl mx-auto bg-[#090e1f]/80 backdrop-blur-md border border-slate-800 rounded-lg p-6 mb-8 text-xs text-slate-400 space-y-3">
+        <div className="bg-terminal-surface/80 backdrop-blur-md border border-border rounded-lg p-6 mb-8 text-xs text-slate-400 space-y-3">
           <div className="flex items-center gap-2 text-slate-200 font-mono font-bold text-sm">
             <FileText className="w-4 h-4 text-emerald-400" />
             NET DOLLAR LIQUIDITY FORMULATION & MONETARY PLUMBING

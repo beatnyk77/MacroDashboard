@@ -32,7 +32,7 @@ export const ChinaDebtSustainabilityPanel: React.FC = () => {
         ?? null;
 
     const rgStatus = useMemo(() => {
-        if (rgDiff == null) return { label: 'Unknown', color: 'text-white/40', icon: null };
+        if (rgDiff == null) return { label: 'Unknown', color: 'text-terminal-dim', icon: null };
         if (rgDiff < 0) return { label: 'Sustainable (r < g)', color: 'text-emerald-400', icon: TrendingDown };
         if (rgDiff < 1) return { label: 'Marginal', color: 'text-amber-400', icon: TrendingUp };
         return { label: 'Unsustainable (r > g)', color: 'text-rose-400', icon: TrendingUp };
@@ -47,14 +47,14 @@ export const ChinaDebtSustainabilityPanel: React.FC = () => {
     return (
         <div className="space-y-8">
             <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-emerald-500/10 border border-emerald-500/20">
+                <div className="p-2.5 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                     <Scale size={20} className="text-emerald-400" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic">
                         Debt Sustainability Dashboard
                     </h3>
-                    <p className="text-xs text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground">
                         r-g differential and scenario sensitivity — sovereign credit analyst view
                     </p>
                 </div>
@@ -63,66 +63,66 @@ export const ChinaDebtSustainabilityPanel: React.FC = () => {
             {/* r-g hero */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 <div className={cn(
-                    'lg:col-span-1 p-6 rounded-2xl border',
+                    'lg:col-span-1 p-6 rounded-xl border',
                     rgDiff != null && rgDiff >= 0
                         ? 'bg-rose-500/[0.04] border-rose-500/15'
                         : 'bg-emerald-500/[0.04] border-emerald-500/15'
                 )}>
-                    <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">
                         r − g Differential
                     </p>
                     <div className="flex items-end gap-3">
-                        <p className={cn('text-4xl font-black font-mono', rgStatus.color)}>
+                        <p className={cn('text-4xl font-bold font-mono', rgStatus.color)}>
                             {rgDiff != null ? `${rgDiff >= 0 ? '+' : ''}${rgDiff.toFixed(2)}` : '—'}
                             <span className="text-lg ml-1">pp</span>
                         </p>
                         {StatusIcon && <StatusIcon size={20} className={rgStatus.color} />}
                     </div>
-                    <p className={cn('text-xs mt-2 font-black uppercase tracking-uppercase', rgStatus.color)}>
+                    <p className={cn('text-xs mt-2 font-semibold uppercase tracking-wider', rgStatus.color)}>
                         {rgStatus.label}
                     </p>
-                    <p className="text-xs text-muted-foreground/50 mt-3">
+                    <p className="text-xs text-terminal-dim mt-3">
                         10Y CGB ({yield10y?.value?.toFixed(2) ?? '—'}%) − GDP growth ({gdpGrowth?.value?.toFixed(1) ?? '—'}%)
                     </p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">
+                <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">
                         Current Debt / GDP
                     </p>
-                    <p className="text-3xl font-black text-white font-mono">
+                    <p className="text-3xl font-bold text-white font-mono">
                         {currentDebt != null ? `${currentDebt.toFixed(0)}%` : '—'}
                     </p>
-                    <p className="text-xs text-muted-foreground/50 mt-2">IMF general government gross debt</p>
+                    <p className="text-xs text-terminal-dim mt-2">IMF general government gross debt</p>
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">
+                <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                    <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">
                         Primary Balance Gap
                     </p>
-                    <p className="text-3xl font-black text-amber-400 font-mono">
+                    <p className="text-3xl font-bold text-amber-400 font-mono">
                         {primaryBalanceGap != null ? `${primaryBalanceGap.toFixed(1)}` : '—'}
-                        <span className="text-sm text-muted-foreground/50 ml-1">% GDP adj. needed</span>
+                        <span className="text-sm text-terminal-dim ml-1">% GDP adj. needed</span>
                     </p>
-                    <p className="text-xs text-muted-foreground/50 mt-2">
+                    <p className="text-xs text-terminal-dim mt-2">
                         Fiscal adjustment to stabilize debt at current trajectory
                     </p>
                 </div>
             </div>
 
             {/* Scenario matrix */}
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-4">
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-4">
                     Debt / GDP 2030 — Scenario Sensitivity
                 </h4>
                 <div className="overflow-x-auto">
                     <table className="w-full text-left">
                         <thead>
-                            <tr className="border-b border-white/5">
-                                <th className="px-4 py-2 text-xs font-black uppercase tracking-uppercase text-white/30">Scenario</th>
-                                <th className="px-4 py-2 text-xs font-black uppercase tracking-uppercase text-white/30">Growth</th>
-                                <th className="px-4 py-2 text-xs font-black uppercase tracking-uppercase text-white/30">Rate</th>
-                                <th className="px-4 py-2 text-xs font-black uppercase tracking-uppercase text-white/30">Debt/GDP 2030</th>
+                            <tr className="border-b border-border">
+                                <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">Scenario</th>
+                                <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">Growth</th>
+                                <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">Rate</th>
+                                <th className="px-4 py-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">Debt/GDP 2030</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -133,7 +133,7 @@ export const ChinaDebtSustainabilityPanel: React.FC = () => {
                                     <td className="px-4 py-3 text-sm font-mono text-white/70">{s.rate}%</td>
                                     <td className="px-4 py-3">
                                         <span className={cn(
-                                            'text-sm font-black font-mono px-2 py-0.5 rounded-lg',
+                                            'text-sm font-bold font-mono px-2 py-0.5 rounded-lg',
                                             s.debt2030 >= 150 ? 'bg-rose-500/15 text-rose-400'
                                                 : s.debt2030 >= 120 ? 'bg-amber-500/15 text-amber-400'
                                                     : 'bg-emerald-500/15 text-emerald-400'
@@ -146,14 +146,14 @@ export const ChinaDebtSustainabilityPanel: React.FC = () => {
                         </tbody>
                     </table>
                 </div>
-                <p className="text-xs text-muted-foreground/40 mt-4">
+                <p className="text-xs text-terminal-dim mt-4">
                     Scenarios derived from IMF DSA framework. Low growth + rate shock (2.5% growth, 4% rate) is the binding constraint
                     if property sector deleveraging persists.
                 </p>
             </div>
 
-            <div className="p-5 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10 text-sm text-muted-foreground/70 leading-relaxed">
-                <span className="font-black uppercase text-xs text-blue-400 mr-2 tracking-uppercase">DSA Thesis:</span>
+            <div className="p-5 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 text-sm text-muted-foreground leading-relaxed">
+                <span className="font-semibold uppercase text-xs text-blue-400 mr-2 tracking-wider">DSA Thesis:</span>
                 China has operated in r &lt; g territory for most of the post-2008 period, allowing debt ratios to rise without
                 immediate spiral dynamics. If growth decelerates toward 3% while implicit rates on shadow debt rise, the r-g flip
                 becomes the binding constraint on fiscal independence.

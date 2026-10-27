@@ -28,20 +28,20 @@ export const ChinaSOEScenarioPanel: React.FC = () => {
     const getSignal = (key: string) => signalMap[key]?.value;
 
     if (isLoading) {
-        return <div className="h-[400px] rounded-2xl bg-white/[0.02] animate-pulse" />;
+        return <div className="h-[400px] rounded-xl bg-white/[0.02] animate-pulse" />;
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-orange-500/10 border border-orange-500/20">
+                <div className="p-2.5 rounded-xl bg-orange-500/10 border border-orange-500/20">
                     <Factory size={20} className="text-orange-400" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic">
                         SOE Contingent Liability Tracker
                     </h3>
-                    <p className="text-xs text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground">
                         Scenario analysis — not point estimates. IMF stress-test framework.
                     </p>
                 </div>
@@ -55,13 +55,13 @@ export const ChinaSOEScenarioPanel: React.FC = () => {
                     { key: 'soe_zombie_proxy_pct', label: 'Zombie SOE Proxy', unit: '%', warn: true },
                 ].map(({ key, label, unit, warn }) => (
                     <div key={key} className={cn(
-                        'p-5 rounded-2xl border',
-                        warn ? 'bg-rose-500/[0.04] border-rose-500/15' : 'bg-white/[0.02] border-white/5'
+                        'p-5 rounded-xl border',
+                        warn ? 'bg-rose-500/[0.04] border-rose-500/15' : 'bg-white/[0.02] border-border'
                     )}>
-                        <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">{label}</p>
-                        <p className="text-2xl font-black text-white font-mono">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">{label}</p>
+                        <p className="text-2xl font-bold text-white font-mono">
                             {getSignal(key) != null ? getSignal(key)!.toFixed(1) : '—'}
-                            <span className="text-xs text-muted-foreground/50 ml-1">{unit}</span>
+                            <span className="text-xs text-terminal-dim ml-1">{unit}</span>
                         </p>
                     </div>
                 ))}
@@ -71,35 +71,35 @@ export const ChinaSOEScenarioPanel: React.FC = () => {
                 {scenarios?.map(s => (
                     <div
                         key={s.scenario_code}
-                        className={cn('p-6 rounded-2xl border', SCENARIO_COLORS[s.scenario_code] ?? 'border-white/5')}
+                        className={cn('p-6 rounded-xl border', SCENARIO_COLORS[s.scenario_code] ?? 'border-border')}
                     >
                         <div className="flex items-center justify-between mb-4">
-                            <h4 className={cn('text-sm font-black uppercase tracking-uppercase italic', SCENARIO_ACCENT[s.scenario_code])}>
+                            <h4 className={cn('text-sm font-semibold uppercase tracking-wider italic', SCENARIO_ACCENT[s.scenario_code])}>
                                 {s.scenario_label}
                             </h4>
-                            <span className="text-xs font-mono text-white/40">{s.probability_weight_pct?.toFixed(0)}% weight</span>
+                            <span className="text-xs font-mono text-terminal-dim">{s.probability_weight_pct?.toFixed(0)}% weight</span>
                         </div>
-                        <p className="text-3xl font-black text-white font-mono mb-1">
+                        <p className="text-3xl font-bold text-white font-mono mb-1">
                             {s.consolidated_debt_outcome_pct?.toFixed(0)}%
-                            <span className="text-xs text-muted-foreground/50 ml-1">GDP</span>
+                            <span className="text-xs text-terminal-dim ml-1">GDP</span>
                         </p>
-                        <p className="text-xs text-muted-foreground/50 mb-4">Consolidated debt outcome</p>
+                        <p className="text-xs text-terminal-dim mb-4">Consolidated debt outcome</p>
                         <div className="space-y-2 text-xs font-mono">
                             <div className="flex justify-between">
-                                <span className="text-white/40">Crystallization</span>
+                                <span className="text-terminal-dim">Crystallization</span>
                                 <span className="text-white/70">{s.crystallization_rate_pct?.toFixed(0)}%</span>
                             </div>
                             <div className="flex justify-between">
-                                <span className="text-white/40">Contingent liability</span>
+                                <span className="text-terminal-dim">Contingent liability</span>
                                 <span className="text-white/70">{s.contingent_liability_pct_gdp?.toFixed(1)}% GDP</span>
                             </div>
                         </div>
-                        <p className="text-xs text-muted-foreground/60 mt-4 leading-relaxed italic">{s.assumptions}</p>
+                        <p className="text-xs text-muted-foreground mt-4 leading-relaxed italic">{s.assumptions}</p>
                     </div>
                 ))}
             </div>
 
-            <div className="p-5 rounded-2xl bg-orange-500/[0.03] border border-orange-500/10 text-sm text-muted-foreground/70 leading-relaxed flex items-start gap-2">
+            <div className="p-5 rounded-xl bg-orange-500/[0.03] border border-orange-500/10 text-sm text-muted-foreground leading-relaxed flex items-start gap-2">
                 <AlertTriangle size={16} className="text-orange-400 shrink-0 mt-0.5" />
                 <span>
                     SOE bond defaults remain rare but are increasing. Local SOEs carry higher implicit guarantee expectations

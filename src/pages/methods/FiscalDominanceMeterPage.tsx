@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const FiscalDominanceMeterChart = lazy(() => import('./FiscalDominanceMeterChart').then(m => ({ default: m.FiscalDominanceMeterChart })));
 
@@ -86,9 +87,9 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Sovereign Debt · Monetary Policy" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#ef4444', color: '#ef4444' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.stress, color: CHART_COLORS.stress }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             Fiscal Dominance Meter
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -99,11 +100,11 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                 </Box>
 
                 {/* Alert box */}
-                <Paper elevation={0} sx={{ p: 4, mb: 5, bgcolor: 'rgba(239,68,68,0.05)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 3 }}>
+                <Paper elevation={0} sx={{ p: 4, mb: 5, bgcolor: alpha(CHART_COLORS.stress, 0.05), border: `1px solid ${alpha(CHART_COLORS.stress, 0.2)}`, borderRadius: 3 }}>
                     <Box display="flex" gap={2} alignItems="flex-start">
-                        <AlertTriangle size={20} style={{ color: '#ef4444', flexShrink: 0, marginTop: 2 }} />
+                        <AlertTriangle size={20} style={{ color: CHART_COLORS.stress, flexShrink: 0, marginTop: 2 }} />
                         <Box>
-                            <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: '#ef4444' }} mb={1}>2024 Reading: 21.3% — Highest in 40 Years</Typography>
+                            <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.stress }} mb={1}>2024 Reading: 21.3% — Highest in 40 Years</Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                                 The US Fiscal Dominance Meter reached 21.3% in Q4 2024 — meaning 21 cents of every dollar in federal tax revenue goes to debt interest payments. This level has not been seen since the late 1980s and approaches the structural threshold at which rate hikes become fiscally self-defeating.
                             </Typography>
@@ -113,17 +114,17 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#ef4444' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.stress }} />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        The Fiscal Dominance Meter (FDM) quantifies the degree to which <strong style={{ color: '#fca5a5' }}>government debt service obligations constrain central bank monetary policy</strong>. Named for economist Thomas Sargent's 1981 theory of fiscal dominance, it operationalises the constraint in a single, comparable ratio.
+                        The Fiscal Dominance Meter (FDM) quantifies the degree to which <strong style={{ color: CHART_COLORS.stressSoft }}>government debt service obligations constrain central bank monetary policy</strong>. Named for economist Thomas Sargent's 1981 theory of fiscal dominance, it operationalises the constraint in a single, comparable ratio.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
                         In a "fiscally dominant" environment, the central bank cannot raise interest rates meaningfully without causing a snowball in government interest costs — which then forces higher deficits, more borrowing, and ultimately monetary financing. The government's fiscal position effectively <em>dominates</em> the central bank's inflation mandate.
                     </Typography>
-                    <Box sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                         <Typography variant="caption" fontWeight={700} color="text.secondary" textTransform="uppercase" letterSpacing={1}>Historical Precedent</Typography>
                         <Typography variant="body2" color="text.secondary" mt={1} sx={{ lineHeight: 1.7 }}>
                             The US last exited fiscal dominance via the 1951 Treasury-Fed Accord, which freed the Fed from pegging Treasury yields. The preceding decade (1941–1951) saw the FDM exceed 30%. Japan has operated in fiscal dominance continuously since ~2000, necessitating Yield Curve Control as a policy response.
@@ -132,17 +133,17 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(239,68,68,0.25)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#ef4444' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.stress, 0.25)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.stress }} />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#fca5a5', lineHeight: 2, border: '1px solid rgba(239,68,68,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 1: Fiscal Dominance Meter (level){'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.stressSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.stress, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 1: Fiscal Dominance Meter (level){'\n'}</Box>
                         FDM = (Federal Interest Payments / Federal Tax Revenue) × 100{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 2: Z-Score for regime classification (25-year window){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 2: Z-Score for regime classification (25-year window){'\n'}</Box>
                         FDM_Z = (FDM − μ₂₅ᵧ) / σ₂₅ᵧ{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Thresholds (heuristic, based on historical data){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Thresholds (heuristic, based on historical data){'\n'}</Box>
                         {'<'}15% : Monetary Dominance (Fed has full independence){'\n'}
                         15–20% : Transition Zone (fiscal pressure building){'\n'}
                         {'>'}20% : Fiscal Dominance Warning{'\n'}
@@ -155,8 +156,8 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                             { label: 'Normalisation', desc: '25-year rolling Z-score using quarterly data — captures full fiscal cycle' },
                             { label: 'Cross Validation', desc: 'Congressional Budget Office Long-Term Outlook + Treasury OFR Annual Reports' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ color: '#fca5a5', fontWeight: 700, fontFamily: 'monospace' }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ color: CHART_COLORS.stressSoft, fontWeight: 700, fontFamily: CHART_FONT_FAMILY }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1} sx={{ lineHeight: 1.5 }}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -165,8 +166,8 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#ef4444' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.stress }} />
                         Interest/Tax Revenue Ratio — US, Japan, India (2000–2024)
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -175,27 +176,27 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                     <Suspense fallback={<ChartSkeleton height={280} />}>
                         <FiscalDominanceMeterChart />
                     </Suspense>
-                    <Box sx={{ mt: 3, p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                    <Box sx={{ mt: 3, p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                         <Typography variant="caption" color="text.secondary">
-                            <strong style={{ color: '#ef4444' }}>Key Observation:</strong> The US crossed the 20% fiscal dominance threshold in 2024 for the first time since the mid-1990s. Japan has remained well above this level continuously since 2001, forcing the Bank of Japan into Yield Curve Control. India peaked at ~30% in the early 2000s and has since reduced through fiscal consolidation.
+                            <strong style={{ color: CHART_COLORS.stress }}>Key Observation:</strong> The US crossed the 20% fiscal dominance threshold in 2024 for the first time since the mid-1990s. Japan has remained well above this level continuously since 2001, forcing the Bank of Japan into Yield Curve Control. India peaked at ~30% in the early 2000s and has since reduced through fiscal consolidation.
                         </Typography>
                     </Box>
                 </Paper>
 
                 {/* Policy Implications */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.gold }} />
                         Policy Implications by Regime
                     </Typography>
                     <Box display="grid" gridTemplateColumns="1fr" gap={2}>
                         {[
-                            { regime: 'FDM < 15% (Monetary Dominance)', desc: 'Central bank has full independence. Can raise rates to any level required to control inflation without triggering a fiscal crisis. Fed 1994, 2004, 2015 rate cycles all occurred here.', color: '#22c55e' },
-                            { regime: 'FDM 15–20% (Transition Zone)', desc: 'Central bank feels political pressure. Rate hikes face Treasury and White House opposition. The Fed begins to communicate "data dependency" — a coded signal of fiscal sensitivity.', color: '#f59e0b' },
-                            { regime: 'FDM > 20% (Fiscal Dominance Warning)', desc: 'Every 100bps fed funds rate increase adds ~$340B to annual interest expense at $34T debt. The Fed faces a structural dilemma: fight inflation or prevent a fiscal spiral. Historical resolution: inflation is allowed to run.', color: '#ef4444' },
-                            { regime: 'FDM > 30% (Full Fiscal Dominance)', desc: 'Central bank becomes operationally subservient to Treasury. YCC or its equivalent becomes the policy tool. Inflation becomes "structural" rather than transient. This is Japan 2000-present.', color: '#dc2626' },
+                            { regime: 'FDM < 15% (Monetary Dominance)', desc: 'Central bank has full independence. Can raise rates to any level required to control inflation without triggering a fiscal crisis. Fed 1994, 2004, 2015 rate cycles all occurred here.', color: CHART_COLORS.expansion },
+                            { regime: 'FDM 15–20% (Transition Zone)', desc: 'Central bank feels political pressure. Rate hikes face Treasury and White House opposition. The Fed begins to communicate "data dependency" — a coded signal of fiscal sensitivity.', color: CHART_COLORS.gold },
+                            { regime: 'FDM > 20% (Fiscal Dominance Warning)', desc: 'Every 100bps fed funds rate increase adds ~$340B to annual interest expense at $34T debt. The Fed faces a structural dilemma: fight inflation or prevent a fiscal spiral. Historical resolution: inflation is allowed to run.', color: CHART_COLORS.stress },
+                            { regime: 'FDM > 30% (Full Fiscal Dominance)', desc: 'Central bank becomes operationally subservient to Treasury. YCC or its equivalent becomes the policy tool. Inflation becomes "structural" rather than transient. This is Japan 2000-present.', color: CHART_COLORS.stressDeep },
                         ].map(p => (
-                            <Box key={p.regime} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid rgba(255,255,255,0.06)', borderLeft: `3px solid ${p.color}` }}>
+                            <Box key={p.regime} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: 1, borderColor: 'divider', borderLeft: `3px solid ${p.color}` }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: p.color }} mb={1}>{p.regime}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{p.desc}</Typography>
                             </Box>
@@ -205,7 +206,7 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>Institutional Use Cases</Typography>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>Institutional Use Cases</Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
                         {[
                             { role: 'Global Macro Hedge Funds', use: 'FDM crossing 20% is a high-conviction entry signal for long gold, long TIPS, and long commodity/real asset positions. The fiscal dominance regime historically resolves through inflation rather than austerity.' },
@@ -213,8 +214,8 @@ export const FiscalDominanceMeterPage: React.FC = () => {
                             { role: 'Rate Derivatives', use: 'FDM > 20% compresses the terminal rate expectation. Markets should price for earlier cuts than the dot plot suggests because fiscal sustainability constrains how long 5%+ rates can be maintained.' },
                             { role: 'Sovereign Credit Analysts', use: 'US S&P downgrade in 2023 and Fitch 2023 downgrade both cited interest cost trajectory. FDM provides the quantitative underpinning of this concern — track monthly for AAA rating risk assessment.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(239,68,68,0.04)', borderRadius: 2, border: '1px solid rgba(239,68,68,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#ef4444' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.stress, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.stress, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.stress }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -223,13 +224,13 @@ export const FiscalDominanceMeterPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Fiscal Dominance Meter FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#ef4444', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.stress, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

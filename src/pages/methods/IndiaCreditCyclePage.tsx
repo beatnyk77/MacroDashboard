@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const IndiaCreditCycleChart = lazy(() => import('./IndiaCreditCycleChart').then(m => ({ default: m.IndiaCreditCycleChart })));
 
@@ -86,9 +87,9 @@ export const IndiaCreditCyclePage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · India Macro" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#22c55e', color: '#22c55e' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.expansion, color: CHART_COLORS.expansion }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             India Credit Cycle Clock
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -100,30 +101,30 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#22c55e' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.expansion }} />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        India's credit cycle is structurally different from Western economies: the banking system is dominated by public sector banks whose lending mandates reflect fiscal as well as monetary objectives. The <strong style={{ color: '#86efac' }}>Credit-Deposit (CD) Ratio</strong> — the fraction of deposits deployed as loans — is the RBI's primary instrument for monitoring system-level liquidity stress in the banking sector.
+                        India's credit cycle is structurally different from Western economies: the banking system is dominated by public sector banks whose lending mandates reflect fiscal as well as monetary objectives. The <strong style={{ color: CHART_COLORS.expansionSoft }}>Credit-Deposit (CD) Ratio</strong> — the fraction of deposits deployed as loans — is the RBI's primary instrument for monitoring system-level liquidity stress in the banking sector.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
-                        When combined with <strong style={{ color: '#86efac' }}>Credit Growth YoY</strong> (the velocity of new lending), these two variables define the four quadrants of the India Credit Cycle Clock. The clock moves through these quadrants in a broadly predictable sequence, each with distinct implications for asset allocation, RBI policy stance, and NPA (non-performing asset) risk.
+                        When combined with <strong style={{ color: CHART_COLORS.expansionSoft }}>Credit Growth YoY</strong> (the velocity of new lending), these two variables define the four quadrants of the India Credit Cycle Clock. The clock moves through these quadrants in a broadly predictable sequence, each with distinct implications for asset allocation, RBI policy stance, and NPA (non-performing asset) risk.
                     </Typography>
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#22c55e' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.expansion, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.expansion }} />
                         Formula &amp; Quadrant Mapping
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#86efac', lineHeight: 2, border: '1px solid rgba(34,197,94,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Credit Growth YoY (x-axis){'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.expansionSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.expansion, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Credit Growth YoY (x-axis){'\n'}</Box>
                         Credit Growth = (Bank Credit_t / Bank Credit_t-12) − 1 × 100{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Credit-Deposit Ratio (y-axis){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Credit-Deposit Ratio (y-axis){'\n'}</Box>
                         CD Ratio (%) = (Total Bank Credit / Total Bank Deposits) × 100{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Quadrant Thresholds (10-year RBI averages){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Quadrant Thresholds (10-year RBI averages){'\n'}</Box>
                         Credit Growth pivot: 12% YoY (10yr avg: ~12.4%){'\n'}
                         CD Ratio pivot:     74% (10yr avg: ~73.8%)
                     </Box>
@@ -134,8 +135,8 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             { label: 'Calibration Period', desc: '10-year rolling RBI averages to set quadrant pivot lines; recalibrated annually each April (RBI fiscal year start).' },
                             { label: 'Source', desc: 'RBI DBIE (Data Bank of India Economy): tables 1 and 2 of the weekly H.3 statistical supplement.' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#86efac', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.expansionSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -143,9 +144,9 @@ export const IndiaCreditCyclePage: React.FC = () => {
                 </Paper>
 
                 {/* Quadrant Definitions */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(34,197,94,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#22c55e' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.expansion, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.expansion }} />
                         Quadrant Definitions
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -156,34 +157,34 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             {
                                 name: 'Expansion',
                                 coords: 'High Credit Growth + High CD Ratio',
-                                color: '#22c55e',
+                                color: CHART_COLORS.expansion,
                                 desc: 'Credit growth above trend with CD ratios elevated above 74%. Characteristic of peak business cycle demand. Associated with rising NPA risk as underwriting standards loosen. RBI typically moves to tightening bias.',
                             },
                             {
                                 name: 'Downturn',
                                 coords: 'Falling Credit Growth + High CD Ratio',
-                                color: '#f59e0b',
+                                color: CHART_COLORS.gold,
                                 desc: 'Credit momentum decelerating but CD ratios still elevated — banks remain fully deployed. Signs of asset quality stress emerging. NPAs begin to be recognised. RBI watches carefully for systemic risk.',
                             },
                             {
                                 name: 'Repair',
                                 coords: 'Low Credit Growth + Low CD Ratio',
-                                color: '#ef4444',
+                                color: CHART_COLORS.stress,
                                 desc: 'Credit growth at or below trend with CD ratios normalising below 74%. Balance sheet repair underway — banks building capital buffers and de-risking portfolios. Weakest phase for credit-sensitive equities.',
                             },
                             {
                                 name: 'Recovery',
                                 coords: 'Rising Credit Growth + Low CD Ratio',
-                                color: '#3b82f6',
+                                color: CHART_COLORS.west,
                                 desc: 'Credit growth re-accelerating from a clean balance sheet base. CD ratios still below historical average, creating headroom for further lending expansion. Typically coincides with RBI easing or neutral stance.',
                             },
                         ].map(q => (
-                            <Box key={q.name} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: `1px solid ${q.color}30` }}>
+                            <Box key={q.name} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: `1px solid ${q.color}30` }}>
                                 <Box display="flex" alignItems="center" gap={1} mb={1}>
                                     <Box sx={{ width: 10, height: 10, borderRadius: '50%', bgcolor: q.color, flexShrink: 0 }} />
-                                    <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: q.color }}>{q.name}</Typography>
+                                    <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: q.color }}>{q.name}</Typography>
                                 </Box>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#64748b' }} display="block" mb={1}>{q.coords}</Typography>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.tick }} display="block" mb={1}>{q.coords}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{q.desc}</Typography>
                             </Box>
                         ))}
@@ -200,22 +201,22 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* Calibration */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#22c55e' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.expansion }} />
                         Calibration Methodology
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        Pivot thresholds are calibrated against <strong style={{ color: '#86efac' }}>10-year rolling RBI averages</strong> — recalibrated each April to align with the RBI's own fiscal year. This ensures the quadrant lines reflect the structural norms of the current Indian banking system rather than historical epochs that may no longer be representative (e.g., pre-liberalisation credit allocation).
+                        Pivot thresholds are calibrated against <strong style={{ color: CHART_COLORS.expansionSoft }}>10-year rolling RBI averages</strong> — recalibrated each April to align with the RBI's own fiscal year. This ensures the quadrant lines reflect the structural norms of the current Indian banking system rather than historical epochs that may no longer be representative (e.g., pre-liberalisation credit allocation).
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
-                        The current regime reading (2025–2026) places India in the <strong style={{ color: '#f59e0b' }}>Downturn</strong> quadrant: credit growth has decelerated from the 2023 expansion peak while CD ratios remain elevated above 76%, reflecting limited deposit growth relative to outstanding loan books. The RBI's macro-prudential guidance on unsecured retail lending (November 2023) and ongoing NBFC capital requirements are consistent with this reading.
+                        The current regime reading (2025–2026) places India in the <strong style={{ color: CHART_COLORS.gold }}>Downturn</strong> quadrant: credit growth has decelerated from the 2023 expansion peak while CD ratios remain elevated above 76%, reflecting limited deposit growth relative to outstanding loan books. The RBI's macro-prudential guidance on unsecured retail lending (November 2023) and ongoing NBFC capital requirements are consistent with this reading.
                     </Typography>
                 </Paper>
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Database size={20} style={{ color: '#22c55e' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Database size={20} style={{ color: CHART_COLORS.expansion }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -225,8 +226,8 @@ export const IndiaCreditCyclePage: React.FC = () => {
                             { role: 'Private Credit / PE', use: 'Expansion phase increases competition from banks, compressing private credit spreads. Repair phase creates origination opportunities as banks pull back from mid-market lending.' },
                             { role: 'Sovereign Wealth Funds', use: 'India allocation sizing informed by cycle phase. Expansion phase warrants caution on credit-intensive sectors; Recovery phase signals structural consumption growth tailwind.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(34,197,94,0.04)', borderRadius: 2, border: '1px solid rgba(34,197,94,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#22c55e' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.expansion, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.expansion, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.expansion }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -235,13 +236,13 @@ export const IndiaCreditCyclePage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         India Credit Cycle FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#22c55e', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.expansion, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

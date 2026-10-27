@@ -1,10 +1,13 @@
 import React, { useMemo } from 'react';
 import {
     ComposedChart, Area, Line, XAxis, YAxis, CartesianGrid,
-    Tooltip as RechartsTooltip, ResponsiveContainer, ReferenceLine
+    Tooltip as RechartsTooltip, ReferenceLine
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, CHART_RAMPS } from '@/constants/chartDefaults';
 import { Activity, Wind, Anchor, Info, TrendingUp, TrendingDown, ArrowRight } from 'lucide-react';
 import { useIndiaInflation } from '@/hooks/useIndiaInflation';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const IndiaInflationPulseMonitor: React.FC = () => {
     const { data: rawData, loading } = useIndiaInflation();
@@ -25,7 +28,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
     const previous = useMemo(() => chartData[chartData.length - 2], [chartData]);
 
     if (loading || !latest) {
-        return <div className="h-[500px] w-full bg-card border border-border rounded-[2.5rem] animate-pulse" />;
+        return <div className="h-[500px] w-full bg-card border border-border rounded-xl animate-pulse" />;
     }
 
     const stickyDivergence = latest.cpi_sticky_yoy - latest.cpi_headline_yoy;
@@ -33,7 +36,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
     const flexibleVol = Math.abs(latest.cpi_flexible_yoy - previous.cpi_flexible_yoy);
 
     return (
-        <section className="w-full bg-card rounded-[2.5rem] border border-border overflow-hidden shadow-sm font-sans relative group text-card-foreground">
+        <section className="w-full bg-card rounded-xl border border-border overflow-hidden shadow-sm font-sans relative group text-card-foreground">
             {/* Header Area */}
             <div className="p-8 pb-6 border-b border-border bg-muted/20">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -43,12 +46,12 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                                 <span className={`animate-ping absolute inline-flex h-2 w-2 rounded-full ${stickyTrend === 'ACCELERATING' ? 'bg-fuchsia-400' : 'bg-emerald-400'} opacity-75`}></span>
                                 <span className={`relative inline-flex rounded-full h-2 w-2 ${stickyTrend === 'ACCELERATING' ? 'bg-fuchsia-500' : 'bg-emerald-500'}`}></span>
                             </span>
-                            <span className={`${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-600 dark:text-fuchsia-400' : 'text-emerald-700 dark:text-emerald-400'} text-xs font-black uppercase tracking-uppercase`}>
+                            <span className={`${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-400' : 'text-emerald-400'} text-xs font-semibold uppercase tracking-wider`}>
                                 Sticky Trend: {stickyTrend}
                             </span>
-                            <span className="text-muted-foreground text-xs font-black uppercase tracking-uppercase ml-2 border-l border-border pl-2">Alpha Signal: Structural Trend Monitor</span>
+                            <span className="text-muted-foreground text-xs font-semibold uppercase tracking-wider ml-2 border-l border-border pl-2">Alpha Signal: Structural Trend Monitor</span>
                         </div>
-                        <h2 className="text-3xl font-black text-foreground tracking-heading leading-none">
+                        <h2 className="text-3xl font-bold text-foreground tracking-heading leading-none">
                             India Inflation Pulse: Sticky vs Flexible
                         </h2>
                     </div>
@@ -68,23 +71,23 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                     title="Sticky Divergence"
                     value={`${(stickyDivergence > 0 ? '+' : '')}${stickyDivergence.toFixed(2)}%`}
                     subtext="VS HEADLINE"
-                    icon={<Anchor className={`w-5 h-5 ${stickyDivergence > 0 ? 'text-fuchsia-600 dark:text-fuchsia-400' : 'text-emerald-700 dark:text-emerald-400'}`} />}
-                    colorClass={stickyDivergence > 0 ? "text-fuchsia-600 dark:text-fuchsia-400" : "text-emerald-700 dark:text-emerald-400"}
+                    icon={<Anchor className={`w-5 h-5 ${stickyDivergence > 0 ? 'text-fuchsia-400' : 'text-emerald-400'}`} />}
+                    colorClass={stickyDivergence > 0 ? "text-fuchsia-400" : "text-emerald-400"}
                 />
                 <MetricCard
                     title="Flexible Volatility"
                     value={`${flexibleVol.toFixed(2)}%`}
                     subtext="MONTHLY SWING"
-                    icon={<Wind className="w-5 h-5 text-cyan-600 dark:text-cyan-400" />}
-                    colorClass="text-cyan-700 dark:text-cyan-400"
+                    icon={<Wind className="w-5 h-5 text-cyan-400" />}
+                    colorClass="text-cyan-400"
                 />
 
                 {/* Alpha Signal Panel */}
                 <div className={`p-6 flex flex-col justify-center transition-all duration-500 ${stickyTrend === 'ACCELERATING' ? 'bg-fuchsia-500/10' : 'bg-emerald-500/10'}`}>
                     <div className="flex flex-col gap-2">
-                        <div className={`flex items-center gap-2 ${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-600 dark:text-fuchsia-400' : 'text-emerald-700 dark:text-emerald-400'}`}>
+                        <div className={`flex items-center gap-2 ${stickyTrend === 'ACCELERATING' ? 'text-fuchsia-400' : 'text-emerald-400'}`}>
                             {stickyTrend === 'ACCELERATING' ? <TrendingUp className="w-5 h-5" /> : <TrendingDown className="w-5 h-5" />}
-                            <span className="text-sm font-black uppercase tracking-uppercase">Structural Signal</span>
+                            <span className="text-sm font-semibold uppercase tracking-wider">Structural Signal</span>
                         </div>
                         <p className="text-xs text-muted-foreground font-medium leading-tight">
                             {stickyTrend === 'ACCELERATING'
@@ -99,30 +102,28 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
             <div className="p-8 pb-12 relative">
                 <div className="flex items-center justify-between mb-8">
                     <div className="flex gap-6">
-                        <LegendItem color="#0284c7" label="Headline CPI" />
-                        <LegendItem color="#c026d3" label="Sticky (Structural)" thick />
-                        <LegendItem color="#0891b2" label="Flexible (Volatile)" dashed />
+                        <LegendItem color={CHART_COLORS.westDeep} label="Headline CPI" />
+                        <LegendItem color={CHART_COLORS.violet} label="Sticky (Structural)" thick />
+                        <LegendItem color={CHART_RAMPS.teal[1]} label="Flexible (Volatile)" dashed />
                     </div>
                     <div className="hidden md:flex items-center gap-2 px-3 py-1 bg-muted border border-border rounded-full capitalize">
-                        <span className="text-xs font-black text-muted-foreground tracking-uppercase">RBI Corridor: 2% - 6%</span>
+                        <span className="text-xs font-bold text-muted-foreground tracking-wider">RBI Corridor: 2% - 6%</span>
                     </div>
                 </div>
 
-                <div className="h-[380px] w-full">
-                    <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height={CHART_HEIGHTS.tall}>
                         <ComposedChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border" opacity={0.5} vertical={false} />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} className="text-border" opacity={0.5} vertical={false} />
                             <XAxis
+                                {...DEFAULT_XAXIS_PROPS}
                                 dataKey="formattedDate"
                                 axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 700 }}
                                 className="text-muted-foreground"
                             />
                             <YAxis
+                                {...DEFAULT_YAXIS_PROPS}
+                                width={60}
                                 axisLine={false}
-                                tickLine={false}
-                                tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 700 }}
                                 className="text-muted-foreground"
                                 tickFormatter={(val) => `${val}%`}
                                 domain={[0, 'auto']}
@@ -138,14 +139,14 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                                 className="text-muted/30"
                                 baseValue={2}
                             />
-                            <ReferenceLine y={4} stroke="currentColor" className="text-border" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'RBI TARGET (4%)', position: 'insideRight', fill: 'currentColor', className: 'text-muted-foreground', fontSize: 8, fontWeight: 900 }} />
+                            <ReferenceLine y={4} stroke="currentColor" className="text-border" strokeWidth={1} strokeDasharray="3 3" label={{ value: 'RBI TARGET (4%)', position: 'insideRight', fill: 'currentColor', className: 'text-muted-foreground', fontSize: 11, fontWeight: 700 }} />
 
                             {/* Lines */}
                             <Line
                                 type="monotone"
                                 dataKey="cpi_flexible_yoy"
                                 name="Flexible CPI"
-                                stroke="#0891b2"
+                                stroke={CHART_RAMPS.teal[1]}
                                 strokeWidth={1}
                                 strokeDasharray="5 5"
                                 dot={false}
@@ -154,7 +155,7 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                                 type="monotone"
                                 dataKey="cpi_headline_yoy"
                                 name="Headline CPI"
-                                stroke="#0284c7"
+                                stroke={CHART_COLORS.westDeep}
                                 strokeWidth={2}
                                 dot={false}
                             />
@@ -162,15 +163,14 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                                 type="monotone"
                                 dataKey="cpi_sticky_yoy"
                                 name="Sticky CPI"
-                                stroke="#c026d3"
+                                stroke={CHART_COLORS.violet}
                                 strokeWidth={4}
                                 dot={false}
-                                activeDot={{ r: 6, strokeWidth: 0, fill: '#c026d3' }}
+                                activeDot={{ r: 6, strokeWidth: 0, fill: CHART_COLORS.violet }}
                                 animationDuration={2000}
                             />
                         </ComposedChart>
-                    </ResponsiveContainer>
-                </div>
+                </MacroChartContainer>
             </div>
 
             {/* Analyst Insight Footer */}
@@ -178,9 +178,9 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                 <div className="flex-1">
                     <div className="flex items-center gap-2 mb-3">
                         <div className="p-1.5 rounded-md bg-fuchsia-500/10 border border-fuchsia-500/20">
-                            <Info className="w-4 h-4 text-fuchsia-600 dark:text-fuchsia-400" />
+                            <Info className="w-4 h-4 text-fuchsia-400" />
                         </div>
-                        <h4 className="text-xs font-black text-foreground uppercase tracking-uppercase">Macro Analyst Insight</h4>
+                        <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider">Macro Analyst Insight</h4>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed font-medium">
                         {stickyDivergence > 0
@@ -188,15 +188,15 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
                             : "Structural disinflation is finally taking hold as Sticky CPI converges toward the 4% target. This clears the runway for a neutral liquidity stance and potential pivot in the coming quarters, regardless of near-term flexible price shocks."}
                     </p>
                 </div>
-                <div className="flex items-center gap-4 shrink-0 px-6 py-4 rounded-3xl bg-card border border-border group-hover:border-fuchsia-500/40 transition-all duration-500">
+                <div className="flex items-center gap-4 shrink-0 px-6 py-4 rounded-xl bg-card border border-border group-hover:border-fuchsia-500/40 transition-all duration-500">
                     <div className="flex flex-col gap-1 items-end">
-                        <span className="text-xs font-black text-fuchsia-600 dark:text-fuchsia-400 tracking-uppercase uppercase italic">The Divergence</span>
+                        <span className="text-xs font-semibold text-fuchsia-400 tracking-wider uppercase italic">The Divergence</span>
                         <div className="flex items-center gap-2">
-                            <span className="text-xl font-black text-foreground">{(stickyDivergence * 100).toFixed(0)}</span>
-                            <span className="text-xs font-black text-muted-foreground">BPS</span>
+                            <span className="text-xl font-bold text-foreground">{(stickyDivergence * 100).toFixed(0)}</span>
+                            <span className="text-xs font-bold text-muted-foreground">BPS</span>
                         </div>
                     </div>
-                    <div className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-600 dark:text-fuchsia-400">
+                    <div className="p-2 rounded-xl bg-fuchsia-500/10 text-fuchsia-400">
                         <ArrowRight className="w-5 h-5" />
                     </div>
                 </div>
@@ -208,16 +208,16 @@ export const IndiaInflationPulseMonitor: React.FC = () => {
 const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
     <div className="p-6 bg-transparent hover:bg-muted/30 transition-colors group">
         <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase group-hover:text-foreground transition-colors">{title}</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider group-hover:text-foreground transition-colors">{title}</span>
             <div className="p-1.5 rounded-lg bg-muted border border-border">
                 {icon}
             </div>
         </div>
         <div className="flex items-end gap-2">
-            <span className={`text-3xl font-black tracking-heading leading-none ${colorClass}`}>{value}</span>
+            <span className={`text-3xl font-bold tracking-heading leading-none ${colorClass}`}>{value}</span>
         </div>
         {subtext && (
-            <div className="mt-2 text-xs font-black tracking-uppercase uppercase text-muted-foreground/80 italic tracking-[0.15em]">{subtext}</div>
+            <div className="mt-2 text-xs font-semibold uppercase text-muted-foreground/80 italic tracking-wider">{subtext}</div>
         )}
     </div>
 );
@@ -225,25 +225,25 @@ const MetricCard = ({ title, value, subtext, icon, colorClass }: any) => (
 const LegendItem = ({ color, label, thick, dashed }: any) => (
     <div className="flex items-center gap-2">
         <div className={`h-1 rounded-full ${thick ? 'w-6 h-1.5' : 'w-4 h-1'}`} style={{ backgroundColor: color, borderBottom: dashed ? `2px dashed ${color}` : 'none' }} />
-        <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{label}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
     </div>
 );
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-popover/95 backdrop-blur-xl border border-border p-4 rounded-2xl shadow-2xl z-50 min-w-[200px] text-popover-foreground">
-                <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-3 border-b border-border pb-2 italic">
+            <div className={`${TOOLTIP_SHELL_CLASS} z-50 min-w-[200px]`}>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 border-b border-border pb-2 italic">
                     {label}
                 </div>
                 <div className="space-y-2">
                     {payload.filter((p: any) => p.dataKey !== 'corridor_range').map((entry: any) => (
                         <div key={entry.name} className="flex justify-between items-center">
-                            <span className="text-xs text-muted-foreground font-bold flex items-center gap-2 uppercase tracking-heading">
+                            <span className="text-xs text-slate-400 font-semibold flex items-center gap-2 uppercase tracking-heading">
                                 <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
                                 {entry.name}
                             </span>
-                            <span className="text-foreground font-mono font-black text-xs">
+                            <span className="text-slate-100 font-mono font-semibold text-xs">
                                 {entry.value.toFixed(2)}%
                             </span>
                         </div>

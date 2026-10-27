@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { ensureLeafletStyles } from '@/lib/leafletStyles';
 import type { ChinaProvincialFiscalStress } from '@/hooks/useChinaDebt';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 /** Maps GeoJSON Chinese names → our province_code */
 const PROVINCE_GEO_NAME_TO_CODE: Record<string, string> = {
@@ -70,13 +71,13 @@ export const ChinaProvincialLeafletMap: React.FC<ChinaProvincialLeafletMapProps>
         const row = code ? dataByCode[code] : undefined;
         const isSelected = selectedCode && code === selectedCode;
         const value = row ? getValue(row) : 0;
-        const color = row ? getColor(value) : 'rgba(42, 46, 53, 0.4)';
+        const color = row ? getColor(value) : alpha(CHART_COLORS.line, 0.4);
 
         (layer as L.Path).setStyle({
             fillColor: color,
             weight: isSelected ? 2 : 1,
             opacity: 1,
-            color: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+            color: isSelected ? CHART_COLORS.west : WHITE_ALPHA.line,
             fillOpacity: isSelected ? 1 : 0.85,
         });
 
@@ -91,7 +92,7 @@ export const ChinaProvincialLeafletMap: React.FC<ChinaProvincialLeafletMapProps>
             mouseout: (event: L.LeafletMouseEvent) => {
                 const l = event.target as L.Path;
                 if (!isSelected) {
-                    l.setStyle({ weight: 1, color: 'rgba(255, 255, 255, 0.1)', fillOpacity: 0.85 });
+                    l.setStyle({ weight: 1, color: WHITE_ALPHA.line, fillOpacity: 0.85 });
                 }
             },
             click: () => {
@@ -109,7 +110,7 @@ export const ChinaProvincialLeafletMap: React.FC<ChinaProvincialLeafletMapProps>
 
     if (!geoJsonData) {
         return (
-            <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-uppercase font-black text-xs">
+            <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-wider font-semibold text-xs">
                 Loading Cartography...
             </div>
         );
@@ -121,10 +122,10 @@ export const ChinaProvincialLeafletMap: React.FC<ChinaProvincialLeafletMapProps>
     ];
 
     return (
-        <div className="h-full w-full relative rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+        <div className="h-full w-full relative rounded-xl overflow-hidden border border-border shadow-2xl">
             <MapContainer
                 bounds={chinaBounds}
-                style={{ height: '100%', width: '100%', background: '#020617' }}
+                style={{ height: '100%', width: '100%', background: CHART_COLORS.surface }}
                 zoomControl={false}
                 attributionControl={false}
                 scrollWheelZoom={false}
@@ -137,8 +138,8 @@ export const ChinaProvincialLeafletMap: React.FC<ChinaProvincialLeafletMapProps>
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .leaflet-custom-tooltip {
-                    background: rgba(2, 6, 23, 0.9) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    background: ${alpha(CHART_COLORS.surface, 0.9)} !important;
+                    border: 1px solid ${WHITE_ALPHA.line} !important;
                     color: white !important;
                     border-radius: 12px !important;
                     padding: 8px 12px !important;

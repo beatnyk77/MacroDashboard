@@ -32,6 +32,7 @@ import { cn } from '@/lib/utils';
 import { TrailLink } from '@/components/TrailLink';
 import type { FreshnessStatus } from '@/components/FreshnessChip';
 import type { MetricData } from '@/hooks/useLatestMetric';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
 const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
@@ -109,17 +110,17 @@ function SignalTile({
     tone?: 'good' | 'warn' | 'bad' | 'neutral';
 }) {
     const toneClass = {
-        good: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/25 bg-emerald-500/[0.05]',
-        warn: 'text-amber-700 dark:text-amber-400 border-amber-500/25 bg-amber-500/[0.05]',
-        bad: 'text-rose-700 dark:text-rose-400 border-rose-500/25 bg-rose-500/[0.05]',
-        neutral: 'text-blue-700 dark:text-blue-400 border-blue-500/25 bg-blue-500/[0.05]',
+        good: ' text-emerald-400 border-emerald-500/25 bg-emerald-500/[0.05]',
+        warn: ' text-amber-400 border-amber-500/25 bg-amber-500/[0.05]',
+        bad: ' text-rose-400 border-rose-500/25 bg-rose-500/[0.05]',
+        neutral: ' text-blue-400 border-blue-500/25 bg-blue-500/[0.05]',
     }[tone];
 
     return (
         <div className={cn('min-h-[124px] rounded-xl border p-4 shadow-sm', toneClass)}>
-            <div className="text-[10px] font-black uppercase tracking-[0.16em] text-muted-foreground">{label}</div>
-            <div className="mt-3 text-2xl font-black tabular-nums tracking-heading text-foreground">{value}</div>
-            <div className="mt-2 text-[11px] font-bold uppercase leading-relaxed text-muted-foreground">{context}</div>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{label}</div>
+            <div className="mt-3 text-2xl font-bold tabular-nums tracking-heading text-foreground">{value}</div>
+            <div className="mt-2 text-[11px] font-semibold uppercase leading-relaxed text-muted-foreground">{context}</div>
         </div>
     );
 }
@@ -133,7 +134,7 @@ function FeedHealthStrip({
         <div className="grid grid-cols-2 gap-2 md:grid-cols-5">
             {feeds.map(feed => (
                 <div key={feed.label} className="flex items-center justify-between gap-3 rounded-lg border border-border bg-muted/30 px-3 py-2">
-                    <span className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">{feed.label}</span>
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{feed.label}</span>
                     <FreshnessChip status={feed.status} lastUpdated={feed.lastUpdated} />
                 </div>
             ))}
@@ -156,9 +157,9 @@ function TabButton({
             type="button"
             onClick={onClick}
             className={cn(
-                'flex min-h-[44px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-[11px] font-black uppercase tracking-[0.14em] transition-colors cursor-pointer',
+                'flex min-h-[44px] items-center justify-center gap-2 rounded-lg border px-4 py-2 text-[11px] font-semibold uppercase tracking-wider transition-colors cursor-pointer',
                 active
-                    ? 'border-amber-500/40 bg-amber-500/10 text-amber-700 dark:text-amber-300 font-bold'
+                    ? 'border-amber-500/40 bg-amber-500/10 text-amber-300 font-bold'
                     : 'border-border bg-card/60 text-muted-foreground hover:bg-muted/50 hover:text-foreground',
             )}
             aria-pressed={active}
@@ -248,38 +249,21 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     faqJsonLd
                 ]}
             />
-            <div className="w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-10 py-8 bg-background text-foreground">
-                {/* Breadcrumbs */}
-                <div className="mb-6">
-                    <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                        <a href="/" className="hover:text-foreground transition-colors">Home</a>
-                        <ChevronRight size={10} />
-                        <a href="/macro-observatory/" className="hover:text-foreground transition-colors">Observatory</a>
-                        <ChevronRight size={10} />
-                        <span className="text-blue-600 dark:text-blue-400 font-bold">Energy & Commodities</span>
-                    </nav>
-                </div>
-
-                {/* Lab Header */}
-                <div className="mb-8">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/25 text-amber-700 dark:text-amber-400 text-[10px] font-black uppercase tracking-uppercase mb-5">
-                        <Fuel size={12} /> Institutional Resource Security
-                    </div>
-                    <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-foreground">
-                            Energy & <span className="text-blue-600 dark:text-blue-400">Commodities</span>
-                        </h1>
-                        <FreshnessChip
+            <div className="page-shell">
+                <LabPageHeader
+                    trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                    current="Energy & Commodities"
+                    badge="Institutional Resource Security"
+                    badgeIcon={<Fuel size={12} />}
+                    title={<>Energy & <span className=" text-blue-400">Commodities</span></>}
+                    status={<FreshnessChip
                             status={regime.isAnyStale ? 'lagged' : 'fresh'}
                             lastUpdated={regime.lastUpdated ?? undefined}
                             label={regime.isAnyStale ? 'MIXED FEEDS' : 'FRESH'}
-                        />
-                    </div>
-                    <p className="mt-3 text-muted-foreground max-w-4xl text-sm md:text-base font-medium leading-relaxed uppercase tracking-wide">
-                        Physical energy stress, sovereign buffers, and inflation transmission.
-                    </p>
-
-                    <div className="mt-6 space-y-4 rounded-2xl border border-border bg-card p-4 md:p-6 shadow-sm">
+                        />}
+                    thesis="Physical energy stress, sovereign buffers, and inflation transmission."
+                >
+                    <div className="mt-6 space-y-4 rounded-xl border border-border bg-card p-4 md:p-6 shadow-sm">
                         <FeedHealthStrip feeds={feedHealth} />
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
                             <SignalTile
@@ -320,15 +304,15 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             />
                         </div>
                         <div className="rounded-xl border border-border bg-muted/20 p-4">
-                            <div className="mb-2 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.16em] text-amber-700 dark:text-amber-400">
+                            <div className="mb-2 flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-amber-400">
                                 <Gauge size={14} /> Current Read
                             </div>
-                            <p className="text-sm font-semibold uppercase leading-relaxed tracking-wide text-foreground">
+                            <p className="text-sm font-semibold uppercase leading-relaxed tracking-wider text-foreground">
                                 {regime.overallNarrative} SPR freshness and India reserve coverage remain the first credibility checks before using the downstream sovereign-risk panels.
                             </p>
                         </div>
                     </div>
-                </div>
+                </LabPageHeader>
 
                 {/* 0. ENERGY MARKET REGIME — Executive Summary */}
                 <div id="energy-regime" className="mb-8">
@@ -348,14 +332,14 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     ))}
                 </div>
 
-                <div className="rounded-2xl border border-border bg-card p-4 md:p-6 shadow-sm">
+                <div className="rounded-xl border border-border bg-card p-4 md:p-6 shadow-sm">
                     {activeTab === 'oil' && (
                         <section id="oil-market" className="space-y-6">
                             <div className="flex items-start gap-3">
                                 <BarChart2 className="mt-1 text-amber-500" size={22} />
                                 <div>
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Oil Market Structure</h2>
-                                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Oil Market Structure</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         WTI curve stress and spot commodity anchors.
                                     </p>
                                 </div>
@@ -382,18 +366,18 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <Factory className="mt-1 text-blue-500" size={22} />
                                 <div>
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Global Refining Imbalance</h2>
-                                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Global Refining Imbalance</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         Capacity elasticity, utilization ceiling, and regional bottlenecks.
                                     </p>
                                 </div>
                             </div>
                             <div className="flex items-center justify-between p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/25">
                                 <div className="flex items-center gap-2.5">
-                                    <Factory size={16} className="text-cyan-600 dark:text-cyan-400" />
-                                    <span className="text-xs font-black uppercase tracking-wider text-cyan-700 dark:text-cyan-300">Live 3:2:1 Crack Spread Tool</span>
+                                    <Factory size={16} className=" text-cyan-400" />
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Live 3:2:1 Crack Spread Tool</span>
                                 </div>
-                                <TrailLink to="/tools/refinery-crack-spread" className="text-xs font-bold uppercase tracking-wider text-foreground hover:text-cyan-600 dark:hover:text-cyan-300 transition-colors flex items-center gap-1">
+                                <TrailLink to="/tools/refinery-crack-spread" className="text-xs font-semibold uppercase tracking-wider text-foreground hover:text-cyan-300 transition-colors flex items-center gap-1">
                                     Open Interactive Tool <ChevronRight size={14} />
                                 </TrailLink>
                             </div>
@@ -412,8 +396,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <Globe className="mt-1 text-blue-500" size={22} />
                                 <div>
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Sovereign Energy Buffers</h2>
-                                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Sovereign Energy Buffers</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         Reserve depletion, national stockpiles, and power-mix resilience.
                                     </p>
                                 </div>
@@ -433,8 +417,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <Clock className="mt-1 text-amber-500" size={22} />
                                 <div>
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">India Transmission</h2>
-                                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">India Transmission</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         Import cost pressure, corridor concentration, and fuel-cover sensitivity.
                                     </p>
                                 </div>
@@ -461,8 +445,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <Droplets className="mt-1 text-emerald-500" size={22} />
                                 <div>
-                                    <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Metals & Industrial Inputs</h2>
-                                    <p className="mt-1 text-xs font-bold uppercase tracking-wide text-muted-foreground">
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Metals & Industrial Inputs</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                                         Gold, silver, rare earth, and physical commodity corridor pressure.
                                     </p>
                                 </div>
@@ -478,18 +462,18 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     )}
                 </div>
 
-                <article className="mt-10 rounded-2xl border border-border bg-card p-6 shadow-sm" aria-label="Structural Analysis of Global Energy Security">
-                    <h2 className="text-sm font-black text-foreground uppercase tracking-uppercase mb-3">Method Lens</h2>
-                    <p className="max-w-5xl text-xs text-muted-foreground leading-relaxed font-medium uppercase tracking-wide">
+                <article className="mt-10 rounded-xl border border-border bg-card p-6 shadow-sm" aria-label="Structural Analysis of Global Energy Security">
+                    <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">Method Lens</h2>
+                    <p className="max-w-5xl text-xs text-muted-foreground leading-relaxed font-medium uppercase tracking-wider">
                         Energy stress transmits through prices, refining capacity, reserves, FX, and industrial inputs. This lab now prioritizes the stress board first, then lets desks inspect the relevant transmission channel.
                     </p>
 
                     {/* Visible FAQ block */}
                     <div className="mt-8 pt-6 border-t border-border space-y-4">
-                        <h3 className="text-xs font-black text-foreground uppercase tracking-widest">Frequently Asked Questions</h3>
+                        <h3 className="text-xs font-semibold text-foreground uppercase tracking-wider">Frequently Asked Questions</h3>
                         {faqItems.map(({ question, answer }) => (
                             <div key={question} className="space-y-1">
-                                <p className="text-xs font-bold text-blue-600 dark:text-blue-400">{question}</p>
+                                <p className="text-xs font-bold text-blue-400">{question}</p>
                                 <p className="text-xs text-muted-foreground leading-relaxed">{answer}</p>
                             </div>
                         ))}
@@ -499,12 +483,12 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <div className="mt-12 pt-8 border-t border-border text-center">
                     <Button
                         variant="ghost"
-                        className="text-muted-foreground font-black uppercase tracking-uppercase hover:text-foreground transition-colors"
+                        className="text-muted-foreground font-semibold uppercase tracking-wider hover:text-foreground transition-colors"
                         asChild
                     >
-                        <a href="/macro-observatory/" className="flex items-center gap-2">
+                        <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
                             <ArrowLeft size={18} /> Back to Observatory
-                        </a>
+                        </TrailLink>
                     </Button>
                 </div>
                 <RelatedContent />

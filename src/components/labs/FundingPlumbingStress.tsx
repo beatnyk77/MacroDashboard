@@ -13,6 +13,7 @@ import {
     Landmark,
     Zap
 } from 'lucide-react';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 interface MetricModuleProps {
     data: USMacroPulseData;
@@ -59,9 +60,9 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                         )}>
                             <Icon className="w-4 h-4" />
                         </div>
-                        <h4 className="text-sm font-black text-foreground uppercase tracking-tighter">{title}</h4>
+                        <h4 className="text-sm font-semibold text-foreground uppercase tracking-tighter">{title}</h4>
                     </div>
-                    <p className="text-[10px] text-muted-foreground font-medium uppercase tracking-widest">{subtitle}</p>
+                    <p className="text-[11px] text-muted-foreground font-medium uppercase tracking-wider">{subtitle}</p>
                 </div>
                 
                 {/* Status indicator */}
@@ -73,8 +74,8 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                         "bg-emerald-500 shadow-emerald-500/50"
                     )} />
                     <span className={cn(
-                        "text-[10px] font-black uppercase tracking-heading",
-                        isRed ? "text-rose-600 dark:text-rose-500" : isAmber ? "text-amber-600 dark:text-amber-500" : "text-emerald-600 dark:text-emerald-500"
+                        "text-[11px] font-semibold uppercase tracking-heading",
+                        isRed ? " text-rose-500" : isAmber ? " text-amber-500" : " text-emerald-500"
                     )}>
                         {isRed ? 'High Stress' : isAmber ? 'Caution' : 'Optimal'}
                     </span>
@@ -83,13 +84,13 @@ const MetricModule: React.FC<MetricModuleProps> = ({
 
             {/* Value Section */}
             <div className="flex items-baseline gap-2 mb-6">
-                <span className="text-3xl font-black text-foreground tracking-tighter tabular-nums">
+                <span className="text-3xl font-bold text-foreground tracking-tighter tabular-nums">
                     {data.current_value >= 1000 
                         ? (data.current_value / 1000).toLocaleString(undefined, { maximumFractionDigits: 2 })
                         : data.current_value.toLocaleString(undefined, { maximumFractionDigits: 1 })
                     }
                 </span>
-                <span className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     {data.current_value >= 1000 ? unitLabel.replace('mn', 'bn') : unitLabel}
                 </span>
             </div>
@@ -115,7 +116,7 @@ const MetricModule: React.FC<MetricModuleProps> = ({
                         />
                     </AreaChart>
                 </MacroChartContainer>
-                <div className="absolute -bottom-2 right-0 text-[8px] font-black text-muted-foreground/30 uppercase tracking-widest pointer-events-none">Liquidity Context</div>
+                <div className="absolute -bottom-2 right-0 text-[11px] font-semibold text-terminal-dim uppercase tracking-wider pointer-events-none">Liquidity Context</div>
             </div>
         </div>
     );
@@ -159,7 +160,7 @@ export const FundingPlumbingStress: React.FC = () => {
     }
 
     return (
-        <Card className="w-full bg-card border border-border shadow-sm dark:shadow-2xl rounded-2xl overflow-hidden relative group">
+        <Card className="w-full bg-card border border-border shadow-2xl rounded-xl overflow-hidden relative group">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-blue-500/20 to-transparent" />
 
@@ -175,7 +176,7 @@ export const FundingPlumbingStress: React.FC = () => {
                                 <span className="w-8 h-px bg-blue-500" />
                                 Funding Plumbing Stress
                             </h3>
-                            <p className="text-[10px] text-muted-foreground font-black uppercase tracking-widest mt-0.5">
+                            <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider mt-0.5">
                                 Real-time Systemic Liquidity Telemetry • Federal Reserve Facilities
                             </p>
                         </div>
@@ -183,10 +184,10 @@ export const FundingPlumbingStress: React.FC = () => {
                     <div className="hidden md:flex items-center gap-6">
                         <div className="flex items-center gap-2">
                             <Activity className="w-3 h-3 text-emerald-500" />
-                                <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-500 uppercase tracking-widest">Published feed</span>
+                                <span className="text-[11px] font-semibold text-emerald-500 uppercase tracking-wider">Published feed</span>
                         </div>
                         <div className="h-4 w-px bg-border" />
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Threshold: Institutional</span>
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Threshold: Institutional</span>
                     </div>
                 </div>
 
@@ -197,7 +198,7 @@ export const FundingPlumbingStress: React.FC = () => {
                         title="Net Liquidity Buffer"
                         subtitle="Overnight Reverse Repo (ON RRP)"
                         icon={Waves}
-                        color="#3b82f6"
+                        color={CHART_COLORS.west}
                         unitLabel="bn USD"
                         stressConfig={{
                             amber: (val) => val < 500 && val >= 200,
@@ -210,7 +211,7 @@ export const FundingPlumbingStress: React.FC = () => {
                         title="Fiscal Cash Buffer"
                         subtitle="Treasury General Account (TGA)"
                         icon={Landmark}
-                        color="#f59e0b"
+                        color={CHART_COLORS.gold}
                         unitLabel="mn USD"
                         stressConfig={{
                             amber: (val) => val < 300000 || val > 900000,
@@ -222,7 +223,7 @@ export const FundingPlumbingStress: React.FC = () => {
                         title="Domestic Funding Stress"
                         subtitle="Standing Repo Facility (SRF)"
                         icon={ShieldAlert}
-                        color="#ef4444"
+                        color={CHART_COLORS.stress}
                         unitLabel="mn USD"
                         stressConfig={{
                             amber: (val) => val > 0 && val <= 5000,
@@ -234,7 +235,7 @@ export const FundingPlumbingStress: React.FC = () => {
                         title="Offshore Dollar Gap"
                         subtitle="Central Bank FX Liquidity Swaps"
                         icon={Globe}
-                        color="#8b5cf6"
+                        color={CHART_COLORS.violet}
                         unitLabel="mn USD"
                         stressConfig={{
                             amber: (val) => val > 0 && val <= 1000,
@@ -246,14 +247,14 @@ export const FundingPlumbingStress: React.FC = () => {
                 {/* Insights Footer */}
                 <div className="px-8 py-4 bg-muted/30 border-t border-border flex flex-wrap items-center gap-x-8 gap-y-2">
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Market Alpha:</span>
-                        <p className="text-[10px] text-muted-foreground font-medium">
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Market Alpha:</span>
+                        <p className="text-[11px] text-muted-foreground font-medium">
                             {metrics.rrp.current_value < 300 ? "RRP balance is below the configured observation threshold." : "RRP balance is above the configured observation threshold."}
                         </p>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-black text-muted-foreground uppercase tracking-widest">Correlates:</span>
-                        <p className="text-[10px] text-muted-foreground font-medium whitespace-nowrap">SOFR Spreads • Treasury Repo Vol • Eurodollar Basis</p>
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Correlates:</span>
+                        <p className="text-[11px] text-muted-foreground font-medium whitespace-nowrap">SOFR Spreads • Treasury Repo Vol • Eurodollar Basis</p>
                     </div>
                 </div>
             </div>

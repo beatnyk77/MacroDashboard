@@ -62,18 +62,18 @@ export const ForInstitutional: React.FC = () => {
 
             {/* ===== Hero — thesis-led statement (D7) ===== */}
             <header className="pt-2 pb-2">
-                <div className="text-[10px] font-black uppercase tracking-[0.22em] text-blue-400/80">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                     For Investors &amp; Research Partners
                 </div>
-                <h1 className="mb-4 mt-4 max-w-[680px] text-[34px] font-extrabold leading-[1.14] text-white md:text-[40px]">
+                <h1 className="mb-4 mt-4 max-w-[680px] text-[34px] font-bold leading-[1.14] text-white md:text-[40px]">
                     The dollar&apos;s reserve share fell from 71% to 58%. We track the next 13 points — before they hit headlines.
                 </h1>
-                <p className="mb-7 max-w-[560px] text-[15px] leading-relaxed text-white/55">
+                <p className="mb-7 max-w-[560px] text-base leading-relaxed text-white/55">
                     Live telemetry on de-dollarization, liquidity regimes, and energy security — wired directly to 15+ official statistical sources, updated daily.
                 </p>
                 <a
                     href="#thesis"
-                    className="inline-flex items-center gap-2 rounded-[10px] bg-blue-600 px-6 py-3 text-[11px] font-black uppercase tracking-uppercase text-white transition-colors hover:bg-blue-700"
+                    className="inline-flex items-center gap-2 rounded-lg bg-blue-600 px-6 py-3 text-[11px] font-semibold uppercase tracking-wider text-white transition-colors hover:bg-blue-700"
                 >
                     Read the Thesis <ArrowRight size={14} />
                 </a>
@@ -84,12 +84,12 @@ export const ForInstitutional: React.FC = () => {
                 {ARC.map((step) => (
                     <div
                         key={step.n}
-                        className="rounded-[18px] border border-white/[0.08] bg-white/[0.02] p-[22px]"
+                        className="rounded-xl border border-white/[0.08] bg-white/[0.02] p-[22px]"
                     >
-                        <div className="mb-2.5 inline-flex items-center gap-2 text-[9px] font-black uppercase tracking-uppercase text-white/40">
+                        <div className="mb-2.5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                             <span className="font-mono text-blue-400">{step.n}</span> · {step.tag}
                         </div>
-                        <h3 className="mb-2 text-[18px] font-extrabold text-white">{step.title}</h3>
+                        <h3 className="mb-2 text-lg font-bold text-white">{step.title}</h3>
 
                         {'body' in step && step.body && (
                             <p className="m-0 text-[13.5px] leading-relaxed text-white/50">{step.body}</p>
@@ -98,8 +98,8 @@ export const ForInstitutional: React.FC = () => {
                         {'moat' in step && step.moat && (
                             <div className="mt-3.5 grid gap-2.5">
                                 {step.moat.map((m) => (
-                                    <div key={m} className="flex items-start gap-2.5 text-[13px] text-white/70">
-                                        <span className="font-black text-emerald-400">→</span>
+                                    <div key={m} className="flex items-start gap-2.5 text-sm text-white/70">
+                                        <span className="font-bold text-emerald-400">→</span>
                                         <span>{m}</span>
                                     </div>
                                 ))}
@@ -109,7 +109,7 @@ export const ForInstitutional: React.FC = () => {
                         {'proof' in step && step.proof && (
                             <Link
                                 to="/data-health"
-                                className="mt-3.5 inline-flex items-center gap-2 text-[11px] font-black uppercase tracking-uppercase text-blue-400 hover:text-blue-300"
+                                className="mt-3.5 inline-flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-blue-400 hover:text-blue-300"
                             >
                                 <ArrowRight size={14} /> See the live data-health board
                             </Link>

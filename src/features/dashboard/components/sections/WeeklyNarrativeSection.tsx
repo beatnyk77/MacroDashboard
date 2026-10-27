@@ -6,6 +6,7 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { History, Info, ChevronRight, Activity } from 'lucide-react';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { Card } from "@/components/ui/card";
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface WeeklyRegimeDigest {
     id: string;
@@ -52,7 +53,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                 <Skeleton
                     variant="rectangular"
                     height={350}
-                    sx={{ borderRadius: 4, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.05)' }}
+                    sx={{ borderRadius: 4, bgcolor: WHITE_ALPHA.ghost, border: `1px solid ${WHITE_ALPHA.faint}` }}
                 />
             </Box>
         );
@@ -76,7 +77,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                 />
                 <Link
                     to="/weekly-narrative"
-                    className="inline-flex items-center gap-2 text-xs font-black text-muted-foreground hover:text-primary transition-all uppercase tracking-uppercase bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-white/12 w-fit"
+                    className="inline-flex items-center gap-2 text-xs font-semibold text-muted-foreground hover:text-primary transition-all uppercase tracking-wider bg-white/5 hover:bg-white/10 px-5 py-2.5 rounded-xl border border-border w-fit"
                 >
                     <History size={14} />
                     Intelligence Archive
@@ -93,10 +94,10 @@ export const WeeklyNarrativeSection: React.FC = () => {
                         <div className="absolute top-0 left-0 w-1.5 h-full bg-blue-500" />
                         <CardContent className="p-8 md:p-10 relative z-10">
                             <Stack direction="row" spacing={2} alignItems="center" mb={4}>
-                                <div className="px-2.5 py-1 bg-blue-500 text-white text-xs font-black tracking-uppercase uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
+                                <div className="px-2.5 py-1 bg-blue-500 text-white text-xs font-semibold tracking-wider uppercase rounded shadow-[0_0_15px_rgba(59,130,246,0.5)]">
                                     REGIME FOCUS
                                 </div>
-                                <span className="text-xs font-bold text-blue-400 tracking-[0.25em] uppercase">
+                                <span className="text-xs font-semibold text-blue-400 tracking-wider uppercase">
                                     Executive Summary
                                 </span>
                             </Stack>
@@ -109,9 +110,9 @@ export const WeeklyNarrativeSection: React.FC = () => {
 
                 {/* Main Content: Sectional Divergence */}
                 <div className="lg:col-span-8">
-                    <Card className="bg-card/20 backdrop-blur-md border-white/5 h-full">
+                    <Card className="bg-card/20 backdrop-blur-md border-border h-full">
                         <CardContent className="p-8 md:p-10">
-                            <h5 className="text-xs font-black tracking-[0.25em] text-muted-foreground uppercase mb-10 flex items-center gap-3">
+                            <h5 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-10 flex items-center gap-3">
                                 <div className="p-1 rounded bg-primary/10">
                                     <Activity size={14} className="text-primary" />
                                 </div>
@@ -121,7 +122,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                 {digest.what_changed?.map((section, idx) => (
                                     <div key={idx} className="group/item relative">
                                         <div className="flex justify-between items-start mb-4">
-                                            <h6 className="text-sm font-black text-foreground group-hover/item:text-primary transition-colors uppercase tracking-uppercase">
+                                            <h6 className="text-sm font-semibold text-foreground group-hover/item:text-primary transition-colors uppercase tracking-wider">
                                                 {section.pillar}
                                             </h6>
                                         </div>
@@ -147,7 +148,7 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                 <div className="p-1.5 rounded-full bg-emerald-500/10">
                                     <Info size={16} className="text-emerald-500" />
                                 </div>
-                                <span className="text-xs font-black tracking-uppercase text-emerald-500 uppercase">
+                                <span className="text-xs font-semibold tracking-wider text-emerald-500 uppercase">
                                     PROPRIETARY VIEW
                                 </span>
                             </div>
@@ -158,9 +159,9 @@ export const WeeklyNarrativeSection: React.FC = () => {
                     </Card>
 
                     {/* Forward Look */}
-                    <Card className="bg-card/40 border-white/12 hover:border-white/20 transition-all shadow-xl">
+                    <Card className="bg-card/40 border-border hover:border-white/20 transition-all shadow-xl">
                         <CardContent className="p-8">
-                            <h5 className="text-xs font-black tracking-[0.25em] text-muted-foreground uppercase mb-6 flex justify-between items-center">
+                            <h5 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-6 flex justify-between items-center">
                                 Next Window
                                 <span className="text-xs text-primary bg-primary/10 px-2 py-0.5 rounded">HIGH IMPACT</span>
                             </h5>
@@ -177,16 +178,16 @@ export const WeeklyNarrativeSection: React.FC = () => {
                                 variant="outlined"
                                 sx={{
                                     borderRadius: 3,
-                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    borderColor: WHITE_ALPHA.line,
                                     color: 'text.primary',
                                     textTransform: 'none',
                                     fontSize: '0.7rem',
-                                    fontWeight: 800,
+                                    fontWeight: 700,
                                     letterSpacing: '0.1em',
                                     py: 1.5,
                                     '&:hover': {
                                         borderColor: 'primary.main',
-                                        bgcolor: 'rgba(59,130,246,0.05)'
+                                        bgcolor: alpha(CHART_COLORS.west, 0.05)
                                     }
                                 }}
                                 endIcon={<ChevronRight size={14} />}

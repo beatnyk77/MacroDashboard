@@ -36,14 +36,14 @@ export const JargonTooltip: React.FC<JargonTooltipProps> = ({
 			<HoverCardContent
 				side="top"
 				align="center"
-				className="w-72 p-3 bg-slate-950/95 border border-sky-500/30 text-slate-200 text-xs shadow-xl backdrop-blur-xl rounded z-50"
+				className="w-72 p-3 bg-card/90 border border-sky-500/30 text-slate-200 text-xs shadow-xl backdrop-blur-xl rounded z-50"
 			>
 				<div className="space-y-1.5">
-					<div className="flex items-center justify-between border-b border-slate-800 pb-1">
-						<span className="font-semibold text-sky-400 font-mono text-[11px] tracking-wide uppercase">
+					<div className="flex items-center justify-between border-b border-border pb-1">
+						<span className="font-semibold text-sky-400 font-mono text-[11px] tracking-wider uppercase">
 							{term}
 						</span>
-						<span className="text-[10px] text-slate-400 flex items-center gap-1">
+						<span className="text-[11px] text-slate-400 flex items-center gap-1">
 							<BookOpen size={10} /> Macro Concept
 						</span>
 					</div>
@@ -53,7 +53,7 @@ export const JargonTooltip: React.FC<JargonTooltipProps> = ({
 					{methodologyUrl && (
 						<a
 							href={methodologyUrl}
-							className="inline-block pt-1 text-[10px] text-sky-400 hover:text-sky-300 underline font-medium"
+							className="inline-block pt-1 text-[11px] text-sky-400 hover:text-sky-300 underline font-medium"
 						>
 							Read full methodology →
 						</a>

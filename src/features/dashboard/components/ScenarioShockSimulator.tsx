@@ -51,7 +51,7 @@ export const ScenarioShockSimulator: React.FC = () => {
                         <Sliders size={18} />
                     </div>
                     <div>
-                        <h3 className="text-sm sm:text-base font-black tracking-tight text-foreground uppercase">
+                        <h3 className="text-sm sm:text-base font-semibold tracking-tight text-foreground uppercase">
                             Factor Sensitivity & Scenario Shock Simulator
                         </h3>
                         <p className="text-xs text-muted-foreground font-mono">
@@ -80,7 +80,7 @@ export const ScenarioShockSimulator: React.FC = () => {
                     <div className="p-3.5 rounded-lg bg-card border border-border shadow-sm">
                         <div className="flex items-center justify-between mb-1.5 text-xs font-mono">
                             <span className="font-bold text-foreground">US 10Y Benchmark Yield Shock</span>
-                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", rateShockBps > 0 ? "bg-amber-500/20 text-amber-900 dark:text-amber-300 font-black" : rateShockBps < 0 ? "bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 font-black" : "text-muted-foreground")}>
+                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", rateShockBps > 0 ? "bg-amber-500/20 text-amber-300 font-bold" : rateShockBps < 0 ? "bg-emerald-500/20 text-emerald-300 font-bold" : "text-muted-foreground")}>
                                 {rateShockBps >= 0 ? `+${rateShockBps}` : rateShockBps} bps
                             </span>
                         </div>
@@ -91,10 +91,10 @@ export const ScenarioShockSimulator: React.FC = () => {
                             step="5"
                             value={rateShockBps}
                             onChange={(e) => setRateShockBps(Number(e.target.value))}
-                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#FF5B04]"
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-orange-500"
                             aria-label="US 10Y Yield Shock in basis points"
                         />
-                        <div className="flex justify-between text-[10px] font-mono font-medium text-muted-foreground mt-1">
+                        <div className="flex justify-between text-[11px] font-mono font-medium text-muted-foreground mt-1">
                             <span>-100 bps (Dovish Pivot)</span>
                             <span>0 bps</span>
                             <span>+100 bps (Term Premium Spike)</span>
@@ -105,7 +105,7 @@ export const ScenarioShockSimulator: React.FC = () => {
                     <div className="p-3.5 rounded-lg bg-card border border-border shadow-sm">
                         <div className="flex items-center justify-between mb-1.5 text-xs font-mono">
                             <span className="font-bold text-foreground">Crude Oil (Brent) Shock</span>
-                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", oilShockUsd > 0 ? "bg-rose-500/20 text-rose-900 dark:text-rose-300 font-black" : oilShockUsd < 0 ? "bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 font-black" : "text-muted-foreground")}>
+                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", oilShockUsd > 0 ? "bg-rose-500/20 text-rose-300 font-bold" : oilShockUsd < 0 ? "bg-emerald-500/20 text-emerald-300 font-bold" : "text-muted-foreground")}>
                                 {oilShockUsd >= 0 ? `+$${oilShockUsd}` : `-$${Math.abs(oilShockUsd)}`}/bbl
                             </span>
                         </div>
@@ -116,10 +116,10 @@ export const ScenarioShockSimulator: React.FC = () => {
                             step="2"
                             value={oilShockUsd}
                             onChange={(e) => setOilShockUsd(Number(e.target.value))}
-                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#075056]"
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-teal-700"
                             aria-label="Crude Oil Price Shock in USD per barrel"
                         />
-                        <div className="flex justify-between text-[10px] font-mono font-medium text-muted-foreground mt-1">
+                        <div className="flex justify-between text-[11px] font-mono font-medium text-muted-foreground mt-1">
                             <span>-$30/bbl (Demand Slump)</span>
                             <span>Baseline</span>
                             <span>+$50/bbl (Geopolitical Shock)</span>
@@ -130,7 +130,7 @@ export const ScenarioShockSimulator: React.FC = () => {
                     <div className="p-3.5 rounded-lg bg-card border border-border shadow-sm">
                         <div className="flex items-center justify-between mb-1.5 text-xs font-mono">
                             <span className="font-bold text-foreground">Broad Dollar Impulse (DXY)</span>
-                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", usdImpulsePct > 0 ? "bg-primary/20 text-primary dark:text-orange-300 font-black" : usdImpulsePct < 0 ? "bg-emerald-500/20 text-emerald-900 dark:text-emerald-300 font-black" : "text-muted-foreground")}>
+                            <span className={cn("font-bold px-2 py-0.5 rounded text-[11px]", usdImpulsePct > 0 ? "bg-primary/20 text-orange-300 font-bold" : usdImpulsePct < 0 ? "bg-emerald-500/20 text-emerald-300 font-bold" : "text-muted-foreground")}>
                                 {usdImpulsePct >= 0 ? `+${usdImpulsePct.toFixed(1)}%` : `${usdImpulsePct.toFixed(1)}%`}
                             </span>
                         </div>
@@ -141,10 +141,10 @@ export const ScenarioShockSimulator: React.FC = () => {
                             step="0.5"
                             value={usdImpulsePct}
                             onChange={(e) => setUsdImpulsePct(Number(e.target.value))}
-                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-[#233038]"
+                            className="w-full h-2 bg-muted rounded-lg appearance-none cursor-pointer accent-slate-700"
                             aria-label="Dollar Index Impulse percentage"
                         />
-                        <div className="flex justify-between text-[10px] font-mono text-muted-foreground mt-1">
+                        <div className="flex justify-between text-[11px] font-mono text-muted-foreground mt-1">
                             <span>-5% (Dollar Selloff)</span>
                             <span>0%</span>
                             <span>+10% (Liquidity Squeeze)</span>
@@ -156,11 +156,11 @@ export const ScenarioShockSimulator: React.FC = () => {
                 <div className="lg:col-span-6 grid grid-cols-1 sm:grid-cols-2 gap-3">
                     {/* Chip 1: S&P P/E Valuation Impact */}
                     <div className="p-3.5 rounded-lg border border-border bg-card">
-                        <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+                        <div className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
                             Equity Valuation Multiple
                         </div>
                         <div className="flex items-baseline gap-2">
-                            <span className={cn("text-xl font-black font-mono", Number(impacts.peContract) < 0 ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400")}>
+                            <span className={cn("text-xl font-bold font-mono", Number(impacts.peContract) < 0 ? " text-rose-400" : " text-emerald-400")}>
                                 {impacts.peContract}x P/E
                             </span>
                             <span className="text-xs font-mono text-muted-foreground">
@@ -174,11 +174,11 @@ export const ScenarioShockSimulator: React.FC = () => {
 
                     {/* Chip 2: EM Debt Contagion */}
                     <div className="p-3.5 rounded-lg border border-border bg-card">
-                        <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+                        <div className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
                             EM Sovereign Spread Contagion
                         </div>
                         <div className="flex items-baseline gap-2">
-                            <span className={cn("text-xl font-black font-mono", impacts.emSpreadBps > 0 ? "text-rose-600 dark:text-rose-400" : "text-emerald-600 dark:text-emerald-400")}>
+                            <span className={cn("text-xl font-bold font-mono", impacts.emSpreadBps > 0 ? " text-rose-400" : " text-emerald-400")}>
                                 {impacts.emSpreadBps >= 0 ? `+${impacts.emSpreadBps}` : impacts.emSpreadBps} bps
                             </span>
                         </div>
@@ -189,11 +189,11 @@ export const ScenarioShockSimulator: React.FC = () => {
 
                     {/* Chip 3: Synthetic Liquidity Drain */}
                     <div className="p-3.5 rounded-lg border border-border bg-card">
-                        <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+                        <div className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
                             Global Synthetic Liquidity
                         </div>
                         <div className="flex items-baseline gap-2">
-                            <span className={cn("text-xl font-black font-mono", impacts.liqDrainBn > 0 ? "text-amber-600 dark:text-amber-400" : "text-blue-600 dark:text-blue-400")}>
+                            <span className={cn("text-xl font-bold font-mono", impacts.liqDrainBn > 0 ? " text-amber-400" : " text-blue-400")}>
                                 {impacts.liqDrainBn > 0 ? `-$${impacts.liqDrainBn}B` : `+$${Math.abs(impacts.liqDrainBn)}B`}
                             </span>
                         </div>
@@ -204,14 +204,14 @@ export const ScenarioShockSimulator: React.FC = () => {
 
                     {/* Chip 4: USD/INR Stress Drift */}
                     <div className="p-3.5 rounded-lg border border-border bg-card">
-                        <div className="text-[10px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
+                        <div className="text-[11px] font-mono uppercase text-muted-foreground tracking-wider mb-1">
                             USD/INR Projected Stress Level
                         </div>
                         <div className="flex items-baseline gap-2">
-                            <span className="text-xl font-black font-mono text-foreground">
+                            <span className="text-xl font-bold font-mono text-foreground">
                                 {impacts.inrDrift}
                             </span>
-                            <span className="text-xs font-mono text-amber-600 dark:text-amber-400 font-bold">
+                            <span className="text-xs font-mono text-amber-400 font-bold">
                                 RBI Band Test
                             </span>
                         </div>

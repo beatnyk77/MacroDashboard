@@ -15,6 +15,7 @@ import { DataDiagnosticsDisclosure } from '@/components/DataDiagnosticsDisclosur
 import { PrecedentBadge } from '@/components/PrecedentBadge';
 import type { MetricData } from '@/types/metric';
 import type { MetricData as LiveMetricData } from '@/lib/metricData';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 interface MetricCardProps extends React.HTMLAttributes<HTMLDivElement> {
 	// Unified data object (preferred)
@@ -215,7 +216,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 				<div className="flex justify-between items-start">
 					<div className="space-y-0.5">
 						<div className="flex items-center gap-2">
-							<span className="text-xs font-semibold tracking-uppercase text-muted-foreground/70 uppercase group-hover:text-blue-500/80 transition-colors">
+							<span className="text-xs font-semibold tracking-wider text-muted-foreground uppercase group-hover:text-blue-500/80 transition-colors">
 								{label}
 							</span>
 							{status !== 'neutral' && (
@@ -238,7 +239,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							)}
 						</div>
 						{sublabel ? (
-							<div className="text-xs font-medium text-muted-foreground/55 truncate max-w-[220px]" title={typeof sublabel === 'string' ? sublabel : undefined}>
+							<div className="text-xs font-medium text-terminal-dim truncate max-w-[220px]" title={typeof sublabel === 'string' ? sublabel : undefined}>
 								{sublabel}
 							</div>
 						) : null}
@@ -269,7 +270,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 									{prefix}{typeof value === 'number' ? formatMetric(value, 'number', { showUnit: false }) : value}
 								</span>
 								{suffix && (
-									<span className="text-lg font-semibold text-muted-foreground/60 self-baseline">
+									<span className="text-lg font-semibold text-muted-foreground self-baseline">
 										{suffix}
 									</span>
 								)}
@@ -286,29 +287,29 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 												)}>
 													{getDeltaIcon()}
 													<span>{delta.value}</span>
-													<span className="text-xs font-medium text-muted-foreground/50 uppercase ml-1">{delta.period}</span>
+													<span className="text-xs font-medium text-terminal-dim uppercase ml-1">{delta.period}</span>
 												</div>
 											</TooltipTrigger>
 											{delta.tooltip && (
-												<TooltipContent className="p-3 bg-slate-950 border-white/12 shadow-2xl backdrop-blur-xl">
+												<TooltipContent className="p-3 bg-card border-border shadow-2xl backdrop-blur-xl">
 													<div className="space-y-2">
-														<div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
-															<span className="text-xs font-bold text-muted-foreground/60 uppercase">Current</span>
+														<div className="flex justify-between items-center gap-4 border-b border-border pb-1.5">
+															<span className="text-xs font-semibold text-muted-foreground uppercase">Current</span>
 															<span className="text-xs font-mono font-bold text-white">{delta.tooltip.currentValue}</span>
 														</div>
-														<div className="flex justify-between items-center gap-4 border-b border-white/5 pb-1.5">
-																			<span className="text-xs font-bold text-muted-foreground/60 uppercase">Previous {delta.period}</span>
+														<div className="flex justify-between items-center gap-4 border-b border-border pb-1.5">
+																			<span className="text-xs font-semibold text-muted-foreground uppercase">Previous {delta.period}</span>
 															<span className="text-xs font-mono font-bold text-white/80">{delta.tooltip.previousValue}</span>
 														</div>
 														<div className="grid grid-cols-2 gap-3 pt-0.5">
 															<div className="space-y-0.5">
-																<div className="text-xs font-black text-muted-foreground/40 uppercase leading-none">Change</div>
+																<div className="text-xs font-semibold text-terminal-dim uppercase leading-none">Change</div>
 																<div className={cn("text-xs font-bold font-mono", getDeltaTextColor())}>
 																	{delta.tooltip.absoluteChange}
 																</div>
 															</div>
 															<div className="space-y-0.5 text-right">
-																<div className="text-xs font-black text-muted-foreground/40 uppercase leading-none">% Change</div>
+																<div className="text-xs font-semibold text-terminal-dim uppercase leading-none">% Change</div>
 																<div className={cn("text-xs font-bold font-mono", getDeltaTextColor())}>
 																	{delta.tooltip.percentChange}%
 																</div>
@@ -321,8 +322,8 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 									</TooltipProvider>
 								)}
 								{typeof zScore === 'number' && !isNaN(zScore) && (
-									<div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-secondary/50 border border-border/50">
-										<span className="text-xs font-semibold text-muted-foreground/60 uppercase">σ</span>
+									<div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded bg-secondary/50 border border-border">
+										<span className="text-xs font-semibold text-muted-foreground uppercase">σ</span>
 										<span className={cn(
 											"text-xs font-bold tabular-nums font-mono",
 											Math.abs(zScore) > 2 ? "text-amber-500" : "text-blue-400"
@@ -343,12 +344,12 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 				</div>
 
 				{/* Footer Meta */}
-				<div className="pt-3 border-t border-border/40 mt-auto">
+				<div className="pt-3 border-t border-border mt-auto">
 					<div className="flex items-end justify-between">
 						<div className="space-y-1.5 flex-1">
 							{isInstitutionalView && typeof percentile === 'number' && !isNaN(percentile) && (
 								<div className="space-y-1 max-w-[100px]">
-									<div className="flex justify-between text-xs font-semibold text-muted-foreground/50 tracking-wide">
+									<div className="flex justify-between text-xs font-semibold text-terminal-dim tracking-wide">
 										<span>RANK</span>
 										<span>{Math.round(percentile)}%</span>
 									</div>
@@ -384,7 +385,7 @@ const MetricCardInner: React.FC<MetricCardProps> = (props) => {
 							<div className="w-20 h-8 opacity-40 group-hover:opacity-100 transition-opacity">
 								<Sparkline
 									data={history}
-									color={status === 'safe' || status === 'neutral' ? 'currentColor' : '#f43f5e'}
+									color={status === 'safe' || status === 'neutral' ? 'currentColor' : CHART_COLORS.east}
 									height={32}
 								/>
 							</div>

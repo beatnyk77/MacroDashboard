@@ -81,7 +81,7 @@ const DeltaPctCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
   const { text, dir } = formatDeltaPct(deltaPct);
   const Icon = dir === 'up' ? ArrowUpRight : dir === 'down' ? ArrowDownRight : Minus;
   const color =
-    dir === 'up' ? 'text-emerald-600 dark:text-emerald-400' : dir === 'down' ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground';
+    dir === 'up' ? ' text-emerald-400' : dir === 'down' ? ' text-rose-400' : 'text-muted-foreground';
   return (
     <span className={cn('inline-flex items-center justify-end gap-1 font-mono tabular-nums text-xs font-bold', color)}>
       <Icon size={12} aria-hidden />
@@ -96,7 +96,7 @@ const DeltaPctCell: React.FC<{ deltaPct: number | null }> = ({ deltaPct }) => {
 const AbsDeltaCell: React.FC<{ delta: number | null }> = ({ delta }) => {
   const { text, dir } = formatAbsDelta(delta);
   const color =
-    dir === 'up' ? 'text-emerald-600 dark:text-emerald-400' : dir === 'down' ? 'text-rose-600 dark:text-rose-400' : 'text-muted-foreground';
+    dir === 'up' ? ' text-emerald-400' : dir === 'down' ? ' text-rose-400' : 'text-muted-foreground';
   return (
     <span className={cn('font-mono tabular-nums text-xs font-bold', color)}>{text}</span>
   );
@@ -107,7 +107,7 @@ const MetricName: React.FC<{ row: MetricRow }> = ({ row }) => {
     return (
       <Link
         to={row.glossaryPath}
-        className="text-sm font-bold text-foreground hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+        className="text-sm font-bold text-foreground hover:text-blue-400 transition-colors"
       >
         {row.name}
       </Link>
@@ -145,7 +145,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
     <section className="space-y-4" aria-label="Scoreboard">
       <div className="flex items-center gap-2">
         <Table2 size={14} className="text-muted-foreground" aria-hidden />
-        <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground">
+        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
           Scoreboard
         </h2>
       </div>
@@ -157,7 +157,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
           className="bg-card border-border shadow-sm overflow-hidden"
         >
           <div className="px-4 md:px-5 py-3 border-b border-border bg-muted/40">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground font-bold">
+            <h3 className="text-[11px] uppercase tracking-wider text-muted-foreground font-semibold">
               {section.label}
             </h3>
           </div>
@@ -166,16 +166,16 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
           <div className="hidden md:block overflow-x-auto">
             <table className="w-full text-left">
               <thead>
-                <tr className="text-[9px] font-black uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/20">
-                  <th className="px-5 py-2.5 font-black">Metric</th>
-                  <th className="px-3 py-2.5 font-black text-right">Level</th>
-                  <th className="px-3 py-2.5 font-black text-right">Prior</th>
-                  <th className="px-3 py-2.5 font-black text-right">Δ</th>
-                  <th className="px-3 py-2.5 font-black text-right">Δ%</th>
-                  <th className="px-3 py-2.5 font-black">Unit</th>
-                  <th className="px-3 py-2.5 font-black">As of</th>
-                  <th className="px-3 py-2.5 font-black">Source</th>
-                  <th className="px-5 py-2.5 font-black">Status</th>
+                <tr className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground border-b border-border bg-muted/20">
+                  <th className="px-5 py-2.5 font-bold">Metric</th>
+                  <th className="px-3 py-2.5 font-bold text-right">Level</th>
+                  <th className="px-3 py-2.5 font-bold text-right">Prior</th>
+                  <th className="px-3 py-2.5 font-bold text-right">Δ</th>
+                  <th className="px-3 py-2.5 font-bold text-right">Δ%</th>
+                  <th className="px-3 py-2.5 font-bold">Unit</th>
+                  <th className="px-3 py-2.5 font-bold">As of</th>
+                  <th className="px-3 py-2.5 font-bold">Source</th>
+                  <th className="px-5 py-2.5 font-bold">Status</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,20 +231,20 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                 </div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-2">
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Level
                     </p>
-                    <p className="font-mono text-base font-black text-foreground tabular-nums">
+                    <p className="font-mono text-base font-bold text-foreground tabular-nums">
                       {formatLevel(row)}
                       {row.unit ? (
-                        <span className="ml-1 text-[10px] font-bold text-muted-foreground not-italic">
+                        <span className="ml-1 text-[11px] font-bold text-muted-foreground not-italic">
                           {row.unit}
                         </span>
                       ) : null}
                     </p>
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Prior
                     </p>
                     <p className="font-mono text-sm font-bold text-muted-foreground tabular-nums">
@@ -252,13 +252,13 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Δ
                     </p>
                     <AbsDeltaCell delta={row.delta} />
                   </div>
                   <div className="text-right">
-                    <p className="text-[9px] font-black uppercase tracking-wider text-muted-foreground">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                       Δ%
                     </p>
                     <div className="flex justify-end">
@@ -266,7 +266,7 @@ export const Scoreboard: React.FC<ScoreboardProps> = ({ board }) => {
                     </div>
                   </div>
                 </div>
-                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[10px] text-muted-foreground">
+                <div className="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-muted-foreground">
                   <span>
                     As of{' '}
                     <span className="font-mono tabular-nums text-muted-foreground font-semibold">

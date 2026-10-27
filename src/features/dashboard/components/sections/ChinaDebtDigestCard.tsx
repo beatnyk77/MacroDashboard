@@ -45,17 +45,17 @@ export const ChinaDebtDigestCard: React.FC<ChinaDebtDigestCardProps> = ({ sectio
                             <Landmark size={16} className="text-amber-400" />
                         </div>
                         <div>
-                            <span className="text-[10px] font-black tracking-[0.25em] uppercase text-amber-400/80">
+                            <span className="text-[11px] font-semibold tracking-wider uppercase text-amber-400/80">
                                 China Public Sector Debt
                             </span>
-                            <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic mt-0.5">
+                            <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic mt-0.5">
                                 {section.headline}
                             </h3>
                         </div>
                     </div>
                     <Link
                         to="/intel/china#debt"
-                        className="text-[10px] font-black uppercase tracking-widest text-amber-400/70 hover:text-amber-300 flex items-center gap-1 shrink-0"
+                        className="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70 hover:text-amber-300 flex items-center gap-1 shrink-0"
                     >
                         Intel Hub <ArrowRight size={12} />
                     </Link>
@@ -68,14 +68,14 @@ export const ChinaDebtDigestCard: React.FC<ChinaDebtDigestCardProps> = ({ sectio
                 {section.composites && section.composites.length > 0 && (
                     <div className={`grid gap-3 mb-6 ${compact ? 'grid-cols-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-5'}`}>
                         {section.composites.map(c => (
-                            <div key={c.id} className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                                <p className="text-[10px] font-black uppercase tracking-uppercase text-white/40 mb-1 truncate">
+                            <div key={c.id} className="p-3 rounded-xl bg-white/[0.02] border border-border">
+                                <p className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim mb-1 truncate">
                                     {c.label}
                                 </p>
-                                <p className="text-lg font-black font-mono text-white">
+                                <p className="text-lg font-bold font-mono text-white">
                                     {c.value.toFixed(c.unit === '×' ? 2 : 1)}{c.unit}
                                 </p>
-                                <span className={`inline-block mt-2 text-[9px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border ${STATUS_STYLES[c.status] ?? STATUS_STYLES.watch}`}>
+                                <span className={`inline-block mt-2 text-[11px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border ${STATUS_STYLES[c.status] ?? STATUS_STYLES.watch}`}>
                                     {c.status}
                                 </span>
                             </div>
@@ -84,7 +84,7 @@ export const ChinaDebtDigestCard: React.FC<ChinaDebtDigestCardProps> = ({ sectio
                 )}
 
                 {section.layer_snapshot && (
-                    <div className="flex flex-wrap gap-4 text-xs font-mono text-muted-foreground/60 mb-6 pb-6 border-b border-white/5">
+                    <div className="flex flex-wrap gap-4 text-xs font-mono text-muted-foreground mb-6 pb-6 border-b border-border">
                         {section.layer_snapshot.central_official_pct != null && (
                             <span>Central (official): {section.layer_snapshot.central_official_pct.toFixed(0)}% GDP</span>
                         )}
@@ -110,7 +110,7 @@ export const ChinaDebtDigestCard: React.FC<ChinaDebtDigestCardProps> = ({ sectio
 
                 <Link
                     to="/methods/china-debt-iceberg"
-                    className="inline-block mt-5 text-[10px] font-black uppercase tracking-widest text-white/30 hover:text-amber-400/80 transition-colors"
+                    className="inline-block mt-5 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim hover:text-amber-400/80 transition-colors"
                 >
                     Methodology: China Debt Iceberg →
                 </Link>

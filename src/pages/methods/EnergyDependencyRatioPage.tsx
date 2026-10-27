@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const EnergyDependencyRatioChart = lazy(() => import('./EnergyDependencyRatioChart').then(m => ({ default: m.EnergyDependencyRatioChart })));
 
@@ -95,9 +96,9 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Macro Indicators · Sovereign Risk" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#10b981', color: '#10b981' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.expansion, color: CHART_COLORS.expansion }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             Energy Dependency Ratio
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -109,33 +110,33 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#10b981' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.expansion }} />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        The Energy Dependency Ratio (EDR) measures what percentage of a country's primary energy consumption is satisfied by <strong style={{ color: '#6ee7b7' }}>net imports</strong> — i.e., it cannot produce domestically. A country with EDR = 88% (India) means nearly all energy must be imported, creating direct transmission from global oil markets to the domestic current account, currency, and inflation.
+                        The Energy Dependency Ratio (EDR) measures what percentage of a country's primary energy consumption is satisfied by <strong style={{ color: CHART_COLORS.expansionSoft }}>net imports</strong> — i.e., it cannot produce domestically. A country with EDR = 88% (India) means nearly all energy must be imported, creating direct transmission from global oil markets to the domestic current account, currency, and inflation.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
                         Negative values indicate net energy exporters (Russia, Saudi Arabia, USA after the shale revolution). The ratio is sourced from IEA World Energy Balances and uses the standardised "ktoe" (kiloton of oil equivalent) unit to normalise across coal, oil, gas, and renewables.
                     </Typography>
-                    <Box sx={{ mt: 3, p: 3, bgcolor: 'rgba(16,185,129,0.05)', borderRadius: 2, border: '1px solid rgba(16,185,129,0.15)' }}>
-                        <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>India Context (2024)</Typography>
-                        <Typography variant="body2" color="text.secondary">India imports ~88% of its petroleum, ~50% of its natural gas, and a declining but still significant share of its coal. The total energy import bill was approximately <strong style={{ color: '#6ee7b7' }}>$221 billion in FY2024</strong>, representing the single largest driver of the current account deficit.</Typography>
+                    <Box sx={{ mt: 3, p: 3, bgcolor: alpha(CHART_COLORS.expansion, 0.05), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.expansion, 0.15)}` }}>
+                        <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.expansion }} mb={1}>India Context (2024)</Typography>
+                        <Typography variant="body2" color="text.secondary">India imports ~88% of its petroleum, ~50% of its natural gas, and a declining but still significant share of its coal. The total energy import bill was approximately <strong style={{ color: CHART_COLORS.expansionSoft }}>$221 billion in FY2024</strong>, representing the single largest driver of the current account deficit.</Typography>
                     </Box>
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(16,185,129,0.25)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#10b981' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.expansion, 0.25)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.expansion }} />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#6ee7b7', lineHeight: 2, border: '1px solid rgba(16,185,129,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Energy Dependency Ratio (IEA standard definition){'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.expansionSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.expansion, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Energy Dependency Ratio (IEA standard definition){'\n'}</Box>
                         EDR (%) = (Gross Imports − Gross Exports) / Gross Inland Consumption × 100{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Where all quantities are in ktoe (kilotons of oil equivalent){'\n'}</Box>
-                        <Box component="span" sx={{ color: '#64748b' }}># Positive = net importer; Negative = net exporter{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Where all quantities are in ktoe (kilotons of oil equivalent){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Positive = net importer; Negative = net exporter{'\n'}</Box>
                     </Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1fr' }} gap={2}>
                         {[
@@ -143,8 +144,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                             { label: 'PPAC (India)', desc: 'Petroleum Planning & Analysis Cell — monthly petroleum import/consumption data' },
                             { label: 'Comtrade (UN)', desc: 'Cross-validation via HS codes 2701–2716 (fossil fuels) for bilateral trade flows' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ color: '#6ee7b7', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ color: CHART_COLORS.expansionSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -153,8 +154,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Cross-country bar chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#10b981' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.expansion }} />
                         Cross-Country Energy Dependency (2024, Illustrative)
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -167,8 +168,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Oil Price Sensitivity Table */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Zap size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Zap size={20} style={{ color: CHART_COLORS.gold }} />
                         India Oil Price Sensitivity Matrix
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -177,22 +178,22 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                     <Box sx={{ overflowX: 'auto' }}>
                         <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse' }}>
                             <Box component="thead">
-                                <Box component="tr" sx={{ bgcolor: 'rgba(255,255,255,0.03)' }}>
+                                <Box component="tr" sx={{ bgcolor: 'background.paper' }}>
                                     {['Brent Crude', 'India CAD/GDP', 'INR Impact', 'RBI Policy Space'].map(h => (
-                                        <Box key={h} component="th" sx={{ p: 2, textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</Box>
+                                        <Box key={h} component="th" sx={{ p: 2, textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', borderBottom: 1, borderColor: 'divider' }}>{h}</Box>
                                     ))}
                                 </Box>
                             </Box>
                             <Box component="tbody">
                                 {oilSensData.map(r => (
-                                    <Box key={r.oil} component="tr" sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' }, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                        <Box component="td" sx={{ p: 2, fontFamily: 'monospace', fontSize: '0.85rem', color: '#fcd34d', fontWeight: 700 }}>{r.oil}/bbl</Box>
-                                        <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: r.cadIndia.includes('5') || r.cadIndia.includes('4') ? '#ef4444' : '#94a3b8' }}>{r.cadIndia} of GDP</Box>
-                                        <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: r.inrImpact.includes('8') || r.inrImpact.includes('5') ? '#ef4444' : '#94a3b8' }}>{r.inrImpact} depreciation</Box>
+                                    <Box key={r.oil} component="tr" sx={{ '&:hover': { bgcolor: 'background.paper' }, borderBottom: 1, borderColor: 'divider' }}>
+                                        <Box component="td" sx={{ p: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.85rem', color: CHART_COLORS.goldSoft, fontWeight: 700 }}>{r.oil}/bbl</Box>
+                                        <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: r.cadIndia.includes('5') || r.cadIndia.includes('4') ? CHART_COLORS.stress : CHART_COLORS.label }}>{r.cadIndia} of GDP</Box>
+                                        <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: r.inrImpact.includes('8') || r.inrImpact.includes('5') ? CHART_COLORS.stress : CHART_COLORS.label }}>{r.inrImpact} depreciation</Box>
                                         <Box component="td" sx={{ p: 2 }}>
                                             <Chip label={r.rbiRoom} size="small" sx={{
-                                                bgcolor: r.rbiRoom === 'Critical' ? 'rgba(239,68,68,0.1)' : r.rbiRoom === 'Constrained' ? 'rgba(245,158,11,0.1)' : 'rgba(34,197,94,0.1)',
-                                                color: r.rbiRoom === 'Critical' ? '#ef4444' : r.rbiRoom === 'Constrained' ? '#f59e0b' : '#22c55e',
+                                                bgcolor: r.rbiRoom === 'Critical' ? alpha(CHART_COLORS.stress, 0.1) : r.rbiRoom === 'Constrained' ? alpha(CHART_COLORS.gold, 0.1) : alpha(CHART_COLORS.expansion, 0.1),
+                                                color: r.rbiRoom === 'Critical' ? CHART_COLORS.stress : r.rbiRoom === 'Constrained' ? CHART_COLORS.gold : CHART_COLORS.expansionSoft,
                                                 fontWeight: 600, fontSize: '0.7rem'
                                             }} />
                                         </Box>
@@ -205,8 +206,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#10b981' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.expansion }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -216,8 +217,8 @@ export const EnergyDependencyRatioPage: React.FC = () => {
                             { role: 'Energy Commodities Desks', use: 'India\'s demand profile — driven by ~88% EDR import dependence — makes it one of the most price-inelastic large buyers. Monitor import data for demand destruction signals.' },
                             { role: 'Policy Analysts', use: 'EDR is the quantitative anchor for India\'s National Energy Security Strategy modeling — cross-referenced with renewable energy transition milestones to estimate EDR trajectory to 2030.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(16,185,129,0.04)', borderRadius: 2, border: '1px solid rgba(16,185,129,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#10b981' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.expansion, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.expansion, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.expansion }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -226,13 +227,13 @@ export const EnergyDependencyRatioPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Energy Dependency Ratio FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#10b981', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.expansion, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

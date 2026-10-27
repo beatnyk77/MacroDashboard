@@ -8,6 +8,7 @@ import { ExternalLink, ArrowUpRight, ArrowDownRight, Globe, Layers, ShieldCheck,
 import { useSearchParams } from 'react-router-dom';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const NetLiquidityGaugeChart = lazy(() => import('./NetLiquidityGaugeChart').then(m => ({ default: m.NetLiquidityGaugeChart })));
 
@@ -44,11 +45,11 @@ export const NetLiquidityGauge: React.FC = () => {
 
     // Institutional regime categorization
     const regime = useMemo(() => {
-        if (activeZScore >= 2.0) return { label: 'Euphoric / Excessive Expansion', color: '#06b6d4', bg: 'rgba(6, 182, 212, 0.1)', shadow: '0 0 35px rgba(6, 182, 212, 0.25)' };
-        if (activeZScore >= 0.75) return { label: 'Expansionary / Goldilocks', color: '#10b981', bg: 'rgba(16, 185, 129, 0.1)', shadow: '0 0 35px rgba(16, 185, 129, 0.25)' };
-        if (activeZScore >= -0.75) return { label: 'Neutral Liquidity Corridor', color: '#3b82f6', bg: 'rgba(59, 130, 246, 0.1)', shadow: '0 0 35px rgba(59, 130, 246, 0.2)' };
-        if (activeZScore >= -1.75) return { label: 'Tightening / Drainage Bias', color: '#f59e0b', bg: 'rgba(245, 158, 11, 0.1)', shadow: '0 0 35px rgba(245, 158, 11, 0.25)' };
-        return { label: 'Severe Contraction / Liquidity Stress', color: '#f43f5e', bg: 'rgba(244, 63, 94, 0.1)', shadow: '0 0 35px rgba(244, 63, 94, 0.3)' };
+        if (activeZScore >= 2.0) return { label: 'Euphoric / Excessive Expansion', color: CHART_COLORS.westDeep, bg: alpha(CHART_COLORS.westDeep, 0.1), shadow: `0 0 35px ${alpha(CHART_COLORS.westDeep, 0.25)}` };
+        if (activeZScore >= 0.75) return { label: 'Expansionary / Goldilocks', color: CHART_COLORS.expansion, bg: alpha(CHART_COLORS.expansion, 0.1), shadow: `0 0 35px ${alpha(CHART_COLORS.expansion, 0.25)}` };
+        if (activeZScore >= -0.75) return { label: 'Neutral Liquidity Corridor', color: CHART_COLORS.west, bg: alpha(CHART_COLORS.west, 0.1), shadow: `0 0 35px ${alpha(CHART_COLORS.west, 0.2)}` };
+        if (activeZScore >= -1.75) return { label: 'Tightening / Drainage Bias', color: CHART_COLORS.gold, bg: alpha(CHART_COLORS.gold, 0.1), shadow: `0 0 35px ${alpha(CHART_COLORS.gold, 0.25)}` };
+        return { label: 'Severe Contraction / Liquidity Stress', color: CHART_COLORS.east, bg: alpha(CHART_COLORS.east, 0.1), shadow: `0 0 35px ${alpha(CHART_COLORS.east, 0.3)}` };
     }, [activeZScore]);
 
     // Trend calculation
@@ -69,7 +70,7 @@ export const NetLiquidityGauge: React.FC = () => {
     return (
         <Box sx={{
             minHeight: isEmbedded ? 'auto' : '100vh',
-            bgcolor: '#050810',
+            bgcolor: CHART_COLORS.surface,
             color: 'white',
             pt: isEmbedded ? 0 : 10,
             pb: isEmbedded ? 0 : 8,
@@ -78,7 +79,7 @@ export const NetLiquidityGauge: React.FC = () => {
             flexDirection: 'column',
             alignItems: 'center',
             justifyContent: 'center',
-            fontFamily: 'Inter, sans-serif',
+            fontFamily: 'Fira Sans, sans-serif',
         }}>
             <SEOManager
                 title="Global Dollar Net Liquidity Engine & Central Bank Radar"
@@ -90,9 +91,9 @@ export const NetLiquidityGauge: React.FC = () => {
             <Container maxWidth="md" sx={{ px: isEmbedded ? 1 : 2 }}>
                 <Paper elevation={0} sx={{
                     p: { xs: 2.5, sm: 4 },
-                    bgcolor: 'rgba(11, 15, 25, 0.85)',
+                    bgcolor: alpha(CHART_COLORS.panel, 0.85),
                     borderRadius: 3,
-                    border: '1px solid #1e293b',
+                    border: `1px solid ${CHART_COLORS.line}`,
                     backdropFilter: 'blur(16px)',
                     position: 'relative',
                     overflow: 'hidden',
@@ -115,30 +116,30 @@ export const NetLiquidityGauge: React.FC = () => {
                         gap: 1.5,
                         mb: 3,
                         pb: 2,
-                        borderBottom: '1px solid rgba(255,255,255,0.06)',
+                        borderBottom: 1, borderColor: 'divider',
                     }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#10b981', boxShadow: '0 0 10px #10b981', animation: 'pulse 2s infinite' }} />
-                            <Typography sx={{ fontSize: '11px', fontWeight: 900, letterSpacing: '0.12em', color: 'rgba(255,255,255,0.7)', textTransform: 'uppercase' }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: CHART_COLORS.expansion, boxShadow: `0 0 10px ${CHART_COLORS.expansion}`, animation: 'pulse 2s infinite' }} />
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, letterSpacing: '0.1em', color: 'text.secondary', textTransform: 'uppercase' }}>
                                 GRAPHIQUESTOR // GLOBAL LIQUIDITY ENGINE
                             </Typography>
                         </Box>
 
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.5, borderRadius: 1, bgcolor: 'rgba(16, 185, 129, 0.1)', border: '1px solid rgba(16, 185, 129, 0.25)' }}>
-                                <ShieldCheck size={12} color="#10b981" />
-                                <Typography sx={{ fontSize: '10px', fontFamily: 'JetBrains Mono, monospace', color: '#10b981', fontWeight: 700 }}>
+                            <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 0.75, px: 1.5, py: 0.5, borderRadius: 1, bgcolor: alpha(CHART_COLORS.expansion, 0.1), border: `1px solid ${alpha(CHART_COLORS.expansion, 0.25)}` }}>
+                                <ShieldCheck size={12} color={CHART_COLORS.expansion} />
+                                <Typography sx={{ fontSize: '11px', fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.expansion, fontWeight: 700 }}>
                                     SYNC: 100% OK
                                 </Typography>
                             </Box>
 
                             {!isEmbedded && (
                                 <Link to="/methods/net-liquidity-z-score" style={{ textDecoration: 'none' }}>
-                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, px: 1.5, py: 0.5, borderRadius: 1, bgcolor: 'rgba(255,255,255,0.03)', border: '1px solid rgba(255,255,255,0.08)', '&:hover': { bgcolor: 'rgba(255,255,255,0.08)' } }}>
-                                        <Typography sx={{ color: '#94a3b8', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, px: 1.5, py: 0.5, borderRadius: 1, bgcolor: 'background.paper', border: 1, borderColor: 'divider', '&:hover': { bgcolor: 'action.hover' } }}>
+                                        <Typography sx={{ color: CHART_COLORS.label, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                             METHODOLOGY
                                         </Typography>
-                                        <ExternalLink size={10} color="#94a3b8" />
+                                        <ExternalLink size={10} color={CHART_COLORS.label} />
                                     </Box>
                                 </Link>
                             )}
@@ -153,25 +154,25 @@ export const NetLiquidityGauge: React.FC = () => {
                             onChange={(_, newMode) => newMode && setMode(newMode)}
                             size="small"
                             sx={{
-                                bgcolor: 'rgba(0,0,0,0.4)',
+                                bgcolor: alpha(CHART_COLORS.black, 0.4),
                                 p: 0.5,
                                 borderRadius: 2,
-                                border: '1px solid #1e293b',
+                                border: `1px solid ${CHART_COLORS.line}`,
                                 '& .MuiToggleButton-root': {
                                     px: 2.5,
                                     py: 0.75,
                                     fontSize: '11px',
-                                    fontWeight: 800,
-                                    letterSpacing: '0.05em',
-                                    color: '#94a3b8',
+                                    fontWeight: 700,
+                                    letterSpacing: '0.1em',
+                                    color: CHART_COLORS.label,
                                     border: 'none',
                                     borderRadius: 1.5,
                                     transition: '0.2s all',
                                     textTransform: 'uppercase',
                                     '&.Mui-selected': {
-                                        color: '#ffffff',
-                                        bgcolor: '#1e293b',
-                                        boxShadow: '0 2px 8px rgba(0,0,0,0.5)',
+                                        color: CHART_COLORS.white,
+                                        bgcolor: CHART_COLORS.line,
+                                        boxShadow: `0 2px 8px ${alpha(CHART_COLORS.black, 0.5)}`,
                                     },
                                 },
                             }}
@@ -195,11 +196,11 @@ export const NetLiquidityGauge: React.FC = () => {
                     <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', alignItems: 'center', my: 2 }}>
                         <svg width="280" height="155" viewBox="0 0 220 125">
                             {/* Static Track with Regime Color Zones */}
-                            <path d="M 22 105 A 88 88 0 0 1 54 44" fill="none" stroke="#f43f5e" strokeWidth="10" strokeLinecap="round" opacity="0.3" />
-                            <path d="M 58 40 A 88 88 0 0 1 95 20" fill="none" stroke="#f59e0b" strokeWidth="10" opacity="0.3" />
-                            <path d="M 99 19 A 88 88 0 0 1 121 19" fill="none" stroke="#3b82f6" strokeWidth="10" opacity="0.3" />
-                            <path d="M 125 20 A 88 88 0 0 1 162 40" fill="none" stroke="#10b981" strokeWidth="10" opacity="0.3" />
-                            <path d="M 166 44 A 88 88 0 0 1 198 105" fill="none" stroke="#06b6d4" strokeWidth="10" strokeLinecap="round" opacity="0.3" />
+                            <path d="M 22 105 A 88 88 0 0 1 54 44" fill="none" stroke={CHART_COLORS.east} strokeWidth="10" strokeLinecap="round" opacity="0.3" />
+                            <path d="M 58 40 A 88 88 0 0 1 95 20" fill="none" stroke={CHART_COLORS.gold} strokeWidth="10" opacity="0.3" />
+                            <path d="M 99 19 A 88 88 0 0 1 121 19" fill="none" stroke={CHART_COLORS.west} strokeWidth="10" opacity="0.3" />
+                            <path d="M 125 20 A 88 88 0 0 1 162 40" fill="none" stroke={CHART_COLORS.expansion} strokeWidth="10" opacity="0.3" />
+                            <path d="M 166 44 A 88 88 0 0 1 198 105" fill="none" stroke={CHART_COLORS.westDeep} strokeWidth="10" strokeLinecap="round" opacity="0.3" />
 
                             {/* Active Dynamic Fill Arc */}
                             <m.path
@@ -215,26 +216,26 @@ export const NetLiquidityGauge: React.FC = () => {
                             />
 
                             {/* Scale markers */}
-                            <text x="14" y="120" fontSize="7" fill="rgba(255,255,255,0.4)" fontWeight="bold" fontFamily="JetBrains Mono">-3.0σ</text>
-                            <text x="105" y="14" fontSize="7" fill="rgba(255,255,255,0.4)" fontWeight="bold" fontFamily="JetBrains Mono">0.0</text>
-                            <text x="184" y="120" fontSize="7" fill="rgba(255,255,255,0.4)" fontWeight="bold" fontFamily="JetBrains Mono">+3.0σ</text>
+                            <text x="14" y="120" fontSize="9" fill={WHITE_ALPHA.dim} fontWeight="bold" fontFamily="Fira Code">-3.0σ</text>
+                            <text x="105" y="14" fontSize="9" fill={WHITE_ALPHA.dim} fontWeight="bold" fontFamily="Fira Code">0.0</text>
+                            <text x="184" y="120" fontSize="9" fill={WHITE_ALPHA.dim} fontWeight="bold" fontFamily="Fira Code">+3.0σ</text>
                         </svg>
 
                         {/* Readout Container */}
                         <Box sx={{ mt: -5, textAlign: 'center' }}>
                             <Typography sx={{
                                 fontSize: '2.5rem',
-                                fontWeight: 900,
-                                fontFamily: 'JetBrains Mono, monospace',
-                                letterSpacing: '-0.03em',
-                                background: `linear-gradient(to bottom, #ffffff, ${regime.color})`,
+                                fontWeight: 700,
+                                fontFamily: CHART_FONT_FAMILY,
+                                letterSpacing: '-0.02em',
+                                background: `linear-gradient(to bottom, ${CHART_COLORS.white}, ${regime.color})`,
                                 WebkitBackgroundClip: 'text',
                                 WebkitTextFillColor: 'transparent',
                                 lineHeight: 1.1,
                             }}>
                                 {activeZScore > 0 ? '+' : ''}{activeZScore.toFixed(2)}σ
                             </Typography>
-                            <Typography sx={{ fontSize: '11px', fontWeight: 800, color: 'rgba(255,255,255,0.45)', textTransform: 'uppercase', letterSpacing: 1.5, mt: 0.5 }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color: 'text.disabled', textTransform: 'uppercase', letterSpacing: '0.1em', mt: 0.5 }}>
                                 {mode === 'global' ? 'Global Aggregate Z-Score' : 'US Fed Net Z-Score'}
                             </Typography>
                         </Box>
@@ -244,11 +245,11 @@ export const NetLiquidityGauge: React.FC = () => {
                     <Box sx={{ textAlign: 'center', my: 2.5 }}>
                         <Box sx={{ display: 'inline-flex', alignItems: 'center', gap: 1.5, px: 2.5, py: 0.75, borderRadius: 100, bgcolor: regime.bg, border: `1px solid ${regime.color}40`, mb: 1.5 }}>
                             <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: regime.color }} />
-                            <Typography sx={{ color: regime.color, fontWeight: 900, fontSize: '11px', textTransform: 'uppercase', letterSpacing: 1.2 }}>
+                            <Typography sx={{ color: regime.color, fontWeight: 700, fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                 {regime.label}
                             </Typography>
                         </Box>
-                        <Typography sx={{ color: '#94a3b8', fontSize: '12px', lineHeight: 1.6, maxWidth: 520, mx: 'auto' }}>
+                        <Typography sx={{ color: CHART_COLORS.label, fontSize: '12px', lineHeight: 1.6, maxWidth: 520, mx: 'auto' }}>
                             Liquidity impulse is at the <strong>{Math.round(activePercentile * 100)}th</strong> percentile of historical distributions.
                             {mode === 'global'
                                 ? ` Incorporates Fed balance sheet runoff, ECB, BOJ, PBOC, and BOE FX-normalized reserves.`
@@ -259,7 +260,7 @@ export const NetLiquidityGauge: React.FC = () => {
                     {/* Central Bank Liquidity Matrix (5 Columns) */}
                     {mode === 'global' && central_banks.length > 0 && (
                         <Box sx={{ mt: 3, mb: 3 }}>
-                            <Typography sx={{ fontSize: '10px', fontWeight: 900, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: 1.5, mb: 1.5 }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color: CHART_COLORS.label, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 1.5 }}>
                                 Big 5 Central Bank Liquidity Matrix (USD Normalized)
                             </Typography>
                             <Box sx={{
@@ -271,27 +272,27 @@ export const NetLiquidityGauge: React.FC = () => {
                                     <Box key={cb.id} sx={{
                                         p: 1.5,
                                         borderRadius: 2,
-                                        bgcolor: 'rgba(0,0,0,0.35)',
-                                        border: '1px solid rgba(255,255,255,0.06)',
+                                        bgcolor: alpha(CHART_COLORS.black, 0.35),
+                                        border: 1, borderColor: 'divider',
                                         display: 'flex',
                                         flexDirection: 'column',
                                         justifyContent: 'space-between',
                                     }}>
                                         <div>
                                             <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 0.5 }}>
-                                                <Typography sx={{ fontSize: '10px', fontWeight: 900, color: '#ffffff', textTransform: 'uppercase' }}>
+                                                <Typography sx={{ fontSize: '11px', fontWeight: 700, color: CHART_COLORS.white, textTransform: 'uppercase' }}>
                                                     {cb.currency}
                                                 </Typography>
-                                                <Typography sx={{ fontSize: '9px', fontWeight: 800, color: cb.yoyPct >= 0 ? '#10b981' : '#f43f5e', fontFamily: 'JetBrains Mono' }}>
+                                                <Typography sx={{ fontSize: '11px', fontWeight: 700, color: cb.yoyPct >= 0 ? CHART_COLORS.expansion : CHART_COLORS.east, fontFamily: CHART_FONT_FAMILY }}>
                                                     {cb.yoyPct >= 0 ? '+' : ''}{cb.yoyPct}%
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontSize: '13px', fontWeight: 800, fontFamily: 'JetBrains Mono', color: '#f8fafc' }}>
+                                            <Typography sx={{ fontSize: '13px', fontWeight: 700, fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.textStrong }}>
                                                 ${cb.usdEqvTr}T
                                             </Typography>
                                         </div>
-                                        <Box sx={{ mt: 1, pt: 0.75, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                                            <Typography sx={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', fontWeight: 700 }}>
+                                        <Box sx={{ mt: 1, pt: 0.75, borderTop: 1, borderColor: 'divider' }}>
+                                            <Typography sx={{ fontSize: '11px', color: CHART_COLORS.tick, textTransform: 'uppercase', fontWeight: 700 }}>
                                                 {cb.status}
                                             </Typography>
                                         </Box>
@@ -303,25 +304,25 @@ export const NetLiquidityGauge: React.FC = () => {
 
                     {/* Metric Details Cards */}
                     <Box sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2, mb: 3 }}>
-                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Typography sx={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, mb: 0.5 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(CHART_COLORS.black, 0.3), border: 1, borderColor: 'divider' }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color: CHART_COLORS.tick, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>
                                 {mode === 'global' ? 'Global Aggregate' : 'US Net Liquidity'}
                             </Typography>
-                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 900, fontFamily: 'JetBrains Mono', color: '#ffffff' }}>
+                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.white }}>
                                 {activeDisplayValue}
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, mt: 0.5 }}>
                                 {mode === 'global' ? (
                                     <>
-                                        <ArrowUpRight size={13} color="#10b981" />
-                                        <Typography sx={{ color: '#10b981', fontSize: '10px', fontWeight: 800, fontFamily: 'JetBrains Mono' }}>
+                                        <ArrowUpRight size={13} color={CHART_COLORS.expansion} />
+                                        <Typography sx={{ color: CHART_COLORS.expansion, fontSize: '11px', fontWeight: 700, fontFamily: CHART_FONT_FAMILY }}>
                                             +{global_delta_7d.toFixed(1)}B 7d
                                         </Typography>
                                     </>
                                 ) : (
                                     <>
-                                        {trend >= 0 ? <ArrowUpRight size={13} color="#10b981" /> : <ArrowDownRight size={13} color="#f43f5e" />}
-                                        <Typography sx={{ color: trend >= 0 ? '#10b981' : '#f43f5e', fontSize: '10px', fontWeight: 800, fontFamily: 'JetBrains Mono' }}>
+                                        {trend >= 0 ? <ArrowUpRight size={13} color={CHART_COLORS.expansion} /> : <ArrowDownRight size={13} color={CHART_COLORS.east} />}
+                                        <Typography sx={{ color: trend >= 0 ? CHART_COLORS.expansion : CHART_COLORS.east, fontSize: '11px', fontWeight: 700, fontFamily: CHART_FONT_FAMILY }}>
                                             {Math.abs(trend).toFixed(1)}% 30d
                                         </Typography>
                                     </>
@@ -329,26 +330,26 @@ export const NetLiquidityGauge: React.FC = () => {
                             </Box>
                         </Box>
 
-                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Typography sx={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, mb: 0.5 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(CHART_COLORS.black, 0.3), border: 1, borderColor: 'divider' }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color: CHART_COLORS.tick, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>
                                 Fed Balance Sheet / QT
                             </Typography>
-                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 900, fontFamily: 'JetBrains Mono', color: '#ffffff' }}>
+                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.white }}>
                                 ${(fed_assets / 1000000).toFixed(2)}T
                             </Typography>
-                            <Typography sx={{ fontSize: '10px', color: '#94a3b8', mt: 0.5, fontFamily: 'JetBrains Mono' }}>
+                            <Typography sx={{ fontSize: '11px', color: CHART_COLORS.label, mt: 0.5, fontFamily: CHART_FONT_FAMILY }}>
                                 RRP: ${(rrp_balance).toFixed(0)}B | TGA: ${(tga_balance).toFixed(0)}B
                             </Typography>
                         </Box>
 
-                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'rgba(0,0,0,0.3)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                            <Typography sx={{ fontSize: '10px', fontWeight: 800, color: '#64748b', textTransform: 'uppercase', letterSpacing: 1, mb: 0.5 }}>
+                        <Box sx={{ p: 2, borderRadius: 2, bgcolor: alpha(CHART_COLORS.black, 0.3), border: 1, borderColor: 'divider' }}>
+                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color: CHART_COLORS.tick, textTransform: 'uppercase', letterSpacing: '0.1em', mb: 0.5 }}>
                                 Telemetry Provenance
                             </Typography>
-                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 900, color: '#3b82f6' }}>
+                            <Typography sx={{ fontSize: '1.25rem', fontWeight: 700, color: CHART_COLORS.west }}>
                                 Institutional
                             </Typography>
-                            <Typography sx={{ fontSize: '10px', color: '#64748b', mt: 0.5, fontWeight: 700, fontFamily: 'JetBrains Mono' }}>
+                            <Typography sx={{ fontSize: '11px', color: CHART_COLORS.tick, mt: 0.5, fontWeight: 700, fontFamily: CHART_FONT_FAMILY }}>
                                 AS OF: {as_of_date ? as_of_date.slice(0, 10) : 'LIVE'}
                             </Typography>
                         </Box>
@@ -362,15 +363,15 @@ export const NetLiquidityGauge: React.FC = () => {
                     </Box>
 
                     {/* Footer Watermark & Backlink */}
-                    <Box sx={{ pt: 2, borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <Box sx={{ pt: 2, borderTop: 1, borderColor: 'divider', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Activity size={12} color="#3b82f6" />
-                            <Typography sx={{ fontSize: '9px', color: '#64748b', textTransform: 'uppercase', letterSpacing: 0.5 }}>
+                            <Activity size={12} color={CHART_COLORS.west} />
+                            <Typography sx={{ fontSize: '11px', color: CHART_COLORS.tick, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                 SOURCES: FRED / ECB SDW / BOJ / PBOC / BOE
                             </Typography>
                         </Box>
                         <a href="https://graphiquestor.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#3b82f6', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 0.75, '&:hover': { color: '#60a5fa' } }}>
+                            <Typography sx={{ color: CHART_COLORS.west, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', '&:hover': { color: CHART_COLORS.westSoft } }}>
                                 Powered by GraphiQuestor
                             </Typography>
                         </a>
@@ -381,7 +382,7 @@ export const NetLiquidityGauge: React.FC = () => {
                     <Box sx={{ mt: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <EmbedCodeBlock path="/tools/net-liquidity-gauge" height={560} />
                         <Link to="/tools" style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#3b82f6', fontSize: '12px', fontWeight: 800, '&:hover': { textDecoration: 'underline' } }}>
+                            <Typography sx={{ color: CHART_COLORS.west, fontSize: '12px', fontWeight: 700, '&:hover': { textDecoration: 'underline' } }}>
                                 ← BACK TO ALL EMBEDDABLE TOOLS
                             </Typography>
                         </Link>

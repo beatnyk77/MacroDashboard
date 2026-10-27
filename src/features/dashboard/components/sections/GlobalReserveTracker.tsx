@@ -13,11 +13,13 @@ import {
 } from 'lucide-react';
 import { useDeDollarization, useDeDollarizationHistory } from '@/hooks/useDeDollarization';
 import { useBricsTracker } from '@/hooks/useBricsTracker';
-import { ResponsiveContainer, AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
+import { AreaChart, Area, BarChart, Bar, XAxis, YAxis, Cell } from 'recharts';
+import { DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { ReserveShareHistoryChart } from '../charts/ReserveShareHistoryChart';
 import { cn } from '@/lib/utils';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { trackClick } from '@/lib/analytics';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface UnifiedMetricCardProps {
     title: string;
@@ -48,49 +50,47 @@ const UnifiedMetricCard: React.FC<UnifiedMetricCardProps> = ({
     const gradId = `grad-${title.replace(/\s+/g, '')}`;
 
     return (
-        <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-3xl p-6 border border-white/5 overflow-hidden flex flex-col justify-between h-full">
+        <div className="group relative bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-500 rounded-xl p-6 border border-border overflow-hidden flex flex-col justify-between h-full">
             <div className="relative z-10">
                 <div className="flex justify-between items-start mb-4">
-                    <div className={cn("p-2.5 rounded-2xl bg-white/5 shadow-inner transition-transform group-hover:scale-110", `text-${color}-400`)}>
+                    <div className={cn("p-2.5 rounded-xl bg-white/5 shadow-inner transition-transform group-hover:scale-110", `text-${color}-400`)}>
                         <Icon className="w-5 h-5" />
                     </div>
                     {delta !== undefined && delta !== null && (
-                        <div className={cn("flex items-center text-xs font-black px-2 py-1 rounded-xl bg-white/5 border border-white/12 tabular-nums", trendColor)}>
+                        <div className={cn("flex items-center text-xs font-bold px-2 py-1 rounded-xl bg-white/5 border border-border tabular-nums", trendColor)}>
                             {isPositive ? <TrendingUp size={12} className="mr-1" /> : <TrendingDown size={12} className="mr-1" />}
                             {Math.abs(delta || 0).toFixed(2)}{suffix === '%' ? 'pp' : suffix} {deltaType.toUpperCase()}
                         </div>
                     )}
                 </div>
 
-                <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase mb-1">
+                <h3 className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">
                     {title}
                 </h3>
-                <div className="text-3xl font-black text-white/90 tracking-heading tabular-nums">
+                <div className="text-3xl font-bold text-white/90 tracking-heading tabular-nums">
                     {value?.toLocaleString(undefined, { maximumFractionDigits: 1 })}{suffix}
                 </div>
             </div>
 
             {/* Sparkline */}
-            <div className="h-[80px] w-full mt-4 -mx-2 opacity-50 group-hover:opacity-100 transition-opacity duration-700">
-                <ResponsiveContainer width="100%" height="100%">
+            <MacroChartContainer height={CHART_HEIGHTS.sparkline} className="mt-4 -mx-2 opacity-50 group-hover:opacity-100 transition-opacity duration-700">
                     <AreaChart data={history}>
                         <defs>
                             <linearGradient id={gradId} x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="5%" stopColor={color === 'amber' ? '#fbbf24' : color === 'blue' ? '#3b82f6' : color === 'rose' ? '#ef4444' : '#8b5cf6'} stopOpacity={0.3} />
-                                <stop offset="95%" stopColor={color === 'amber' ? '#fbbf24' : color === 'blue' ? '#3b82f6' : color === 'rose' ? '#ef4444' : '#8b5cf6'} stopOpacity={0} />
+                                <stop offset="5%" stopColor={color === 'amber' ? CHART_COLORS.gold : color === 'blue' ? CHART_COLORS.west : color === 'rose' ? CHART_COLORS.stress : CHART_COLORS.violet} stopOpacity={0.3} />
+                                <stop offset="95%" stopColor={color === 'amber' ? CHART_COLORS.gold : color === 'blue' ? CHART_COLORS.west : color === 'rose' ? CHART_COLORS.stress : CHART_COLORS.violet} stopOpacity={0} />
                             </linearGradient>
                         </defs>
                         <Area
                             type="monotone"
                             dataKey="value"
-                            stroke={color === 'amber' ? '#fbbf24' : color === 'blue' ? '#3b82f6' : color === 'rose' ? '#ef4444' : '#8b5cf6'}
+                            stroke={color === 'amber' ? CHART_COLORS.gold : color === 'blue' ? CHART_COLORS.west : color === 'rose' ? CHART_COLORS.stress : CHART_COLORS.violet}
                             fill={`url(#${gradId})`}
                             strokeWidth={3}
                             isAnimationActive={true}
                         />
                     </AreaChart>
-                </ResponsiveContainer>
-            </div>
+            </MacroChartContainer>
         </div>
     );
 };
@@ -105,7 +105,7 @@ export const GlobalReserveTracker: React.FC = () => {
     const isLoading = !deDolMetrics || isLoadingBrics;
 
     if (isLoading) {
-        return <Skeleton className="h-[600px] w-full rounded-[2.5rem] bg-white/5" />;
+        return <Skeleton className="h-[600px] w-full rounded-xl bg-white/5" />;
     }
 
     const usdShare = deDolMetrics?.usdShare;
@@ -129,14 +129,10 @@ export const GlobalReserveTracker: React.FC = () => {
             code: c.country_code,
             value: c.gold_tonnes,
             change: c.gold_yoy_pct_change,
-            flag: {
-                CN: '🇨🇳', IN: '🇮🇳', RU: '🇷🇺', BR: '🇧🇷', ZA: '🇿🇦',
-                SA: '🇸🇦', AE: '🇦🇪', IR: '🇮🇷', EG: '🇪🇬', ET: '🇪🇹'
-            }[c.country_code] || '🏳️'
         }));
 
     return (
-        <Card className="p-8 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl relative overflow-hidden rounded-[2.5rem]">
+        <Card className="p-8 bg-background/40 backdrop-blur-3xl border-border shadow-2xl relative overflow-hidden rounded-xl">
             {/* Header */}
             <div className="flex flex-col md:flex-row justify-between items-start mb-10 gap-6">
                 <div className="space-y-2">
@@ -144,7 +140,7 @@ export const GlobalReserveTracker: React.FC = () => {
                         <div className="p-2 rounded-xl bg-rose-500/10 border border-rose-500/20">
                             <Compass className="text-rose-500 w-5 h-5" />
                         </div>
-                        <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
+                        <h2 className="text-2xl font-bold tracking-heading text-white uppercase italic">
                             Global <span className="text-rose-500">Reserve</span> Tracker
                         </h2>
                     </div>
@@ -155,18 +151,18 @@ export const GlobalReserveTracker: React.FC = () => {
             </div>
 
             <Tabs defaultValue="dedollarization" className="space-y-8">
-                <TabsList className="bg-white/5 border border-white/5 p-1 rounded-2xl h-auto flex flex-wrap gap-1 w-fit">
+                <TabsList className="bg-white/5 border border-border p-1 rounded-xl h-auto flex flex-wrap gap-1 w-fit">
                     <TabsTrigger
                         value="dedollarization"
                         onClick={() => trackClick('reserve_tab_dedollarization', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-uppercase transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-semibold text-xs uppercase tracking-wider transition-all"
                     >
                         De-Dollarization Pulse
                     </TabsTrigger>
                     <TabsTrigger
                         value="brics"
                         onClick={() => trackClick('reserve_tab_brics', 'global_reserve_tracker')}
-                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-black text-xs uppercase tracking-uppercase transition-all"
+                        className="px-6 py-2.5 rounded-xl data-[state=active]:bg-white/10 data-[state=active]:text-white text-muted-foreground font-semibold text-xs uppercase tracking-wider transition-all"
                     >
                         BRICS+ Momentum
                     </TabsTrigger>
@@ -191,12 +187,12 @@ export const GlobalReserveTracker: React.FC = () => {
                         />
                     </div>
 
-                    <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 flex items-start gap-4">
-                        <div className="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                    <div className="p-6 rounded-xl bg-white/[0.02] border border-border flex items-start gap-4">
+                        <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
                             <AlertTriangle className="text-amber-500 w-5 h-5" />
                         </div>
                         <div className="space-y-1">
-                            <h4 className="text-xs font-black text-white uppercase tracking-uppercase">Structural Signal</h4>
+                            <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Structural Signal</h4>
                             <p className="text-xs text-muted-foreground leading-relaxed italic">
                                 Central banks are currently in a <span className="text-amber-400 font-bold">rotation phase</span>. While USD remains the primary denominator, the persistent accumulation of physical gold by non-Western powers indicates a "shadow" hedging regime against future fiat volatility.
                             </p>
@@ -236,32 +232,31 @@ export const GlobalReserveTracker: React.FC = () => {
                     </div>
 
                     {/* Gold Leaderboard */}
-                    <div className="bg-white/[0.02] rounded-3xl p-6 border border-white/12">
+                    <div className="bg-white/[0.02] rounded-xl p-6 border border-border">
                         <div className="flex justify-between items-end mb-8">
                             <div>
-                                <h3 className="text-sm font-black text-white uppercase tracking-uppercase flex items-center gap-2">
+                                <h3 className="text-sm font-semibold text-white uppercase tracking-wider flex items-center gap-2">
                                     <Globe className="w-4 h-4 text-emerald-500" />
                                     Strategic Accumulation Leaderboard
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 mt-1 uppercase tracking-heading">
+                                <p className="text-xs text-muted-foreground mt-1 uppercase tracking-heading">
                                     Top 5 BRICS+ Nations by Official Gold Reserves (Tonnes)
                                 </p>
                             </div>
                         </div>
 
-                        <div className="h-[250px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                                 <BarChart layout="vertical" data={chartData} margin={{ top: 0, right: 30, left: 60, bottom: 0 }}>
                                     <XAxis type="number" hide />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
                                         type="category"
                                         dataKey="name"
                                         tick={({ x, y, payload }) => {
-                                            const country = chartData.find(c => c.name === payload.value);
                                             return (
                                                 <g transform={`translate(${x},${y})`}>
-                                                    <text x={-15} y={4} textAnchor="end" fill="rgba(255,255,255,0.4)" fontSize={9} fontWeight={900}>
-                                                        {country?.flag} {payload.value}
+                                                    <text x={-15} y={4} textAnchor="end" fill={WHITE_ALPHA.dim} fontSize={11} fontWeight={700}>
+                                                        {payload.value}
                                                     </text>
                                                 </g>
                                             );
@@ -275,17 +270,16 @@ export const GlobalReserveTracker: React.FC = () => {
                                     </Bar>
                                     <defs>
                                         <linearGradient id="goldGradient" x1="0" y1="0" x2="1" y2="0">
-                                            <stop offset="0%" stopColor="#b45309" stopOpacity={0.4} />
-                                            <stop offset="100%" stopColor="#fbbf24" />
+                                            <stop offset="0%" stopColor={CHART_COLORS.goldDeep} stopOpacity={0.4} />
+                                            <stop offset="100%" stopColor={CHART_COLORS.gold} />
                                         </linearGradient>
                                     </defs>
                                 </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </div>
 
                     {/* Macro Interpretation Bullets */}
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-white/5">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 pt-4 border-t border-border">
                         {[
                             { label: 'Reserve Diversification', content: 'Aggressive rotation into hard assets by Eastern central banks.', color: 'emerald' },
                             { label: 'USD Liquidity Risk', content: 'Declining petrodollar reliance creates structural liquidity gaps.', color: 'rose' },
@@ -295,7 +289,7 @@ export const GlobalReserveTracker: React.FC = () => {
                             <div key={idx} className="flex gap-3 group/bullet">
                                 <div className={cn("w-1 h-8 rounded-full opacity-20 group-hover/bullet:opacity-100 transition-opacity", `bg-${bullet.color}-500`)} />
                                 <div className="space-y-0.5">
-                                    <div className="text-xs font-black uppercase tracking-uppercase text-white/40">{bullet.label}</div>
+                                    <div className="text-xs font-semibold uppercase tracking-wider text-terminal-dim">{bullet.label}</div>
                                     <p className="text-xs text-muted-foreground leading-snug">{bullet.content}</p>
                                 </div>
                             </div>

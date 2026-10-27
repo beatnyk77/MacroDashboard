@@ -4,6 +4,7 @@ import { useGeopoliticalOSINT, GeopoliticalOSINT } from '@/hooks/useGeopolitical
 import { Plane, Ship, Activity, Globe, ExternalLink } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m, AnimatePresence } from 'framer-motion';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -22,32 +23,32 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
     const [selectedAsset, setSelectedAsset] = useState<GeopoliticalOSINT | null>(null);
 
     return (
-        <div className={cn("relative w-full h-[600px] bg-slate-950/40 rounded-[2.5rem] overflow-hidden border border-white/5 backdrop-blur-md", className)}>
+        <div className={cn("relative w-full h-[600px] bg-card/40 rounded-xl overflow-hidden border border-border backdrop-blur-md", className)}>
             {/* Header Overlay */}
             <div className="absolute top-8 left-8 z-10 space-y-2">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-black uppercase tracking-uppercase">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-semibold uppercase tracking-wider">
                     <Globe size={12} /> OSINT Infrastructure
                 </div>
-                <h2 className="text-2xl font-black text-white uppercase tracking-heading">Geopolitical <span className="text-blue-500">Live Risk Map</span></h2>
-                <p className="text-xs text-muted-foreground/60 uppercase font-bold tracking-uppercase max-w-xs">
+                <h2 className="text-2xl font-bold text-white uppercase tracking-heading">Geopolitical <span className="text-blue-500">Live Risk Map</span></h2>
+                <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider max-w-xs">
                     Real-time ADS-B and Marine tracking correlating high-value assets with regional stress signals.
                 </p>
             </div>
 
             {/* Legend Overlay */}
             <div className="absolute top-8 right-8 z-10 flex flex-col gap-3">
-                <div className="px-4 py-3 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/12 space-y-3">
+                <div className="px-4 py-3 rounded-xl bg-background/60 backdrop-blur-xl border border-border space-y-3">
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse" />
-                        <span className="text-xs font-black text-white uppercase tracking-uppercase">Private Jets</span>
+                        <span className="text-xs font-semibold text-white uppercase tracking-wider">Private Jets</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xs font-black text-white uppercase tracking-uppercase">Tanker/Vessel</span>
+                        <span className="text-xs font-semibold text-white uppercase tracking-wider">Tanker/Vessel</span>
                     </div>
                     <div className="flex items-center gap-3">
                         <div className="w-2 h-2 rounded-full bg-rose-500 animate-ping" />
-                        <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">High Risk Zone</span>
+                        <span className="text-xs font-semibold text-rose-500 uppercase tracking-wider">High Risk Zone</span>
                     </div>
                 </div>
             </div>
@@ -90,12 +91,12 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                             <Geography
                                 key={geo.rsmKey}
                                 geography={geo}
-                                fill="rgba(255,255,255,0.03)"
-                                stroke="rgba(255,255,255,0.08)"
+                                fill={WHITE_ALPHA.ghost}
+                                stroke={WHITE_ALPHA.line}
                                 strokeWidth={0.5}
                                 style={{
                                     default: { outline: 'none' },
-                                    hover: { fill: 'rgba(255,255,255,0.05)', outline: 'none' },
+                                    hover: { fill: WHITE_ALPHA.faint, outline: 'none' },
                                 }}
                             />
                         ))
@@ -105,8 +106,8 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                 {/* Conflict HeatZones (Hormuz, etc.) */}
                 <Marker coordinates={[56.3, 26.6]}>
                     <g>
-                        <circle r={30} fill="rgba(244, 63, 94, 0.1)" className="animate-pulse" />
-                        <circle r={10} fill="rgba(244, 63, 94, 0.2)" />
+                        <circle r={30} fill={alpha(CHART_COLORS.east, 0.1)} className="animate-pulse" />
+                        <circle r={10} fill={alpha(CHART_COLORS.east, 0.2)} />
                     </g>
                 </Marker>
 
@@ -148,33 +149,33 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
-                        className="absolute top-8 bottom-8 right-8 w-80 z-20 p-6 rounded-[2rem] bg-black/90 backdrop-blur-3xl border border-white/12 shadow-2xl flex flex-col"
+                        className="absolute top-8 bottom-8 right-8 w-80 z-20 p-6 rounded-xl bg-background/90 backdrop-blur-3xl border border-border shadow-2xl flex flex-col"
                     >
                         <button 
                             onClick={() => setSelectedAsset(null)}
-                            className="absolute top-6 right-6 text-muted-foreground/40 hover:text-white transition-colors"
+                            className="absolute top-6 right-6 text-terminal-dim hover:text-white transition-colors"
                         >
                             <Activity size={20} />
                         </button>
 
                         <div className="flex items-center gap-4 mb-8">
                             <div className={cn(
-                                "p-4 rounded-2xl bg-white/[0.03] border border-white/12",
+                                "p-4 rounded-xl bg-white/[0.03] border border-border",
                                 assetColors[selectedAsset.type]
                             )}>
                                 {assetIcons[selectedAsset.type]}
                             </div>
                             <div>
-                                <h3 className="text-xl font-black text-white uppercase tracking-heading">{selectedAsset.callsign}</h3>
-                                <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+                                <h3 className="text-xl font-bold text-white uppercase tracking-heading">{selectedAsset.callsign}</h3>
+                                <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                     {selectedAsset.type} • {selectedAsset.owner_flag || 'Unknown Origin'}
                                 </div>
                             </div>
                         </div>
 
                         <div className="space-y-6 flex-1 overflow-y-auto pr-2 custom-scrollbar">
-                            <div className="p-4 rounded-2xl bg-white/[0.02] border border-white/5">
-                                <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase block mb-2 underline decoration-blue-500/30 underline-offset-4">
+                            <div className="p-4 rounded-xl bg-white/[0.02] border border-border">
+                                <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider block mb-2 underline decoration-blue-500/30 underline-offset-4">
                                     Macro Correlation
                                 </span>
                                 <p className="text-xs text-white/70 leading-relaxed font-medium">
@@ -183,12 +184,12 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                             </div>
 
                             <div className="grid grid-cols-2 gap-3">
-                                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                                    <span className="text-xs font-bold text-muted-foreground/60 uppercase">Latitude</span>
+                                <div className="p-3 rounded-xl bg-white/[0.02] border border-border">
+                                    <span className="text-xs font-semibold text-muted-foreground uppercase">Latitude</span>
                                     <div className="text-sm font-mono text-white mt-1">{selectedAsset.lat.toFixed(4)}</div>
                                 </div>
-                                <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5">
-                                    <span className="text-xs font-bold text-muted-foreground/60 uppercase">Longitude</span>
+                                <div className="p-3 rounded-xl bg-white/[0.02] border border-border">
+                                    <span className="text-xs font-semibold text-muted-foreground uppercase">Longitude</span>
                                     <div className="text-sm font-mono text-white mt-1">{selectedAsset.lng.toFixed(4)}</div>
                                 </div>
                             </div>
@@ -196,14 +197,14 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                             {selectedAsset.metadata && (
                                 <div className="space-y-3">
                                     {selectedAsset.metadata.altitude && (
-                                        <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                            <span className="text-xs font-bold text-muted-foreground uppercase">Altitude</span>
+                                        <div className="flex items-center justify-between py-2 border-b border-border">
+                                            <span className="text-xs font-semibold text-muted-foreground uppercase">Altitude</span>
                                             <span className="text-sm font-mono text-white">{selectedAsset.metadata.altitude} ft</span>
                                         </div>
                                     )}
                                     {selectedAsset.metadata.velocity && (
-                                        <div className="flex items-center justify-between py-2 border-b border-white/5">
-                                            <span className="text-xs font-bold text-muted-foreground uppercase">Velocity</span>
+                                        <div className="flex items-center justify-between py-2 border-b border-border">
+                                            <span className="text-xs font-semibold text-muted-foreground uppercase">Velocity</span>
                                             <span className="text-sm font-mono text-white">{Math.round(selectedAsset.metadata.velocity * 1.94384)} knots</span>
                                         </div>
                                     )}
@@ -215,19 +216,19 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
                                     href={selectedAsset.metadata.gdelt_url} 
                                     target="_blank" 
                                     rel="noopener noreferrer"
-                                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase hover:bg-blue-500/20 transition-colors"
+                                    className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider hover:bg-blue-500/20 transition-colors"
                                 >
                                     View OSINT Source <ExternalLink size={12} />
                                 </a>
                             )}
                         </div>
 
-                        <div className="mt-6 pt-6 border-t border-white/12 flex items-center justify-between">
+                        <div className="mt-6 pt-6 border-t border-border flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-xs font-bold text-muted-foreground uppercase">Real-Time</span>
+                                <span className="text-xs font-semibold text-muted-foreground uppercase">Real-Time</span>
                             </div>
-                            <span className="text-xs font-mono text-muted-foreground/40 italic">Refreshed 1m ago</span>
+                            <span className="text-xs font-mono text-terminal-dim italic">Refreshed 1m ago</span>
                         </div>
                     </m.div>
                 )}
@@ -235,7 +236,7 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
 
             {/* Bottom Status bar */}
             <div className="absolute bottom-8 left-8 z-10 hidden md:flex items-center gap-4">
-                <div className="flex items-center gap-3 px-4 py-2 rounded-2xl bg-black/60 backdrop-blur-xl border border-white/12 shadow-lg">
+                <div className="flex items-center gap-3 px-4 py-2 rounded-xl bg-background/60 backdrop-blur-xl border border-border shadow-lg">
                     {(() => {
                         const latestTimestamp = assets?.[0]?.timestamp;
                         const now = new Date().getTime();
@@ -259,43 +260,43 @@ export const GeopoliticalRiskMap: React.FC<{ className?: string }> = ({ classNam
 
                         return (
                             <>
-                                <div className="flex items-center gap-2 pr-3 border-r border-white/12">
+                                <div className="flex items-center gap-2 pr-3 border-r border-border">
                                     <div className={cn("w-2 h-2 rounded-full animate-pulse", statusColor)} />
-                                    <span className={cn("text-xs font-black uppercase tracking-uppercase", statusIconColor)}>{statusText} FEED</span>
+                                    <span className={cn("text-xs font-semibold uppercase tracking-wider", statusIconColor)}>{statusText} FEED</span>
                                 </div>
                                 <div className="flex items-center gap-2 pl-3">
-                                    <Activity size={14} className="text-white/40" />
-                                    <span className="text-xs font-black text-white uppercase tracking-uppercase">{assets?.length || 0} Assets</span>
+                                    <Activity size={14} className="text-terminal-dim" />
+                                    <span className="text-xs font-semibold text-white uppercase tracking-wider">{assets?.length || 0} Assets</span>
                                 </div>
                             </>
                         );
                     })()}
                 </div>
                 {isLoading && (
-                    <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-blue-500/10 border border-blue-500/20 shadow-lg">
+                    <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-500/10 border border-blue-500/20 shadow-lg">
                         <m.div 
                             animate={{ rotate: 360 }}
                             transition={{ repeat: Infinity, duration: 2, ease: "linear" }}
                         >
                             <Globe size={14} className="text-blue-500" />
                         </m.div>
-                        <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">Scanning Signal...</span>
+                        <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">Scanning Signal...</span>
                     </div>
                 )}
             </div>
 
             {/* Empty State Overlay */}
             {!isLoading && (!assets || assets.length === 0) && (
-                <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-950/80 backdrop-blur-md z-10 p-12 text-center">
-                    <div className="p-6 rounded-full bg-slate-900 border border-white/5 mb-6">
-                        <Ship className="w-12 h-12 text-slate-700 animate-pulse" />
+                <div className="absolute inset-0 flex flex-col items-center justify-center bg-card/90 backdrop-blur-md z-10 p-12 text-center">
+                    <div className="p-6 rounded-full bg-card border border-border mb-6">
+                        <Ship className="w-12 h-12 text-terminal-dim animate-pulse" />
                     </div>
-                    <h3 className="text-xl font-black text-white uppercase tracking-heading mb-2">No High-Value Assets in Scope</h3>
-                    <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-uppercase max-w-sm leading-relaxed">
+                    <h3 className="text-xl font-bold text-white uppercase tracking-heading mb-2">No High-Value Assets in Scope</h3>
+                    <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider max-w-sm leading-relaxed">
                         Signal quiet across Strait of Hormuz and Bab el-Mandeb. Monitoring for trade disruption and maritime stress markers.
                     </p>
                     <div className="mt-8 px-4 py-2 rounded-xl bg-blue-500/5 border border-blue-500/10">
-                        <span className="text-xs font-black text-blue-500/50 uppercase tracking-uppercase">Next Scan in 60s</span>
+                        <span className="text-xs font-semibold text-blue-500/50 uppercase tracking-wider">Next Scan in 60s</span>
                     </div>
                 </div>
             )}

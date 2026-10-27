@@ -7,11 +7,11 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 const DashboardSkeleton = () => (
     <div className="w-full space-y-6">
-        <Skeleton className="w-full h-[650px] rounded-[2rem]" />
+        <Skeleton className="w-full h-[650px] rounded-xl" />
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <Skeleton className="h-[400px] rounded-[2rem]" />
-            <Skeleton className="h-[400px] rounded-[1.5rem]" />
-            <Skeleton className="h-[400px] rounded-[2rem]" />
+            <Skeleton className="h-[400px] rounded-xl" />
+            <Skeleton className="h-[400px] rounded-xl" />
+            <Skeleton className="h-[400px] rounded-xl" />
         </div>
     </div>
 );

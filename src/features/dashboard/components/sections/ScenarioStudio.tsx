@@ -5,6 +5,7 @@ import { Target, TrendingUp, AlertTriangle, ShieldCheck, Info } from 'lucide-rea
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useViewContext } from '@/context/ViewContext';
 import { Card } from '@/components/ui/card';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 // Institutional Baselines for Simulation (124Y Context)
 const BASELINES = {
@@ -50,8 +51,8 @@ export const ScenarioStudio: React.FC = () => {
     return (
         <div className="mb-6">
             <div className="flex items-center gap-1.5 mb-3">
-                <Target color="#3b82f6" size={24} />
-                <h2 className="text-2xl font-extrabold tracking-heading">
+                <Target color={CHART_COLORS.west} size={24} />
+                <h2 className="text-2xl font-bold tracking-heading">
                     Scenario Studio <span className="text-xl font-normal text-muted-foreground">(Beta)</span>
                 </h2>
             </div>
@@ -59,7 +60,7 @@ export const ScenarioStudio: React.FC = () => {
             <Grid container spacing={{ xs: 2, md: 3 }}> {/* spacing={3} -> gap-6? We'll keep for now */}
                 <Grid item xs={12} md={7}>
                     <Card variant="elevated" className="p-8 h-full bg-card">
-                        <p className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/70 mb-3">Simulation Inputs</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3">Simulation Inputs</p>
 
                         <div className="space-y-6 mt-3">
                             <div>
@@ -79,7 +80,7 @@ export const ScenarioStudio: React.FC = () => {
                                         { value: 25000, label: '$25K' }
                                     ]}
                                     sx={{
-                                        '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
+                                        '& .MuiSlider-markLabel': { fontSize: '0.6875rem', fontWeight: 700 }
                                     }}
                                 />
                             </div>
@@ -101,7 +102,7 @@ export const ScenarioStudio: React.FC = () => {
                                         { value: 40, label: '2020 Peak' }
                                     ]}
                                     sx={{
-                                        '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
+                                        '& .MuiSlider-markLabel': { fontSize: '0.6875rem', fontWeight: 700 }
                                     }}
                                 />
                             </div>
@@ -123,15 +124,15 @@ export const ScenarioStudio: React.FC = () => {
                                         { value: 40, label: 'Hyper-Displacement' }
                                     ]}
                                     sx={{
-                                        '& .MuiSlider-markLabel': { fontSize: '0.65rem', fontWeight: 700 }
+                                        '& .MuiSlider-markLabel': { fontSize: '0.6875rem', fontWeight: 700 }
                                     }}
                                 />
                             </div>
                         </div>
 
-                        <div className="mt-6 p-2 bg-white/[0.02] rounded-lg border border-white/10">
+                        <div className="mt-6 p-2 bg-white/[0.02] rounded-lg border border-border">
                             <div className="flex items-center gap-1 mb-1">
-                                <Info size={14} color="#94a3b8" />
+                                <Info size={14} color={CHART_COLORS.label} />
                                 <span className="text-xs font-bold text-muted-foreground">INSTITUTIONAL MODELING NOTE</span>
                             </div>
                             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -145,23 +146,23 @@ export const ScenarioStudio: React.FC = () => {
                 <Grid item xs={12} md={5}>
                     <Card variant="elevated" className="p-8 h-full bg-blue-500/[0.03] border border-primary relative overflow-hidden">
                         <div className="absolute top-[-20px] right-[-20px] opacity-5">
-                            <TrendingUp size={120} color="#3b82f6" />
+                            <TrendingUp size={120} color={CHART_COLORS.west} />
                         </div>
 
-                        <p className="text-xs font-bold uppercase tracking-uppercase text-primary mb-3">Simulated Outputs</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-3">Simulated Outputs</p>
 
                         <div className="space-y-6 mt-3">
                             <div>
-                                <span className="text-xs font-bold text-muted-foreground/60 block mb-1">M2 / GOLD RATIO</span>
-                                <div className="text-2xl font-black">
+                                <span className="text-xs font-bold text-muted-foreground block mb-1">M2 / GOLD RATIO</span>
+                                <div className="text-2xl font-bold">
                                     {(simRatio !== undefined && simRatio !== null && !isNaN(simRatio)) ? simRatio.toFixed(2) : '-'}
                                 </div>
                             </div>
 
                             <div>
                                 <div className="flex justify-between mb-0.5">
-                                    <span className="text-xs font-bold text-muted-foreground/60">INSTITUTIONAL Z-SCORE</span>
-                                    <span className={`text-xs font-black ${Math.abs(zScore) > 2 ? 'text-error' : 'text-primary'}`}>
+                                    <span className="text-xs font-bold text-muted-foreground">INSTITUTIONAL Z-SCORE</span>
+                                    <span className={`text-xs font-bold ${Math.abs(zScore) > 2 ? 'text-error' : 'text-primary'}`}>
                                         {zScore > 0 ? '+' : ''}{(zScore !== undefined && zScore !== null && !isNaN(zScore)) ? zScore.toFixed(2) : '-'}σ
                                     </span>
                                 </div>
@@ -176,22 +177,22 @@ export const ScenarioStudio: React.FC = () => {
                                 </p>
                             </div>
 
-                            <hr className="border-white/10 my-2" />
+                            <hr className="border-border my-2" />
 
                             <div>
-                                <span className="text-xs font-bold text-muted-foreground/60">REGIME PROJECTION</span>
+                                <span className="text-xs font-bold text-muted-foreground">REGIME PROJECTION</span>
                                 <div className="flex items-center gap-1 mt-1">
-                                    {zScore > 2 ? <AlertTriangle size={18} color="#f43f5e" /> : <ShieldCheck size={18} color="#10b981" />}
+                                    {zScore > 2 ? <AlertTriangle size={18} color={CHART_COLORS.east} /> : <ShieldCheck size={18} color={CHART_COLORS.expansion} />}
                                     <span className="text-lg font-bold">{regimeLabel}</span>
                                 </div>
                             </div>
 
                             <div>
-                                <span className="text-xs font-bold text-muted-foreground/60">SIMULATED LIQUIDITY POOL</span>
+                                <span className="text-xs font-bold text-muted-foreground">SIMULATED LIQUIDITY POOL</span>
                                 <div className="text-2xl font-bold">
                                     ${(effectiveM2 !== undefined && effectiveM2 !== null && !isNaN(effectiveM2)) ? (effectiveM2 / 1000).toFixed(1) : '-'}T
                                 </div>
-                                <p className="text-xs text-muted-foreground/50">
+                                <p className="text-xs text-terminal-dim">
                                     {(effectiveM2 / currentM2 - 1) > 0 ? '+' : ''}{(!isNaN(effectiveM2) && !isNaN(currentM2) && currentM2 !== 0) ? ((effectiveM2 / currentM2 - 1) * 100).toFixed(1) : '-'}% vs Current
                                 </p>
                             </div>

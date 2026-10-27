@@ -151,6 +151,18 @@ export default [
                     message: "Use TrailLink/TrailNavLink from '@/components/TrailLink' instead, so internal hrefs always carry the trailing slash.",
                 }],
             }],
+            // Terminal contract: Fira Sans for UI, Fira Code for data. Use `font-sans` / `font-mono`
+            // or CHART_FONT_FAMILY; other families are never loaded and silently fall back.
+            'no-restricted-syntax': ['error',
+                {
+                    selector: "Property[key.name='fontFamily'] > Literal[value=/Inter|JetBrains|Space Grotesk|IBM Plex|Syne|^monospace$|^mono$/]",
+                    message: "Use 'Fira Code, monospace' (CHART_FONT_FAMILY) or 'Fira Sans, sans-serif' instead of other font families.",
+                },
+                {
+                    selector: "Literal[value=/font-\\['(?!Fira)/]",
+                    message: "Use font-sans / font-mono instead of arbitrary font families.",
+                },
+            ],
         },
     },
     {

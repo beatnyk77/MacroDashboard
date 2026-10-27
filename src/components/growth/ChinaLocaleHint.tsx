@@ -34,7 +34,7 @@ export const ChinaLocaleHint: React.FC<ChinaLocaleHintProps> = ({
             </div>
             <TrailLink
                 to="/intel/china"
-                className="shrink-0 text-[10px] font-black uppercase tracking-uppercase text-red-400/90 no-underline hover:text-red-300"
+                className="shrink-0 text-[11px] font-semibold uppercase tracking-wider text-red-400/90 no-underline hover:text-red-300"
             >
                 进入 China Hub →
             </TrailLink>

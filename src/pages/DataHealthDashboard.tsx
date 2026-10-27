@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { CheckCircle, AlertCircle, Clock, RefreshCcw, Send, Settings, RefreshCw, Download } from 'lucide-react';
 import { PIPELINE_BY_ID } from '@/lib/pipelineCatalog';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 
 const AuthenticatedDataHealthDashboard: React.FC = () => {
@@ -317,9 +318,9 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
     };
 
     const renderStalenessStatus = (status: string) => {
-        if (status === 'FRESH') return <Chip label="Fresh" size="small" sx={{ bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontWeight: 700 }} icon={<CheckCircle size={14} color="#10b981" />} />;
-        if (status === 'LAGGED') return <Chip label="Lagged" size="small" sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 700 }} icon={<Clock size={14} color="#f59e0b" />} />;
-        return <Chip label="Stale" size="small" sx={{ bgcolor: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', fontWeight: 700 }} icon={<AlertCircle size={14} color="#f43f5e" />} />;
+        if (status === 'FRESH') return <Chip label="Fresh" size="small" sx={{ bgcolor: alpha(CHART_COLORS.expansion, 0.1), color: CHART_COLORS.expansion, fontWeight: 700 }} icon={<CheckCircle size={14} color={CHART_COLORS.expansion} />} />;
+        if (status === 'LAGGED') return <Chip label="Lagged" size="small" sx={{ bgcolor: alpha(CHART_COLORS.gold, 0.1), color: CHART_COLORS.gold, fontWeight: 700 }} icon={<Clock size={14} color={CHART_COLORS.gold} />} />;
+        return <Chip label="Stale" size="small" sx={{ bgcolor: alpha(CHART_COLORS.east, 0.1), color: CHART_COLORS.east, fontWeight: 700 }} icon={<AlertCircle size={14} color={CHART_COLORS.east} />} />;
     };
 
     return (
@@ -327,7 +328,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
         <Box sx={{ maxWidth: 1600, mx: 'auto', p: 4 }}>
             <Box sx={{ mb: 6, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <Box>
-                    <Typography variant="h4" component="h1" sx={{ fontWeight: 900, mb: 1, textTransform: 'uppercase', color: 'white' }}>
+                    <Typography variant="h4" component="h1" sx={{ fontWeight: 700, mb: 1, textTransform: 'uppercase', color: 'white' }}>
                         Macro Data Operations
                     </Typography>
                     <Typography sx={{ color: 'text.secondary' }}>
@@ -336,10 +337,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                 </Box>
                 <Grid container spacing={2} sx={{ maxWidth: 700, justifyContent: 'flex-end' }}>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 4, borderRadius: '16px', bgcolor: 'rgba(16, 185, 129, 0.05)', border: '1px solid rgba(16, 185, 129, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 4, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.expansion, 0.05), border: `1px solid ${alpha(CHART_COLORS.expansion, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#10b981', fontWeight: 700, display: 'block', lineHeight: 1 }}>Live Coverage</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 900, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.expansion, fontWeight: 700, display: 'block', lineHeight: 1 }}>Live Coverage</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {authenticity ? `${authenticity.authenticity_score}% live` : 'Calculating...'}
                                 </Typography>
                                 {authenticity?.provisional_metrics != null && (
@@ -348,7 +349,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                                     </Typography>
                                 )}
                             </Box>
-                            <CheckCircle size={24} color="#10b981" />
+                            <CheckCircle size={24} color={CHART_COLORS.expansion} />
                         </Paper>
                     </Grid>
                     <Grid item>
@@ -357,7 +358,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                             startIcon={<RefreshCw size={20} />}
                             sx={{
                                 color: 'white',
-                                borderColor: 'rgba(255,255,255,0.1)',
+                                borderColor: WHITE_ALPHA.line,
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 px: 3,
@@ -376,8 +377,8 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                             variant="contained"
                             startIcon={<Download size={20} />}
                             sx={{
-                                bgcolor: '#10b981',
-                                '&:hover': { bgcolor: '#0c8a6a' },
+                                bgcolor: CHART_COLORS.expansion,
+                                '&:hover': { bgcolor: CHART_COLORS.expansionDeep },
                                 borderRadius: '12px',
                                 textTransform: 'none',
                                 px: 3,
@@ -389,10 +390,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Button>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.west, 0.05), border: `1px solid ${alpha(CHART_COLORS.west, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Last Digest</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.west, fontWeight: 700, display: 'block', lineHeight: 1 }}>Last Digest</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {newsletterStatus ? newsletterStatus.year_month : 'Pending'}
                                 </Typography>
                             </Box>
@@ -402,10 +403,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.west, 0.05), border: `1px solid ${alpha(CHART_COLORS.west, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>ASI Matrix</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.west, fontWeight: 700, display: 'block', lineHeight: 1 }}>ASI Matrix</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {asiStatus ? `${asiStatus.stateCount}/36 states` : 'Unknown'}
                                 </Typography>
                             </Box>
@@ -415,10 +416,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(245, 158, 11, 0.05)', border: '1px solid rgba(245, 158, 11, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px solid ${alpha(CHART_COLORS.gold, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f59e0b', fontWeight: 700, display: 'block', lineHeight: 1 }}>Energy Terminal</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.gold, fontWeight: 700, display: 'block', lineHeight: 1 }}>Energy Terminal</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {energyStatus ? `${energyStatus.stateCount}/36 states` : 'Unknown'}
                                 </Typography>
                             </Box>
@@ -429,10 +430,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                     </Grid>
 
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(59, 130, 246, 0.05)', border: '1px solid rgba(59, 130, 246, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.west, 0.05), border: `1px solid ${alpha(CHART_COLORS.west, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>US Macro Pulse</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.west, fontWeight: 700, display: 'block', lineHeight: 1 }}>US Macro Pulse</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {usMacroStatus ? new Date(usMacroStatus.date).toLocaleDateString() : 'Inactive'}
                                 </Typography>
                             </Box>
@@ -442,10 +443,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(96, 165, 250, 0.05)', border: '1px solid rgba(96, 165, 250, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.westSoft, 0.05), border: `1px solid ${alpha(CHART_COLORS.westSoft, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#60a5fa', fontWeight: 700, display: 'block', lineHeight: 1 }}>Geopolitical OSINT</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.west, fontWeight: 700, display: 'block', lineHeight: 1 }}>Geopolitical OSINT</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {osintStatus ? `${osintStatus.assetCount} Assets` : 'Unknown'}
                                 </Typography>
                             </Box>
@@ -455,10 +456,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.indigo, 0.05), border: `1px solid ${alpha(CHART_COLORS.indigo, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Fiscal Structural</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.indigo, fontWeight: 700, display: 'block', lineHeight: 1 }}>Fiscal Structural</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {fiscalStatus?.defense ? new Date(fiscalStatus.defense.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -468,10 +469,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.indigo, 0.05), border: `1px solid ${alpha(CHART_COLORS.indigo, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Money Market</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.indigo, fontWeight: 700, display: 'block', lineHeight: 1 }}>Money Market</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {moneyMarketStatus ? new Date(moneyMarketStatus.date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -481,10 +482,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.indigo, 0.05), border: `1px solid ${alpha(CHART_COLORS.indigo, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>FX Defense</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.indigo, fontWeight: 700, display: 'block', lineHeight: 1 }}>FX Defense</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {fxDefenseStatus ? new Date(fxDefenseStatus.date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -494,10 +495,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(99, 102, 241, 0.05)', border: '1px solid rgba(99, 102, 241, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.indigo, 0.05), border: `1px solid ${alpha(CHART_COLORS.indigo, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#818cf8', fontWeight: 700, display: 'block', lineHeight: 1 }}>Digitization</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.indigo, fontWeight: 700, display: 'block', lineHeight: 1 }}>Digitization</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {digitizationStatus ? new Date(digitizationStatus.date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -507,10 +508,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px solid ${alpha(CHART_COLORS.gold, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold / Debt G20</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.goldSoft, fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold / Debt G20</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {goldDebtStatus ? new Date(goldDebtStatus.date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -520,10 +521,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(234, 179, 8, 0.05)', border: '1px solid rgba(234, 179, 8, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px solid ${alpha(CHART_COLORS.gold, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#eab308', fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold Positioning</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.goldSoft, fontWeight: 700, display: 'block', lineHeight: 1 }}>Gold Positioning</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {goldPositioningStatus ? new Date(goldPositioningStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -533,10 +534,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Global Refining</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>Global Refining</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {globalRefiningStatus ? new Date(globalRefiningStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -546,10 +547,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Commodity Flows</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>Commodity Flows</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {commodityFlowsStatus ? new Date(commodityFlowsStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -559,10 +560,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>WTI Spread</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>WTI Spread</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {oilSpreadStatus?.computed_at ? new Date(oilSpreadStatus.computed_at).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -572,10 +573,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil Import Flows</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil Import Flows</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {oilImportsStatus ? new Date(oilImportsStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -585,10 +586,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Fuel Security IN</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>Fuel Security IN</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {fuelSecurityStatus?.last_updated_at ? new Date(fuelSecurityStatus.last_updated_at).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -598,10 +599,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>EU Gas / Power</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>EU Gas / Power</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     {energyGlobalStatus ? new Date(energyGlobalStatus.as_of_date).toLocaleDateString() : 'Pending'}
                                 </Typography>
                             </Box>
@@ -611,10 +612,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                         </Paper>
                     </Grid>
                     <Grid item>
-                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: 'rgba(249, 115, 22, 0.05)', border: '1px solid rgba(249, 115, 22, 0.1)', display: 'flex', alignItems: 'center', gap: 2 }}>
+                        <Paper sx={{ p: 2, px: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.orange, 0.05), border: `1px solid ${alpha(CHART_COLORS.orange, 0.1)}`, display: 'flex', alignItems: 'center', gap: 2 }}>
                             <Box>
-                                <Typography variant="overline" sx={{ color: '#f97316', fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil EIA Weekly</Typography>
-                                <Typography variant="h5" sx={{ fontWeight: 800, color: 'white' }}>
+                                <Typography variant="overline" sx={{ color: CHART_COLORS.orange, fontWeight: 700, display: 'block', lineHeight: 1 }}>Oil EIA Weekly</Typography>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: 'white' }}>
                                     Refinery Util
                                 </Typography>
                             </Box>
@@ -628,7 +629,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
             </Box>
         </Box>
 
-        <Box sx={{ p: { xs: 2, md: 6 }, bgcolor: '#020617', minHeight: '100vh' }}>
+        <Box sx={{ p: { xs: 2, md: 6 }, bgcolor: CHART_COLORS.surface, minHeight: '100vh' }}>
             <SEOManager 
                 title="System Health & Ingestion Telemetry — GraphiQuestor"
                 description="Live monitoring of macro data ingestion pipelines, cron jobs, and database integrity."
@@ -637,37 +638,37 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
             <Grid container spacing={4}>
                 {/* 1. CRON SCHEDULER MONITOR */}
                 <Grid item xs={12}>
-                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: WHITE_ALPHA.ghost, border: `1px solid ${WHITE_ALPHA.faint}` }}>
                         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 3 }}>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                                <Settings size={20} color="#60a5fa" />
-                                <Typography variant="h6" sx={{ fontWeight: 800, color: 'white' }}>Active pg_cron Scheduler</Typography>
+                                <Settings size={20} color={CHART_COLORS.west} />
+                                <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>Active pg_cron Scheduler</Typography>
                             </Box>
-                            <Chip label="Auto-Healing: Enabled" size="small" sx={{ bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontSize: '0.7rem', fontWeight: 800 }} />
+                            <Chip label="Auto-Healing: Enabled" size="small" sx={{ bgcolor: alpha(CHART_COLORS.expansion, 0.1), color: CHART_COLORS.expansion, fontSize: '0.7rem', fontWeight: 700 }} />
                         </Box>
                         <TableContainer sx={{ maxHeight: 400 }}>
                             <Table stickyHeader size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Job Name</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Schedule (UTC)</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Last Execution</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Status</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }} align="right">Man. Trigger</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Job Name</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Schedule (UTC)</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Last Execution</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Status</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }} align="right">Man. Trigger</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {cronJobs?.map((job: any) => (
                                         <TableRow key={job.jobid} hover>
-                                            <TableCell sx={{ color: 'white', fontWeight: 600, fontFamily: 'monospace', fontSize: '0.8rem' }}>{job.jobname}</TableCell>
-                                            <TableCell sx={{ color: '#94a3b8', fontSize: '0.75rem' }}>{job.schedule}</TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 600, fontFamily: 'Fira Code, monospace', fontSize: '0.8rem' }}>{job.jobname}</TableCell>
+                                            <TableCell sx={{ color: CHART_COLORS.label, fontSize: '0.75rem' }}>{job.schedule}</TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>
                                                 {job.last_run_at ? new Date(job.last_run_at).toLocaleString() : 'Never'}
                                             </TableCell>
                                             <TableCell>
                                                 {job.last_run_status === 'succeeded' ?
-                                                    <Chip label="OK" size="small" sx={{ height: 20, bgcolor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', fontSize: '0.7rem' }} /> :
-                                                    <Chip label={job.last_run_status || 'Wait'} size="small" sx={{ height: 20, bgcolor: 'rgba(244, 63, 94, 0.1)', color: '#f43f5e', fontSize: '0.7rem' }} />
+                                                    <Chip label="OK" size="small" sx={{ height: 20, bgcolor: alpha(CHART_COLORS.expansion, 0.1), color: CHART_COLORS.expansion, fontSize: '0.7rem' }} /> :
+                                                    <Chip label={job.last_run_status || 'Wait'} size="small" sx={{ height: 20, bgcolor: alpha(CHART_COLORS.east, 0.1), color: CHART_COLORS.east, fontSize: '0.7rem' }} />
                                                 }
                                             </TableCell>
                                             <TableCell align="right">
@@ -675,7 +676,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => handleForceTriggerCron(job.jobname)}
                                                     disabled={refreshing === job.jobname}
-                                                    sx={{ color: 'rgba(255,255,255,0.2)', '&:hover': { color: '#60a5fa' } }}
+                                                    sx={{ color: WHITE_ALPHA.soft, '&:hover': { color: CHART_COLORS.west } }}
                                                 >
                                                     {refreshing === job.jobname ? <CircularProgress size={14} /> : <RefreshCcw size={14} />}
                                                 </IconButton>
@@ -690,28 +691,28 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
 
                 {/* 2. METRIC STALENESS */}
                 <Grid item xs={12} lg={6}>
-                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <Typography variant="h6" sx={{ mb: 3, fontWeight: 800, color: 'white' }}>Intelligence Freshness</Typography>
+                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: WHITE_ALPHA.ghost, border: `1px solid ${WHITE_ALPHA.faint}` }}>
+                        <Typography variant="h6" sx={{ mb: 3, fontWeight: 700, color: 'white' }}>Intelligence Freshness</Typography>
                         <TableContainer sx={{ maxHeight: 600 }}>
                             <Table stickyHeader size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Metric</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Lag</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Status</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Metric</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Lag</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Status</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {staleness?.map((row: any) => (
                                         <TableRow key={row.metric_id} hover>
-                                            <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.metric_id}</TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'Fira Code, monospace', fontSize: '0.8rem' }}>{row.metric_id}</TableCell>
                                             <TableCell sx={{ color: 'text.secondary', fontSize: '0.8rem' }}>
                                                 {Math.round(row.days_since_update)}d <span style={{ opacity: 0.4 }}>/ {row.expected_interval_days}d</span>
                                             </TableCell>
-                                            <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', fontFamily: 'monospace' }}>
+                                            <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', fontFamily: 'Fira Code, monospace' }}>
                                                 {row.is_provisional ? (
-                                                    <Chip label={row.source_ref ?? 'provisional'} size="small" sx={{ bgcolor: 'rgba(245, 158, 11, 0.1)', color: '#f59e0b', fontWeight: 700, fontSize: '0.65rem' }} />
+                                                    <Chip label={row.source_ref ?? 'provisional'} size="small" sx={{ bgcolor: alpha(CHART_COLORS.gold, 0.1), color: CHART_COLORS.gold, fontWeight: 700, fontSize: '0.6875rem' }} />
                                                 ) : (
                                                     row.source_ref ?? row.provenance ?? 'live'
                                                 )}
@@ -727,24 +728,24 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
 
                 {/* 3. INGESTION PIPELINES */}
                 <Grid item xs={12} lg={6}>
-                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
-                        <Typography variant="h6" sx={{ mb: 3, fontWeight: 800, color: 'white' }}>Ingestion History</Typography>
+                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: WHITE_ALPHA.ghost, border: `1px solid ${WHITE_ALPHA.faint}` }}>
+                        <Typography variant="h6" sx={{ mb: 3, fontWeight: 700, color: 'white' }}>Ingestion History</Typography>
                         <TableContainer sx={{ maxHeight: 600 }}>
                             <Table stickyHeader size="small">
                                 <TableHead>
                                     <TableRow>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>HTTP</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Rows</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Lat (ms)</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }}>Last Run</TableCell>
-                                        <TableCell sx={{ bgcolor: '#0B1121', color: 'text.secondary', fontWeight: 700 }} align="right">Action</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Pipeline</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>HTTP</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Rows</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Lat (ms)</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }}>Last Run</TableCell>
+                                        <TableCell sx={{ bgcolor: CHART_COLORS.panel, color: 'text.secondary', fontWeight: 700 }} align="right">Action</TableCell>
                                     </TableRow>
                                 </TableHead>
                                 <TableBody>
                                     {ingestions?.map((row: any) => (
                                         <TableRow key={row.function_name} hover>
-                                            <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'monospace', fontSize: '0.8rem' }}>{row.function_name.replace('ingest-', '')}</TableCell>
+                                            <TableCell sx={{ color: 'white', fontWeight: 500, fontFamily: 'Fira Code, monospace', fontSize: '0.8rem' }}>{row.function_name.replace('ingest-', '')}</TableCell>
                                             <TableCell>
                                                 <Chip
                                                     label={row.status_code || '--'}
@@ -752,9 +753,9 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                                                     variant="outlined"
                                                     sx={{
                                                         height: 18,
-                                                        fontSize: '0.65rem',
-                                                        borderColor: row.status_code === 200 ? 'rgba(16, 185, 129, 0.3)' : 'rgba(244, 63, 94, 0.3)',
-                                                        color: row.status_code === 200 ? '#10b981' : '#f43f5e'
+                                                        fontSize: '0.6875rem',
+                                                        borderColor: row.status_code === 200 ? alpha(CHART_COLORS.expansion, 0.3) : alpha(CHART_COLORS.east, 0.3),
+                                                        color: row.status_code === 200 ? CHART_COLORS.expansion : CHART_COLORS.east
                                                     }}
                                                 />
                                             </TableCell>
@@ -768,7 +769,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                                                     size="small"
                                                     onClick={() => handleForceRefresh(row.function_name)}
                                                     disabled={refreshing === row.function_name}
-                                                    sx={{ color: refreshing === row.function_name ? '#60a5fa' : 'rgba(255,255,255,0.1)' }}
+                                                    sx={{ color: refreshing === row.function_name ? CHART_COLORS.west : WHITE_ALPHA.line }}
                                                 >
                                                     {refreshing === row.function_name ? <CircularProgress size={14} /> : <RefreshCcw size={14} />}
                                                 </IconButton>
@@ -782,10 +783,10 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                 </Grid>
                 {/* 4. RECENT FAILURES / ERRORS */}
                 <Grid item xs={12}>
-                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: 'rgba(244, 63, 94, 0.05)', border: '1px solid rgba(244, 63, 94, 0.1)' }}>
+                    <Paper sx={{ p: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.east, 0.05), border: `1px solid ${alpha(CHART_COLORS.east, 0.1)}` }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 3 }}>
-                            <AlertCircle size={20} color="#f43f5e" />
-                            <Typography variant="h6" sx={{ fontWeight: 800, color: 'white' }}>Persistent Ingestion Failures</Typography>
+                            <AlertCircle size={20} color={CHART_COLORS.east} />
+                            <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>Persistent Ingestion Failures</Typography>
                         </Box>
                         {recentErrors && recentErrors.length > 0 ? (
                             <TableContainer>
@@ -802,7 +803,7 @@ const AuthenticatedDataHealthDashboard: React.FC = () => {
                                         {recentErrors.map((err: any) => (
                                             <TableRow key={err.id}>
                                                 <TableCell sx={{ color: 'white', fontWeight: 600, fontSize: '0.8rem' }}>{err.function_name.replace('ingest-', '')}</TableCell>
-                                                <TableCell sx={{ color: '#f43f5e', fontWeight: 700 }}>{err.status_code || 'FAIL'}</TableCell>
+                                                <TableCell sx={{ color: CHART_COLORS.east, fontWeight: 700 }}>{err.status_code || 'FAIL'}</TableCell>
                                                 <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem' }}>{new Date(err.start_time).toLocaleString()}</TableCell>
                                                 <TableCell sx={{ color: 'text.secondary', fontSize: '0.75rem', maxWidth: 400, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                                                     {err.error_message || err.metadata?.error || 'Unknown failure'}
@@ -830,9 +831,9 @@ export const DataHealthDashboard: React.FC = () => {
     return (
         <>
             <SEOManager title="Data Health | Admin" robots="noindex, nofollow" description="Internal data health monitor." />
-            <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', bgcolor: '#020617', color: 'white', p: 4 }}>
+            <Box sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', bgcolor: CHART_COLORS.surface, color: 'white', p: 4 }}>
                 <Box sx={{ textAlign: 'center' }}>
-                    <Typography variant="h5" sx={{ mb: 1, fontWeight: 800 }}>ADMIN ACCESS REQUIRED</Typography>
+                    <Typography variant="h5" sx={{ mb: 1, fontWeight: 700 }}>ADMIN ACCESS REQUIRED</Typography>
                     <Typography sx={{ color: 'text.secondary', mb: 3 }}>Authenticate through the operations console to view this board.</Typography>
                     <Button href="/admin/" variant="contained">Open operations console</Button>
                 </Box>

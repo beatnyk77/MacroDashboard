@@ -117,7 +117,7 @@ function SectionHeading({ id, children }: { id: string; children: React.ReactNod
     return (
         <h2
             id={id}
-            className="scroll-mt-28 text-lg font-black uppercase tracking-heading text-white mb-4"
+            className="scroll-mt-28 text-lg font-semibold uppercase tracking-heading text-white mb-4"
         >
             {children}
         </h2>
@@ -125,7 +125,7 @@ function SectionHeading({ id, children }: { id: string; children: React.ReactNod
 }
 
 function Divider() {
-    return <div className="border-t border-slate-800/60 my-12" />;
+    return <div className="border-t border-border my-12" />;
 }
 
 export const MCPIntelligencePage: React.FC = () => {
@@ -191,17 +191,17 @@ export const MCPIntelligencePage: React.FC = () => {
             />
 
             {/* Mobile sticky nav */}
-            <div className="lg:hidden sticky top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800 overflow-x-auto">
+            <div className="lg:hidden sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border overflow-x-auto">
                 <div className="flex gap-1 px-4 py-2 whitespace-nowrap">
                     {NAV_SECTIONS.map((item) => (
                         <button
                             key={item.id}
                             type="button"
                             onClick={() => scrollTo(item.id)}
-                            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-colors ${
+                            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors ${
                                 activeId === item.id
                                     ? 'bg-cyan-500/15 text-cyan-400'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                    : 'text-terminal-dim hover:text-slate-300'
                             }`}
                         >
                             {item.label}
@@ -214,7 +214,7 @@ export const MCPIntelligencePage: React.FC = () => {
                 {/* Desktop sticky nav */}
                 <aside className="hidden lg:block w-52 shrink-0">
                     <div className="sticky top-24 space-y-0.5">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-3 px-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim mb-3 px-3">
                             MCP Protocol
                         </p>
                         {NAV_SECTIONS.map((section) => (
@@ -225,22 +225,22 @@ export const MCPIntelligencePage: React.FC = () => {
                                 className={`block w-full text-left px-3 py-1.5 rounded text-xs font-semibold transition-colors ${
                                     activeId === section.id
                                         ? 'bg-cyan-500/10 text-cyan-400'
-                                        : 'text-slate-500 hover:text-slate-300 hover:bg-white/[0.03]'
+                                        : 'text-terminal-dim hover:text-slate-300 hover:bg-white/[0.03]'
                                 }`}
                             >
                                 {section.label}
                             </button>
                         ))}
-                        <div className="mt-6 pt-4 border-t border-slate-800/60 px-3 space-y-2">
+                        <div className="mt-6 pt-4 border-t border-border px-3 space-y-2">
                             <Link
                                 to="/api-docs"
-                                className="block text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:text-blue-400 no-underline"
+                                className="block text-[11px] font-semibold uppercase tracking-wider text-terminal-dim hover:text-blue-400 no-underline"
                             >
                                 REST API →
                             </Link>
                             <Link
                                 to="/for-researchers"
-                                className="block text-[10px] font-bold uppercase tracking-widest text-slate-600 hover:text-violet-400 no-underline"
+                                className="block text-[11px] font-semibold uppercase tracking-wider text-terminal-dim hover:text-violet-400 no-underline"
                             >
                                 AI & Research →
                             </Link>
@@ -251,11 +251,11 @@ export const MCPIntelligencePage: React.FC = () => {
                 <main className="flex-1 min-w-0 max-w-3xl">
                     {/* Overview */}
                     <header id="overview" className="scroll-mt-28 mb-10">
-                        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-cyan-400 mb-6">
+                        <div className="inline-flex items-center gap-2 rounded-full border border-cyan-500/25 bg-cyan-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-cyan-400 mb-6">
                             <Bot size={12} />
                             Agent Integration Protocol
                         </div>
-                        <h1 className="text-3xl md:text-4xl font-black tracking-heading text-white mb-4">
+                        <h1 className="text-3xl md:text-4xl font-bold tracking-heading text-white mb-4">
                             Macro Intelligence{' '}
                             <span className="text-cyan-400">MCP Server</span>
                         </h1>
@@ -265,13 +265,13 @@ export const MCPIntelligencePage: React.FC = () => {
                             Never fabricated values.
                         </p>
                         <div className="flex flex-wrap gap-2 mb-6">
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-emerald-400">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-500/25 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
                                 <Zap size={10} /> 8 Tools Live
                             </span>
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-violet-400">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-violet-500/25 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-violet-400">
                                 <BookOpen size={10} /> 4 Resources
                             </span>
-                            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-amber-400">
+                            <span className="inline-flex items-center gap-1.5 rounded-full border border-amber-500/25 bg-amber-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-amber-400">
                                 <Workflow size={10} /> 3 Prompts
                             </span>
                         </div>
@@ -280,7 +280,7 @@ export const MCPIntelligencePage: React.FC = () => {
                             <EndpointPill label="Remote MCP" href={MCP_CONFIG.remoteUrl} />
                             <EndpointPill label="Cloudflare Worker" href={MCP_CONFIG.workerUrl} />
                         </div>
-                        <p className="mt-4 font-mono text-[11px] text-slate-500">
+                        <p className="mt-4 font-mono text-[11px] text-terminal-dim">
                             Package: <span className="text-cyan-400/80">{MCP_CONFIG.smitheryId}</span>
                         </p>
                     </header>
@@ -295,19 +295,19 @@ export const MCPIntelligencePage: React.FC = () => {
                         <div className="rounded-xl border border-cyan-500/15 bg-cyan-500/[0.03] p-5 mb-4">
                             <div className="flex flex-col gap-3 text-sm text-slate-400">
                                 <div className="flex items-center gap-3 flex-wrap">
-                                    <span className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-cyan-300">
+                                    <span className="rounded-lg border border-border bg-background/30 px-3 py-2 font-mono text-xs text-cyan-300">
                                         AI Agent
                                     </span>
-                                    <ArrowRight size={14} className="text-slate-600 shrink-0" />
+                                    <ArrowRight size={14} className="text-terminal-dim shrink-0" />
                                     <span className="rounded-lg border border-cyan-500/20 bg-cyan-500/10 px-3 py-2 font-mono text-xs text-cyan-300">
                                         macro-intelligence MCP
                                     </span>
-                                    <ArrowRight size={14} className="text-slate-600 shrink-0" />
-                                    <span className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-emerald-300">
+                                    <ArrowRight size={14} className="text-terminal-dim shrink-0" />
+                                    <span className="rounded-lg border border-border bg-background/30 px-3 py-2 font-mono text-xs text-emerald-300">
                                         Supabase (anon RLS)
                                     </span>
-                                    <ArrowRight size={14} className="text-slate-600 shrink-0" />
-                                    <span className="rounded-lg border border-white/10 bg-black/30 px-3 py-2 font-mono text-xs text-violet-300">
+                                    <ArrowRight size={14} className="text-terminal-dim shrink-0" />
+                                    <span className="rounded-lg border border-border bg-background/30 px-3 py-2 font-mono text-xs text-violet-300">
                                         GraphiQuestor Terminal
                                     </span>
                                 </div>
@@ -334,17 +334,17 @@ export const MCPIntelligencePage: React.FC = () => {
                             </Link>{' '}
                             endpoints where applicable.
                         </p>
-                        <div className="overflow-x-auto rounded-xl border border-slate-800">
+                        <div className="overflow-x-auto rounded-xl border border-border">
                             <table className="w-full text-left text-sm">
                                 <thead>
-                                    <tr className="border-b border-slate-800 bg-slate-900/80">
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                    <tr className="border-b border-border bg-card/90">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                                             Tool
                                         </th>
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                                             Purpose
                                         </th>
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500 hidden sm:table-cell">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim hidden sm:table-cell">
                                             REST Mirror
                                         </th>
                                     </tr>
@@ -353,7 +353,7 @@ export const MCPIntelligencePage: React.FC = () => {
                                     {MCP_TOOLS.map((tool) => (
                                         <tr
                                             key={tool.name}
-                                            className="border-b border-slate-800/60 hover:bg-white/[0.02]"
+                                            className="border-b border-border hover:bg-white/[0.02]"
                                         >
                                             <td className="px-4 py-3 font-mono text-xs text-cyan-300 whitespace-nowrap">
                                                 {tool.name}
@@ -361,7 +361,7 @@ export const MCPIntelligencePage: React.FC = () => {
                                             <td className="px-4 py-3 text-slate-400 text-xs leading-relaxed">
                                                 {tool.purpose}
                                             </td>
-                                            <td className="px-4 py-3 font-mono text-[11px] text-slate-500 hidden sm:table-cell whitespace-nowrap">
+                                            <td className="px-4 py-3 font-mono text-[11px] text-terminal-dim hidden sm:table-cell whitespace-nowrap">
                                                 {tool.rest}
                                             </td>
                                         </tr>
@@ -389,10 +389,10 @@ export const MCPIntelligencePage: React.FC = () => {
                             ].map((field) => (
                                 <div
                                     key={field.key}
-                                    className="rounded-lg border border-white/[0.06] bg-black/20 px-4 py-3"
+                                    className="rounded-lg border border-white/[0.06] bg-background/20 px-4 py-3"
                                 >
                                     <div className="font-mono text-xs text-cyan-400 mb-1">{field.key}</div>
-                                    <div className="text-[11px] text-slate-500">{field.desc}</div>
+                                    <div className="text-[11px] text-terminal-dim">{field.desc}</div>
                                 </div>
                             ))}
                         </div>
@@ -407,7 +407,7 @@ export const MCPIntelligencePage: React.FC = () => {
 
                         <div className="space-y-8">
                             <div>
-                                <h3 className="text-xs font-black uppercase tracking-widest text-cyan-400 mb-3 flex items-center gap-2">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider text-cyan-400 mb-3 flex items-center gap-2">
                                     <Terminal size={14} />
                                     Smithery — One Command
                                 </h3>
@@ -419,7 +419,7 @@ export const MCPIntelligencePage: React.FC = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-3">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3">
                                     Cursor / Claude — Local stdio
                                 </h3>
                                 <p className="text-sm text-slate-400 mb-3">
@@ -437,7 +437,7 @@ export const MCPIntelligencePage: React.FC = () => {
                             </div>
 
                             <div>
-                                <h3 className="text-xs font-black uppercase tracking-widest text-slate-300 mb-3 flex items-center gap-2">
+                                <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300 mb-3 flex items-center gap-2">
                                     <Layers size={14} className="text-cyan-400" />
                                     Remote HTTP (Worker)
                                 </h3>
@@ -454,7 +454,7 @@ export const MCPIntelligencePage: React.FC = () => {
                     {/* Resources */}
                     <section>
                         <SectionHeading id="resources">Resources &amp; Prompts</SectionHeading>
-                        <h3 className="text-xs font-black uppercase tracking-widest text-violet-400 mb-3">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-violet-400 mb-3">
                             MCP Resources
                         </h3>
                         <ul className="space-y-2 mb-8">
@@ -464,11 +464,11 @@ export const MCPIntelligencePage: React.FC = () => {
                                     className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3"
                                 >
                                     <div className="font-mono text-xs text-violet-300/90">{r.uri}</div>
-                                    <div className="text-[11px] text-slate-500 mt-1">{r.description}</div>
+                                    <div className="text-[11px] text-terminal-dim mt-1">{r.description}</div>
                                 </li>
                             ))}
                         </ul>
-                        <h3 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-3">
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-3">
                             Built-in Prompts
                         </h3>
                         <ul className="space-y-2">
@@ -478,7 +478,7 @@ export const MCPIntelligencePage: React.FC = () => {
                                     className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3"
                                 >
                                     <div className="font-mono text-xs text-amber-300/90">{p.name}</div>
-                                    <div className="text-[11px] text-slate-500 mt-1">{p.description}</div>
+                                    <div className="text-[11px] text-terminal-dim mt-1">{p.description}</div>
                                 </li>
                             ))}
                         </ul>
@@ -499,7 +499,7 @@ export const MCPIntelligencePage: React.FC = () => {
                                     key={wf.title}
                                     className="rounded-xl border border-cyan-500/10 bg-cyan-500/[0.02] p-5"
                                 >
-                                    <h3 className="text-sm font-black uppercase tracking-heading text-white mb-2">
+                                    <h3 className="text-sm font-semibold uppercase tracking-heading text-white mb-2">
                                         {wf.title}
                                     </h3>
                                     <p className="text-sm text-slate-300 italic mb-3">&ldquo;{wf.prompt}&rdquo;</p>
@@ -507,7 +507,7 @@ export const MCPIntelligencePage: React.FC = () => {
                                         {wf.flow.map((step, i) => (
                                             <li
                                                 key={step}
-                                                className="flex items-start gap-2 text-xs text-slate-500 font-mono"
+                                                className="flex items-start gap-2 text-xs text-terminal-dim font-mono"
                                             >
                                                 <span className="text-cyan-500/60 shrink-0">{i + 1}.</span>
                                                 {step}
@@ -524,17 +524,17 @@ export const MCPIntelligencePage: React.FC = () => {
                     {/* Clients */}
                     <section>
                         <SectionHeading id="clients">Client Compatibility</SectionHeading>
-                        <div className="overflow-x-auto rounded-xl border border-slate-800">
+                        <div className="overflow-x-auto rounded-xl border border-border">
                             <table className="w-full text-left text-sm">
                                 <thead>
-                                    <tr className="border-b border-slate-800 bg-slate-900/80">
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                    <tr className="border-b border-border bg-card/90">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                                             Client
                                         </th>
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                                             Transport
                                         </th>
-                                        <th className="px-4 py-3 text-[10px] font-black uppercase tracking-widest text-slate-500">
+                                        <th className="px-4 py-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                                             Install
                                         </th>
                                     </tr>
@@ -543,13 +543,13 @@ export const MCPIntelligencePage: React.FC = () => {
                                     {MCP_CLIENTS.map((row) => (
                                         <tr
                                             key={row.client}
-                                            className="border-b border-slate-800/60 hover:bg-white/[0.02]"
+                                            className="border-b border-border hover:bg-white/[0.02]"
                                         >
                                             <td className="px-4 py-3 font-semibold text-white text-xs">
                                                 {row.client}
                                             </td>
                                             <td className="px-4 py-3 text-slate-400 text-xs">{row.transport}</td>
-                                            <td className="px-4 py-3 font-mono text-[11px] text-slate-500">
+                                            <td className="px-4 py-3 font-mono text-[11px] text-terminal-dim">
                                                 {row.install}
                                             </td>
                                         </tr>
@@ -559,11 +559,11 @@ export const MCPIntelligencePage: React.FC = () => {
                         </div>
                     </section>
 
-                    <div className="mt-12 rounded-xl border border-white/[0.08] bg-slate-900/40 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                    <div className="mt-12 rounded-xl border border-white/[0.08] bg-card/40 p-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                         <div className="flex items-center gap-3">
                             <Database size={20} className="text-blue-400 shrink-0" />
                             <div>
-                                <div className="text-xs font-black uppercase tracking-widest text-slate-400">
+                                <div className="text-xs font-semibold uppercase tracking-wider text-slate-400">
                                     Need REST instead?
                                 </div>
                                 <div className="text-sm text-white/80">
@@ -573,7 +573,7 @@ export const MCPIntelligencePage: React.FC = () => {
                         </div>
                         <Link
                             to="/api-docs"
-                            className="inline-flex items-center gap-2 rounded-lg border border-blue-500/25 bg-blue-500/10 px-4 py-2.5 text-xs font-black uppercase tracking-widest text-blue-400 no-underline hover:border-blue-500/40 transition-colors shrink-0"
+                            className="inline-flex items-center gap-2 rounded-lg border border-blue-500/25 bg-blue-500/10 px-4 py-2.5 text-xs font-semibold uppercase tracking-wider text-blue-400 no-underline hover:border-blue-500/40 transition-colors shrink-0"
                         >
                             API Documentation
                             <ArrowRight size={14} />

@@ -3,6 +3,7 @@ import { Box, Paper, Typography, Grid, Stack, ToggleButtonGroup, ToggleButton, S
 import { SectionHeader } from '@/components/SectionHeader';
 import { useInstitutionalLoans } from '@/hooks/useInstitutionalLoans';
 import { Shield, Globe, AlertTriangle } from 'lucide-react';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const InstitutionalInfluenceSection = () => {
     const [loanType, setLoanType] = useState<'Stock' | 'Flow'>('Stock');
@@ -90,9 +91,9 @@ export const InstitutionalInfluenceSection = () => {
     };
 
     const COLORS = {
-        WEST: '#3b82f6',
-        EAST: '#ef4444',
-        JAPAN: '#ffffff'
+        WEST: CHART_COLORS.west,
+        EAST: CHART_COLORS.stress,
+        JAPAN: CHART_COLORS.white
     };
 
     return (
@@ -109,13 +110,13 @@ export const InstitutionalInfluenceSection = () => {
                     onChange={handleTypeChange}
                     size="small"
                     sx={{
-                        bgcolor: 'rgba(255,255,255,0.03)',
-                        border: '1px solid rgba(255,255,255,0.05)',
+                        bgcolor: WHITE_ALPHA.ghost,
+                        border: `1px solid ${WHITE_ALPHA.faint}`,
                         '& .MuiToggleButton-root': {
                             px: 2,
                             py: 0.5,
-                            fontSize: '0.65rem',
-                            fontWeight: 900,
+                            fontSize: '0.6875rem',
+                            fontWeight: 700,
                             color: 'text.disabled',
                             borderColor: 'transparent',
                             '&.Mui-selected': {
@@ -146,23 +147,23 @@ export const InstitutionalInfluenceSection = () => {
                                 const japanPct = reg.total > 0 ? (reg.japan / reg.total) * 100 : 0;
 
                                 const status = getStatus(reg.west, reg.east, reg.japan);
-                                const statusColor = status === 'EAST_DOMINANT' ? COLORS.EAST : (status === 'WEST_DOMINANT' ? COLORS.WEST : (status === 'JAPAN_DOMINANT' ? COLORS.JAPAN : '#f59e0b'));
+                                const statusColor = status === 'EAST_DOMINANT' ? COLORS.EAST : (status === 'WEST_DOMINANT' ? COLORS.WEST : (status === 'JAPAN_DOMINANT' ? COLORS.JAPAN : CHART_COLORS.gold));
 
                                 return (
                                     <Grid item xs={12} md={6} key={reg.region}>
                                         <Paper sx={{
                                             p: 2.5,
-                                            bgcolor: 'rgba(255,255,255,0.01)',
+                                            bgcolor: WHITE_ALPHA.ghost,
                                             backgroundImage: 'none',
                                             border: '1px solid',
-                                            borderColor: 'rgba(255,255,255,0.05)',
+                                            borderColor: WHITE_ALPHA.faint,
                                             borderRadius: 2,
                                             transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                                             position: 'relative',
                                             overflow: 'hidden',
                                             '&:hover': {
                                                 borderColor: `${statusColor}40`,
-                                                bgcolor: 'rgba(255,255,255,0.02)',
+                                                bgcolor: WHITE_ALPHA.ghost,
                                                 transform: 'translateY(-2px)',
                                                 boxShadow: `0 8px 24px -12px ${statusColor}40`
                                             }
@@ -170,7 +171,7 @@ export const InstitutionalInfluenceSection = () => {
                                             <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
                                                 <Stack direction="row" spacing={1} alignItems="center">
                                                     <Globe size={14} color={statusColor} />
-                                                    <Typography variant="overline" sx={{ fontWeight: 900, fontSize: '0.7rem', letterSpacing: '0.1em' }}>
+                                                    <Typography variant="overline" sx={{ fontWeight: 700, fontSize: '0.7rem', letterSpacing: '0.1em' }}>
                                                         {reg.region.replace('_', ' ')}
                                                     </Typography>
                                                 </Stack>
@@ -180,7 +181,7 @@ export const InstitutionalInfluenceSection = () => {
                                                     borderRadius: 0.5,
                                                     bgcolor: `${statusColor}15`,
                                                     color: statusColor,
-                                                    fontWeight: 900,
+                                                    fontWeight: 700,
                                                     fontSize: '0.55rem',
                                                     border: `1px solid ${statusColor}30`
                                                 }}>
@@ -188,11 +189,11 @@ export const InstitutionalInfluenceSection = () => {
                                                 </Typography>
                                             </Stack>
 
-                                            <Typography variant="h5" sx={{ fontWeight: 900, fontFamily: 'monospace', mb: 1.5, color: '#fff' }}>
+                                            <Typography variant="h5" sx={{ fontWeight: 700, fontFamily: 'Fira Code, monospace', mb: 1.5, color: '#fff' }}>
                                                 {formatCurrency(reg.total)}
                                             </Typography>
 
-                                            <Stack direction="row" spacing={0.5} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', mb: 2, bgcolor: 'rgba(255,255,255,0.03)' }}>
+                                            <Stack direction="row" spacing={0.5} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', mb: 2, bgcolor: WHITE_ALPHA.ghost }}>
                                                 <Box sx={{ width: `${westPct}%`, bgcolor: COLORS.WEST }} />
                                                 <Box sx={{ width: `${eastPct}%`, bgcolor: COLORS.EAST }} />
                                                 <Box sx={{ width: `${japanPct}%`, bgcolor: COLORS.JAPAN }} />
@@ -200,16 +201,16 @@ export const InstitutionalInfluenceSection = () => {
 
                                             <Grid container spacing={1}>
                                                 <Grid item xs={4}>
-                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6rem' }}>WEST</Typography>
-                                                    <Typography variant="caption" sx={{ color: COLORS.WEST, fontWeight: 900 }}>{westPct.toFixed(0)}%</Typography>
+                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6875rem' }}>WEST</Typography>
+                                                    <Typography variant="caption" sx={{ color: COLORS.WEST, fontWeight: 700 }}>{westPct.toFixed(0)}%</Typography>
                                                 </Grid>
                                                 <Grid item xs={4}>
-                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6rem' }}>EAST</Typography>
-                                                    <Typography variant="caption" sx={{ color: COLORS.EAST, fontWeight: 900 }}>{eastPct.toFixed(0)}%</Typography>
+                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6875rem' }}>EAST</Typography>
+                                                    <Typography variant="caption" sx={{ color: COLORS.EAST, fontWeight: 700 }}>{eastPct.toFixed(0)}%</Typography>
                                                 </Grid>
                                                 <Grid item xs={4}>
-                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6rem' }}>JAPAN</Typography>
-                                                    <Typography variant="caption" sx={{ color: COLORS.JAPAN, fontWeight: 900 }}>{japanPct.toFixed(0)}%</Typography>
+                                                    <Typography variant="caption" sx={{ color: 'text.disabled', fontWeight: 600, display: 'block', fontSize: '0.6875rem' }}>JAPAN</Typography>
+                                                    <Typography variant="caption" sx={{ color: COLORS.JAPAN, fontWeight: 700 }}>{japanPct.toFixed(0)}%</Typography>
                                                 </Grid>
                                             </Grid>
                                         </Paper>
@@ -224,15 +225,15 @@ export const InstitutionalInfluenceSection = () => {
                 <Grid item xs={12} lg={4}>
                     <Paper sx={{
                         p: 3,
-                        bgcolor: 'rgba(255,255,255,0.01)',
+                        bgcolor: WHITE_ALPHA.ghost,
                         backgroundImage: 'none',
-                        border: '1px solid rgba(255,255,255,0.05)',
+                        border: `1px solid ${WHITE_ALPHA.faint}`,
                         borderRadius: 2,
                         height: '100%',
                         display: 'flex',
                         flexDirection: 'column'
                     }}>
-                        <Typography variant="overline" sx={{ fontWeight: 900, color: 'text.secondary', mb: 3, display: 'block', letterSpacing: '0.15em' }}>
+                        <Typography variant="overline" sx={{ fontWeight: 700, color: 'text.secondary', mb: 3, display: 'block', letterSpacing: '0.15em' }}>
                             FRONTIER MARKET CAPTURE
                         </Typography>
 
@@ -251,14 +252,14 @@ export const InstitutionalInfluenceSection = () => {
                                 return (
                                     <Box key={bracket}>
                                         <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                            <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', fontSize: '0.65rem' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', fontSize: '0.6875rem' }}>
                                                 {bracket.replace('_', ' ')}
                                             </Typography>
-                                            <Typography variant="caption" sx={{ fontWeight: 900, color: 'text.primary', fontSize: '0.55rem' }}>
+                                            <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.primary', fontSize: '0.55rem' }}>
                                                 {formatCurrency(total)}
                                             </Typography>
                                         </Stack>
-                                        <Stack direction="row" spacing={0.25} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', bgcolor: 'rgba(255,255,255,0.03)' }}>
+                                        <Stack direction="row" spacing={0.25} sx={{ height: 4, borderRadius: 1, overflow: 'hidden', bgcolor: WHITE_ALPHA.ghost }}>
                                             <Box sx={{ width: `${westW}%`, bgcolor: COLORS.WEST }} />
                                             <Box sx={{ width: `${eastW}%`, bgcolor: COLORS.EAST }} />
                                             <Box sx={{ width: `${japanW}%`, bgcolor: COLORS.JAPAN }} />
@@ -268,14 +269,14 @@ export const InstitutionalInfluenceSection = () => {
                             })}
                         </Stack>
 
-                        <Box sx={{ mt: 'auto', p: 2, borderRadius: 1.5, bgcolor: 'rgba(59, 130, 246, 0.03)', border: '1px dashed rgba(59, 130, 246, 0.15)' }}>
+                        <Box sx={{ mt: 'auto', p: 2, borderRadius: 1.5, bgcolor: alpha(CHART_COLORS.west, 0.03), border: `1px dashed ${alpha(CHART_COLORS.west, 0.15)}` }}>
                             <Stack direction="row" spacing={1} alignItems="center">
                                 <Shield size={14} color={COLORS.WEST} />
-                                <Typography variant="caption" sx={{ color: COLORS.WEST, fontWeight: 900, fontSize: '0.6rem', letterSpacing: '0.1em' }}>
+                                <Typography variant="caption" sx={{ color: COLORS.WEST, fontWeight: 700, fontSize: '0.6875rem', letterSpacing: '0.1em' }}>
                                     DOMINANCE STATUS: MULTIPOLAR
                                 </Typography>
                             </Stack>
-                            <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.disabled', fontSize: '0.6rem', fontWeight: 600, fontStyle: 'italic' }}>
+                            <Typography variant="caption" sx={{ display: 'block', mt: 1, color: 'text.disabled', fontSize: '0.6875rem', fontWeight: 600, fontStyle: 'italic' }}>
                                 Data suggests a transition from a binary West/East split to a multipolar institutional environment where Japan (JICA) operates as a critical independent balance force in Southeast Asia.
                             </Typography>
                         </Box>

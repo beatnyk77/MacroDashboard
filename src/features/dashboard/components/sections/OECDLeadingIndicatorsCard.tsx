@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Typography, Paper, Tooltip, Stack, Chip } from '@mui/material';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ReferenceLine } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { useOECDLeadingIndicators } from '@/hooks/useOECDLeadingIndicators';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { TrendingUp, Info } from 'lucide-react';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const OECDLeadingIndicatorsCard: React.FC = () => {
     const { data: latestRegions, isLoading: regionsLoading } = useOECDLeadingIndicators();
@@ -38,7 +40,7 @@ export const OECDLeadingIndicatorsCard: React.FC = () => {
     const isLoading = regionsLoading || historyLoading;
 
     if (isLoading) {
-        return <Paper sx={{ p: 3, height: 320, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        return <Paper sx={{ p: 3, height: 320, bgcolor: WHITE_ALPHA.ghost, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Typography variant="body2" color="text.secondary">Loading Leading Indicators...</Typography>
         </Paper>;
     }
@@ -47,14 +49,14 @@ export const OECDLeadingIndicatorsCard: React.FC = () => {
         <Paper sx={{
             p: 3,
             height: '100%',
-            bgcolor: 'rgba(255,255,255,0.02)',
+            bgcolor: WHITE_ALPHA.ghost,
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: 2
         }}>
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 3 }}>
                 <Box>
-                    <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.disabled', letterSpacing: '0.1em' }}>
+                    <Typography variant="overline" sx={{ fontWeight: 700, color: 'text.disabled', letterSpacing: '0.1em' }}>
                         Forward-Looking Growth
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 700, mt: 0.5 }}>
@@ -67,14 +69,14 @@ export const OECDLeadingIndicatorsCard: React.FC = () => {
             </Stack>
 
             <Box sx={{ height: 200 }}>
-                <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height="fill">
                     <LineChart data={history as any[]}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                         <XAxis
+                            {...DEFAULT_XAXIS_PROPS}
                             dataKey="date"
                             axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+                            tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }}
                             tickFormatter={(str) => new Date(str).toLocaleDateString('en-US', { month: 'short' })}
                         />
                         <YAxis
@@ -82,16 +84,17 @@ export const OECDLeadingIndicatorsCard: React.FC = () => {
                             domain={['auto', 'auto']}
                         />
                         <RechartsTooltip
-                            contentStyle={{ backgroundColor: '#121212', border: '1px solid #333', borderRadius: '4px' }}
-                            itemStyle={{ fontSize: '11px' }}
+                            contentStyle={DEFAULT_TOOLTIP_STYLE}
+                            labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                            itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                         />
-                        <ReferenceLine y={100} stroke="rgba(255,255,255,0.2)" strokeDasharray="3 3" />
-                        <Line type="monotone" dataKey="US" stroke="#4dabf5" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="EA" stroke="#ff9800" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="CN" stroke="#f44336" strokeWidth={2} dot={false} />
-                        <Line type="monotone" dataKey="IN" stroke="#4caf50" strokeWidth={2} dot={false} />
+                        <ReferenceLine y={100} stroke={WHITE_ALPHA.soft} strokeDasharray="3 3" />
+                        <Line type="monotone" dataKey="US" stroke={CHART_COLORS.west} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="EA" stroke={CHART_COLORS.orange} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="CN" stroke={CHART_COLORS.stress} strokeWidth={2} dot={false} />
+                        <Line type="monotone" dataKey="IN" stroke={CHART_COLORS.expansion} strokeWidth={2} dot={false} />
                     </LineChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
             </Box>
 
             <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>
@@ -102,8 +105,8 @@ export const OECDLeadingIndicatorsCard: React.FC = () => {
                         size="small"
                         icon={r.trend === 'expansion' ? <TrendingUp size={12} /> : undefined}
                         sx={{
-                            bgcolor: r.trend === 'expansion' ? 'rgba(76, 175, 80, 0.1)' : r.trend === 'contraction' ? 'rgba(244, 67, 54, 0.1)' : 'rgba(255,255,255,0.05)',
-                            color: r.trend === 'expansion' ? '#4caf50' : r.trend === 'contraction' ? '#f44336' : 'text.secondary',
+                            bgcolor: r.trend === 'expansion' ? alpha(CHART_COLORS.expansion, 0.1) : r.trend === 'contraction' ? alpha(CHART_COLORS.stress, 0.1) : WHITE_ALPHA.faint,
+                            color: r.trend === 'expansion' ? CHART_COLORS.expansion : r.trend === 'contraction' ? CHART_COLORS.stress : 'text.secondary',
                             border: '1px solid currentColor',
                             borderColor: 'transparent',
                             fontWeight: 600,

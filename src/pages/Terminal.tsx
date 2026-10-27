@@ -31,6 +31,7 @@ import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
 import { ValueProgressionPath } from '@/components/engagement/ValueProgressionPath';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 import { ChinaLocaleHint } from '@/components/growth/ChinaLocaleHint';
+import { CountryCode } from '@/components/CountryCode';
 
 const M2GoldRatioExplorer = lazy(() =>
     import('@/components/engagement/M2GoldRatioExplorer').then((m) => ({ default: m.M2GoldRatioExplorer }))
@@ -246,7 +247,7 @@ export const Terminal: React.FC = () => {
                                             <p className="section-label mt-1">Monetary Base & Treasury General Account Telemetry</p>
                                         </div>
                                         <div className="flex items-center gap-4">
-                                            <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-700 dark:text-amber-400 hover:underline transition-colors">Methodology →</Link>
+                                            <Link to="/methods/net-liquidity-z-score" className="text-xs text-amber-400 hover:underline transition-colors">Methodology →</Link>
                                             <MetricFreshnessChip metricId={MID.FED_BALANCE_SHEET} sourceLabel="FRED / Treasury" />
                                         </div>
                                     </CardHeader>
@@ -261,7 +262,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 5: FED MONETIZATION MONITOR */}
-                <ModuleRow id="fed-monetization" label="FED MONETIZATION" href="/labs/us-macro-fiscal/" labelColor="text-rose-500/80">
+                <ModuleRow id="fed-monetization" label="FED MONETIZATION" href="/labs/us-macro-fiscal/" labelColor="text-rose-400">
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
                     <SectionErrorBoundary name="Fed Monetization Monitor">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -275,7 +276,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 6: TREASURY AUCTION DEMAND */}
-                <ModuleRow id="auction-demand" label="AUCTION DEMAND" href="/labs/us-macro-fiscal/" labelColor="text-rose-500/80" alternateBg>
+                <ModuleRow id="auction-demand" label="AUCTION DEMAND" href="/labs/us-macro-fiscal/" labelColor="text-rose-400" alternateBg>
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
                     <SectionErrorBoundary name="Auction Demand Gauge">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -286,7 +287,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 7: US DEBT MATURITY WALL */}
-                <ModuleRow label="US DEBT WALL" href="/labs/us-macro-fiscal/" labelColor="text-rose-500/80">
+                <ModuleRow label="US DEBT WALL" href="/labs/us-macro-fiscal/" labelColor="text-rose-400">
                     <LazyRender minHeight="250px" fallback={<SectionLoadingFallback minHeight={250} />}>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -300,7 +301,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 8: CORPORATE DEBT MATURITY WALL */}
-                <ModuleRow label="CORP DEBT WALL" href="/labs/us-macro-fiscal/" labelColor="text-rose-500/80" alternateBg>
+                <ModuleRow label="CORP DEBT WALL" href="/labs/us-macro-fiscal/" labelColor="text-rose-400" alternateBg>
                     <LazyRender minHeight="250px" fallback={<SectionLoadingFallback minHeight={250} />}>
                     <SectionErrorBoundary name="Corporate Debt Maturity Wall">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -311,7 +312,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 9: TREASURY YIELD SNAPSHOT */}
-                <ModuleRow id="treasury-yield" label="TREASURY YIELD" href="/labs/us-macro-fiscal/" labelColor="text-rose-500/80">
+                <ModuleRow id="treasury-yield" label="TREASURY YIELD" href="/labs/us-macro-fiscal/" labelColor="text-rose-400">
                     <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
                     <SectionErrorBoundary name="Treasury Snapshot">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -326,7 +327,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 10: ENERGY MARKETS */}
-                <ModuleRow id="energy-markets" label="ENERGY MARKETS" href="/labs/energy-commodities/" labelColor="text-orange-500/80" alternateBg>
+                <ModuleRow id="energy-markets" label="ENERGY MARKETS" href="/labs/energy-commodities/" labelColor="text-orange-400" alternateBg>
                     <LazyRender minHeight="400px" fallback={<SectionLoadingFallback minHeight={400} />}>
                     <SectionErrorBoundary name="Energy & Commodities">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -337,7 +338,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 10b: CFTC COT POSITIONING & SQUEEZE RADAR */}
-                <ModuleRow id="cot-positioning" label="COT POSITIONING" labelColor="text-cyan-700 dark:text-cyan-400">
+                <ModuleRow id="cot-positioning" label="COT POSITIONING" labelColor="text-cyan-400">
                     <LazyRender minHeight="350px" fallback={<SectionLoadingFallback minHeight={350} />}>
                     <SectionErrorBoundary name="COT Positioning Radar">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -353,7 +354,7 @@ export const Terminal: React.FC = () => {
                     href="/intel/india/"
                     badge={<GQSignalBadge href="/methods/india-credit-cycle-clock/" />}
 
-                    labelColor="text-amber-500/80"
+                    labelColor="text-amber-400"
                     alternateBg
                 >
                     <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
@@ -366,7 +367,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 14: CHINA MACRO PULSE */}
-                <ModuleRow id="china-pulse" label="CHINA PULSE" href="/intel/china/" labelColor="text-red-500/80" alternateBg>
+                <ModuleRow id="china-pulse" label="CHINA PULSE" href="/intel/china/" labelColor="text-red-400" alternateBg>
                     <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
                     <SectionErrorBoundary name="China Macro Pulse">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -381,7 +382,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 15: AFRICA MACRO */}
-                <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro/" labelColor="text-amber-500/80">
+                <ModuleRow label="AFRICA MACRO" href="/labs/africa-macro/" labelColor="text-amber-400">
                     <LazyRender minHeight="250px" fallback={<SectionLoadingFallback minHeight={250} />}>
                     <SectionErrorBoundary name="Africa Macro Snapshot">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -392,7 +393,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 16: SOVEREIGN RISK MATRIX */}
-                <ModuleRow id="sovereign-risk" label="SOVEREIGN RISK" href="/labs/sovereign-stress" labelColor="text-blue-500/80" alternateBg>
+                <ModuleRow id="sovereign-risk" label="SOVEREIGN RISK" href="/labs/sovereign-stress" labelColor="text-blue-400" alternateBg>
                     <LazyRender minHeight="400px" fallback={<SectionLoadingFallback minHeight={400} />}>
                     <SectionErrorBoundary name="Sovereign Risk Matrix">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -403,7 +404,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 16.5: FINANCIAL CONDITIONS */}
-                <ModuleRow id="financial-conditions" label="FINANCIAL CONDITIONS" href="/labs/financial-conditions" labelColor="text-orange-500/80">
+                <ModuleRow id="financial-conditions" label="FINANCIAL CONDITIONS" href="/labs/financial-conditions" labelColor="text-orange-400">
                     <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} />}>
                     <SectionErrorBoundary name="Financial Conditions Lab">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>
@@ -414,33 +415,33 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
 
                 {/* Row 17: REGIONAL HUBS */}
-                <ModuleRow label="REGIONAL HUBS" href="/labs" labelColor="text-blue-500/80">
+                <ModuleRow label="REGIONAL HUBS" href="/labs" labelColor="text-blue-400">
                     <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} />}>
                     <SectionErrorBoundary name="Regional Intelligence">
                         <Card variant="elevated" className="relative overflow-hidden">
                             <CardHeader>
-                                <CardTitle className="text-lg uppercase font-black">Regional Intelligence Hubs</CardTitle>
-                                <p className="text-[10px] text-muted-foreground/40 font-bold uppercase tracking-uppercase mt-1">Deep-dive macroeconomic telemetry & sovereign stress labs</p>
+                                <CardTitle className="text-sm md:text-base font-semibold tracking-tight text-foreground">Regional Intelligence Hubs</CardTitle>
+                                <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-wider mt-1">Deep-dive macroeconomic telemetry & sovereign stress labs</p>
                             </CardHeader>
                             <CardContent>
                                 <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                                     {[
-                                        { label: 'United States', flag: '🇺🇸', href: '/labs/us-macro-fiscal' },
-                                        { label: 'China Macro', flag: '🇨🇳', href: '/intel/china' },
-                                        { label: 'India Macro', flag: '🇮🇳', href: '/intel/india' },
-                                        { label: 'Africa Pulse', flag: '🌍', href: '/labs/africa-macro' },
-                                        { label: 'Sovereign Stress', flag: '🛡️', href: '/labs/sovereign-stress' },
+                                        { label: 'United States', code: 'US', href: '/labs/us-macro-fiscal' },
+                                        { label: 'China Macro', code: 'CN', href: '/intel/china' },
+                                        { label: 'India Macro', code: 'IN', href: '/intel/india' },
+                                        { label: 'Africa Pulse', code: 'AFR', href: '/labs/africa-macro' },
+                                        { label: 'Sovereign Stress', code: 'SOV', href: '/labs/sovereign-stress' },
                                     ].map(item => (
                                         <Link
                                             key={item.href}
                                             to={item.href}
                                             className="group p-4 rounded-lg bg-card border border-border hover:bg-muted/50 hover:border-primary/40 transition-all duration-200 shadow-sm"
                                         >
-                                            <div className="text-2xl mb-2">{item.flag}</div>
+                                            <div className="mb-2"><CountryCode code={item.code} size="md" /></div>
                                             <div className="font-bold text-sm text-foreground group-hover:text-primary transition-colors">
                                                 {item.label}
                                             </div>
-                                            <div className="text-xs text-muted-foreground/60 mt-1">
+                                            <div className="text-xs text-muted-foreground mt-1">
                                                 Explore Hub →
                                             </div>
                                         </Link>
@@ -453,7 +454,7 @@ export const Terminal: React.FC = () => {
                 </ModuleRow>
             </div>
             
-            <div className="max-w-7xl mx-auto px-4 sm:px-8 mb-10">
+            <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 mb-10">
                 <LazyRender minHeight="500px" fallback={<SectionLoadingFallback minHeight={500} />}>
                     <SectionErrorBoundary name="Infinite FAQ">
                         <Suspense fallback={<SectionLoadingFallback minHeight={200} />}>

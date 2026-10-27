@@ -43,13 +43,13 @@ const PipelineStatusCard = React.memo<PipelineStatusCardProps>(({ row, now }) =>
     const live = row.status_code === 200;
 
     return (
-        <div className="rounded-[14px] border border-white/[0.08] bg-white/[0.02] p-4">
+        <div className="rounded-lg border border-white/[0.08] bg-white/[0.02] p-4">
             <div className="mb-3 flex items-center justify-between gap-2.5">
                 <div>
-                    <div className="text-[14px] font-extrabold text-white">
+                    <div className="text-[14px] font-bold text-white">
                         {meta.name}
                     </div>
-                    <div className="mt-0.5 text-[10px] font-extrabold uppercase tracking-[0.08em] text-white/40">
+                    <div className="mt-0.5 text-[11px] font-semibold uppercase tracking-[0.08em] text-terminal-dim">
                         {meta.sub}
                     </div>
                 </div>
@@ -122,8 +122,8 @@ export const DataHealthPublic: React.FC = () => {
                 keywords={['Data provenance', 'Data freshness', 'Macro data pipelines', 'Source authenticity']}
             />
 
-            <div className="text-[10px] font-black uppercase tracking-[0.18em] text-blue-400/80">Live · Public</div>
-            <h1 className="mb-1.5 mt-3.5 text-[26px] font-extrabold text-white">Data Health &amp; Provenance</h1>
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">Live · Public</div>
+            <h1 className="mb-1.5 mt-3.5 text-[26px] font-bold text-white">Data Health &amp; Provenance</h1>
             <p className="m-0 max-w-[620px] text-[14px] leading-relaxed text-white/50">
                 {PIPELINE_MESH_COPY} Every metric traces to an official source with an authenticity score. This board is live.
             </p>
@@ -150,7 +150,7 @@ export const DataHealthPublic: React.FC = () => {
             </div>
 
             {total === 0 && (
-                <p className="mt-8 text-center text-[13px] italic text-white/30">Loading live pipeline telemetry…</p>
+                <p className="mt-8 text-center text-sm italic text-terminal-dim">Loading live pipeline telemetry…</p>
             )}
         </div>
     );
@@ -162,10 +162,10 @@ const Stat: React.FC<{ label: string; value: string; accent?: boolean; small?: b
     accent,
     small,
 }) => (
-    <div className="min-w-[120px] flex-1 rounded-[14px] border border-white/[0.08] px-[18px] py-[13px]">
-        <div className="mb-1.5 text-[9px] font-extrabold uppercase tracking-[0.12em] text-white/40">{label}</div>
+    <div className="min-w-[120px] flex-1 rounded-lg border border-white/[0.08] px-[18px] py-[13px]">
+        <div className="mb-1.5 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">{label}</div>
         <div
-            className={`font-mono font-extrabold ${small ? 'text-[16px]' : 'text-[22px]'} ${
+            className={`font-mono font-bold ${small ? 'text-[16px]' : 'text-xl'} ${
                 accent ? 'text-emerald-400' : 'text-white'
             }`}
         >

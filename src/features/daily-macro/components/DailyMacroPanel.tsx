@@ -12,15 +12,16 @@ import { supabase } from '@/lib/supabase';
 import { RefreshCw, Activity, AlertTriangle } from 'lucide-react';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { useStaleness } from '@/hooks/useStaleness';
+import { WHITE_ALPHA, alpha, CHART_COLORS } from '@/constants/chartDefaults';
 
 // ─── Skeleton ──────────────────────────────────────────────────────────────
 
 const PanelSkeleton = () => (
   <div
-    className="rounded-2xl p-6 animate-pulse"
+    className="rounded-xl p-6 animate-pulse"
     style={{
-      background: 'rgba(8,12,24,0.7)',
-      border: '1px solid rgba(255,255,255,0.06)',
+      background: alpha(CHART_COLORS.panel, 0.7),
+      border: `1px solid ${WHITE_ALPHA.faint}`,
       backdropFilter: 'blur(12px)',
     }}
   >
@@ -29,7 +30,7 @@ const PanelSkeleton = () => (
       <div className="h-4 w-24 rounded bg-white/10" />
     </div>
     <div className="flex flex-col md:flex-row gap-6">
-      <div className="w-full md:w-[220px] h-[220px] rounded-2xl bg-white/5" />
+      <div className="w-full md:w-[220px] h-[220px] rounded-xl bg-white/5" />
       <div className="flex-1 space-y-4">
         <div className="h-4 w-full rounded bg-white/10" />
         <div className="h-4 w-3/4 rounded bg-white/10" />
@@ -39,9 +40,9 @@ const PanelSkeleton = () => (
           <div className="h-2 w-full rounded bg-white/5" />
         </div>
       </div>
-      <div className="hidden md:block w-[220px] h-[220px] rounded-2xl bg-white/5" />
+      <div className="hidden md:block w-[220px] h-[220px] rounded-xl bg-white/5" />
     </div>
-    <div className="mt-8 h-32 rounded-2xl bg-white/5" />
+    <div className="mt-8 h-32 rounded-xl bg-white/5" />
   </div>
 );
 
@@ -79,15 +80,15 @@ const DailyMacroPanelInner: React.FC = () => {
   if (signalError) {
     return (
       <div
-        className="rounded-2xl p-8 flex flex-col items-center justify-center text-center border border-white/10"
+        className="rounded-xl p-8 flex flex-col items-center justify-center text-center border border-border"
         style={{
-          background: 'rgba(8,12,24,0.7)',
+          background: alpha(CHART_COLORS.panel, 0.7),
           backdropFilter: 'blur(12px)',
           minHeight: '260px'
         }}
       >
         <AlertTriangle className="text-red-500 mb-3" size={28} />
-        <h3 className="text-sm font-bold text-white uppercase tracking-widest mb-2">
+        <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">
           Daily Macro Signal Temporarily Unavailable
         </h3>
         <p className="text-xs text-white/60 max-w-md mb-6 leading-relaxed">
@@ -95,7 +96,7 @@ const DailyMacroPanelInner: React.FC = () => {
         </p>
         <button
           onClick={() => refetchSignal()}
-          className="text-[10px] font-black uppercase tracking-widest px-5 py-2.5 bg-white/5 border border-white/15 hover:bg-white/10 active:scale-95 rounded-lg transition-all"
+          className="text-[11px] font-semibold uppercase tracking-wider px-5 py-2.5 bg-white/5 border border-border hover:bg-white/10 active:scale-95 rounded-lg transition-all"
         >
           Retry Connection
         </button>
@@ -109,7 +110,7 @@ const DailyMacroPanelInner: React.FC = () => {
 
   return (
     <div
-      className="rounded-2xl overflow-hidden transition-all duration-300 bg-card border border-border shadow-sm dark:shadow-xl"
+      className="rounded-xl overflow-hidden transition-all duration-300 bg-card border border-border shadow-xl"
       style={{
         opacity: isRefreshing ? 0.7 : 1,
       }}
@@ -121,7 +122,7 @@ const DailyMacroPanelInner: React.FC = () => {
         <div className="flex items-center gap-3">
           <Activity size={12} className="text-primary" />
           <span
-            className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground"
+            className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
           >
             Daily Macro Signal
           </span>
@@ -134,7 +135,7 @@ const DailyMacroPanelInner: React.FC = () => {
           {/* Pipeline Status */}
           <div className="hidden sm:flex items-center gap-1.5 px-2 py-0.5 rounded bg-muted border border-border">
             <div className={`w-1 h-1 rounded-full ${signalHealth ? 'bg-emerald-500' : 'bg-muted-foreground/40'}`} />
-            <span className="text-[8px] font-bold text-muted-foreground uppercase tracking-tighter">
+            <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-tighter">
               Pipeline: {signalHealth ? 'Active' : 'Offline'}
             </span>
           </div>
@@ -143,11 +144,11 @@ const DailyMacroPanelInner: React.FC = () => {
         <div className="flex items-center gap-4">
           <div className="flex flex-col items-end">
             <div
-              className="text-[9px] font-mono leading-none mb-1 uppercase tracking-widest text-muted-foreground/60"
+              className="text-[11px] font-mono leading-none mb-1 uppercase tracking-wider text-muted-foreground"
             >
               Last Computed
             </div>
-            <div className="text-[10px] font-mono font-bold text-foreground">
+            <div className="text-[11px] font-mono font-bold text-foreground">
               {new Date(signal.computed_at).toLocaleTimeString(undefined, { 
                 hour: '2-digit', minute: '2-digit'
               })}
@@ -168,7 +169,7 @@ const DailyMacroPanelInner: React.FC = () => {
             }`}
           >
             <RefreshCw size={12} className={isRefreshing ? 'animate-spin' : ''} />
-            <span className="text-[10px] font-black uppercase tracking-wider">
+            <span className="text-[11px] font-semibold uppercase tracking-wider">
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </span>
           </button>
@@ -180,13 +181,13 @@ const DailyMacroPanelInner: React.FC = () => {
         <div className="px-5 py-3 bg-amber-500/10 border-b border-amber-500/10 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3">
             <AlertTriangle size={14} className="text-amber-500" />
-            <span className="text-[11px] font-bold text-amber-500/80 uppercase tracking-tight">
+            <span className="text-[11px] font-semibold text-amber-500/80 uppercase tracking-tight">
               Intelligence may be delayed. Showing last known good signal.
             </span>
           </div>
           <button 
             onClick={handleRefresh}
-            className="text-[9px] font-black uppercase tracking-widest px-2 py-1 bg-amber-500 text-black rounded hover:bg-amber-400 transition-colors"
+            className="text-[11px] font-semibold uppercase tracking-wider px-2 py-1 bg-amber-500 text-black rounded hover:bg-amber-400 transition-colors"
           >
             Update Now
           </button>

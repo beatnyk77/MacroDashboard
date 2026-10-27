@@ -2,7 +2,6 @@ import React from 'react';
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { Scale, TrendingUp } from 'lucide-react';
 import {
-    ResponsiveContainer,
     BarChart,
     Bar,
     XAxis,
@@ -11,6 +10,8 @@ import {
     CartesianGrid,
     Cell
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface DebtMetric {
     region: 'West (G7)' | 'East (BRICS+)';
@@ -27,8 +28,8 @@ const DEBT_DATA: DebtMetric[] = [
 
 export const EastWestDebtInfluence: React.FC = () => {
     return (
-        <Card className="w-full bg-black/40 border-white/5 backdrop-blur-xl rounded-2xl overflow-hidden shadow-2xl">
-            <CardHeader className="flex flex-row items-center justify-between p-6 border-b border-white/5">
+        <Card className="w-full bg-background/40 border-border backdrop-blur-xl rounded-xl overflow-hidden shadow-2xl">
+            <CardHeader className="flex flex-row items-center justify-between p-6 border-b border-border">
                 <div className="flex items-center gap-3">
                     <div className="p-2 bg-indigo-500/10 rounded-lg">
                         <Scale className="w-5 h-5 text-indigo-400" />
@@ -45,59 +46,58 @@ export const EastWestDebtInfluence: React.FC = () => {
 
                     {/* Visual Comparison */}
                     <div className="space-y-6">
-                        <h4 className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 mb-4">Leverage vs Yield</h4>
-                        <div className="h-[250px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-4">Leverage vs Yield</h4>
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                                 <BarChart data={DEBT_DATA} layout="vertical" margin={{ top: 0, right: 30, left: 20, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
                                     <XAxis type="number" hide />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
                                         type="category"
                                         dataKey="region"
-                                        tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700 }}
                                         width={100}
                                         axisLine={false}
-                                        tickLine={false}
                                     />
                                     <Tooltip
-                                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
-                                        contentStyle={{ backgroundColor: '#0f172a', border: '1px solid rgba(255,255,255,0.1)' }}
+                                        contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                        labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                        itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
+                                        cursor={{ fill: WHITE_ALPHA.faint }}
                                     />
                                     <Bar dataKey="debtToGdp" name="Debt/GDP %" radius={[0, 4, 4, 0]} barSize={20}>
-                                        <Cell fill="#f43f5e" /> {/* West (High Debt) */}
-                                        <Cell fill="#10b981" /> {/* East (Lower Debt) */}
+                                        <Cell fill={CHART_COLORS.east} /> {/* West (High Debt) */}
+                                        <Cell fill={CHART_COLORS.expansion} /> {/* East (Lower Debt) */}
                                     </Bar>
-                                    <Bar dataKey="yield10Y" name="10Y Yield %" radius={[0, 4, 4, 0]} barSize={20} fill="#3b82f6" />
+                                    <Bar dataKey="yield10Y" name="10Y Yield %" radius={[0, 4, 4, 0]} barSize={20} fill={CHART_COLORS.west} />
                                 </BarChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                         <div className="flex justify-center gap-6 mt-2">
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-sm bg-rose-500" />
-                                <span className="text-xs uppercase font-bold text-muted-foreground">Highest Leverage</span>
+                                <span className="text-xs uppercase font-semibold text-muted-foreground">Highest Leverage</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-sm bg-emerald-500" />
-                                <span className="text-xs uppercase font-bold text-muted-foreground">Lowest Leverage</span>
+                                <span className="text-xs uppercase font-semibold text-muted-foreground">Lowest Leverage</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <div className="w-3 h-3 rounded-sm bg-blue-500" />
-                                <span className="text-xs uppercase font-bold text-muted-foreground">Nominal Yield</span>
+                                <span className="text-xs uppercase font-semibold text-muted-foreground">Nominal Yield</span>
                             </div>
                         </div>
                     </div>
 
                     {/* Metric Deep Dive Table */}
                     <div className="flex flex-col justify-center">
-                        <div className="grid grid-cols-3 gap-y-6 pb-6 border-b border-white/5">
-                            <div className="col-span-1 text-xs font-black uppercase text-muted-foreground tracking-uppercase self-end pb-2">Metric</div>
-                            <div className="col-span-1 text-center text-xs font-black uppercase text-rose-400 tracking-uppercase pb-2">West (G7)</div>
-                            <div className="col-span-1 text-center text-xs font-black uppercase text-emerald-400 tracking-uppercase pb-2">East (BRICS+)</div>
+                        <div className="grid grid-cols-3 gap-y-6 pb-6 border-b border-border">
+                            <div className="col-span-1 text-xs font-semibold uppercase text-muted-foreground tracking-wider self-end pb-2">Metric</div>
+                            <div className="col-span-1 text-center text-xs font-semibold uppercase text-rose-400 tracking-wider pb-2">West (G7)</div>
+                            <div className="col-span-1 text-center text-xs font-semibold uppercase text-emerald-400 tracking-wider pb-2">East (BRICS+)</div>
 
                             {/* Row 1: Debt to GDP */}
                             <div className="col-span-1 font-bold text-sm text-foreground">Debt / GDP</div>
-                            <div className="col-span-1 text-center font-mono text-xl font-black text-rose-400">128.5%</div>
-                            <div className="col-span-1 text-center font-mono text-xl font-black text-emerald-400">64.2%</div>
+                            <div className="col-span-1 text-center font-mono text-xl font-bold text-rose-400">128.5%</div>
+                            <div className="col-span-1 text-center font-mono text-xl font-bold text-emerald-400">64.2%</div>
 
                             {/* Row 2: Real Yield */}
                             <div className="col-span-1 font-bold text-sm text-foreground">Real Yield</div>
@@ -114,7 +114,7 @@ export const EastWestDebtInfluence: React.FC = () => {
                             <div className="flex items-start gap-3">
                                 <TrendingUp className="w-4 h-4 text-indigo-400 mt-1" />
                                 <div>
-                                    <span className="text-xs font-black uppercase tracking-uppercase text-indigo-400 mb-1 block">
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-indigo-400 mb-1 block">
                                         Strategic Implication
                                     </span>
                                     <p className="text-xs text-indigo-200/80 leading-relaxed font-medium">

@@ -5,7 +5,6 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-  ChevronRight,
   ArrowLeft,
   Globe2,
   Sliders
@@ -15,6 +14,8 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { MetricCard } from '@/components/MetricCard';
+import { LabPageHeader } from '@/components/LabPageHeader';
+import { TrailLink } from '@/components/TrailLink';
 
 export const FxCarryMatrixLab: React.FC = () => {
   const { data: unwindMetric } = useLatestMetric(MID.JPY_CARRY_UNWIND_RISK_SCORE);
@@ -90,45 +91,28 @@ export const FxCarryMatrixLab: React.FC = () => {
         ]}
       />
 
-      <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-        {/* Breadcrumbs */}
-        <div className="mb-8">
-          <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-            <a href="/" className="hover:text-white transition-colors">Home</a>
-            <ChevronRight size={10} />
-            <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
-            <ChevronRight size={10} />
-            <span className="text-slate-400">FX Carry Matrix</span>
-          </nav>
-        </div>
-
-        {/* Hero Header */}
-        <div className="mb-12">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-            <Globe2 size={12} /> Global FX & Swap Telemetry
-          </div>
-          <div className="flex items-center gap-4 mb-4">
-            <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-              FX Carry Trade & <span className="text-emerald-400">Swap Basis Matrix</span>
-            </h1>
-            <FreshnessChip status={dataFreshness.state} lastUpdated={unwindMetric?.lastUpdated} />
-          </div>
-          <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-            Monitoring G7 real policy rate differentials, 3-Month cross-currency basis swaps, and Yen carry trade unwind risk telemetry.
-          </p>
-        </div>
+      <div className="page-shell">
+        <LabPageHeader
+            trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+            current="FX Carry Matrix"
+            badge="Global FX & Swap Telemetry"
+            badgeIcon={<Globe2 size={12} />}
+            title={<>FX Carry Trade & <span className="text-blue-400">Swap Basis Matrix</span></>}
+            status={<FreshnessChip status={dataFreshness.state} lastUpdated={unwindMetric?.lastUpdated} />}
+            thesis="Monitoring G7 real policy rate differentials, 3-Month cross-currency basis swaps, and Yen carry trade unwind risk telemetry."
+        />
 
         {/* Primary Metric Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
           {/* JPY Unwind Risk Score Hero Card */}
-          <div className="p-6 bg-slate-900/60 border border-white/10 rounded-2xl backdrop-blur-xl relative overflow-hidden">
+          <div className="p-6 bg-card/60 border border-border rounded-xl backdrop-blur-xl relative overflow-hidden">
             <div className="flex justify-between items-start mb-4">
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">JPY Carry Unwind Risk</span>
-              <span className={`px-2 py-0.5 text-[9px] font-black rounded-full border ${badge.bg}`}>
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">JPY Carry Unwind Risk</span>
+              <span className={`px-2 py-0.5 text-[11px] font-bold rounded-full border ${badge.bg}`}>
                 {badge.label}
               </span>
             </div>
-            <div className="text-4xl font-black text-white tracking-tight mb-2">
+            <div className="text-4xl font-bold text-white tracking-tight mb-2">
               {unwindRiskScore !== null ? Math.round(unwindRiskScore) : '—'}{unwindRiskScore !== null && <span className="text-base text-muted-foreground font-normal"> / 100</span>}
             </div>
             <div className="w-full bg-white/5 h-2 rounded-full overflow-hidden mb-3">
@@ -169,16 +153,16 @@ export const FxCarryMatrixLab: React.FC = () => {
         </div>
 
         {/* G7 Real Policy Rate Matrix Table */}
-        <div className="mb-16 p-8 bg-white/[0.02] border border-white/10 rounded-3xl backdrop-blur-xl">
+        <div className="mb-16 p-8 bg-white/[0.02] border border-border rounded-xl backdrop-blur-xl">
           <div className="flex items-center justify-between mb-8">
             <div className="flex items-center gap-3">
               <Sliders className="text-emerald-400" size={24} />
               <div>
-                <h2 className="text-xl font-black text-white uppercase tracking-heading">G7 Real Policy Rate Matrix</h2>
+                <h2 className="text-xl font-bold text-white uppercase tracking-heading">G7 Real Policy Rate Matrix</h2>
                 <p className="text-xs text-muted-foreground font-medium">Policy rate minus 12-Month trailing CPI inflation across major central bank regimes</p>
               </div>
             </div>
-            <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+            <span className="text-[11px] font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
               G7 MACRO MATRIX
             </span>
           </div>
@@ -186,7 +170,7 @@ export const FxCarryMatrixLab: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm font-medium">
               <thead>
-                <tr className="border-b border-white/10 text-[10px] font-black text-muted-foreground uppercase tracking-widest">
+                <tr className="border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                   <th className="pb-4">Economy</th>
                   <th className="pb-4">Nominal Policy Rate</th>
                   <th className="pb-4">CPI YoY</th>
@@ -194,11 +178,11 @@ export const FxCarryMatrixLab: React.FC = () => {
                   <th className="pb-4">Policy Stance</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/5 text-slate-200">
+              <tbody className="divide-y divide-border text-slate-200">
                 {g7MatrixData.map((row, idx) => (
                   <tr key={idx} className="hover:bg-white/[0.02] transition-colors">
                     <td className="py-4 font-bold text-white flex items-center gap-2">
-                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80 flex items-center justify-center text-[8px] font-black text-black">
+                      <span className="w-2.5 h-2.5 rounded-full bg-emerald-400/80 flex items-center justify-center text-[11px] font-bold text-black">
                         {row.code}
                       </span>
                       {row.country}
@@ -217,8 +201,8 @@ export const FxCarryMatrixLab: React.FC = () => {
         </div>
 
         {/* Structural Analysis Text Block */}
-        <article className="p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Methodology Analysis">
-          <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Methodology: Cross-Currency Swap Basis & Yen Carry Trade Telemetry</h2>
+        <article className="p-12 bg-white/[0.02] border border-border rounded-xl" aria-label="Methodology Analysis">
+          <h2 className="text-xl font-bold text-white uppercase tracking-wider mb-6">Methodology: Cross-Currency Swap Basis & Yen Carry Trade Telemetry</h2>
           <div className="space-y-4 text-sm text-muted-foreground leading-relaxed font-medium">
             <p>
               The <strong>FX Carry Trade & Swap Basis Matrix Desk</strong> monitors structural pricing imbalances in international FX swap markets. In a frictionless market, covered interest parity (CIP) holds; however, structural dollar demand creates a persistent negative cross-currency basis spread.
@@ -230,15 +214,15 @@ export const FxCarryMatrixLab: React.FC = () => {
         </article>
 
         {/* Navigation Footer */}
-        <div className="mt-24 pt-12 border-t border-white/5 text-center">
+        <div className="mt-24 pt-12 border-t border-border text-center">
           <Button
             variant="ghost"
-            className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+            className="text-terminal-dim font-semibold uppercase tracking-wider hover:text-white transition-colors"
             asChild
           >
-            <a href="/macro-observatory/" className="flex items-center gap-2">
+            <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
               <ArrowLeft size={18} /> Back to Observatory
-            </a>
+            </TrailLink>
           </Button>
         </div>
 

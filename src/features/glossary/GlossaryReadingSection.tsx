@@ -25,7 +25,7 @@ export const GlossaryReadingSection: React.FC<GlossaryReadingSectionProps> = ({ 
             <Typography
                 component="h2"
                 variant="h6"
-                sx={{ fontWeight: 800, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
+                sx={{ fontWeight: 700, mb: 3, display: 'flex', alignItems: 'center', gap: 1.5 }}
             >
                 <BookOpen size={20} /> Related Metrics &amp; Reading
             </Typography>
@@ -39,7 +39,7 @@ export const GlossaryReadingSection: React.FC<GlossaryReadingSectionProps> = ({ 
                             className="group flex items-center gap-2 rounded-lg border border-white/[0.08] bg-white/[0.02] px-3 py-2 no-underline transition-colors hover:border-white/15 hover:bg-white/[0.05]"
                         >
                             <span
-                                className={`rounded border px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest ${badge.color}`}
+                                className={`rounded border px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${badge.color}`}
                             >
                                 {badge.label}
                             </span>

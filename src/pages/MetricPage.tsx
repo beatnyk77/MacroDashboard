@@ -2,7 +2,8 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { useQuery } from '@tanstack/react-query';
-import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, Tooltip, CartesianGrid } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { ChevronRight, Database, BookOpen, Activity, AlertTriangle } from 'lucide-react';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
@@ -26,6 +27,7 @@ import { metricPrimaryMeta, metricSnapshotMeta } from '@/lib/seoTemplates';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
 import { getDossier } from '@/features/dossier/dossierRegistry';
 import { DossierPage } from '@/features/dossier/components/DossierPage';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 /**
  * /metrics/:id — programmatic SEO pages for proprietary metrics (roadmap F5).
@@ -191,7 +193,7 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
 
     if (isLoading) {
         return (
-            <div data-prerender-await={metricId} className="mx-auto flex min-h-[520px] w-full max-w-4xl items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
+            <div data-prerender-await={metricId} className="mx-auto flex min-h-[520px] w-full max-w-4xl items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">
                 <Activity size={14} className="animate-pulse" /> Loading metric
             </div>
         );
@@ -202,7 +204,7 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
             <div data-prerender-await={metricId} data-prerender-ready="true" className="mx-auto w-full max-w-3xl px-4 py-20 text-center">
                 <SEOManager title="Metric Not Found" description={`No live metric found for ${metricId}.`} robots="noindex, follow" />
                 <AlertTriangle className="mx-auto mb-4 text-amber-300" size={28} />
-                <h1 className="text-2xl font-black uppercase tracking-tight text-white">Metric unavailable</h1>
+                <h1 className="text-2xl font-bold uppercase tracking-tight text-white">Metric unavailable</h1>
                 <p className="mt-3 text-sm text-muted-foreground">No live `vw_latest_metrics` row exists for `{metricId}`.</p>
                 <Link to="/metrics/" className="mt-6 inline-flex text-sm font-bold text-blue-300 hover:underline">Open metrics explorer</Link>
             </div>
@@ -226,18 +228,18 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
                     creator: { '@type': 'Organization', name: 'GraphiQuestor', url: 'https://graphiquestor.com' },
                 }}
             />
-            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-white/30">
+            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                 <Link to="/metrics/" className="hover:text-blue-400 transition-colors">Metrics</Link>
                 <ChevronRight size={12} />
                 <span className="text-white/60">{metricId}</span>
             </nav>
 
-            <header className="mb-8 border-b border-white/10 pb-6">
-                <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{latest.category ?? 'Live Metric'}</div>
-                <h1 className="mt-3 text-3xl font-black tracking-tight text-white">{title}</h1>
+            <header className="mb-8 border-b border-border pb-6">
+                <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">{latest.category ?? 'Live Metric'}</div>
+                <h1 className="mt-3 text-3xl font-bold tracking-tight text-white">{title}</h1>
                 <div className="mt-5 flex flex-wrap items-center gap-3">
-                    <span className="font-mono text-2xl font-black tabular-nums text-white">{formatMetricValue(latest.value, latest.unit_label)}</span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-widest text-white/50">
+                    <span className="font-mono text-2xl font-bold tabular-nums text-white">{formatMetricValue(latest.value, latest.unit_label)}</span>
+                    <span className="rounded-full border border-border bg-white/[0.04] px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider text-white/50">
                         Observation {latest.as_of_date ?? 'unavailable'}
                     </span>
                     <FreshnessChip
@@ -261,30 +263,29 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
             {series.length > 1 && (
                 <section className="mt-8 rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
                     <div className="mb-3 flex items-center justify-between">
-                        <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Time Series</h2>
+                        <h2 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Time Series</h2>
                         <ExportCSVButton data={series} filename={`graphiquestor-${metricId}`} />
                     </div>
-                    <div className="h-72">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <LineChart data={series} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                                <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} minTickGap={48} />
-                                <YAxis tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} width={64} domain={['auto', 'auto']} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} minTickGap={48} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} width={64} domain={['auto', 'auto']} />
                                 <Tooltip
-                                    contentStyle={{ background: '#0b1220', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                                    labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 />
-                                <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                                <Line type="monotone" dataKey="value" stroke={CHART_COLORS.west} strokeWidth={2} dot={false} />
                             </LineChart>
-                        </ResponsiveContainer>
-                    </div>
+                    </MacroChartContainer>
                 </section>
             )}
 
-            <section className="mt-8 space-y-3 border-t border-white/10 pt-6 text-[12px]">
-                <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Data provenance</h2>
+            <section className="mt-8 space-y-3 border-t border-border pt-6 text-[12px]">
+                <h2 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Data provenance</h2>
                 <p className="flex items-start gap-1.5 leading-relaxed text-white/50">
-                    <Database size={13} className="mt-0.5 flex-shrink-0 text-white/40" />
+                    <Database size={13} className="mt-0.5 flex-shrink-0 text-terminal-dim" />
                     <span>
                         Latest observation from `vw_latest_metrics`; history from `metric_observations`. Freshness above is based on the observation date and native cadence. Pipeline refresh is shown separately to avoid confusing a rerun with a new observation.
                     </span>
@@ -299,8 +300,8 @@ const GenericMetricPage: React.FC<{ metricId: string }> = ({ metricId }) => {
 };
 
 const Fact: React.FC<{ label: string; value: string; mono?: boolean }> = ({ label, value, mono }) => (
-    <div className="rounded-xl border border-white/10 bg-white/[0.03] p-4">
-        <div className="text-[9px] font-black uppercase tracking-widest text-white/35">{label}</div>
+    <div className="rounded-xl border border-border bg-white/[0.03] p-4">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">{label}</div>
         <div className={`mt-2 break-words text-sm font-bold text-white/80 ${mono ? 'font-mono' : ''}`}>{value}</div>
     </div>
 );
@@ -427,7 +428,7 @@ const CatalogMetricPage: React.FC = () => {
             />
 
             {/* Breadcrumb */}
-            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-bold uppercase tracking-widest text-white/30">
+            <nav className="mb-6 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                 <Link to="/methodology" className="hover:text-blue-400 transition-colors">Methodology</Link>
                 <ChevronRight size={12} />
                 <span className="text-white/60">{entry.name}</span>
@@ -446,9 +447,9 @@ const CatalogMetricPage: React.FC = () => {
                 </div>
 
                 {/* Header */}
-                <header className="space-y-3 border-b border-white/10 pb-6">
-                    <div className="text-[10px] font-black uppercase tracking-[0.25em] text-blue-400/80">{entry.category}</div>
-                    <h1 className="text-3xl font-black tracking-tight text-white">
+                <header className="space-y-3 border-b border-border pb-6">
+                    <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">{entry.category}</div>
+                    <h1 className="text-3xl font-bold tracking-tight text-white">
                         {snapshotId ? `Snapshot: ${entry.name}` : `Live terminal: ${entry.name}`}
                     </h1>
                     
@@ -458,14 +459,14 @@ const CatalogMetricPage: React.FC = () => {
 
                     {(latest || liveMetric || (snapshot && snapshotId)) && (
                         <div className="flex flex-wrap items-center gap-3 text-[12px] font-bold text-white/50">
-                            <span className="text-white text-lg font-black">
+                            <span className="text-white text-lg font-bold">
                                 {(() => {
                                     const v = snapshotId && snapshot ? snapshot.value : (liveMetric?.value ?? latest?.value);
                                     if (v == null) return '—';
                                     return Math.abs(v) >= 100 ? v.toFixed(0) : v.toFixed(2);
                                 })()}
                             </span>
-                            <span className="rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 uppercase tracking-widest text-[10px]">
+                            <span className="rounded-full border border-border bg-white/[0.04] px-2.5 py-0.5 uppercase tracking-wider text-[11px]">
                                 Last observation {snapshotId && snapshot ? snapshot.observed_at?.split('T')[0] : (liveMetric?.lastUpdated ?? latest?.date)}
                             </span>
                             {snapshotId && snapshot ? (
@@ -486,37 +487,36 @@ const CatalogMetricPage: React.FC = () => {
 
                 {/* Chart */}
                 {series && series.length > 1 && (
-                    <section className="rounded-2xl border border-white/[0.06] bg-white/[0.02] p-5">
+                    <section className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
                         <div className="mb-3 flex items-center justify-between">
-                            <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Time Series</h2>
+                            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Time Series</h2>
                             <div onClick={() => trackAuthorityDownload(entry.id, 'csv', snapshotId)}>
                                 <ExportCSVButton data={series} filename={`graphiquestor-${entry.id}`} />
                             </div>
                         </div>
-                        <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                                 <LineChart data={series} margin={{ top: 4, right: 8, bottom: 0, left: 0 }}>
-                                    <CartesianGrid stroke="rgba(255,255,255,0.05)" vertical={false} />
-                                    <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} minTickGap={48} />
-                                    <YAxis tick={{ fill: 'rgba(255,255,255,0.35)', fontSize: 10 }} width={56} domain={['auto', 'auto']} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
+                                    <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} minTickGap={48} />
+                                    <YAxis {...DEFAULT_YAXIS_PROPS} tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} width={56} domain={['auto', 'auto']} />
                                     <Tooltip
-                                        contentStyle={{ background: '#0b1220', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 8, fontSize: 12 }}
-                                        labelStyle={{ color: 'rgba(255,255,255,0.6)' }}
+                                        contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                        labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                        itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                     />
-                                    <Line type="monotone" dataKey="value" stroke="#3b82f6" strokeWidth={2} dot={false} />
+                                    <Line type="monotone" dataKey="value" stroke={CHART_COLORS.west} strokeWidth={2} dot={false} />
                                 </LineChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </section>
                 )}
 
                 {/* Formula */}
                 <section>
-                    <h2 className="mb-3 text-[11px] font-black uppercase tracking-widest text-white/40">Formula</h2>
-                    <pre className="overflow-x-auto rounded-xl border border-white/[0.06] bg-black/40 p-4 font-mono text-[13px] text-emerald-400 whitespace-pre-wrap">{entry.formula}</pre>
+                    <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Formula</h2>
+                    <pre className="overflow-x-auto rounded-xl border border-white/[0.06] bg-background/40 p-4 font-mono text-sm text-emerald-400 whitespace-pre-wrap">{entry.formula}</pre>
                     <ul className="mt-4 space-y-2">
                         {entry.components.map((c, i) => (
-                            <li key={i} className="flex gap-2 text-[13px] leading-relaxed text-white/60">
+                            <li key={i} className="flex gap-2 text-sm leading-relaxed text-white/60">
                                 <span className="mt-1.5 h-1 w-1 flex-shrink-0 rounded-full bg-blue-400" />
                                 {c}
                             </li>
@@ -526,23 +526,23 @@ const CatalogMetricPage: React.FC = () => {
 
                 {/* Intuition */}
                 <section>
-                    <h2 className="mb-3 text-[11px] font-black uppercase tracking-widest text-white/40">Why It Matters</h2>
+                    <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Why It Matters</h2>
                     <p className="text-[14px] leading-relaxed text-white/70">{entry.intuition}</p>
                 </section>
 
                 {/* Institutional use */}
                 <section>
-                    <h2 className="mb-3 text-[11px] font-black uppercase tracking-widest text-white/40">Institutional Use</h2>
+                    <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Institutional Use</h2>
                     <p className="text-[14px] leading-relaxed text-white/70">{entry.institutionalUse}</p>
                 </section>
 
                 {/* Interpretation bands */}
                 <section>
-                    <h2 className="mb-3 text-[11px] font-black uppercase tracking-widest text-white/40">How to Read It</h2>
+                    <h2 className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">How to Read It</h2>
                     <div className="overflow-hidden rounded-xl border border-white/[0.06]">
                         {entry.interpretation.map((band, i) => (
-                            <div key={i} className={`flex items-center justify-between gap-4 px-4 py-3 text-[13px] ${i > 0 ? 'border-t border-white/[0.05]' : ''}`}>
-                                <span className={`font-black uppercase tracking-wider text-[11px] ${band.color}`}>{band.label}</span>
+                            <div key={i} className={`flex items-center justify-between gap-4 px-4 py-3 text-sm ${i > 0 ? 'border-t border-white/[0.05]' : ''}`}>
+                                <span className={`font-semibold uppercase tracking-wider text-[11px] ${band.color}`}>{band.label}</span>
                                 <span className="font-mono text-white/50">{band.condition}</span>
                             </div>
                         ))}
@@ -557,10 +557,10 @@ const CatalogMetricPage: React.FC = () => {
                 )}
 
                 {/* Sources + EEAT */}
-                <section className="space-y-3 border-t border-white/10 pt-6 text-[12px]">
-                    <h2 className="text-[11px] font-black uppercase tracking-widest text-white/40">Data provenance</h2>
+                <section className="space-y-3 border-t border-border pt-6 text-[12px]">
+                    <h2 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Data provenance</h2>
                     <p className="flex items-start gap-1.5 leading-relaxed text-white/50">
-                        <Database size={13} className="mt-0.5 flex-shrink-0 text-white/40" />
+                        <Database size={13} className="mt-0.5 flex-shrink-0 text-terminal-dim" />
                         <span>
                             Sources: {entry.sources.join(' · ')}. Computed and published by Kartikay Sharma, CA, for FounderHQ LLP.
                             Values are observational composites — not forecasts. See{' '}

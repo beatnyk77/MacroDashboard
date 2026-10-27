@@ -54,7 +54,7 @@ export const IntelligenceSidebar: React.FC = () => {
             <button
                 onClick={() => setIsCollapsed(false)}
                 aria-label="Expand intelligence sidebar"
-                className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-white/12 p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
+                className="fixed right-0 top-1/2 -translate-y-1/2 bg-background border border-r-0 border-border p-2 rounded-l-xl hover:bg-white/5 transition-all z-[1100] shadow-2xl"
             >
                 <div className="relative">
                     <ChevronLeft size={20} className="text-muted-foreground" aria-hidden="true" />
@@ -69,16 +69,16 @@ export const IntelligenceSidebar: React.FC = () => {
             className="hidden xl:block sticky top-16 h-[calc(100vh-4rem)] w-[300px] overflow-y-auto overscroll-contain bg-background"
             aria-label="Intelligence News Sidebar"
         >
-            <div className="p-4 border-b border-white/12 flex items-center justify-between bg-white/5">
+            <div className="p-4 border-b border-border flex items-center justify-between bg-white/5">
                 <div className="flex flex-col gap-0.5">
                     <div className="flex items-center gap-2">
                         <Newspaper size={18} className="text-blue-400" />
-                        <span className="text-xs font-black tracking-uppercase uppercase text-primary">Intelligence</span>
+                        <span className="text-xs font-semibold tracking-wider uppercase text-primary">Intelligence</span>
                     </div>
                     {lastUpdatedDate && (
                         <div className="flex items-center gap-1.5 mt-1">
                             <div className={`w-1.5 h-1.5 rounded-full ${isStale ? 'bg-rose-500 animate-pulse' : 'bg-emerald-500'}`} />
-                            <span className={`text-xs font-bold uppercase tracking-heading ${isStale ? 'text-rose-400' : 'text-muted-foreground/60'}`}>
+                            <span className={`text-xs font-semibold uppercase tracking-heading ${isStale ? 'text-rose-400' : 'text-muted-foreground'}`}>
                                 {isStale ? `STALE: ${diffMin}m AGO` : `LIVE: ${diffMin}m AGO`}
                             </span>
                         </div>
@@ -111,12 +111,12 @@ export const IntelligenceSidebar: React.FC = () => {
                                 title={`Read headline: ${item.title}`}
                                 className="block group"
                             >
-                                <div className="p-4 rounded-xl border border-white/5 bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/12 transition-all duration-300">
+                                <div className="p-4 rounded-xl border border-border bg-white/[0.02] hover:bg-white/[0.05] hover:border-white/12 transition-all duration-300">
                                     <div className="flex items-center gap-2 mb-2">
-                                        <span className="text-xs font-bold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-heading">
+                                        <span className="text-xs font-semibold px-1.5 py-0.5 rounded bg-blue-500/20 text-blue-400 uppercase tracking-heading">
                                             {item.source}
                                         </span>
-                                        <span className="text-xs text-muted-foreground/50 flex items-center gap-1">
+                                        <span className="text-xs text-terminal-dim flex items-center gap-1">
                                             <Clock size={10} />
                                             {new Date(item.published_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                                         </span>
@@ -127,10 +127,10 @@ export const IntelligenceSidebar: React.FC = () => {
                                     <div className="flex items-center justify-between">
                                         <div className="flex gap-1 overflow-hidden">
                                             {item.keywords?.slice(0, 2).map((k: string) => (
-                                                <span key={k} className="text-xs text-muted-foreground/60 truncate">#{k}</span>
+                                                <span key={k} className="text-xs text-muted-foreground truncate">#{k}</span>
                                             ))}
                                         </div>
-                                        <ExternalLink size={10} className="text-muted-foreground/30 group-hover:text-primary transition-colors shrink-0" />
+                                        <ExternalLink size={10} className="text-terminal-dim group-hover:text-primary transition-colors shrink-0" />
                                     </div>
                                 </div>
                             </a>
@@ -139,10 +139,10 @@ export const IntelligenceSidebar: React.FC = () => {
                 </div>
             </div>
 
-            <div className="p-4 border-t border-white/12 bg-white/5">
+            <div className="p-4 border-t border-border bg-white/5">
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">
                     <TrendingUp size={12} className="text-emerald-500" />
-                    <span className="font-bold uppercase tracking-uppercase">Market Pulse: Active</span>
+                    <span className="font-semibold uppercase tracking-wider">Market Pulse: Active</span>
                 </div>
             </div>
         </aside>

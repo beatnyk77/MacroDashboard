@@ -24,14 +24,14 @@ export const CountryDeepDiveGrid: React.FC = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.05 }}
-                    className="group relative p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] hover:border-white/10 transition-all"
+                    className="group relative p-6 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] hover:border-white/10 transition-all"
                 >
                     <div className="flex justify-between items-start mb-6">
-                        <div className="w-10 h-10 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white/40">
+                        <div className="w-10 h-10 rounded-full bg-white/5 border border-border flex items-center justify-center text-[11px] font-bold text-terminal-dim">
                             {c.iso}
                         </div>
                         <div className={cn(
-                            "px-2 py-0.5 rounded text-[8px] font-black uppercase tracking-widest",
+                            "px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider",
                             c.stress_score > 80 ? "bg-rose-500/10 text-rose-500 border border-rose-500/20" :
                             c.stress_score > 60 ? "bg-amber-500/10 text-amber-500 border border-amber-500/20" :
                             "bg-emerald-500/10 text-emerald-500 border border-emerald-500/20"
@@ -40,12 +40,12 @@ export const CountryDeepDiveGrid: React.FC = () => {
                         </div>
                     </div>
 
-                    <h3 className="text-lg font-black text-white mb-1 group-hover:text-blue-400 transition-colors">{c.name}</h3>
-                    <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest mb-6">Primary Risk: {c.primary_risk}</div>
+                    <h3 className="text-lg font-bold text-white mb-1 group-hover:text-blue-400 transition-colors">{c.name}</h3>
+                    <div className="text-[11px] font-semibold text-white/20 uppercase tracking-wider mb-6">Primary Risk: {c.primary_risk}</div>
 
                     <div className="space-y-4">
-                        <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest">
-                            <span className="text-white/30">Outlook</span>
+                        <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider">
+                            <span className="text-terminal-dim">Outlook</span>
                             <span className={cn(
                                 c.outlook === 'Positive' || c.outlook === 'Improving' ? "text-emerald-500" :
                                 c.outlook === 'Negative' ? "text-rose-500" : "text-amber-500"

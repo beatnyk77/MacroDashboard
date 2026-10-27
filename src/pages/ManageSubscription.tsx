@@ -62,34 +62,34 @@ export const ManageSubscription: React.FC = () => {
                 canonical="https://graphiquestor.com/subscribe/manage/"
             />
 
-            <div className="mb-8 text-[10px] font-black uppercase tracking-[0.22em] text-blue-400/80">
+            <div className="mb-8 text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                 GraphiQuestor · Email
             </div>
 
             {state === 'working' && (
                 <div role="status" aria-live="polite" className="flex flex-col items-center">
                     <Loader2 size={40} className="mb-6 animate-spin text-blue-400" aria-hidden />
-                    <h1 className="text-[22px] font-extrabold text-white">Updating your subscription…</h1>
+                    <h1 className="text-xl font-bold text-white">Updating your subscription…</h1>
                 </div>
             )}
 
             {state === 'done' && (
                 <div
-                    className="w-full rounded-[18px] border border-emerald-400/25 bg-emerald-500/[0.06] p-8"
+                    className="w-full rounded-xl border border-emerald-400/25 bg-emerald-500/[0.06] p-8"
                     role="status"
                     aria-live="polite"
                 >
                     <div className="mx-auto mb-4 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-emerald-400/15 text-emerald-400">
                         <Check size={22} aria-hidden />
                     </div>
-                    <h1 className="mb-2 text-[20px] font-extrabold text-white">{message}</h1>
+                    <h1 className="mb-2 text-[20px] font-bold text-white">{message}</h1>
                     <p className="mb-6 text-[14px] leading-relaxed text-white/50">
                         Changed your mind? Every email footer has links to adjust cadence or re-subscribe —
                         or head back to the free terminal.
                     </p>
                     <Link
                         to="/"
-                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-blue-500/20 bg-blue-500/[0.12] px-5 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-blue-400 transition-colors hover:bg-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                        className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-blue-500/20 bg-blue-500/[0.12] px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-blue-400 transition-colors hover:bg-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                     >
                         Open the free terminal
                     </Link>
@@ -98,13 +98,13 @@ export const ManageSubscription: React.FC = () => {
 
             {state === 'invalid' && (
                 <div
-                    className="w-full rounded-[18px] border border-amber-400/25 bg-amber-500/[0.06] p-8"
+                    className="w-full rounded-xl border border-amber-400/25 bg-amber-500/[0.06] p-8"
                     role="alert"
                 >
                     <div className="mx-auto mb-4 flex h-[44px] w-[44px] items-center justify-center rounded-full bg-amber-400/15 text-amber-400">
                         <AlertTriangle size={22} aria-hidden />
                     </div>
-                    <h1 className="mb-2 text-[20px] font-extrabold text-white">Link expired or invalid.</h1>
+                    <h1 className="mb-2 text-[20px] font-bold text-white">Link expired or invalid.</h1>
                     <p className="mb-6 text-[14px] leading-relaxed text-white/50">
                         We couldn&apos;t apply that change. Use the footer link from your most recent email,
                         or re-subscribe for a fresh confirmation link.
@@ -112,13 +112,13 @@ export const ManageSubscription: React.FC = () => {
                     <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center">
                         <Link
                             to="/institutional/"
-                            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] bg-blue-600 px-5 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
+                            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg bg-blue-600 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-white transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50"
                         >
                             Re-subscribe
                         </Link>
                         <Link
                             to="/"
-                            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-[10px] border border-white/15 px-5 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-white/70 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+                            className="inline-flex min-h-[44px] items-center justify-center gap-2 rounded-lg border border-border px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-white/70 transition-colors hover:border-white/30 hover:text-white focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                         >
                             Open terminal
                         </Link>

@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const NetLiquidityZScoreChart = lazy(() => import('./NetLiquidityZScoreChart').then(m => ({ default: m.NetLiquidityZScoreChart })));
 
@@ -90,9 +91,9 @@ export const NetLiquidityZScorePage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Liquidity" variant="outlined" color="primary"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem' }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             How we calculate Net Liquidity Z-Score
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -104,12 +105,12 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 1: Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-blue-400" />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        The Federal Reserve's <strong style={{ color: '#93c5fd' }}>Net Liquidity</strong> is computed by taking its total balance sheet (WALCL), then subtracting the Treasury General Account (TGA) and Overnight Reverse Repo (ON RRP) balances. These two subtractions represent money that exists on the Fed's books but is <em>not</em> circulating in the financial system — effectively "sterilised" liquidity.
+                        The Federal Reserve's <strong style={{ color: CHART_COLORS.westSoft }}>Net Liquidity</strong> is computed by taking its total balance sheet (WALCL), then subtracting the Treasury General Account (TGA) and Overnight Reverse Repo (ON RRP) balances. These two subtractions represent money that exists on the Fed's books but is <em>not</em> circulating in the financial system — effectively "sterilised" liquidity.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
                         By computing a Z-score against a 25-year rolling window (mean and standard deviation), we normalise this level across different historical QE regimes — allowing direct comparison of 2024 liquidity conditions against 2010, 2019, or 2020 conditions on a like-for-like basis.
@@ -117,18 +118,18 @@ export const NetLiquidityZScorePage: React.FC = () => {
                 </Paper>
 
                 {/* Section 2: Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.west, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <FlaskConical size={20} className="text-blue-400" />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#93c5fd', lineHeight: 2, border: '1px solid rgba(59,130,246,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 1: Compute Net Liquidity{'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.westSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.west, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 1: Compute Net Liquidity{'\n'}</Box>
                         Net Liquidity = WALCL − WTREGEN − RRPONTSYD{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 2: Rolling statistics (25-year window){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 2: Rolling statistics (25-year window){'\n'}</Box>
                         μ = Rolling Mean(Net Liquidity, 25y){'\n'}
                         σ = Rolling Std(Net Liquidity, 25y){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 3: Z-Score{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 3: Z-Score{'\n'}</Box>
                         Z = (Net Liquidity − μ) / σ
                     </Box>
 
@@ -138,8 +139,8 @@ export const NetLiquidityZScorePage: React.FC = () => {
                             { code: 'WTREGEN', name: 'Treasury General Account', source: 'FRED / NY Fed', desc: 'US Govt operating account — drains bank reserves when rising' },
                             { code: 'RRPONTSYD', name: 'Overnight Reverse Repo', source: 'FRED / NY Fed', desc: 'Eligible institution cash parked at Fed — drains system liquidity' },
                         ].map(c => (
-                            <Box key={c.code} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#93c5fd', fontWeight: 700, fontSize: '0.8rem' }}>{c.code}</Typography>
+                            <Box key={c.code} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.westSoft, fontWeight: 700, fontSize: '0.8rem' }}>{c.code}</Typography>
                                 <Typography variant="body2" fontWeight={700} mt={0.5} mb={0.5}>{c.name}</Typography>
                                 <Typography variant="caption" color="text.disabled" display="block" mb={1}>{c.source}</Typography>
                                 <Typography variant="caption" color="text.secondary">{c.desc}</Typography>
@@ -150,7 +151,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 3: Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <Activity size={20} className="text-blue-400" />
                         Historical Z-Score (Illustrative, 2020–2025)
                     </Typography>
@@ -164,8 +165,8 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 4: Institutional Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.gold }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -175,7 +176,7 @@ export const NetLiquidityZScorePage: React.FC = () => {
                             { role: 'Fixed Income Investors', use: 'Cross-reference with 2Y/10Y curve slope. NL contraction + inverted yield curve has historically predicted recession within 12–18 months with 80%+ hit rate.' },
                             { role: 'Risk Management', use: 'Incorporate in VaR and tail-risk scenarios. NL Z < −2.0σ warrants activation of liquidity stress protocols and position de-risking.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
                                 <Typography component="p" variant="subtitle2" fontWeight={700} color="primary.main" mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
@@ -185,29 +186,29 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* Section 5: Regime Interpretation */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <TrendingUp size={20} className="text-blue-400" />
                         Regime Interpretation Table
                     </Typography>
                     <Box sx={{ overflowX: 'auto' }}>
                         <Box component="table" sx={{ width: '100%', borderCollapse: 'collapse' }}>
                             <Box component="thead">
-                                <Box component="tr" sx={{ bgcolor: 'rgba(255,255,255,0.03)' }}>
+                                <Box component="tr" sx={{ bgcolor: 'background.paper' }}>
                                     {['Z-Score Range', 'Regime', 'Equity Bias', 'Gold Bias', 'Credit Bias'].map(h => (
-                                        <Box key={h} component="th" sx={{ p: 2, textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, color: 'text.secondary', borderBottom: '1px solid rgba(255,255,255,0.08)' }}>{h}</Box>
+                                        <Box key={h} component="th" sx={{ p: 2, textAlign: 'left', fontSize: '0.7rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.secondary', borderBottom: 1, borderColor: 'divider' }}>{h}</Box>
                                     ))}
                                 </Box>
                             </Box>
                             <Box component="tbody">
                                 {[
-                                    { range: '> +2.0σ', regime: 'Euphoric / Excessive', equity: '⚠️ Caution', gold: 'Neutral', credit: 'Tight spreads' },
-                                    { range: '+1.0σ to +2.0σ', regime: 'Goldilocks', equity: '✅ Overweight', gold: 'Modest', credit: 'Spread compression' },
+                                    { range: '> +2.0σ', regime: 'Euphoric / Excessive', equity: 'Caution', gold: 'Neutral', credit: 'Tight spreads' },
+                                    { range: '+1.0σ to +2.0σ', regime: 'Goldilocks', equity: 'Overweight', gold: 'Modest', credit: 'Spread compression' },
                                     { range: '0 to +1.0σ', regime: 'Neutral / Recovery', equity: 'Neutral', gold: 'Neutral', credit: 'Stable' },
                                     { range: '−1.0σ to 0', regime: 'Tightening Onset', equity: 'Underweight', gold: 'Accumulate', credit: 'Widening' },
-                                    { range: '< −1.5σ', regime: 'Contraction / Risk-Off', equity: '❌ Defensive', gold: '✅ Overweight', credit: 'Avoid HY' },
+                                    { range: '< −1.5σ', regime: 'Contraction / Risk-Off', equity: 'Defensive', gold: 'Overweight', credit: 'Avoid HY' },
                                 ].map(r => (
-                                    <Box key={r.range} component="tr" sx={{ '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' }, borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                                        <Box component="td" sx={{ p: 2, fontFamily: 'monospace', fontSize: '0.8rem', color: '#93c5fd' }}>{r.range}</Box>
+                                    <Box key={r.range} component="tr" sx={{ '&:hover': { bgcolor: 'background.paper' }, borderBottom: 1, borderColor: 'divider' }}>
+                                        <Box component="td" sx={{ p: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.8rem', color: CHART_COLORS.westSoft }}>{r.range}</Box>
                                         <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: 'text.primary', fontWeight: 600 }}>{r.regime}</Box>
                                         <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: 'text.secondary' }}>{r.equity}</Box>
                                         <Box component="td" sx={{ p: 2, fontSize: '0.85rem', color: 'text.secondary' }}>{r.gold}</Box>
@@ -221,13 +222,13 @@ export const NetLiquidityZScorePage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Net Liquidity Z-Score FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#3b82f6', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.west, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

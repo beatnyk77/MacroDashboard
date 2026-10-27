@@ -5,6 +5,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { TrailLink } from '@/components/TrailLink';
 
 // Lazy loaded components for heavy charts
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
@@ -14,8 +15,8 @@ const PetrodollarVsPetroyuan = lazy(() => import('@/features/dashboard/component
 const GoldOilRevaluationScenario = lazy(() => import('@/features/dashboard/components/sections/GoldOilRevaluationScenario').then(m => ({ default: m.GoldOilRevaluationScenario })));
 
 const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">Loading Telemetry...</span>
+    <div className="w-full min-h-[300px] bg-secondary/30 border border-border rounded-xl animate-pulse flex items-center justify-center">
+        <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Loading Telemetry...</span>
     </div>
 );
 
@@ -76,21 +77,21 @@ export const DeDollarizationGuide: React.FC = () => {
             <div className="w-full max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
                 {/* Breadcrumbs */}
                 <div className="mb-8">
-                    <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                        <a href="/" className="hover:text-white transition-colors">Home</a>
+                    <nav className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
+                        <TrailLink to="/" className="hover:text-white transition-colors">Home</TrailLink>
                         <ChevronRight size={10} />
-                        <a href="/labs/de-dollarization-gold/" className="hover:text-white transition-colors">De-Dollarization Lab</a>
+                        <TrailLink to="/labs/de-dollarization-gold/" className="hover:text-white transition-colors">De-Dollarization Lab</TrailLink>
                         <ChevronRight size={10} />
                         <span className="text-amber-500">Methodology Guide</span>
                     </nav>
                 </div>
 
                 {/* Header */}
-                <div className="mb-16 border-b border-white/10 pb-12">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[10px] font-black uppercase tracking-widest mb-6">
+                <div className="mb-16 border-b border-border pb-12">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-500 text-[11px] font-semibold uppercase tracking-wider mb-6">
                         Institutional Macro Strategy
                     </div>
-                    <h1 className="text-4xl md:text-6xl font-black uppercase tracking-tight text-white mb-6 leading-none">
+                    <h1 className="text-4xl md:text-6xl font-bold uppercase tracking-tight text-white mb-6 leading-none">
                         The Ultimate Guide to Global <span className="text-amber-500">De-Dollarization</span>
                     </h1>
                     <p className="text-xl text-muted-foreground font-medium leading-relaxed max-w-3xl">
@@ -99,9 +100,9 @@ export const DeDollarizationGuide: React.FC = () => {
                 </div>
 
                 {/* Content Body */}
-                <article className="prose prose-invert prose-lg max-w-none prose-headings:font-black prose-headings:uppercase prose-headings:tracking-tight prose-a:text-amber-500 hover:prose-a:text-amber-400">
+                <article className="prose prose-invert prose-lg max-w-none prose-headings:font-semibold prose-headings:uppercase prose-headings:tracking-tight prose-a:text-amber-500 hover:prose-a:text-amber-400">
                     
-                    <div className="p-8 bg-amber-500/5 border border-amber-500/20 rounded-2xl mb-12">
+                    <div className="p-8 bg-amber-500/5 border border-amber-500/20 rounded-xl mb-12">
                         <h3 className="text-amber-500 mt-0">Executive Summary & Key Takeaways</h3>
                         <p className="text-sm">The structural decoupling of the global financial system is no longer a theoretical tail risk; it is an active, measurable regime shift. "De-dollarization" does not imply the immediate collapse of the US Dollar as the primary global reserve currency. Rather, it represents the fragmentation of settlement networks and a sovereign rotation toward hard-asset liquidity.</p>
                         <ul className="text-sm font-medium">
@@ -128,7 +129,7 @@ export const DeDollarizationGuide: React.FC = () => {
                         We monitor this via the <strong>Debt/Gold Z-Score</strong>, which normalizes sovereign debt issuance against physical gold reserves. A rising Z-Score indicates aggressive fiat debasement, prompting central banks to aggressively buy gold to maintain the purchasing power of their reserve portfolios.
                     </p>
 
-                    <div className="my-12 not-prose p-6 bg-white/[0.02] border border-white/10 rounded-2xl">
+                    <div className="my-12 not-prose p-6 bg-secondary/30 border border-border rounded-xl">
                         <SectionErrorBoundary name="Debt/Gold Context">
                             <Suspense fallback={<LoadingFallback />}>
                                 <div className="grid lg:grid-cols-2 gap-8">
@@ -144,7 +145,7 @@ export const DeDollarizationGuide: React.FC = () => {
                         A reserve currency requires a sovereign balance sheet capable of absorbing global trade surpluses. However, the US is entering a regime of "Fiscal Dominance"—where massive, structural fiscal deficits overwhelm monetary policy. As foreign buyers retreat, domestic institutions must absorb the debt, forcing the Federal Reserve to inject liquidity to prevent yield curve dislocation.
                     </p>
 
-                    <div className="my-12 not-prose p-6 bg-white/[0.02] border border-white/10 rounded-2xl">
+                    <div className="my-12 not-prose p-6 bg-secondary/30 border border-border rounded-xl">
                         <SectionErrorBoundary name="Global Reserves">
                             <Suspense fallback={<LoadingFallback />}>
                                 <GlobalReserveTracker />
@@ -163,14 +164,14 @@ export const DeDollarizationGuide: React.FC = () => {
                     </p>
 
                     <div className="my-12 not-prose space-y-8">
-                        <div className="p-6 bg-white/[0.02] border border-white/10 rounded-2xl">
+                        <div className="p-6 bg-secondary/30 border border-border rounded-xl">
                             <SectionErrorBoundary name="Petrodollar Tracker">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <PetrodollarVsPetroyuan />
                                 </Suspense>
                             </SectionErrorBoundary>
                         </div>
-                        <div className="p-6 bg-white/[0.02] border border-white/10 rounded-2xl">
+                        <div className="p-6 bg-secondary/30 border border-border rounded-xl">
                             <SectionErrorBoundary name="Gold Oil Ratio">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <GoldOilRevaluationScenario />
@@ -201,14 +202,14 @@ export const DeDollarizationGuide: React.FC = () => {
                         GraphiQuestor provides the raw intelligence required to front-run these macroeconomic shifts. We do not forecast; we observe structural reality.
                     </p>
                     <ul>
-                        <li><a href="/labs/de-dollarization-gold/">De-Dollarization & Gold Lab</a>: Monitor real-time changes in the Debt/Gold Z-Score and central bank accumulation.</li>
-                        <li><a href="/labs/central-bank-gold-purchases/">Gold Purchases Tracker</a>: Deep dive into sovereign gold flows.</li>
-                        <li><a href="/labs/us-treasury-foreign-holdings/">US Treasury Foreign Holdings</a>: Track the shifting buyer base for US sovereign debt.</li>
+                        <li><TrailLink to="/labs/de-dollarization-gold/">De-Dollarization & Gold Lab</TrailLink>: Monitor real-time changes in the Debt/Gold Z-Score and central bank accumulation.</li>
+                        <li><TrailLink to="/labs/central-bank-gold-purchases/">Gold Purchases Tracker</TrailLink>: Deep dive into sovereign gold flows.</li>
+                        <li><TrailLink to="/labs/us-treasury-foreign-holdings/">US Treasury Foreign Holdings</TrailLink>: Track the shifting buyer base for US sovereign debt.</li>
                     </ul>
 
                     {/* Frequently Asked Questions */}
-                    <div className="mt-12 pt-8 border-t border-white/10 space-y-6">
-                        <h3 className="text-xl font-black text-white tracking-wide">Frequently Asked Questions</h3>
+                    <div className="mt-12 pt-8 border-t border-border space-y-6">
+                        <h3 className="text-xl font-bold text-white tracking-wide">Frequently Asked Questions</h3>
                         {faqItems.map(({ question, answer }) => (
                             <div key={question} className="space-y-1">
                                 <h4 className="text-sm font-bold text-amber-400">{question}</h4>
@@ -218,15 +219,15 @@ export const DeDollarizationGuide: React.FC = () => {
                     </div>
                 </article>
 
-                <div className="mt-24 pt-12 border-t border-white/10 text-center">
+                <div className="mt-24 pt-12 border-t border-border text-center">
                     <Button
                         variant="outline"
-                        className="font-black uppercase tracking-widest text-amber-500 border-amber-500/20 hover:bg-amber-500/10"
+                        className="font-semibold uppercase tracking-wider text-amber-500 border-amber-500/20 hover:bg-amber-500/10"
                         asChild
                     >
-                        <a href="/labs/de-dollarization-gold/" className="flex items-center gap-2">
+                        <TrailLink to="/labs/de-dollarization-gold/" className="flex items-center gap-2">
                             <ArrowLeft size={16} /> Explore the De-Dollarization Lab
-                        </a>
+                        </TrailLink>
                     </Button>
                 </div>
                 <RelatedContent />

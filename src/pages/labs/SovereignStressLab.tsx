@@ -5,7 +5,6 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-    ChevronRight,
     ArrowLeft,
     ShieldAlert,
     TrendingUp,
@@ -19,6 +18,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { TrailLink } from '@/components/TrailLink';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 // Lazy loaded components
 const SovereignRiskMatrix = lazy(() => import('@/features/dashboard/components/sections/SovereignRiskMatrix').then(m => ({ default: m.SovereignRiskMatrix })));
@@ -27,8 +27,8 @@ const SovereignStressDeskCard = lazy(() => import('@/components/SovereignStressD
 
 
 const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Stress Signal...</span>
+    <div className="w-full min-h-[300px] bg-white/[0.02] border border-border rounded-xl animate-pulse flex items-center justify-center">
+        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">Loading Stress Signal...</span>
     </div>
 );
 
@@ -102,34 +102,18 @@ export const SovereignStressLab: React.FC = () => {
                 faqJsonLd
             ]}
         />
-        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            {/* Breadcrumbs */}
-            <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                    <TrailLink to="/" className="hover:text-foreground transition-colors">Home</TrailLink>
-                    <ChevronRight size={10} />
-                    <TrailLink to="/macro-observatory/" className="hover:text-foreground transition-colors">Observatory</TrailLink>
-                    <ChevronRight size={10} />
-                    <span className="text-purple-600 dark:text-purple-400">Sovereign Stress</span>
-                </nav>
-            </div>
+        <div className="page-shell">
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                current="Sovereign Stress"
+                badge="Fiscal Sustainability Monitor"
+                badgeIcon={<ShieldAlert size={12} />}
+                title={<>Sovereign <span className="text-blue-400">Stress</span> Lab</>}
+                status={<FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />}
+                thesis="A country-level screen for observed debt burden, growth, reserve coverage, and balance-sheet transmission. Each reading carries its observation date and data state."
+            />
 
-            <div className="mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/10 border border-purple-500/20 text-purple-600 dark:text-purple-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-                    <ShieldAlert size={12} /> Fiscal Sustainability Monitor
-                </div>
-                <div className="flex items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-foreground">
-                        Sovereign <span className="text-purple-600 dark:text-purple-400">Stress</span> Lab
-                    </h1>
-                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                </div>
-                <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    A country-level screen for observed debt burden, growth, reserve coverage, and balance-sheet transmission. Each reading carries its observation date and data state.
-                </p>
-            </div>
-
-            <div className="space-y-24">
+            <div className="space-y-16">
                 {/* Section 0: Sovereign Stress & Cross-Border Flows Desk */}
                 <section>
                     <SectionErrorBoundary name="Sovereign Stress Desk">
@@ -144,8 +128,8 @@ export const SovereignStressLab: React.FC = () => {
                 {/* Section 1: Sovereign Risk Matrix */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
-                        <TrendingUp className="text-purple-600 dark:text-purple-400" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Sovereign Risk Matrix</h2>
+                        <TrendingUp className="text-purple-400" size={28} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">Sovereign Risk Matrix</h2>
                     </div>
 
                     <SectionErrorBoundary name="Sovereign Risk">
@@ -162,8 +146,8 @@ export const SovereignStressLab: React.FC = () => {
                 {/* Section 2: BoJ Monetary Dominance */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
-                        <Activity className="text-cyan-600 dark:text-cyan-400" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">BoJ Monetary Dominance</h2>
+                        <Activity className="text-cyan-400" size={28} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">BoJ Monetary Dominance</h2>
                     </div>
                     <SectionErrorBoundary name="BoJ Stress Monitor">
                         <LazyRender minHeight="300px" fallback={<LoadingFallback />}>
@@ -178,8 +162,8 @@ export const SovereignStressLab: React.FC = () => {
             </div>
 
             {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-card border border-border rounded-3xl shadow-sm" aria-label="Structural Analysis of G20 Debt Sustainability">
-                <h2 className="text-xl font-black text-foreground uppercase tracking-uppercase mb-6">How to read the Sovereign Stress Lab</h2>
+            <article className="mt-32 p-12 bg-card border border-border rounded-xl shadow-sm" aria-label="Structural Analysis of G20 Debt Sustainability">
+                <h2 className="text-xl font-bold text-foreground uppercase tracking-wider mb-6">How to read the Sovereign Stress Lab</h2>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>Sovereign Stress Lab</strong> organizes sovereign-risk evidence around fiscal burden, economic growth, reserve coverage, and central-bank balance sheets. The G20 matrix currently uses observed debt-to-GDP and real GDP growth readings, with gold reserves and nominal GDP available as supporting context.
@@ -194,7 +178,7 @@ export const SovereignStressLab: React.FC = () => {
 
                 {/* Visible FAQ block */}
                 <div className="mt-10 pt-8 border-t border-border space-y-5">
-                    <h3 className="text-sm font-black text-foreground uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
+                    <h3 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">Frequently Asked Questions</h3>
                     {faqItems.map(({ question, answer }) => (
                         <div key={question}>
                             <p className="text-sm font-bold text-foreground/90 mb-1">{question}</p>
@@ -207,12 +191,12 @@ export const SovereignStressLab: React.FC = () => {
             <div className="mt-24 pt-12 border-t border-border text-center">
                 <Button
                     variant="ghost"
-                    className="text-muted-foreground/60 font-black uppercase tracking-uppercase hover:text-foreground transition-colors"
+                    className="text-muted-foreground font-semibold uppercase tracking-wider hover:text-foreground transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory/" className="flex items-center gap-2">
+                    <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
-                    </a>
+                    </TrailLink>
                 </Button>
             </div>
             <RelatedContent />

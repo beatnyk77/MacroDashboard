@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { ensureLeafletStyles } from '@/lib/leafletStyles';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface IndiaLeafletMapProps {
     data: any[];
@@ -61,10 +62,10 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
         const color = getColor(value);
 
         layer.setStyle({
-            fillColor: stateData ? color : 'rgba(42, 46, 53, 0.4)',
+            fillColor: stateData ? color : alpha(CHART_COLORS.line, 0.4),
             weight: isSelected ? 2 : 1,
             opacity: 1,
-            color: isSelected ? '#3b82f6' : 'rgba(255, 255, 255, 0.1)',
+            color: isSelected ? CHART_COLORS.west : WHITE_ALPHA.line,
             fillOpacity: isSelected ? 1 : 0.8
         });
 
@@ -85,7 +86,7 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
                 if (!isSelected) {
                     l.setStyle({
                         weight: 1,
-                        color: 'rgba(255, 255, 255, 0.1)',
+                        color: WHITE_ALPHA.line,
                         fillOpacity: 0.8
                     });
                 }
@@ -105,7 +106,7 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
         }
     };
 
-    if (!geoJsonData) return <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-uppercase font-black text-xs">Loading Cartography...</div>;
+    if (!geoJsonData) return <div className="h-full w-full flex items-center justify-center text-white/20 uppercase tracking-wider font-semibold text-xs">Loading Cartography...</div>;
 
     const indiaBounds: L.LatLngBoundsExpression = [
         [6.4626999, 68.1097], // Southwest
@@ -113,10 +114,10 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
     ];
 
     return (
-        <div className="h-full w-full relative rounded-3xl overflow-hidden border border-white/5 shadow-2xl">
+        <div className="h-full w-full relative rounded-xl overflow-hidden border border-border shadow-2xl">
             <MapContainer
                 bounds={indiaBounds}
-                style={{ height: '100%', width: '100%', background: '#020617' }}
+                style={{ height: '100%', width: '100%', background: CHART_COLORS.surface }}
                 zoomControl={false}
                 attributionControl={false}
                 scrollWheelZoom={false}
@@ -136,16 +137,16 @@ export const IndiaLeafletMap: React.FC<IndiaLeafletMapProps> = ({
             <style dangerouslySetInnerHTML={{
                 __html: `
                 .leaflet-custom-tooltip {
-                    background: rgba(2, 6, 23, 0.9) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+                    background: ${alpha(CHART_COLORS.surface, 0.9)} !important;
+                    border: 1px solid ${WHITE_ALPHA.line} !important;
                     color: white !important;
                     border-radius: 12px !important;
                     padding: 8px 12px !important;
-                    font-family: 'Inter', sans-serif !important;
+                    font-family: 'Fira Sans', sans-serif !important;
                     font-size: 0.7rem !important;
                     font-weight: 700 !important;
                     backdrop-filter: blur(8px) !important;
-                    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5) !important;
+                    box-shadow: 0 10px 15px -3px ${alpha(CHART_COLORS.black, 0.5)} !important;
                 }
                 .leaflet-container {
                     cursor: crosshair !important;

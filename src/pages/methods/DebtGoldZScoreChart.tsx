@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Cell } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const debtGoldData = [
     { year: '2000', zscore: -0.8 },
@@ -22,12 +25,15 @@ function BarTooltip({ active, payload, label }: { active?: boolean; payload?: { 
     if (active && payload && payload.length) {
         const z = payload[0].value;
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={z > 2.0 ? '#f59e0b' : z > 1.0 ? '#fb923c' : '#94a3b8'}>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <TerminalTooltipRow
+                    label="Z-score"
+                    valueClassName={z > 2.0 ? 'text-amber-400' : z > 1.0 ? 'text-orange-400' : 'text-slate-400'}
+                >
                     Z = {z > 0 ? '+' : ''}{z.toFixed(1)}σ
-                </Typography>
-            </Box>
+                </TerminalTooltipRow>
+            </TerminalTooltipShell>
         );
     }
     return null;
@@ -35,24 +41,24 @@ function BarTooltip({ active, payload, label }: { active?: boolean; payload?: { 
 
 export const DebtGoldZScoreChart: React.FC = () => (
     <>
-        <ResponsiveContainer width="100%" height={240}>
+        <MacroChartContainer height={CHART_HEIGHTS.standard}>
             <BarChart data={debtGoldData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[-1.5, 2.8]} />
+                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" />
+                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} domain={[-1.5, 2.8]} />
                 <Tooltip content={<BarTooltip />} />
-                <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" />
-                <ReferenceLine y={2.0} stroke="#f59e0b" strokeDasharray="5 5" strokeOpacity={0.6} />
+                <ReferenceLine y={0} stroke={WHITE_ALPHA.soft} />
+                <ReferenceLine y={2.0} stroke={CHART_COLORS.gold} strokeDasharray="5 5" strokeOpacity={0.6} />
                 <Bar dataKey="zscore" radius={[3, 3, 0, 0]}>
                     {debtGoldData.map((entry) => (
-                        <Cell key={entry.year} fill={entry.zscore > 2.0 ? '#f59e0b' : entry.zscore > 1.0 ? '#fb923c' : '#3b82f6'} />
+                        <Cell key={entry.year} fill={entry.zscore > 2.0 ? CHART_COLORS.gold : entry.zscore > 1.0 ? CHART_COLORS.orange : CHART_COLORS.west} />
                     ))}
                 </Bar>
             </BarChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
         <Box display="flex" gap={3} mt={2} flexWrap="wrap">
-            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 12, height: 12, bgcolor: '#f59e0b', borderRadius: '2px' }} /><Typography variant="caption" color="text.secondary">Z &gt; +2.0σ (Extreme gold undervaluation signal)</Typography></Box>
-            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 12, height: 12, bgcolor: '#fb923c', borderRadius: '2px' }} /><Typography variant="caption" color="text.secondary">Z +1.0σ to +2.0σ (Elevated)</Typography></Box>
+            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 12, height: 12, bgcolor: CHART_COLORS.gold, borderRadius: '2px' }} /><Typography variant="caption" color="text.secondary">Z &gt; +2.0σ (Extreme gold undervaluation signal)</Typography></Box>
+            <Box display="flex" alignItems="center" gap={1}><Box sx={{ width: 12, height: 12, bgcolor: CHART_COLORS.orange, borderRadius: '2px' }} /><Typography variant="caption" color="text.secondary">Z +1.0σ to +2.0σ (Elevated)</Typography></Box>
         </Box>
     </>
 );

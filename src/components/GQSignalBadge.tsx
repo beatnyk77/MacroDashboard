@@ -11,7 +11,7 @@ const BadgeContent: React.FC<{ tooltip?: string }> = ({ tooltip }) => (
   <span
     title={tooltip}
     className="inline-flex items-center gap-1 px-2 py-0.5 rounded-sm
-      text-[10px] tracking-widest font-mono uppercase
+      text-[11px] tracking-wider font-mono uppercase
       text-amber-400/80 bg-amber-400/10 border border-amber-400/20
       cursor-default select-none"
   >

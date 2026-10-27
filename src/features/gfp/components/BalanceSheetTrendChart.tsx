@@ -1,14 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { useGfpBalanceSheet } from '@/hooks/useGfpBalanceSheet';
 import { formatBillions } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
@@ -19,8 +10,12 @@ import {
   DEFAULT_TOOLTIP_STYLE,
   DEFAULT_LEGEND_PROPS,
   CHART_HEIGHTS,
+  DEFAULT_TOOLTIP_ITEM_STYLE,
+  DEFAULT_TOOLTIP_LABEL_STYLE,
+    CHART_COLORS,
 } from '@/constants/chartDefaults';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const BalanceSheetTrendChart: React.FC = () => {
   const { data, isLoading, error } = useGfpBalanceSheet(false);
@@ -39,21 +34,21 @@ export const BalanceSheetTrendChart: React.FC = () => {
   if (error || !chartData.length) return <GfpUnavailableState />;
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Consolidated Balance Sheet
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             Assets · Liabilities · Net position
           </p>
         </div>
         <GfpBasisBadge basis="accrual" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.accrual}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.accrual}</p>
       <div style={{ width: '100%', height: CHART_HEIGHTS.standard }}>
-        <ResponsiveContainer>
+        <MacroChartContainer height="fill">
           <LineChart data={chartData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
             <XAxis dataKey="fy" {...DEFAULT_XAXIS_PROPS} />
@@ -63,6 +58,8 @@ export const BalanceSheetTrendChart: React.FC = () => {
               width={56}
             />
             <Tooltip
+              labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+              itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
               contentStyle={DEFAULT_TOOLTIP_STYLE}
               formatter={(value: number, name: string) => [formatBillions(value), name]}
               labelFormatter={(l) => `FY${l}`}
@@ -72,7 +69,7 @@ export const BalanceSheetTrendChart: React.FC = () => {
               type="monotone"
               dataKey="assets"
               name="Total Assets"
-              stroke="#34d399"
+              stroke={CHART_COLORS.expansion}
               strokeWidth={1.5}
               dot={false}
             />
@@ -80,7 +77,7 @@ export const BalanceSheetTrendChart: React.FC = () => {
               type="monotone"
               dataKey="liabilities"
               name="Total Liabilities"
-              stroke="#f87171"
+              stroke={CHART_COLORS.stress}
               strokeWidth={1.5}
               dot={false}
             />
@@ -88,12 +85,12 @@ export const BalanceSheetTrendChart: React.FC = () => {
               type="monotone"
               dataKey="netPosition"
               name="Net Position"
-              stroke="#22d3ee"
+              stroke={CHART_COLORS.west}
               strokeWidth={1.5}
               dot={false}
             />
           </LineChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
       </div>
     </section>
   );

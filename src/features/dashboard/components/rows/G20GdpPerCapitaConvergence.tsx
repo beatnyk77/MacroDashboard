@@ -1,15 +1,6 @@
 import React, { useMemo, useState } from 'react';
-import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    Legend,
-    ReferenceLine
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import {
     Box,
     Typography,
@@ -23,17 +14,18 @@ import { TrendingUp } from 'lucide-react';
 import { useG20GdpConvergence } from '@/hooks/useG20GdpConvergence';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { m, AnimatePresence } from 'framer-motion';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const G20_COUNTRIES = [
-    { code: 'USA', name: 'USA', color: '#3b82f6' },
-    { code: 'IND', name: 'India', color: '#f59e0b' },
-    { code: 'CHN', name: 'China', color: '#ef4444' },
-    { code: 'DEU', name: 'Germany', color: '#10b981' },
-    { code: 'BRA', name: 'Brazil', color: '#8b5cf6' },
-    { code: 'JPN', name: 'Japan', color: '#ec4899' },
-    { code: 'EU27', name: 'EU', color: '#6366f1' },
-    { code: 'IDN', name: 'Indonesia', color: '#06b6d4' },
-    { code: 'RUS', name: 'Russia', color: '#4b5563' },
+    { code: 'USA', name: 'USA', color: CHART_COLORS.west },
+    { code: 'IND', name: 'India', color: CHART_COLORS.gold },
+    { code: 'CHN', name: 'China', color: CHART_COLORS.stress },
+    { code: 'DEU', name: 'Germany', color: CHART_COLORS.expansion },
+    { code: 'BRA', name: 'Brazil', color: CHART_COLORS.violet },
+    { code: 'JPN', name: 'Japan', color: CHART_COLORS.east },
+    { code: 'EU27', name: 'EU', color: CHART_COLORS.indigo },
+    { code: 'IDN', name: 'Indonesia', color: CHART_COLORS.westDeep },
+    { code: 'RUS', name: 'Russia', color: CHART_COLORS.tick },
 ];
 
 const BASE_YEARS = [2008, 2015, 2020];
@@ -86,14 +78,14 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
     return (
         <Card sx={{
             p: 4,
-            background: 'rgba(255, 255, 255, 0.02)',
+            background: WHITE_ALPHA.ghost,
             backdropFilter: 'blur(20px)',
-            border: '1px solid rgba(255, 255, 255, 0.05)',
+            border: `1px solid ${WHITE_ALPHA.faint}`,
             borderRadius: '24px'
         }}>
             <Box sx={{ mb: 6, display: 'flex', flexDirection: { xs: 'column', md: 'row' }, justifyContent: 'space-between', alignItems: 'flex-start', gap: 4 }}>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 900, mb: 1, letterSpacing: '-0.02em', color: 'common.white', display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, mb: 1, letterSpacing: '-0.02em', color: 'common.white', display: 'flex', alignItems: 'center', gap: 1.5 }}>
                         <TrendingUp size={24} className="text-blue-500" />
                         G20 GDP Convergence Monitor
                         <GQSignalBadge
@@ -145,41 +137,36 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                     transition={{ duration: 0.4, ease: "easeOut" }}
                 >
                     <Box sx={{ height: 450, width: '100%', mb: 4 }}>
-                        <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height="fill">
                             <LineChart data={chartData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                                <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="year"
                                     axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                                    tick={{ fill: WHITE_ALPHA.dim, fontSize: 12 }}
                                     dy={10}
                                 />
                                 <YAxis
+                                    {...DEFAULT_YAXIS_PROPS}
+                                    width={60}
                                     domain={['auto', 'auto']}
                                     axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 12 }}
+                                    tick={{ fill: WHITE_ALPHA.dim, fontSize: 12 }}
                                     dx={-10}
                                 />
                                 <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
-                                        border: '1px solid rgba(255, 255, 255, 0.1)',
-                                        borderRadius: '12px',
-                                        backdropFilter: 'blur(10px)',
-                                        boxShadow: '0 20px 25px -5px rgba(0, 0, 0, 0.5)'
-                                    }}
-                                    itemStyle={{ fontSize: '0.8rem', fontWeight: 600 }}
-                                    labelStyle={{ color: '#94a3b8', marginBottom: '8px', fontWeight: 700 }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 />
                                 <Legend
                                     verticalAlign="top"
                                     height={36}
                                     iconType="circle"
-                                    formatter={(value) => <span style={{ color: '#94a3b8', fontSize: '12px', fontWeight: 600 }}>{G20_COUNTRIES.find(c => c.code === value)?.name}</span>}
+                                    formatter={(value) => <span style={{ color: CHART_COLORS.label, fontSize: '12px', fontWeight: 600 }}>{G20_COUNTRIES.find(c => c.code === value)?.name}</span>}
                                 />
-                                <ReferenceLine y={100} stroke="#94a3b8" strokeDasharray="3 3" />
+                                <ReferenceLine y={100} stroke={CHART_COLORS.label} strokeDasharray="3 3" />
                                 {G20_COUNTRIES.map(country => (
                                     selectedCountries.includes(country.code) && (
                                         <Line
@@ -195,12 +182,12 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
                                     )
                                 ))}
                             </LineChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </Box>
                 </m.div>
             </AnimatePresence>
 
-            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 4, pt: 4, borderTop: '1px solid rgba(255,255,255,0.05)' }}>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1.5, mt: 4, pt: 4, borderTop: `1px solid ${WHITE_ALPHA.faint}` }}>
                 {G20_COUNTRIES.map(country => (
                     <Chip
                         key={country.code}
@@ -222,33 +209,33 @@ export const G20GdpPerCapitaConvergence: React.FC = () => {
             </Box>
 
             <Box sx={{ mt: 6, display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1fr 1fr 1fr' }, gap: 4 }}>
-                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#f59e0b', 0.05), border: '1px solid ' + alpha('#f59e0b', 0.1) }}>
-                    <Typography variant="caption" sx={{ color: '#f59e0b', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.gold, 0.05), border: '1px solid ' + alpha(CHART_COLORS.gold, 0.1) }}>
+                    <Typography variant="caption" sx={{ color: CHART_COLORS.gold, fontWeight: 700, textTransform: 'uppercase', mb: 1, display: 'block' }}>
                         Emerging Force (IND)
                     </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'common.white' }}>
                         India: +{indiaGrowth}%
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         Fastest convergence trajectory in the group.
                     </Typography>
                 </Box>
-                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#ef4444', 0.05), border: '1px solid ' + alpha('#ef4444', 0.1) }}>
-                    <Typography variant="caption" sx={{ color: '#ef4444', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.stress, 0.05), border: '1px solid ' + alpha(CHART_COLORS.stress, 0.1) }}>
+                    <Typography variant="caption" sx={{ color: CHART_COLORS.stress, fontWeight: 700, textTransform: 'uppercase', mb: 1, display: 'block' }}>
                         Economic Titan (CHN)
                     </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'common.white' }}>
                         China: +{chinaGrowth}%
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                         Massive scale shift since {baseYear}.
                     </Typography>
                 </Box>
-                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha('#3b82f6', 0.05), border: '1px solid ' + alpha('#3b82f6', 0.1) }}>
-                    <Typography variant="caption" sx={{ color: '#3b82f6', fontWeight: 800, textTransform: 'uppercase', mb: 1, display: 'block' }}>
+                <Box sx={{ p: 3, borderRadius: '16px', bgcolor: alpha(CHART_COLORS.west, 0.05), border: '1px solid ' + alpha(CHART_COLORS.west, 0.1) }}>
+                    <Typography variant="caption" sx={{ color: CHART_COLORS.west, fontWeight: 700, textTransform: 'uppercase', mb: 1, display: 'block' }}>
                         Advanced Benchmark (USA)
                     </Typography>
-                    <Typography variant="h6" sx={{ fontWeight: 800, color: 'common.white' }}>
+                    <Typography variant="h6" sx={{ fontWeight: 700, color: 'common.white' }}>
                         USA: +{usaGrowth}%
                     </Typography>
                     <Typography variant="body2" sx={{ color: 'text.secondary' }}>

@@ -6,10 +6,13 @@ import {
     Zap,
     Info
 } from 'lucide-react';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid, Cell } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ReferenceLine, AreaChart, Area, CartesianGrid, Cell } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { useGoldPositioning } from '@/hooks/useGoldPositioning';
 import { MotionCard } from '@/components/MotionCard';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 // Custom tooltip component for basis chart
 interface BasisTooltipProps {
@@ -23,27 +26,15 @@ const BasisTooltip: React.FC<BasisTooltipProps> = ({ active, payload, label }) =
     const value = payload[0].value;
     const isPositive = value >= 0;
     return (
-        <Box sx={{
-            p: 2,
-            bgcolor: 'rgba(15, 23, 42, 0.95)',
-            border: '1px solid rgba(255,255,255,0.12)',
-            borderRadius: 1,
-            boxShadow: '0 4px 12px rgba(0,0,0,0.3)'
-        }}>
-            <Typography variant="caption" sx={{ color: 'text.secondary', fontSize: '0.7rem', display: 'block', mb: 0.5 }}>
-                {label}
-            </Typography>
-            <Typography variant="body2" sx={{
-                fontWeight: 700,
-                fontFamily: 'monospace',
-                color: isPositive ? '#34d399' : '#f43f5e'
-            }}>
+        <TerminalTooltipShell>
+            <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+            <TerminalTooltipRow label="Basis" valueClassName={isPositive ? 'text-emerald-400' : 'text-rose-400'}>
                 {isPositive ? '+' : ''}{value.toFixed(1)} bps
-            </Typography>
-            <Typography variant="caption" sx={{ color: 'text.disabled', fontSize: '0.65rem', display: 'block', mt: 0.5 }}>
+            </TerminalTooltipRow>
+            <div className="mt-1 text-[11px] text-terminal-dim">
                 {isPositive ? 'Physical Premium' : 'Paper Premium'}
-            </Typography>
-        </Box>
+            </div>
+        </TerminalTooltipShell>
     );
 };
 
@@ -105,11 +96,11 @@ export const GoldPositioningMonitor: React.FC = () => {
     return (
         <Box sx={{ mb: 12 }}>
             <Box sx={{ mb: 4, display: 'flex', alignItems: 'center', gap: 2 }}>
-                <Box sx={{ p: 1.5, bgcolor: alpha('#f59e0b', 0.1), color: '#f59e0b', borderRadius: 1 }}>
+                <Box sx={{ p: 1.5, bgcolor: alpha(CHART_COLORS.gold, 0.1), color: CHART_COLORS.gold, borderRadius: 1 }}>
                     <Layers size={24} />
                 </Box>
                 <Box>
-                    <Typography variant="h5" sx={{ fontWeight: 900, color: 'text.primary', textTransform: 'uppercase', tracking: -0.5 }}>
+                    <Typography variant="h5" sx={{ fontWeight: 700, color: 'text.primary', textTransform: 'uppercase', tracking: -0.5 }}>
                         Gold Derivatives & Physical Arbitrage Monitor
                     </Typography>
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 700, textTransform: 'uppercase', tracking: 1 }}>
@@ -124,20 +115,20 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <MotionCard>
                         <Box sx={{ p: 3, height: '100%' }}>
                             <div className="flex items-center justify-between mb-4">
-                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                     <Activity size={12} />
                                     <span>COT NET POSITION</span>
                                     <MuiTooltip title="CFTC Commitments of Traders net positions by trader classification. Positive = net long, Negative = net short." arrow placement="top">
-                                        <Info size={10} className="text-muted-foreground/40 cursor-help" />
+                                        <Info size={10} className="text-terminal-dim cursor-help" />
                                     </MuiTooltip>
                                 </span>
-                                <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[10px] font-bold uppercase">
+                                <span className="px-2 py-0.5 rounded bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-[11px] font-semibold uppercase">
                                     CFTC WEEKLY
                                 </span>
                             </div>
 
                             {/* Color legend */}
-                            <div className="flex items-center justify-center gap-4 mb-3 text-[10px] text-muted-foreground/60">
+                            <div className="flex items-center justify-center gap-4 mb-3 text-[11px] text-muted-foreground">
                                 <span className="flex items-center gap-1">
                                     <span className="w-2 h-2 rounded-full bg-indigo-400" />
                                     <span>Long</span>
@@ -149,58 +140,51 @@ export const GoldPositioningMonitor: React.FC = () => {
                             </div>
 
                             <Box sx={{ height: 220, mb: 2 }}>
-                                <ResponsiveContainer width="100%" height="100%">
+                                <MacroChartContainer height="fill">
                                     <BarChart
                                         data={sortedCotData}
                                         layout="vertical"
                                         margin={{ left: 20, right: 30, top: 4, bottom: 4 }}
                                     >
-                                        <CartesianGrid strokeDasharray="3 3" horizontal={false} stroke="rgba(255,255,255,0.06)" />
+                                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
                                         <XAxis
+                                            {...DEFAULT_XAXIS_PROPS}
                                             type="number"
-                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
                                             tickFormatter={(v) => `${v >= 0 ? '+' : ''}${v}K`}
                                             axisLine={false}
-                                            tickLine={false}
                                         />
                                         <YAxis
+                                            {...DEFAULT_YAXIS_PROPS}
                                             dataKey="name"
                                             type="category"
                                             width={110}
-                                            tick={{ fill: '#94a3b8', fontSize: 11, fontWeight: 700, fontFamily: 'monospace' }}
                                             axisLine={false}
-                                            tickLine={false}
                                         />
                                         <Tooltip
-                                            cursor={{ fill: 'rgba(255,255,255,0.03)' }}
-                                            contentStyle={{
-                                                backgroundColor: '#0f172a',
-                                                border: '1px solid rgba(255,255,255,0.12)',
-                                                borderRadius: '8px',
-                                                fontSize: '11px',
-                                                fontFamily: 'monospace',
-                                                padding: '8px 12px'
-                                            }}
+                                            contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                            labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                            itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
+                                            cursor={{ fill: WHITE_ALPHA.ghost }}
                                             formatter={(value: number) => [`${value.toLocaleString()} contracts`, 'Net Position']}
                                         />
-                                        <ReferenceLine x={0} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} />
+                                        <ReferenceLine x={0} stroke={WHITE_ALPHA.soft} strokeWidth={1.5} />
                                         <Bar dataKey="value" radius={[0, 4, 4, 0]} barSize={28}>
                                             {sortedCotData.map((entry, index) => (
                                                 <Cell
                                                     key={`cell-${index}`}
-                                                    fill={entry.value >= 0 ? '#818cf8' : '#f43f5e'}
+                                                    fill={entry.value >= 0 ? CHART_COLORS.indigo : CHART_COLORS.east}
                                                 />
                                             ))}
                                         </Bar>
                                     </BarChart>
-                                </ResponsiveContainer>
+                                </MacroChartContainer>
                             </Box>
 
-                            <div className="pt-2 border-t border-white/5 flex justify-between text-[10px]">
-                                <span className="text-muted-foreground/40 font-mono">
+                            <div className="pt-2 border-t border-border flex justify-between text-[11px]">
+                                <span className="text-terminal-dim font-mono">
                                     As of: {new Date(latest.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
-                                <span className="text-muted-foreground/60">
+                                <span className="text-muted-foreground">
                                     Latest CFTC report
                                 </span>
                             </div>
@@ -213,47 +197,46 @@ export const GoldPositioningMonitor: React.FC = () => {
                     <MotionCard>
                         <Box sx={{ p: 3, height: '100%' }}>
                             <div className="flex items-center justify-between mb-4">
-                                <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60 flex items-center gap-2">
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                                     <Layers size={12} />
                                     <span>PAPER-PHYSICAL BASIS SPREAD</span>
                                     <MuiTooltip title="Spread between paper gold (futures) and physical spot prices. Positive = physical premium (backwardation), Negative = paper premium (contango). Measured in basis points (bps)." arrow placement="top">
-                                        <Info size={10} className="text-muted-foreground/40 cursor-help" />
+                                        <Info size={10} className="text-terminal-dim cursor-help" />
                                     </MuiTooltip>
                                 </span>
-                                <div className="flex items-center gap-3 text-[10px]">
+                                <div className="flex items-center gap-3 text-[11px]">
                                     <span className="flex items-center gap-1.5">
                                         <span className="w-3 h-3 rounded-full bg-sky-500" />
-                                        <span className="text-muted-foreground/60">Basis (bps)</span>
+                                        <span className="text-muted-foreground">Basis (bps)</span>
                                     </span>
                                     <span className="flex items-center gap-1.5">
                                         <span className="w-3 h-3 rounded-full bg-emerald-400" />
-                                        <span className="text-muted-foreground/60">Physical Premium</span>
+                                        <span className="text-muted-foreground">Physical Premium</span>
                                     </span>
                                 </div>
                             </div>
 
                             <Box sx={{ height: 280 }}>
-                                <ResponsiveContainer width="100%" height="100%">
+                                <MacroChartContainer height="fill">
                                     <AreaChart data={basisSeriesData} margin={{ top: 4, right: 4, left: 0, bottom: 24 }}>
                                         <defs>
                                             <linearGradient id="basisGradientPositive" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#34d399" stopOpacity={0.3} />
-                                                <stop offset="100%" stopColor="#34d399" stopOpacity={0} />
+                                                <stop offset="0%" stopColor={CHART_COLORS.expansion} stopOpacity={0.3} />
+                                                <stop offset="100%" stopColor={CHART_COLORS.expansion} stopOpacity={0} />
                                             </linearGradient>
                                             <linearGradient id="basisGradientNegative" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="0%" stopColor="#f43f5e" stopOpacity={0.3} />
-                                                <stop offset="100%" stopColor="#f43f5e" stopOpacity={0} />
+                                                <stop offset="0%" stopColor={CHART_COLORS.east} stopOpacity={0.3} />
+                                                <stop offset="100%" stopColor={CHART_COLORS.east} stopOpacity={0} />
                                             </linearGradient>
                                         </defs>
 
-                                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
 
                                         {/* XAxis */}
                                         <XAxis
+                                            {...DEFAULT_XAXIS_PROPS}
                                             dataKey="formattedDate"
-                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
-                                            axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                                            tickLine={false}
+                                            axisLine={{ stroke: WHITE_ALPHA.line }}
                                             angle={-45}
                                             textAnchor="end"
                                             height={50}
@@ -262,27 +245,27 @@ export const GoldPositioningMonitor: React.FC = () => {
 
                                         {/* YAxis */}
                                         <YAxis
-                                            tick={{ fill: '#64748b', fontSize: 10, fontFamily: 'monospace' }}
+                                            {...DEFAULT_YAXIS_PROPS}
+                                            width={60}
                                             axisLine={false}
-                                            tickLine={false}
                                             tickFormatter={(v) => `${v} bps`}
                                             domain={['auto', 'auto']}
                                         />
 
-                                        <Tooltip content={<BasisTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeDasharray: '2 2' }} />
+                                        <Tooltip content={<BasisTooltip />} cursor={{ stroke: WHITE_ALPHA.line, strokeDasharray: '2 2' }} />
 
-                                        <ReferenceLine y={0} stroke="rgba(255,255,255,0.25)" strokeWidth={1.5} strokeDasharray="3 3" />
+                                        <ReferenceLine y={0} stroke={WHITE_ALPHA.soft} strokeWidth={1.5} strokeDasharray="3 3" />
 
                                         {/* Line for basis spread (on top) */}
                                         {basisSeriesData.length > 0 && (
                                             <Area
                                                 type="monotone"
                                                 dataKey="basisSpread"
-                                                stroke="#0ea5e9"
+                                                stroke={CHART_COLORS.west}
                                                 strokeWidth={2}
                                                 fill="none"
                                                 dot={false}
-                                                activeDot={{ r: 4, fill: '#0ea5e9', stroke: '#fff', strokeWidth: 2 }}
+                                                activeDot={{ r: 4, fill: CHART_COLORS.west, stroke: '#fff', strokeWidth: 2 }}
                                             />
                                         )}
                                         {/* Positive area fill */}
@@ -304,12 +287,12 @@ export const GoldPositioningMonitor: React.FC = () => {
                                             />
                                         )}
                                     </AreaChart>
-                                </ResponsiveContainer>
+                                </MacroChartContainer>
                             </Box>
 
                             {/* Current value indicator */}
-                            <div className="flex items-center justify-end gap-2 mt-2 text-[10px]">
-                                <span className="text-muted-foreground/40">CURRENT:</span>
+                            <div className="flex items-center justify-end gap-2 mt-2 text-[11px]">
+                                <span className="text-terminal-dim">CURRENT:</span>
                                 <span className={`font-mono font-bold ${basisSeriesData.length > 0 && basisSeriesData[basisSeriesData.length-1].basisSpread >= 0 ? 'text-emerald-400' : 'text-rose-500'}`}>
                                     {basisSeriesData.length > 0 ? (basisSeriesData[basisSeriesData.length-1].basisSpread >= 0 ? '+' : '') + basisSeriesData[basisSeriesData.length-1].basisSpread.toFixed(1) : 'N/A'} bps
                                 </span>
@@ -322,10 +305,10 @@ export const GoldPositioningMonitor: React.FC = () => {
             {/* Interpretation Footer */}
             <Box sx={{ mt: 3 }}>
                 <MotionCard>
-                    <Box sx={{ p: 2, bgcolor: 'rgba(255,215,0,0.02)', display: 'flex', alignItems: 'flex-start', gap: 2 }}>
+                    <Box sx={{ p: 2, bgcolor: alpha(CHART_COLORS.gold, 0.02), display: 'flex', alignItems: 'flex-start', gap: 2 }}>
                         <Zap size={16} className="text-amber-500 mt-1 flex-shrink-0" />
-                        <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.7)', fontStyle: 'italic', fontWeight: 500 }}>
-                            {latest.interpretation} — <span className="text-xs opacity-50 uppercase font-black tracking-heading">Verified @ {new Date(latest.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
+                        <Typography variant="body2" sx={{ color: WHITE_ALPHA.strong, fontStyle: 'italic', fontWeight: 500 }}>
+                            {latest.interpretation} — <span className="text-xs opacity-50 uppercase font-semibold tracking-heading">Verified @ {new Date(latest.as_of_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </Typography>
                     </Box>
                 </MotionCard>

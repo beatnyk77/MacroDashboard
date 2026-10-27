@@ -1,10 +1,13 @@
 import React from 'react';
 import { TrailLink as Link } from '@/components/TrailLink';
-import { LineChart, Line, ResponsiveContainer } from 'recharts';
+import { LineChart, Line } from 'recharts';
 import { useDailyMacroSignal } from '@/features/daily-macro/hooks/useDailyMacroSignal';
 import { generateMacroBrief } from '@/features/daily-macro/services/macroSignalEngine';
 import type { MacroRegime } from '@/features/daily-macro/services/macroSignalEngine';
 import { cn } from '@/lib/utils';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { stripPictographs } from '@/utils/text';
 
 // ─── Regime config ──────────────────────────────────────────────────────────
 
@@ -16,21 +19,21 @@ const REGIME_CONFIG: Record<MacroRegime, {
 }> = {
   RISK_ON: {
     label: 'Risk-On',
-    color: '#10b981',
+    color: CHART_COLORS.expansion,
     textClass: 'text-emerald-400',
-    bgGlow: 'rgba(16, 185, 129, 0.04)',
+    bgGlow: alpha(CHART_COLORS.expansion, 0.04),
   },
   NEUTRAL: {
     label: 'Neutral',
-    color: '#f59e0b',
+    color: CHART_COLORS.gold,
     textClass: 'text-amber-400',
-    bgGlow: 'rgba(245, 158, 11, 0.03)',
+    bgGlow: alpha(CHART_COLORS.gold, 0.03),
   },
   RISK_OFF: {
     label: 'Risk-Off',
-    color: '#f43f5e',
+    color: CHART_COLORS.east,
     textClass: 'text-red-400',
-    bgGlow: 'rgba(244, 63, 94, 0.04)',
+    bgGlow: alpha(CHART_COLORS.east, 0.04),
   },
 };
 
@@ -48,13 +51,13 @@ const AnchorSkeleton: React.FC = () => (
   <div
     className="w-full animate-pulse"
     style={{
-      background: 'rgba(8,12,24,0.6)',
-      borderTop: '1px solid rgba(255,255,255,0.05)',
-      borderBottom: '1px solid rgba(255,255,255,0.05)',
-      borderLeft: '3px solid rgba(255,255,255,0.08)',
+      background: alpha(CHART_COLORS.panel, 0.6),
+      borderTop: `1px solid ${WHITE_ALPHA.faint}`,
+      borderBottom: `1px solid ${WHITE_ALPHA.faint}`,
+      borderLeft: `3px solid ${WHITE_ALPHA.line}`,
     }}
   >
-    <div className="flex flex-col md:flex-row gap-0 divide-y md:divide-y-0 md:divide-x divide-white/5">
+    <div className="flex flex-col md:flex-row gap-0 divide-y md:divide-y-0 md:divide-x divide-border">
       {/* Left block skeleton */}
       <div className="md:w-[38%] px-6 py-5 flex flex-col gap-3">
         <div className="h-3 w-24 rounded bg-white/8" />
@@ -126,7 +129,7 @@ export const RegimeAnchor: React.FC = () => {
         );
 
   // Best single-sentence synthesis: prefer regime_line which is the holistic summary
-  const synthLine = brief.regime_line;
+  const synthLine = stripPictographs(brief.regime_line);
 
   const deltaPositive = signal.score_delta >= 0;
   const deltaAbs = Math.abs(signal.score_delta);
@@ -178,7 +181,7 @@ export const RegimeAnchor: React.FC = () => {
           {/* ── LEFT BLOCK: Regime classification + score ── */}
           <div className="md:w-[38%] px-5 py-4 flex flex-col justify-center gap-1.5">
             <span
-              className="font-mono text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold"
+              className="font-mono text-[11px] uppercase tracking-wider text-muted-foreground font-semibold"
             >
               Current Regime
             </span>
@@ -194,7 +197,7 @@ export const RegimeAnchor: React.FC = () => {
                 {cfg.label.toUpperCase()}
               </span>
               <span
-                className={cn('text-4xl font-black tabular-nums leading-none', cfg.textClass)}
+                className={cn('text-4xl font-bold tabular-nums leading-none', cfg.textClass)}
               >
                 {Math.round(signal.score)}
               </span>
@@ -211,7 +214,7 @@ export const RegimeAnchor: React.FC = () => {
                   {deltaPositive ? '▲' : '▼'} {deltaAbs.toFixed(1)} vs yesterday
                 </span>
               )}
-              <span className="text-[10px] text-muted-foreground font-mono">
+              <span className="text-[11px] text-muted-foreground font-mono">
                 {signal.confidence_pct.toFixed(0)}% confidence
               </span>
             </div>
@@ -220,7 +223,7 @@ export const RegimeAnchor: React.FC = () => {
           {/* ── CENTER BLOCK: Synthesis + signal chips ── */}
           <div className="md:w-[42%] px-5 py-4 flex flex-col justify-center gap-2.5">
             {/* Synthesis line */}
-            <p className="text-[12px] md:text-[13px] text-foreground font-medium leading-snug line-clamp-2">
+            <p className="text-[12px] md:text-sm text-foreground font-medium leading-snug line-clamp-2">
               {synthLine}
             </p>
 
@@ -230,7 +233,7 @@ export const RegimeAnchor: React.FC = () => {
                 <span
                   key={key}
                   className={cn(
-                    'font-mono text-[10px] font-bold uppercase tracking-wider',
+                    'font-mono text-[11px] font-semibold uppercase tracking-wider',
                     'px-2 py-0.5 rounded border',
                     chipColor(val)
                   )}
@@ -241,7 +244,7 @@ export const RegimeAnchor: React.FC = () => {
             </div>
 
             {/* Timestamp */}
-            <span className="text-[10px] text-muted-foreground/60 font-mono">
+            <span className="text-[11px] text-muted-foreground font-mono">
               Updated: {updatedAt}
             </span>
           </div>
@@ -252,7 +255,7 @@ export const RegimeAnchor: React.FC = () => {
               to="/weekly-narrative"
               className={cn(
                 'inline-flex items-center justify-center gap-1.5 w-full',
-                'font-mono text-[10px] uppercase tracking-[0.15em] font-bold',
+                'font-mono text-[11px] uppercase tracking-wider font-semibold',
                 'px-3 py-2 rounded border transition-all duration-200',
                 'border-border bg-card hover:bg-muted',
                 'text-foreground hover:text-foreground',
@@ -262,13 +265,12 @@ export const RegimeAnchor: React.FC = () => {
               Full Analysis →
             </Link>
 
-            <span className="text-[10px] font-mono text-muted-foreground text-center leading-tight">
+            <span className="text-[11px] font-mono text-muted-foreground text-center leading-tight">
               {regimeSteakLabel}
             </span>
 
             {/* Sparkline: 7-day regime score trend */}
-            <div className="h-10 w-full opacity-60">
-              <ResponsiveContainer width="100%" height="100%">
+            <MacroChartContainer height={CHART_HEIGHTS.sparkline} className="opacity-60">
                 <LineChart data={sparklineData}>
                   <Line
                     type="monotone"
@@ -279,8 +281,7 @@ export const RegimeAnchor: React.FC = () => {
                     isAnimationActive={false}
                   />
                 </LineChart>
-              </ResponsiveContainer>
-            </div>
+            </MacroChartContainer>
           </div>
         </div>
       </div>

@@ -1,14 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { useGfpNetCostConcentration } from '@/hooks/useGfpNetCost';
 import { formatPct } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
@@ -19,8 +10,12 @@ import {
   DEFAULT_TOOLTIP_STYLE,
   DEFAULT_LEGEND_PROPS,
   CHART_HEIGHTS,
+  DEFAULT_TOOLTIP_ITEM_STYLE,
+  DEFAULT_TOOLTIP_LABEL_STYLE,
+    CHART_COLORS,
 } from '@/constants/chartDefaults';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const ConcentrationPanel: React.FC = () => {
   const { data, isLoading, error } = useGfpNetCostConcentration();
@@ -42,19 +37,19 @@ export const ConcentrationPanel: React.FC = () => {
   if (error || !chartData.length) return <GfpUnavailableState />;
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Net Cost Concentration
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             HHI (0–1) · top-5 / top-10 share of agency net cost
           </p>
         </div>
         <GfpBasisBadge basis="accrual" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.accrual}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.accrual}</p>
 
       {latest && (
         <div className="grid grid-cols-3 gap-3">
@@ -65,7 +60,7 @@ export const ConcentrationPanel: React.FC = () => {
       )}
 
       <div style={{ width: '100%', height: CHART_HEIGHTS.standard }}>
-        <ResponsiveContainer>
+        <MacroChartContainer height="fill">
           <LineChart data={chartData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
             <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
             <XAxis dataKey="fy" {...DEFAULT_XAXIS_PROPS} />
@@ -85,6 +80,8 @@ export const ConcentrationPanel: React.FC = () => {
               width={40}
             />
             <Tooltip
+              labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+              itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
               contentStyle={DEFAULT_TOOLTIP_STYLE}
               formatter={(value: number, name: string) => {
                 if (name === 'HHI') return [value?.toFixed?.(3) ?? value, name];
@@ -98,7 +95,7 @@ export const ConcentrationPanel: React.FC = () => {
               type="monotone"
               dataKey="top5"
               name="Top-5 Share"
-              stroke="#22d3ee"
+              stroke={CHART_COLORS.west}
               strokeWidth={1.5}
               dot={false}
             />
@@ -107,7 +104,7 @@ export const ConcentrationPanel: React.FC = () => {
               type="monotone"
               dataKey="top10"
               name="Top-10 Share"
-              stroke="#a78bfa"
+              stroke={CHART_COLORS.violet}
               strokeWidth={1.5}
               dot={false}
             />
@@ -116,23 +113,23 @@ export const ConcentrationPanel: React.FC = () => {
               type="monotone"
               dataKey="hhi"
               name="HHI"
-              stroke="#f59e0b"
+              stroke={CHART_COLORS.gold}
               strokeWidth={1.5}
               strokeDasharray="4 3"
               dot={false}
             />
           </LineChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
       </div>
     </section>
   );
 };
 
 const Metric: React.FC<{ label: string; value: string }> = ({ label, value }) => (
-  <div className="p-3 rounded-lg border border-white/5 bg-black/20">
-    <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">
+  <div className="p-3 rounded-lg border border-border bg-background/20">
+    <div className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
       {label}
     </div>
-    <div className="text-lg font-black font-mono text-white tabular-nums mt-0.5">{value}</div>
+    <div className="text-lg font-bold font-mono text-white tabular-nums mt-0.5">{value}</div>
   </div>
 );

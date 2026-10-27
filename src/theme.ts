@@ -11,192 +11,6 @@ declare module '@mui/material/styles' {
     }
 }
 
-const getTheme = (mode: 'light' | 'dark') => {
-    const theme = createTheme({
-        breakpoints: {
-            values: {
-                xs: 0,
-                sm: 600,
-                md: 960,
-                lg: 1280,
-                xl: 1600,
-                xxl: 1920 // Custom breakout for ultra-wide
-            }
-        },
-        palette: {
-            mode,
-            background: {
-                default: mode === 'dark' ? '#070B10' : '#FDF6E3',
-                paper: mode === 'dark' ? '#0E141A' : '#FFFCF4',
-            },
-            text: {
-                primary: mode === 'dark' ? '#E7EEF2' : '#17212B',
-                secondary: mode === 'dark' ? '#B6C4CC' : '#3B4E59',
-            },
-            primary: {
-                main: mode === 'dark' ? '#FF7A33' : '#FF5D05',
-                light: mode === 'dark' ? '#FF9B6B' : '#FF7A33',
-                dark: mode === 'dark' ? '#C8551B' : '#C44700',
-            },
-            secondary: {
-                main: mode === 'dark' ? '#55D6C2' : '#0B5A68',
-            },
-            divider: mode === 'dark' ? '#2B3942' : '#C8D2D5',
-            error: {
-                main: mode === 'dark' ? '#FF9B9B' : '#B42318',
-            },
-            warning: {
-                main: mode === 'dark' ? '#F6C56B' : '#9A400E',
-            },
-            success: {
-                main: mode === 'dark' ? '#6CE7B1' : '#065F46',
-            },
-            action: {
-                hover: mode === 'dark' ? 'rgba(255, 255, 255, 0.03)' : 'rgba(35, 48, 56, 0.04)',
-            }
-        },
-        typography: {
-            fontFamily: '"Fira Sans", sans-serif',
-            h1: { 
-                fontSize: typographyScale['4xl'],
-                fontWeight: 700, 
-                letterSpacing: '-0.025em',
-                lineHeight: 1.15
-            },
-            h2: {
-                fontSize: typographyScale['3xl'],
-                fontWeight: 700,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.2
-            },
-            h3: {
-                fontSize: typographyScale['2xl'],
-                fontWeight: 600,
-                letterSpacing: '-0.02em',
-                lineHeight: 1.25
-            },
-            h4: { 
-                fontSize: typographyScale['xl'],
-                fontWeight: 600, 
-                letterSpacing: '-0.02em',
-                lineHeight: 1.3
-            },
-            h5: { 
-                fontSize: typographyScale['lg'],
-                fontWeight: 600,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.4
-            },
-            h6: { 
-                fontSize: typographyScale['base'],
-                fontWeight: 600,
-                letterSpacing: '-0.01em',
-                lineHeight: 1.5
-            },
-            subtitle1: { 
-                fontSize: typographyScale['sm'],
-                letterSpacing: '0.01em', 
-                fontWeight: 500,
-                lineHeight: 1.35
-            },
-            body1: { 
-                fontSize: typographyScale['base'],
-                lineHeight: 1.5 
-            },
-            body2: {
-                fontSize: typographyScale['sm'],
-                lineHeight: 1.35
-            },
-            caption: { 
-                fontSize: typographyScale['xs'],
-                letterSpacing: '0.01em', 
-                fontWeight: 500,
-                lineHeight: 1.25
-            },
-        },
-        spacing: 4, // Aligned with 4px tailwind base unit
-        components: {
-            MuiCard: {
-                styleOverrides: {
-                    root: {
-                        borderRadius: 12,
-                        boxShadow: mode === 'dark'
-                            ? '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1)'
-                            : '0 4px 6px -1px rgba(0, 0, 0, 0.05)',
-                        backgroundImage: 'none',
-                        backgroundColor: mode === 'dark' ? '#0E141A' : '#FFFCF4',
-                        backdropFilter: 'blur(8px)',
-                        border: mode === 'dark' ? '1px solid #2B3942' : '1px solid #C8D2D5',
-                    },
-                },
-            },
-            MuiPaper: {
-                styleOverrides: {
-                    root: {
-                        backgroundImage: 'none',
-                    },
-                },
-            },
-            MuiCssBaseline: {
-                styleOverrides: {
-                    body: {
-                        scrollbarColor: mode === 'dark' ? '#1e293b #020617' : '#cbd5e1 #f8fafc',
-                        '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
-                            backgroundColor: 'transparent',
-                            width: 8,
-                        },
-                        '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
-                            borderRadius: 8,
-                            backgroundColor: mode === 'dark' ? '#1e293b' : '#cbd5e1',
-                            minHeight: 24,
-                            border: `2px solid ${mode === 'dark' ? '#020617' : '#f8fafc'}`,
-                        },
-                        '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
-                            backgroundColor: mode === 'dark' ? '#334155' : '#94a3b8',
-                        },
-                    },
-                },
-            },
-            // Prevent ALL MUI overlays from locking body scroll
-            MuiDialog: {
-                defaultProps: {
-                    disableScrollLock: true,
-                },
-            },
-            MuiDrawer: {
-                defaultProps: {
-                    disableScrollLock: true,
-                },
-            },
-            MuiModal: {
-                defaultProps: {
-                    disableScrollLock: true,
-                },
-            },
-            MuiPopover: {
-                defaultProps: {
-                    disableScrollLock: true,
-                },
-            },
-        },
-        shape: {
-            borderRadius: 12,
-        },
-    });
-
-    return theme;
-};
-
-export default getTheme;
-
-// ============================================================================
-// DESIGN TOKENS - TAILWIND ALIGNMENT
-// ============================================================================
-// These tokens define the single source of truth for typography, spacing, etc.
-// They must stay in sync with tailwind.config.js
-
-import { cn } from '@/lib/utils';
-
 // Typography scale (8-step modular scale, base: 0.9375rem, ratio: 1.25)
 // Corresponds to tailwind.config.js fontSize
 export const typographyScale = {
@@ -209,6 +23,188 @@ export const typographyScale = {
 	'3xl': '2.148rem', // 34.4px
 	'4xl': '2.685rem', // 43px
 };
+
+// Pure dark institutional terminal. Light mode is retired; values mirror the
+// CSS variables in src/index.css and the `terminal` colors in tailwind.config.js.
+const terminalTheme = createTheme({
+    breakpoints: {
+        values: {
+            xs: 0,
+            sm: 600,
+            md: 960,
+            lg: 1280,
+            xl: 1600,
+            xxl: 1920 // Custom breakout for ultra-wide
+        }
+    },
+    palette: {
+        mode: 'dark',
+        background: {
+            default: '#070B10', // Obsidian Deep
+            paper: '#0E141C',   // Card / panel elevation
+        },
+        text: {
+            primary: '#E7EEF2',
+            secondary: '#94A3B8',
+            disabled: '#718096', // terminal-dim: AA on the page background
+        },
+        primary: {
+            main: '#60A5FA',
+            light: '#93C5FD',
+            dark: '#3B82F6',
+        },
+        secondary: {
+            main: '#38BDF8',
+        },
+        divider: 'rgba(255, 255, 255, 0.08)',
+        error: {
+            main: '#F87171',
+        },
+        warning: {
+            main: '#F59E0B',
+        },
+        success: {
+            main: '#34D399',
+        },
+        action: {
+            hover: 'rgba(255, 255, 255, 0.04)',
+        }
+    },
+    typography: {
+        fontFamily: '"Fira Sans", sans-serif',
+        h1: {
+            fontSize: typographyScale['4xl'],
+            fontWeight: 700,
+            letterSpacing: '-0.025em',
+            lineHeight: 1.15
+        },
+        h2: {
+            fontSize: typographyScale['3xl'],
+            fontWeight: 700,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.2
+        },
+        h3: {
+            fontSize: typographyScale['2xl'],
+            fontWeight: 600,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.25
+        },
+        h4: {
+            fontSize: typographyScale['xl'],
+            fontWeight: 600,
+            letterSpacing: '-0.02em',
+            lineHeight: 1.3
+        },
+        h5: {
+            fontSize: typographyScale['lg'],
+            fontWeight: 600,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.4
+        },
+        h6: {
+            fontSize: typographyScale['base'],
+            fontWeight: 600,
+            letterSpacing: '-0.01em',
+            lineHeight: 1.5
+        },
+        subtitle1: {
+            fontSize: typographyScale['sm'],
+            letterSpacing: '0.01em',
+            fontWeight: 500,
+            lineHeight: 1.35
+        },
+        body1: {
+            fontSize: typographyScale['base'],
+            lineHeight: 1.5
+        },
+        body2: {
+            fontSize: typographyScale['sm'],
+            lineHeight: 1.35
+        },
+        caption: {
+            fontSize: typographyScale['xs'],
+            letterSpacing: '0.01em',
+            fontWeight: 500,
+            lineHeight: 1.25
+        },
+    },
+    spacing: 4, // Aligned with 4px tailwind base unit
+    components: {
+        MuiCard: {
+            styleOverrides: {
+                root: {
+                    borderRadius: 12,
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.2), 0 2px 4px -1px rgba(0, 0, 0, 0.1)',
+                    backgroundImage: 'none',
+                    backgroundColor: '#0E141C',
+                    backdropFilter: 'blur(12px)',
+                    border: '1px solid rgba(255, 255, 255, 0.07)',
+                },
+            },
+        },
+        MuiPaper: {
+            styleOverrides: {
+                root: {
+                    backgroundImage: 'none',
+                },
+            },
+        },
+        MuiCssBaseline: {
+            styleOverrides: {
+                body: {
+                    scrollbarColor: 'rgba(255, 255, 255, 0.16) transparent',
+                    '&::-webkit-scrollbar, & *::-webkit-scrollbar': {
+                        backgroundColor: 'transparent',
+                        width: 8,
+                    },
+                    '&::-webkit-scrollbar-thumb, & *::-webkit-scrollbar-thumb': {
+                        borderRadius: 8,
+                        backgroundColor: 'rgba(255, 255, 255, 0.16)',
+                        minHeight: 24,
+                    },
+                    '&::-webkit-scrollbar-thumb:hover, & *::-webkit-scrollbar-thumb:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.28)',
+                    },
+                },
+            },
+        },
+        // Prevent ALL MUI overlays from locking body scroll
+        MuiDialog: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+        MuiDrawer: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+        MuiModal: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+        MuiPopover: {
+            defaultProps: {
+                disableScrollLock: true,
+            },
+        },
+    },
+    shape: {
+        borderRadius: 12,
+    },
+});
+
+export default terminalTheme;
+
+// ============================================================================
+// DESIGN TOKENS - TAILWIND ALIGNMENT
+// ============================================================================
+// These tokens define the single source of truth for typography, spacing, etc.
+// They must stay in sync with tailwind.config.js
+
+import { cn } from '@/lib/utils';
 
 // Corresponding Tailwind utility class mappings
 export const typographyClassMap = {
@@ -226,7 +222,7 @@ export const typographyClassMap = {
 export const tracking = {
 	heading: 'tracking-heading',   // -0.02em
 	body: 'tracking-body',         // 0
-	uppercase: 'tracking-uppercase', // 0.1em
+	uppercase: 'tracking-wider', // 0.1em
 };
 
 // Font weight utilities
@@ -235,8 +231,8 @@ export const fontWeight = {
 	medium: 'font-medium',
 	semibold: 'font-semibold',
 	bold: 'font-bold',
-	extrabold: 'font-extrabold',
-	black: 'font-black',
+	extrabold: 'font-bold',
+	black: 'font-bold',
 };
 
 // Vertical spacing scale (4px base unit)
@@ -292,7 +288,7 @@ export const zIndex = {
 export const metricTypography = {
 	hero: {
 		fontSize: '3rem',
-		fontWeight: 800,
+		fontWeight: 700,
 		lineHeight: 1.1,
 		letterSpacing: '-0.02em'
 	},

@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { Calculator, Database, ChevronDown } from 'lucide-react';
 import { Skeleton } from "@/components/ui/skeleton";
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export interface CompositeIndexCardProps {
     title: string;
@@ -19,10 +20,10 @@ export interface CompositeIndexCardProps {
 }
 
 const scoreColor = (v: number | undefined | null): string => {
-    if (v === undefined || v === null || isNaN(v)) return '#64748b';
-    if (v > 65) return '#22c55e';
-    if (v > 45) return '#f59e0b';
-    return '#ef4444';
+    if (v === undefined || v === null || isNaN(v)) return CHART_COLORS.tick;
+    if (v > 65) return CHART_COLORS.expansion;
+    if (v > 45) return CHART_COLORS.gold;
+    return CHART_COLORS.stress;
 };
 
 const clamp = (val: number, min: number, max: number): number => {
@@ -100,14 +101,14 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
     }, [value, isNullValue, histMinMax]);
 
     return (
-        <div className="bg-slate-950/40 backdrop-blur-md border border-white/8 rounded-xl p-4 space-y-3 group hover:border-white/12 transition-colors">
+        <div className="bg-card/40 backdrop-blur-md border border-border rounded-xl p-4 space-y-3 group hover:border-white/12 transition-colors">
             {/* Header: Label + Freshness */}
             <div className="flex items-start justify-between">
                 <span className="text-xs font-medium text-white/60 uppercase tracking-wider">
                     {title}
                 </span>
                 {sources.length > 0 && (
-                    <span className="text-xs font-semibold text-white/40 uppercase tracking-uppercase flex items-center gap-0.5">
+                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider flex items-center gap-0.5">
                         <Database size={8} /> {sources[0]}
                     </span>
                 )}
@@ -120,9 +121,9 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                     <Skeleton className="h-2 w-full bg-white/5" />
                 </div>
             ) : isNullValue ? (
-                <div className="text-xs text-slate-500 italic">Data pending</div>
+                <div className="text-xs text-terminal-dim italic">Data pending</div>
             ) : isZeroWithNeutral ? (
-                <div className="text-xs text-slate-600 italic">Awaiting wiring</div>
+                <div className="text-xs text-terminal-dim italic">Awaiting wiring</div>
             ) : (
                 <>
                     <div className="text-4xl font-mono font-bold" style={{ color }}>
@@ -140,7 +141,7 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
                                 }}
                             />
                         </div>
-                        <div className="flex justify-between text-[10px] text-white/40 font-mono">
+                        <div className="flex justify-between text-[11px] text-terminal-dim font-mono">
                             <span>{histMinMax.min.toFixed(0)}</span>
                             <span className="text-white/60">
                                 {percentileLabel(value!, histMinMax.min, histMinMax.max)}
@@ -154,11 +155,11 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
             {/* Collapsible Significance */}
             {!isNullValue && !isZeroWithNeutral && (
                 <details className="group/details">
-                    <summary className="text-[10px] text-white/50 cursor-pointer list-none flex items-center gap-1 hover:text-white/70 transition-colors">
+                    <summary className="text-[11px] text-white/50 cursor-pointer list-none flex items-center gap-1 hover:text-white/70 transition-colors">
                         <span className="font-medium uppercase tracking-wider">Why this matters</span>
                         <ChevronDown size={10} className="group-open/details:rotate-180 transition-transform" />
                     </summary>
-                    <p className="text-[11px] text-white/40 mt-2 leading-relaxed italic">
+                    <p className="text-[11px] text-terminal-dim mt-2 leading-relaxed italic">
                         {significanceText}
                     </p>
                 </details>
@@ -167,8 +168,8 @@ export const CompositeIndexCard: React.FC<CompositeIndexCardProps> = ({
             {/* Formula */}
             {!isNullValue && !isZeroWithNeutral && (
                 <div className="flex items-center gap-1 px-2 py-1 rounded bg-white/[0.02] border border-white/[0.05]">
-                    <Calculator size={9} className="text-white/30" />
-                    <span className="text-xs text-white/30 font-mono">{formula}</span>
+                    <Calculator size={9} className="text-terminal-dim" />
+                    <span className="text-xs text-terminal-dim font-mono">{formula}</span>
                 </div>
             )}
         </div>

@@ -64,7 +64,6 @@ export interface BenchmarkDistribution {
     rankings: {
         code: string;
         name: string;
-        flag: string;
         value: number;
         percentile: number;
     }[];

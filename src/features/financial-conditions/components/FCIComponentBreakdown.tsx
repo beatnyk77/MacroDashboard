@@ -30,10 +30,10 @@ export const FCIComponentBreakdown: React.FC<FCIComponentBreakdownProps> = ({
   };
 
   return (
-    <div className={cn('bg-[#0a0f1d]/90 backdrop-blur-xl border border-border/60 rounded-2xl p-5 sm:p-6 shadow-xl space-y-5', className)}>
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border/40 pb-4">
+    <div className={cn('bg-card/90 backdrop-blur-xl border border-border rounded-xl p-5 sm:p-6 shadow-xl space-y-5', className)}>
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-border pb-4">
         <div>
-          <h3 className="text-sm sm:text-base font-black uppercase tracking-wider text-foreground">
+          <h3 className="text-sm sm:text-base font-semibold uppercase tracking-wider text-foreground">
             5-Pillar Transmission Decomposition
           </h3>
           <p className="text-xs text-muted-foreground">
@@ -41,7 +41,7 @@ export const FCIComponentBreakdown: React.FC<FCIComponentBreakdownProps> = ({
           </p>
         </div>
 
-        <div className="flex items-center gap-3 text-[10px] font-mono">
+        <div className="flex items-center gap-3 text-[11px] font-mono">
           <span className="flex items-center gap-1 text-rose-400">
             <span className="w-2 h-2 rounded-full bg-rose-500" />
             + Tightening
@@ -63,19 +63,19 @@ export const FCIComponentBreakdown: React.FC<FCIComponentBreakdownProps> = ({
           return (
             <div
               key={comp.id}
-              className="p-4 rounded-xl bg-card/60 border border-border/50 hover:border-border transition-all flex flex-col justify-between space-y-3"
+              className="p-4 rounded-xl bg-card/60 border border-border hover:border-border transition-all flex flex-col justify-between space-y-3"
             >
               <div className="space-y-1.5">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <span className="p-1.5 rounded-lg bg-muted/60 border border-border/60">
+                    <span className="p-1.5 rounded-lg bg-muted/60 border border-border">
                       {getIcon(comp.id)}
                     </span>
-                    <span className="text-xs font-black uppercase tracking-wider text-foreground">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-foreground">
                       {comp.name}
                     </span>
                   </div>
-                  <span className="text-[10px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border/40">
+                  <span className="text-[11px] font-mono px-1.5 py-0.5 rounded bg-muted text-muted-foreground border border-border">
                     {comp.ticker}
                   </span>
                 </div>
@@ -86,12 +86,12 @@ export const FCIComponentBreakdown: React.FC<FCIComponentBreakdownProps> = ({
               </div>
 
               {/* Z-Score & Contribution Bar */}
-              <div className="space-y-1.5 pt-2 border-t border-border/40">
+              <div className="space-y-1.5 pt-2 border-t border-border">
                 <div className="flex items-center justify-between text-xs font-mono">
                   <span className="text-muted-foreground">Rolling Z-Score:</span>
                   <span
                     className={cn(
-                      'font-black tabular-nums',
+                      'font-bold tabular-nums',
                       isTightening ? 'text-rose-400' : isEasing ? 'text-emerald-400' : 'text-slate-300'
                     )}
                   >

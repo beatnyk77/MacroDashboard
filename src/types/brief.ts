@@ -37,12 +37,12 @@ export type FocusArea =
   | 'trade_flows';
 
 export const FOCUS_AREA_LABELS: Record<FocusArea, string> = {
-  us_macro:              '🇺🇸 US Macro',
-  india:                 '🇮🇳 India',
-  china:                 '🇨🇳 China',
-  africa:                '🌍 Africa',
-  energy:                '⚡ Energy',
-  sovereign_debt:        '🏦 Sovereign Debt',
-  gold_dedollarization:  '💛 Gold & De-Dollarization',
-  trade_flows:           '🔄 Trade Flows',
+  us_macro:              'US Macro',
+  india:                 'India',
+  china:                 'China',
+  africa:                'Africa',
+  energy:                'Energy',
+  sovereign_debt:        'Sovereign Debt',
+  gold_dedollarization:  'Gold & De-Dollarization',
+  trade_flows:           'Trade Flows',
 };

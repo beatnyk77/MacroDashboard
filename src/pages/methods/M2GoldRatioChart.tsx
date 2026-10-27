@@ -1,9 +1,12 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import {
     LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-    ResponsiveContainer, ReferenceLine, ReferenceArea
+    ReferenceLine, ReferenceArea
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const ratioData = [
     { year: '2000', ratio: 100, label: 'Gold $279' },
@@ -31,15 +34,15 @@ function RatioTooltip({ active, payload, label }: { active?: boolean; payload?: 
         const val = payload[0].value;
         const entry = ratioData.find(d => d.year === label);
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 1, minWidth: 160 }}>
-                <Typography variant="caption" color="text.secondary" display="block">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={val > 130 ? '#ef4444' : val < 85 ? '#22c55e' : '#f59e0b'}>
-                    Index: {val}
-                </Typography>
+            <TerminalTooltipShell className="min-w-[160px]">
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <TerminalTooltipRow label="Index" valueClassName={val > 130 ? 'text-red-400' : val < 85 ? 'text-emerald-400' : 'text-amber-400'}>
+                    {val}
+                </TerminalTooltipRow>
                 {entry?.label && (
-                    <Typography variant="caption" sx={{ color: '#94a3b8', display: 'block', mt: 0.5 }}>{entry.label}</Typography>
+                    <div className="mt-1 text-xs text-slate-400">{entry.label}</div>
                 )}
-            </Box>
+            </TerminalTooltipShell>
         );
     }
     return null;
@@ -68,26 +71,26 @@ export const M2GoldRatioChart: React.FC = () => (
             </tbody>
         </table>
 
-        <ResponsiveContainer width="100%" height={280}>
+        <MacroChartContainer height={CHART_HEIGHTS.standard}>
             <LineChart data={ratioData} margin={{ top: 5, right: 15, left: -15, bottom: 0 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-                <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[60, 160]} />
+                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" />
+                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} domain={[60, 160]} />
                 <Tooltip content={<RatioTooltip />} />
-                <ReferenceArea y1={130} y2={160} fill="rgba(245,158,11,0.06)" />
-                <ReferenceLine y={130} stroke="#f59e0b" strokeDasharray="5 5" strokeOpacity={0.5}
-                    label={{ value: 'Extreme zone', position: 'insideTopRight', fontSize: 10, fill: '#f59e0b' }} />
-                <ReferenceLine y={100} stroke="rgba(255,255,255,0.15)" strokeDasharray="3 3" />
+                <ReferenceArea y1={130} y2={160} fill={alpha(CHART_COLORS.gold, 0.06)} />
+                <ReferenceLine y={130} stroke={CHART_COLORS.gold} strokeDasharray="5 5" strokeOpacity={0.5}
+                    label={{ value: 'Extreme zone', position: 'insideTopRight', fontSize: 11, fill: CHART_COLORS.gold }} />
+                <ReferenceLine y={100} stroke={WHITE_ALPHA.soft} strokeDasharray="3 3" />
                 <Line
                     type="monotone"
                     dataKey="ratio"
-                    stroke="#f59e0b"
+                    stroke={CHART_COLORS.gold}
                     strokeWidth={2.5}
                     dot={false}
-                    activeDot={{ r: 5, fill: '#f59e0b' }}
+                    activeDot={{ r: 5, fill: CHART_COLORS.gold }}
                 />
             </LineChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
         <Typography variant="caption" color="text.disabled" sx={{ display: 'block', mt: 2, fontStyle: 'italic' }}>
             Note: Illustrative reconstruction using publicly available M2 and gold price data. Live readings available on the GraphiQuestor M2/Gold Ratio glossary page.
         </Typography>

@@ -58,14 +58,14 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
         >
             <div className="mb-4 flex items-center gap-2">
                 <Calculator size={16} className="text-amber-400" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-amber-400/80">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-amber-400/80">
                     M2/Gold Ratio Explorer
                 </h3>
             </div>
 
             <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground">
+                    <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Global M2 ($ Trillions)
                     </span>
                     <input
@@ -79,7 +79,7 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-muted-foreground">
+                    <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         Gold Spot ($/oz)
                     </span>
                     <input
@@ -104,7 +104,7 @@ export const M2GoldRatioExplorer: React.FC<M2GoldRatioExplorerProps> = ({
                         <span className="pb-0.5 text-xs text-muted-foreground">M2/Gold ratio</span>
                     </div>
                     <p className={`text-xs leading-relaxed font-semibold ${result.color}`}>{result.label}</p>
-                    <p className="mt-2 text-[10px] text-muted-foreground">
+                    <p className="mt-2 text-[11px] text-muted-foreground">
                         Implied coverage: {(result.goldOzPerM2Unit * 1e6).toFixed(2)} oz gold per $1M M2 ·
                         Stock: {GOLD_STOCK_TONNES.toLocaleString()}t above-ground
                     </p>

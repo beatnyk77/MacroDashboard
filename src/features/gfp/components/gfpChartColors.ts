@@ -1,14 +1,16 @@
+import { CHART_COLORS } from '@/constants/chartDefaults';
+// Ten distinct series: one token per slot so no two lines share a colour.
 const LINE_COLORS = [
-  '#22d3ee',
-  '#f59e0b',
-  '#a78bfa',
-  '#34d399',
-  '#f472b6',
-  '#60a5fa',
-  '#fb7185',
-  '#eab308',
-  '#2dd4bf',
-  '#c084fc',
+  CHART_COLORS.west,
+  CHART_COLORS.gold,
+  CHART_COLORS.violet,
+  CHART_COLORS.expansion,
+  CHART_COLORS.eastSoft,
+  CHART_COLORS.westDeep,
+  CHART_COLORS.east,
+  CHART_COLORS.goldSoft,
+  CHART_COLORS.expansionSoft,
+  CHART_COLORS.violetSoft,
 ];
 
 export function gfpSeriesColor(index: number): string {

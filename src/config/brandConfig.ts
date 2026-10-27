@@ -1,3 +1,4 @@
+import { CHART_COLORS } from '@/constants/chartDefaults';
 export const BrandConfig = {
   name: 'GraphiQuestor',
   shortName: 'GQ',
@@ -9,8 +10,8 @@ export const BrandConfig = {
   signalBadgePrefix: 'GQ',
   twitter: '@GraphiQuestor',
   colors: {
-    primary: '#3b82f6',
-    accent: '#f59e0b',
+    primary: CHART_COLORS.west,
+    accent: CHART_COLORS.gold,
   },
   seo: {
     siteName: 'GraphiQuestor',

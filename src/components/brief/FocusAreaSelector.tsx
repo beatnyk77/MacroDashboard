@@ -68,7 +68,7 @@ export const FocusAreaSelector: React.FC<FocusAreaSelectorProps> = ({
               'px-3 py-1.5 rounded-lg text-xs font-mono uppercase tracking-wider transition-all duration-200',
               isSelected
                 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30'
-                : 'text-white/40 border border-white/10 hover:text-white/70 hover:border-white/20 bg-white/[0.01]',
+                : 'text-terminal-dim border border-border hover:text-white/70 hover:border-white/20 bg-white/[0.01]',
             ].join(' ')}
           >
             {label}

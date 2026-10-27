@@ -29,7 +29,7 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
       <section aria-label="Related briefs">
         <Card variant="elevated" className="bg-card border-border shadow-sm">
           <CardContent className="p-5">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-3">
               <Newspaper size={14} aria-hidden />
               Related briefs
             </h2>
@@ -46,7 +46,7 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
     <section aria-label="Related briefs">
       <Card variant="elevated" className="bg-card border-border shadow-sm">
         <CardContent className="p-5 md:p-6 space-y-4">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <Newspaper size={14} aria-hidden />
             Related briefs
           </h2>
@@ -59,7 +59,7 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
               const body = (
                 <>
                   <div className="min-w-0 space-y-0.5">
-                    <p className="text-sm font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors truncate">
+                    <p className="text-sm font-bold text-foreground group-hover:text-blue-400 transition-colors truncate">
                       {link.title}
                     </p>
                     <p className="text-[11px] font-mono tabular-nums text-muted-foreground">
@@ -69,7 +69,7 @@ export const BriefIndex: React.FC<BriefIndexProps> = ({ links }) => {
                   {external ? (
                     <ExternalLink
                       size={13}
-                      className="mt-1 shrink-0 text-muted-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                      className="mt-1 shrink-0 text-muted-foreground group-hover:text-blue-400"
                       aria-hidden
                     />
                   ) : null}

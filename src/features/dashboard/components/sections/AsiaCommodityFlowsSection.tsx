@@ -39,10 +39,10 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 3.5: Asia Commodity Flows */}
                 <MotionCard delay={0.4} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-emerald-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
+                        <h3 className="text-2xl font-bold text-white uppercase tracking-heading">
                             Asia Commodity Flow Dynamics
                         </h3>
-                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground mt-2 max-w-2xl font-medium tracking-wide">
                             Molecular shift toward the East. Tracking Crude import origins for Bharat & China identifies emerging trade corridors and energy density dependencies.
                         </p>
                         <div className="mt-2">
@@ -57,10 +57,10 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 3.6: Import Dependency Monitor */}
                 <MotionCard delay={0.45} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-rose-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
+                        <h3 className="text-2xl font-bold text-white uppercase tracking-heading">
                             Import Dependency Monitor
                         </h3>
-                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground mt-2 max-w-2xl font-medium tracking-wide">
                             Economic impact of energy sourcing. Weighted average costs in local currency (INR/CNY) highlights the intersection of commodity cycles and FX volatility.
                         </p>
                     </div>
@@ -76,10 +76,10 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                 {/* Row 4: Import Vulnerability & Flow Matrix */}
                 <MotionCard delay={0.5} className="w-full">
                     <div className="mb-8 pl-4 border-l-4 border-blue-500/30">
-                        <h3 className="text-2xl font-black text-white uppercase tracking-heading">
+                        <h3 className="text-2xl font-bold text-white uppercase tracking-heading">
                             Supplier Concentration Matrix
                         </h3>
-                        <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                        <p className="text-xs text-muted-foreground mt-2 max-w-2xl font-medium tracking-wide">
                             Mapping energy import concentration. Higher reliance on volatile regions directly impacts the national risk profile.
                         </p>
                     </div>
@@ -91,8 +91,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                 {apiData.importData && apiData.importData.length > 0 ? (
                                     <OilImportVulnerabilityCard data={apiData.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
-                                        <span className="text-xs text-muted-foreground uppercase tracking-uppercase mb-2 font-black">Data loading...</span>
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-border p-8 text-center">
+                                        <span className="text-xs text-muted-foreground uppercase tracking-wider mb-2 font-semibold">Data loading...</span>
                                     </div>
                                 )}
                             </Suspense>
@@ -104,8 +104,8 @@ export const AsiaCommodityFlowsSection: React.FC = () => {
                                 {apiData.importData && apiData.importData.length > 0 ? (
                                     <VulnerabilityScoreMatrix data={apiData.importData} isLoading={false} />
                                 ) : (
-                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-white/12 p-8 text-center">
-                                        <span className="text-xs text-rose-500/50 uppercase tracking-uppercase mb-2 font-black">Analysis Pending</span>
+                                    <div className="h-[400px] flex flex-col items-center justify-center bg-white/5 rounded-xl border border-border p-8 text-center">
+                                        <span className="text-xs text-rose-500/50 uppercase tracking-wider mb-2 font-semibold">Analysis Pending</span>
                                     </div>
                                 )}
                             </Suspense>

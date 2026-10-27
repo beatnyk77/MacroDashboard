@@ -94,22 +94,22 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             {/* Backdrop */}
             <div
-                className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+                className="absolute inset-0 bg-card/90 backdrop-blur-sm animate-in fade-in duration-200"
                 onClick={onClose}
             />
 
             {/* Modal Content */}
-            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-slate-950/95 border border-white/12 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
+            <div className="relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-card/90 border border-border rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200">
                 <div className="flex justify-between items-center mb-10">
                     <div className="flex items-center gap-4">
                         <div className="p-2 rounded-lg bg-primary text-primary-foreground">
                             <Activity size={24} />
                         </div>
                         <div>
-                            <h2 className="text-2xl font-black tracking-heading text-foreground">
+                            <h2 className="text-2xl font-bold tracking-heading text-foreground">
                                 Regime Replay: {regime}
                             </h2>
-                            <p className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase mt-1">
+                            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1">
                                 CROSS-ASSET CORRELATION & HISTORICAL ANALOGUES
                             </p>
                         </div>
@@ -125,10 +125,10 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                 <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
                     {/* Left Panel: Triggers */}
                     <div className="md:col-span-5">
-                        <div className="p-6 bg-white/[0.02] rounded-xl border border-white/5 h-full">
+                        <div className="p-6 bg-white/[0.02] rounded-xl border border-border h-full">
                             <div className="flex items-center gap-2 mb-6 text-blue-500">
                                 <AlertCircle size={18} />
-                                <span className="text-xs font-black uppercase tracking-uppercase">Live Regime Triggers</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider">Live Regime Triggers</span>
                             </div>
                             {currentTriggers.map((trigger, i) => (
                                 <div key={i} className="flex items-start gap-3 mb-4 last:mb-0">
@@ -144,10 +144,10 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                     {/* Right Panel: Precedent */}
                     <div className="md:col-span-7">
                         <div className="mb-8 p-4 bg-blue-500/5 rounded-lg border border-blue-500/20 border-dashed">
-                            <span className="text-xs font-black text-primary uppercase tracking-uppercase mb-2 block">
+                            <span className="text-xs font-semibold text-primary uppercase tracking-wider mb-2 block">
                                 Historical Precedent
                             </span>
-                            <h3 className="text-lg font-extrabold text-foreground mb-2">
+                            <h3 className="text-lg font-bold text-foreground mb-2">
                                 {precedent}
                             </h3>
                             <p className="text-sm font-medium text-muted-foreground leading-relaxed">
@@ -157,26 +157,26 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
 
                         <div className="flex items-center gap-2 mb-4 text-amber-500">
                             <History size={18} />
-                            <span className="text-xs font-black uppercase tracking-uppercase">Historical Asset Performance</span>
+                            <span className="text-xs font-semibold uppercase tracking-wider">Historical Asset Performance</span>
                         </div>
 
-                        <div className="w-full overflow-hidden rounded-lg border border-white/5 bg-transparent">
+                        <div className="w-full overflow-hidden rounded-lg border border-border bg-transparent">
                             <Table>
                                 <TableHeader className="bg-white/[0.02]">
-                                    <TableRow className="border-b border-white/5 hover:bg-transparent">
-                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">ASSET</TableHead>
-                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">PERF (AVG)</TableHead>
-                                        <TableHead className="py-2 px-3 font-black text-xs text-muted-foreground uppercase">MACRO CATALYST</TableHead>
+                                    <TableRow className="border-b border-border hover:bg-transparent">
+                                        <TableHead className="py-2 px-3 font-semibold text-xs text-muted-foreground uppercase">ASSET</TableHead>
+                                        <TableHead className="py-2 px-3 font-semibold text-xs text-muted-foreground uppercase">PERF (AVG)</TableHead>
+                                        <TableHead className="py-2 px-3 font-semibold text-xs text-muted-foreground uppercase">MACRO CATALYST</TableHead>
                                     </TableRow>
                                 </TableHeader>
                                 <TableBody>
                                     {historicalPerformance.map((row) => (
-                                        <TableRow key={row.asset} className="hover:bg-white/[0.01] transition-colors border-white/5">
-                                            <TableCell className="py-3 px-3 font-extrabold text-xs text-foreground">
+                                        <TableRow key={row.asset} className="hover:bg-white/[0.01] transition-colors border-border">
+                                            <TableCell className="py-3 px-3 font-bold text-xs text-foreground">
                                                 {row.asset}
                                             </TableCell>
                                             <TableCell className={cn(
-                                                "py-3 px-3 font-black text-xs",
+                                                "py-3 px-3 font-bold text-xs",
                                                 row.performance.startsWith('+') ? "text-emerald-500" : "text-rose-500"
                                             )}>
                                                 {row.performance}
@@ -192,8 +192,8 @@ export const RegimeReplayModal: React.FC<RegimeReplayModalProps> = ({ open, onCl
                     </div>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-white/5">
-                    <p className="text-xs text-muted-foreground/60 italic leading-relaxed text-center">
+                <div className="mt-8 pt-6 border-t border-border">
+                    <p className="text-xs text-muted-foreground italic leading-relaxed text-center">
                         Methodology: Performance is averaged over the last three identical macro regimes. Catalysts represent the primary driver during the most recent analogue period. Current Triggers are derived from live data pipelines (FRED/Treasury/Gold Ratios).
                     </p>
                 </div>

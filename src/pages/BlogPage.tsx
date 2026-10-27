@@ -6,6 +6,7 @@ import { blogArticles } from '@/features/blog/blogData';
 import { SEOManager } from '@/components/SEOManager';
 import { PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Calendar, User } from 'lucide-react';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export const BlogPage: React.FC = () => {
     return (
@@ -34,8 +35,8 @@ export const BlogPage: React.FC = () => {
 
             <Container maxWidth="lg">
                 <div className="mb-12 text-center">
-                    <Typography variant="h3" component="h1" className="font-black tracking-heading mb-2">
-                        Intelligence <span style={{ color: '#3b82f6' }}>Journal</span>
+                    <Typography variant="h3" component="h1" className="font-bold tracking-heading mb-2">
+                        Intelligence <span style={{ color: CHART_COLORS.west }}>Journal</span>
                     </Typography>
                     <Typography variant="body1" className="text-muted-foreground mx-auto mb-4" style={{ maxWidth: 600 }}>
                         Deep-dive analysis on the structural shifts reshaping the global monetary order and the physical economy.
@@ -46,16 +47,16 @@ export const BlogPage: React.FC = () => {
                     {blogArticles.map((article) => (
                         <div key={article.id}>
                             <Link to={`/blog/${article.slug}`} className="block h-full">
-                                <Card variant="elevated" className="h-full p-8 flex flex-col border-border/50 duration-300 hover:-translate-y-1 hover:border-primary">
+                                <Card variant="elevated" className="h-full p-8 flex flex-col border-border duration-300 hover:-translate-y-1 hover:border-primary">
                                     <div className="flex gap-1 mb-2">
                                         <Chip
                                             label={article.category}
                                             size="small"
-                                            className="bg-blue-500/10 text-blue-500 font-extrabold text-xs rounded-sm"
+                                            className="bg-blue-500/10 text-blue-500 font-bold text-xs rounded-sm"
                                         />
                                     </div>
 
-                                    <Typography variant="h6" component="h2" className="font-extrabold mb-2 leading-tight">
+                                    <Typography variant="h6" component="h2" className="font-bold mb-2 leading-tight">
                                         {article.title}
                                     </Typography>
 

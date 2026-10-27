@@ -5,6 +5,7 @@ import { BrandConfig, PublisherOrganizationSchema } from '@/config/brandConfig';
 import { Linkedin, Search } from 'lucide-react';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const About: React.FC = () => {
     return (
@@ -36,7 +37,7 @@ export const About: React.FC = () => {
 
             <Container maxWidth="md">
                 <Box sx={{ mb: 6, textAlign: 'center' }}>
-                    <Typography variant="h1" component="h1" sx={{ fontWeight: 900, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' }, tracking: '-0.02em' }}>
+                    <Typography variant="h1" component="h1" sx={{ fontWeight: 700, mb: 2, fontSize: { xs: '2.5rem', md: '3.5rem' }, tracking: '-0.02em' }}>
                         The Surveillance Mandate
                     </Typography>
                     <Typography variant="h2" sx={{ fontSize: '1.25rem', color: 'text.secondary', fontWeight: 400, maxWidth: '600px', mx: 'auto' }}>
@@ -52,12 +53,12 @@ export const About: React.FC = () => {
                             src="/avatar.jpg"
                             alt="Kartikay Sharma"
                             imgProps={{ loading: 'lazy' }}
-                            sx={{ width: 140, height: 140, mx: 'auto', mb: 3, border: '4px solid rgba(255,255,255,0.05)', borderRadius: '12px' }}
+                            sx={{ width: 140, height: 140, mx: 'auto', mb: 3, border: `4px solid ${WHITE_ALPHA.faint}`, borderRadius: '12px' }}
                         >
                             KS
                         </Avatar>
                         <Box sx={{ px: 2 }}>
-                            <Typography variant="h3" sx={{ fontWeight: 800, fontSize: '1.4rem', mb: 0.5 }}>
+                            <Typography variant="h3" sx={{ fontWeight: 700, fontSize: '1.4rem', mb: 0.5 }}>
                                 Kartikay Sharma
                             </Typography>
                             <Typography variant="subtitle2" component="p" sx={{ color: 'primary.main', fontWeight: 600, mb: 2, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -72,9 +73,9 @@ export const About: React.FC = () => {
                                 size="small"
                                 startIcon={<Linkedin size={14} />}
                                 sx={{ 
-                                    borderColor: 'rgba(255,255,255,0.1)',
+                                    borderColor: WHITE_ALPHA.line,
                                     color: 'text.secondary',
-                                    '&:hover': { borderColor: 'primary.main', bgcolor: 'rgba(59, 130, 246, 0.05)' }
+                                    '&:hover': { borderColor: 'primary.main', bgcolor: alpha(CHART_COLORS.west, 0.05) }
                                 }}
                             >
                                 Institutional Profile
@@ -105,7 +106,7 @@ export const About: React.FC = () => {
                             We synthesize the converging forces of fiscal dominance, geopolitical fragmentation (BRICS+ architecture), and the reassertion of the physical economy. By tracking state-level granularity in India and provincial shifts in China, GraphiQuestor reveals leading indicators of regime shifts before they manifest in national aggregates.
                         </Typography>
 
-                        <Box sx={{ p: 3, mt: 5, bgcolor: 'rgba(59, 130, 246, 0.03)', borderLeft: '3px solid #3b82f6', borderRadius: '4px' }}>
+                        <Box sx={{ p: 3, mt: 5, bgcolor: alpha(CHART_COLORS.west, 0.03), borderLeft: `3px solid ${CHART_COLORS.west}`, borderRadius: '4px' }}>
                             <Typography variant="body2" sx={{ fontStyle: 'italic', color: 'text.primary', opacity: 0.9 }}>
                                 "The objective of GraphiQuestor is not prediction, but the precise measurement of structural reality. Capital follows the plumbing, not the press conferences."
                             </Typography>
@@ -118,7 +119,7 @@ export const About: React.FC = () => {
                     <Typography
                         variant="h2"
                         component="h2"
-                        sx={{ fontWeight: 900, fontSize: { xs: '1.6rem', md: '2rem' }, mb: 1 }}
+                        sx={{ fontWeight: 700, fontSize: { xs: '1.6rem', md: '2rem' }, mb: 1 }}
                     >
                         Industry-First Signals
                     </Typography>
@@ -132,25 +133,25 @@ export const About: React.FC = () => {
                         component="div"
                         sx={{
                             overflowX: 'auto',
-                            border: '1px solid rgba(255,255,255,0.06)',
+                            border: `1px solid ${WHITE_ALPHA.faint}`,
                             borderRadius: '12px',
-                            background: 'rgba(255,255,255,0.02)',
+                            background: WHITE_ALPHA.ghost,
                         }}
                     >
                         <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.8rem' }}>
                             <thead>
-                                <tr style={{ borderBottom: '1px solid rgba(255,255,255,0.06)' }}>
+                                <tr style={{ borderBottom: `1px solid ${WHITE_ALPHA.faint}` }}>
                                     {['Signal', 'What It Measures', 'Commercial Equivalent'].map(h => (
                                         <th
                                             key={h}
                                             style={{
                                                 padding: '10px 16px',
                                                 textAlign: 'left',
-                                                fontWeight: 800,
+                                                fontWeight: 700,
                                                 textTransform: 'uppercase',
                                                 letterSpacing: '0.10em',
                                                 fontSize: '0.68rem',
-                                                color: 'rgba(255,255,255,0.35)',
+                                                color: WHITE_ALPHA.dim,
                                                 whiteSpace: 'nowrap',
                                             }}
                                         >
@@ -195,29 +196,29 @@ export const About: React.FC = () => {
                                     <tr
                                         key={row.signal}
                                         style={{
-                                            borderBottom: i < 4 ? '1px solid rgba(255,255,255,0.04)' : 'none',
+                                            borderBottom: i < 4 ? `1px solid ${WHITE_ALPHA.ghost}` : 'none',
                                             transition: 'background 0.15s',
                                         }}
-                                        onMouseEnter={e => (e.currentTarget.style.background = 'rgba(255,255,255,0.03)')}
+                                        onMouseEnter={e => (e.currentTarget.style.background = WHITE_ALPHA.ghost)}
                                         onMouseLeave={e => (e.currentTarget.style.background = 'transparent')}
                                     >
                                         <td style={{ padding: '12px 16px', verticalAlign: 'top' }}>
                                             <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
                                                 <a
                                                     href={row.href}
-                                                    style={{ color: '#e2e8f0', fontWeight: 700, textDecoration: 'none' }}
-                                                    onMouseEnter={e => ((e.target as HTMLElement).style.color = '#60a5fa')}
-                                                    onMouseLeave={e => ((e.target as HTMLElement).style.color = '#e2e8f0')}
+                                                    style={{ color: CHART_COLORS.textStrong, fontWeight: 700, textDecoration: 'none' }}
+                                                    onMouseEnter={e => ((e.target as HTMLElement).style.color = CHART_COLORS.west)}
+                                                    onMouseLeave={e => ((e.target as HTMLElement).style.color = CHART_COLORS.textStrong)}
                                                 >
                                                     {row.signal}
                                                 </a>
                                                 <GQSignalBadge />
                                             </div>
                                         </td>
-                                        <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.55)', verticalAlign: 'top', lineHeight: 1.6 }}>
+                                        <td style={{ padding: '12px 16px', color: WHITE_ALPHA.mid, verticalAlign: 'top', lineHeight: 1.6 }}>
                                             {row.measures}
                                         </td>
-                                        <td style={{ padding: '12px 16px', color: 'rgba(255,255,255,0.30)', verticalAlign: 'top', fontFamily: 'monospace', fontSize: '0.75rem' }}>
+                                        <td style={{ padding: '12px 16px', color: WHITE_ALPHA.dim, verticalAlign: 'top', fontFamily: 'Fira Code, monospace', fontSize: '0.75rem' }}>
                                             {row.commercial}
                                         </td>
                                     </tr>
@@ -233,21 +234,21 @@ export const About: React.FC = () => {
                             px: 4,
                             py: 2.5,
                             borderRadius: '10px',
-                            background: 'rgba(245, 158, 11, 0.05)',
-                            border: '1px solid rgba(245, 158, 11, 0.15)',
+                            background: alpha(CHART_COLORS.gold, 0.05),
+                            border: `1px solid ${alpha(CHART_COLORS.gold, 0.15)}`,
                             display: 'flex',
                             alignItems: 'center',
                             gap: 2,
                             flexWrap: 'wrap',
                         }}
                     >
-                        <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 800, color: 'rgba(245,158,11,0.7)' }}>
+                        <span style={{ fontSize: '0.72rem', textTransform: 'uppercase', letterSpacing: '0.12em', fontWeight: 700, color: alpha(CHART_COLORS.gold, 0.7) }}>
                             ◆ Estimated commercial data cost to replicate GraphiQuestor&apos;s proprietary signal layer:
                         </span>
-                        <span style={{ fontSize: '1.05rem', fontWeight: 900, color: '#f59e0b', fontFamily: 'monospace' }}>
+                        <span style={{ fontSize: '1.05rem', fontWeight: 700, color: CHART_COLORS.gold, fontFamily: 'Fira Code, monospace' }}>
                             $4,400/month
                         </span>
-                        <span style={{ fontSize: '0.72rem', color: 'rgba(255,255,255,0.30)', fontWeight: 600 }}>
+                        <span style={{ fontSize: '0.72rem', color: WHITE_ALPHA.dim, fontWeight: 600 }}>
                             — available here, free.
                         </span>
                     </Box>

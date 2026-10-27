@@ -1,7 +1,6 @@
 import React, { useMemo } from 'react';
 import { AlertTriangle, Building2, Landmark } from 'lucide-react';
 import {
-    ResponsiveContainer,
     ComposedChart,
     Bar,
     Line,
@@ -11,9 +10,11 @@ import {
     Tooltip,
     Legend,
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { useChinaDebtLayers, useChinaFiscalSignals, type ChinaFiscalSignal } from '@/hooks/useChinaDebt';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { cn } from '@/lib/utils';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const ChinaLGFFiscalPanel: React.FC = () => {
     const { data: layers, isLoading: layersLoading } = useChinaDebtLayers();
@@ -62,20 +63,20 @@ export const ChinaLGFFiscalPanel: React.FC = () => {
     const landCollapse = latestSignals.land_revenue_collapse_idx;
 
     if (isLoading) {
-        return <div className="h-[500px] rounded-2xl bg-white/[0.02] animate-pulse" />;
+        return <div className="h-[500px] rounded-xl bg-white/[0.02] animate-pulse" />;
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center gap-3">
-                <div className="p-2.5 rounded-2xl bg-amber-500/10 border border-amber-500/20">
+                <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/20">
                     <Building2 size={20} className="text-amber-400" />
                 </div>
                 <div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic">
                         LGFV Debt Observatory
                     </h3>
-                    <p className="text-xs text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground">
                         Local government financing vehicles — the single largest shadow debt risk
                     </p>
                 </div>
@@ -113,70 +114,70 @@ export const ChinaLGFFiscalPanel: React.FC = () => {
                     },
                 ].map(({ label, value, range, unit, warn }) => (
                     <div key={label} className={cn(
-                        'p-5 rounded-2xl border',
-                        warn ? 'bg-amber-500/[0.04] border-amber-500/15' : 'bg-white/[0.02] border-white/5'
+                        'p-5 rounded-xl border',
+                        warn ? 'bg-amber-500/[0.04] border-amber-500/15' : 'bg-white/[0.02] border-border'
                     )}>
-                        <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">{label}</p>
-                        <p className="text-2xl font-black text-white font-mono">
+                        <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">{label}</p>
+                        <p className="text-2xl font-bold text-white font-mono">
                             {value != null ? value.toFixed(1) : '—'}
-                            <span className="text-xs text-muted-foreground/50 ml-1">{unit}</span>
+                            <span className="text-xs text-terminal-dim ml-1">{unit}</span>
                         </p>
-                        {range && <p className="text-xs text-muted-foreground/40 mt-1">Range: {range} {unit}</p>}
+                        {range && <p className="text-xs text-terminal-dim mt-1">Range: {range} {unit}</p>}
                     </div>
                 ))}
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-4">
+                <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-4">
                         LGFV Debt Layer (% GDP) — Annual Range
                     </h4>
                     {lgfvHistory.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={200}>
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <ComposedChart data={lgfvHistory} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                                <XAxis dataKey="year" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                                <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
-                                <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11 }} />
-                                <Legend wrapperStyle={{ fontSize: 10 }} />
-                                <Bar dataKey="mid" fill="rgba(245,158,11,0.5)" name="Estimate" radius={[2, 2, 0, 0]} />
-                                <Line type="monotone" dataKey="high" stroke="#ef4444" strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="High" />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} unit="%" />
+                                <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE} itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE} />
+                                <Legend wrapperStyle={{ fontSize: 11 }} />
+                                <Bar dataKey="mid" fill={alpha(CHART_COLORS.gold, 0.5)} name="Estimate" radius={[2, 2, 0, 0]} />
+                                <Line type="monotone" dataKey="high" stroke={CHART_COLORS.stress} strokeWidth={1.5} strokeDasharray="4 4" dot={false} name="High" />
                             </ComposedChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     ) : (
-                        <p className="text-sm text-muted-foreground/50">LGFV layer history unavailable</p>
+                        <p className="text-sm text-terminal-dim">LGFV layer history unavailable</p>
                     )}
                 </div>
 
-                <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                    <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-4">
+                <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-4">
                         Land Fiscal Dependence (% of LG Revenue)
                     </h4>
                     {landHistory.length > 0 ? (
-                        <ResponsiveContainer width="100%" height={200}>
+                        <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <ComposedChart data={landHistory} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                                <XAxis dataKey="year" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                                <YAxis tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" domain={[0, 50]} />
-                                <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11 }} />
-                                <Line type="monotone" dataKey="value" stroke="#60a5fa" strokeWidth={2} dot={{ fill: '#60a5fa', r: 3 }} name="Land %" />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} unit="%" domain={[0, 50]} />
+                                <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE} itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE} />
+                                <Line type="monotone" dataKey="value" stroke={CHART_COLORS.west} strokeWidth={2} dot={{ fill: CHART_COLORS.west, r: 3 }} name="Land %" />
                             </ComposedChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     ) : (
-                        <p className="text-sm text-muted-foreground/50">Land revenue data unavailable</p>
+                        <p className="text-sm text-terminal-dim">Land revenue data unavailable</p>
                     )}
                 </div>
             </div>
 
             {/* Special Refinancing Watch */}
-            <div className="p-6 rounded-2xl bg-rose-500/[0.04] border border-rose-500/15">
+            <div className="p-6 rounded-xl bg-rose-500/[0.04] border border-rose-500/15">
                 <div className="flex items-center gap-2 mb-4">
                     <Landmark size={16} className="text-rose-400" />
-                    <h4 className="text-xs font-black uppercase tracking-uppercase text-rose-400">
+                    <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400">
                         Special Refinancing Bond Watch
                     </h4>
                 </div>
-                <p className="text-sm text-muted-foreground/70 leading-relaxed mb-4">
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">
                     When Beijing issues special refinancing bonds to swap LGFV debt, it signals implicit acknowledgment of
                     provincial distress and quasi-monetization. The 2023 wave totaled approximately{' '}
                     <span className="text-white font-mono">¥1.4T</span>; cumulative issuance through late 2024 is estimated at{' '}

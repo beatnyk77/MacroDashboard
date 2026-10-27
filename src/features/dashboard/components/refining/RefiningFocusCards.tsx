@@ -13,9 +13,9 @@ const FocusCard: React.FC<{
     const isOverMedian = utilization > median;
 
     return (
-        <div className="p-6 rounded-[2rem] bg-white/[0.03] border border-white/5 backdrop-blur-sm space-y-6">
+        <div className="p-6 rounded-xl bg-white/[0.03] border border-border backdrop-blur-sm space-y-6">
             <div className="flex items-center justify-between">
-                <h4 className="text-lg font-black text-white uppercase tracking-heading">{country} <span className="text-blue-500">Focus</span></h4>
+                <h4 className="text-lg font-semibold text-white uppercase tracking-heading">{country} <span className="text-blue-500">Focus</span></h4>
                 <div className="p-2 rounded-xl bg-blue-500/10 border border-blue-500/20">
                     <Shield size={16} className="text-blue-500" />
                 </div>
@@ -23,20 +23,20 @@ const FocusCard: React.FC<{
 
             <div className="space-y-4">
                 <div>
-                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-2">Import Dependency Correlation</span>
+                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider block mb-2">Import Dependency Correlation</span>
                     <div className="flex items-end gap-2">
-                        <div className="text-3xl font-black text-white italic leading-none">{correlation.toFixed(2)}</div>
-                        <div className="text-xs font-bold text-emerald-400 uppercase pb-1 flex items-center gap-1">
+                        <div className="text-3xl font-bold text-white italic leading-none">{correlation.toFixed(2)}</div>
+                        <div className="text-xs font-semibold text-emerald-400 uppercase pb-1 flex items-center gap-1">
                             <TrendingUp size={10} /> CRITICAL
                         </div>
                     </div>
                 </div>
 
-                <div className="pt-4 border-t border-white/5">
+                <div className="pt-4 border-t border-border">
                     <div className="flex justify-between items-center mb-2">
-                        <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">Cap Utilization</span>
+                        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Cap Utilization</span>
                         <span className={cn(
-                            "text-xs font-black uppercase tracking-uppercase px-1.5 py-0.5 rounded",
+                            "text-xs font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded",
                             isOverMedian ? "text-blue-400 bg-blue-500/10" : "text-amber-400 bg-amber-500/10"
                         )}>
                             {isOverMedian ? "Above Median" : "Below Median"}
@@ -47,13 +47,13 @@ const FocusCard: React.FC<{
                             <m.div
                                 initial={{ width: 0 }}
                                 animate={{ width: `${utilization}%` }}
-                                className="h-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"
+                                className="h-full bg-blue-500 shadow-[0_0_10px_theme(colors.blue.500)]"
                             />
                         </div>
-                        <div className="text-sm font-black text-white italic">{utilization}%</div>
+                        <div className="text-sm font-bold text-white italic">{utilization}%</div>
                     </div>
                     <div className="flex justify-between mt-2">
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase">Median: {median}%</span>
+                        <span className="text-xs font-semibold text-terminal-dim uppercase">Median: {median}%</span>
                         <BarChart3 size={12} className="text-white/20" />
                     </div>
                 </div>

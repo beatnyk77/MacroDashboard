@@ -5,7 +5,6 @@ import { SectionHeader } from '@/components/SectionHeader';
 import { ExportCSVButton } from '@/components/ExportCSVButton';
 import { Card } from '@/components/ui/card';
 import {
-    ResponsiveContainer,
     LineChart,
     Line,
     XAxis,
@@ -13,19 +12,23 @@ import {
     CartesianGrid,
     Tooltip,
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { TrendingUp, TrendingDown, AlertTriangle, Info, BookOpen } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
 import { TrailLink as Link } from '@/components/TrailLink';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CountryCode } from '@/components/CountryCode';
 /* ── Tenor ordering for x-axis ────────────────────────────────── */
 const TENOR_ORDER = ['3M', '6M', '1Y', '2Y', '5Y', '10Y', '30Y'];
 
 /* ── Country palette ──────────────────────────────────────────── */
-const COUNTRY_CONFIG: Record<string, { label: string; color: string; flag: string }> = {
-    US: { label: 'United States', color: '#60a5fa', flag: '🇺🇸' },
-    EU: { label: 'EU (Germany)', color: '#fbbf24', flag: '🇪🇺' },
-    IN: { label: 'India', color: '#34d399', flag: '🇮🇳' },
-    CN: { label: 'China', color: '#f87171', flag: '🇨🇳' },
+const COUNTRY_CONFIG: Record<string, { label: string; color: string }> = {
+    US: { label: 'United States', color: CHART_COLORS.west },
+    EU: { label: 'EU (Germany)', color: CHART_COLORS.gold },
+    IN: { label: 'India', color: CHART_COLORS.expansion },
+    CN: { label: 'China', color: CHART_COLORS.stress },
 };
 
 const COUNTRIES = Object.keys(COUNTRY_CONFIG);
@@ -96,8 +99,8 @@ export const YieldCurveMonitor: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Yield Curves...</span>
+            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Loading Yield Curves...</span>
             </div>
         );
     }
@@ -124,7 +127,7 @@ export const YieldCurveMonitor: React.FC = () => {
                             return (
                                 <StatusChip
                                     key={c}
-                                    label={`${COUNTRY_CONFIG[c].flag} ${c}`}
+                                    label={c}
                                     status={g.inverted ? 'INVERTED' : 'NORMAL'}
                                     color={g.inverted ? 'rose' : 'emerald'}
                                 />
@@ -136,18 +139,18 @@ export const YieldCurveMonitor: React.FC = () => {
                 {/* Main container: full-width chart + gauge grid below */}
                 <div className="flex flex-col gap-10">
                     {/* ── Hero Chart ───────────────────────────────────── */}
-                    <Card variant="elevated" className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-6 relative overflow-hidden">
+                    <Card variant="elevated" className="bg-white/[0.02] border border-border rounded-xl p-6 relative overflow-hidden">
                         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
                             <div>
-                                <h3 className="text-xs font-black text-white/40 uppercase tracking-uppercase">
+                                <h3 className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                                     Sovereign Yield Curves
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 mt-0.5">
+                                <p className="text-xs text-muted-foreground mt-0.5">
                                     x = Tenor · y = Yield (%) · Lines = Countries
                                 </p>
                             </div>
                             {latestDate && (
-                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                                     As of {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                                 </span>
                             )}
@@ -163,20 +166,20 @@ export const YieldCurveMonitor: React.FC = () => {
                             ))}
                         </div>
 
-                        <div className="h-[600px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.hero}>
                                 <LineChart data={chartData} margin={{ top: 20, right: 60, left: 20, bottom: 30 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
+                                        {...DEFAULT_XAXIS_PROPS}
                                         dataKey="tenor"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 12, fill: 'rgba(255,255,255,0.4)', fontWeight: 600 }}
+                                        tick={{ fontSize: 12, fill: WHITE_ALPHA.dim, fontWeight: 600 }}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 11, fill: 'rgba(255,255,255,0.3)', fontWeight: 500 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim, fontWeight: 500 }}
                                         tickFormatter={(val: number) => `${val.toFixed(1)}%`}
                                         domain={['auto', 'auto']}
                                     />
@@ -195,8 +198,7 @@ export const YieldCurveMonitor: React.FC = () => {
                                         />
                                     ))}
                                 </LineChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </Card>
 
                     {/* ── Gauge Cards Grid ─────────────────────────────── */}
@@ -222,9 +224,9 @@ export const YieldCurveMonitor: React.FC = () => {
 
                 {/* Source footer */}
                 <div className="mt-10 flex justify-center">
-                    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/[0.03] border border-border">
                         <Info size={13} className="text-blue-400" />
-                        <span className="text-[11px] font-bold text-muted-foreground uppercase tracking-uppercase text-center">
+                        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider text-center">
                             Sources: FRED · ECB SDW · RBI DBIE — updated daily
                         </span>
                     </div>
@@ -236,10 +238,10 @@ export const YieldCurveMonitor: React.FC = () => {
 
 /* ── Status Chip ──────────────────────────────────────────────── */
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
-    <div className="px-4 py-2.5 rounded-xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-0.5">
-        <span className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
+    <div className="px-4 py-2.5 rounded-xl bg-white/[0.03] border border-border flex flex-col items-start gap-0.5">
+        <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">{label}</span>
         <span className={cn(
-            "text-[11px] font-black uppercase tracking-heading",
+            "text-[11px] font-semibold uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -248,7 +250,7 @@ const StatusChip = ({ label, status, color }: { label: string; status: string; c
 /* ── Gauge Card ───────────────────────────────────────────────── */
 const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     country: string;
-    config: { label: string; color: string; flag: string };
+    config: { label: string; color: string };
     slope: string;
     spread: string;
     inverted: boolean;
@@ -256,16 +258,16 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
     source: string;
 }) => (
     <m.div whileHover={{ y: -2 }}>
-        <Card variant="elevated" className="p-4 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] group cursor-default h-full">
+        <Card variant="elevated" className="p-4 rounded-xl bg-white/[0.02] border border-border flex flex-col justify-between hover:bg-white/[0.04] group cursor-default h-full">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-1.5">
-                <span className="text-base">{config.flag}</span>
-                <span className="text-[10px] font-black text-white/60 uppercase tracking-uppercase">{country}</span>
+                <CountryCode code={country} />
+                <span className="text-[11px] font-semibold text-white/60 uppercase tracking-wider">{country}</span>
             </div>
             <div className="flex items-center gap-1">
-                <span className="text-lg font-black tabular-nums" style={{ color: config.color }}>{y10y}%</span>
-                <span className="text-[10px] font-bold text-muted-foreground/40 uppercase">10Y</span>
+                <span className="text-lg font-bold tabular-nums" style={{ color: config.color }}>{y10y}%</span>
+                <span className="text-[11px] font-semibold text-terminal-dim uppercase">10Y</span>
             </div>
         </div>
 
@@ -275,19 +277,19 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-1.5">
                     <TrendingUp size={12} className="text-blue-400" />
-                    <span className="text-[10px] font-bold text-muted-foreground/60">Slope (30Y−3M)</span>
+                    <span className="text-[11px] font-bold text-muted-foreground">Slope (30Y−3M)</span>
                 </div>
                 <span className={cn(
-                    "text-xs font-black tabular-nums",
-                    parseFloat(slope) > 0 ? "text-emerald-400" : parseFloat(slope) < 0 ? "text-rose-500" : "text-white/40"
+                    "text-xs font-bold tabular-nums",
+                    parseFloat(slope) > 0 ? "text-emerald-400" : parseFloat(slope) < 0 ? "text-rose-500" : "text-terminal-dim"
                 )}>
                     {slope !== '—' ? `${parseFloat(slope) > 0 ? '+' : ''}${slope}` : '—'}
-                    <span className="text-[10px] font-bold text-muted-foreground/40 ml-1">bps</span>
+                    <span className="text-[11px] font-bold text-terminal-dim ml-1">bps</span>
                 </span>
             </div>
 
             {/* Term Premium Glossary Link */}
-            <Link to="/glossary/term-premium" className="flex items-center gap-1 text-[10px] font-bold text-blue-400 hover:text-blue-300 uppercase tracking-uppercase transition-colors">
+            <Link to="/glossary/term-premium" className="flex items-center gap-1 text-[11px] font-semibold text-blue-400 hover:text-blue-300 uppercase tracking-wider transition-colors">
                 <BookOpen size={9} /> Term Premium
             </Link>
 
@@ -298,17 +300,17 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
                         ? <AlertTriangle size={12} className="text-rose-500" />
                         : <TrendingDown size={12} className="text-amber-400" />
                     }
-                    <span className="text-[10px] font-bold text-muted-foreground/60">2Y−10Y</span>
+                    <span className="text-[11px] font-bold text-muted-foreground">2Y−10Y</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                     <span className={cn(
-                        "text-xs font-black tabular-nums",
+                        "text-xs font-bold tabular-nums",
                         inverted ? "text-rose-500" : "text-emerald-400"
                     )}>
                         {spread !== '—' ? `${parseFloat(spread) > 0 ? '+' : ''}${spread}` : '—'}
                     </span>
                     {inverted && (
-                        <span className="text-[9px] font-black px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
+                        <span className="text-[11px] font-semibold px-1.5 py-0.5 rounded-full bg-rose-500/10 text-rose-500 uppercase">
                             Inv
                         </span>
                     )}
@@ -317,9 +319,9 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
         </div>
 
         {/* Footer */}
-        <div className="mt-3 pt-2 border-t border-white/5 flex items-center justify-between">
-            <span className="text-[10px] font-black text-white/15 uppercase tracking-uppercase">{config.label}</span>
-            <span className="text-[10px] font-bold text-muted-foreground/30 uppercase">{source}</span>
+        <div className="mt-3 pt-2 border-t border-border flex items-center justify-between">
+            <span className="text-[11px] font-semibold text-white/15 uppercase tracking-wider">{config.label}</span>
+            <span className="text-[11px] font-semibold text-terminal-dim uppercase">{source}</span>
         </div>
     </Card>
 </m.div>
@@ -329,8 +331,8 @@ const GaugeCard = ({ country, config, slope, spread, inverted, y10y, source }: {
 const CurveTooltip = ({ active, payload, label, gauges }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl min-w-[220px]">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3 border-b border-white/5 pb-2">
+            <div className={`${TOOLTIP_SHELL_CLASS} min-w-[220px]`}>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-3 border-b border-border pb-2">
                     Tenor: {label}
                 </div>
                 <div className="space-y-2">
@@ -344,14 +346,14 @@ const CurveTooltip = ({ active, payload, label, gauges }: any) => {
                                 <div key={countryCode} className="flex items-center justify-between gap-8">
                                     <div className="flex items-center gap-2">
                                         <div className="w-2 h-2 rounded-full" style={{ backgroundColor: cfg?.color }} />
-                                        <span className="text-xs font-bold text-muted-foreground/80">{cfg?.flag} {countryCode}</span>
+                                        <span className="text-xs font-bold text-slate-400">{countryCode}</span>
                                     </div>
                                     <div className="flex items-center gap-2">
-                                        <span className="text-xs font-black tabular-nums text-white/90">
+                                        <span className="text-xs font-semibold font-mono tabular-nums text-slate-400">
                                             {Number(p.value).toFixed(2)}%
                                         </span>
                                         {gData?.source && (
-                                            <span className="text-xs font-bold text-muted-foreground/30 uppercase">{gData.source}</span>
+                                            <span className="text-xs font-semibold text-slate-400 uppercase">{gData.source}</span>
                                         )}
                                     </div>
                                 </div>

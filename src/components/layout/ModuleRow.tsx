@@ -3,9 +3,22 @@ import { TrailLink as Link } from '@/components/TrailLink';
 import { cn } from '@/lib/utils';
 import { MotionCard } from '@/components/MotionCard';
 
+// Full class names are spelled out so Tailwind's scanner emits them; interpolated
+// `text-${color}` / `bg-${color}/30` strings never reach the generated CSS.
+const MODULE_TONES = {
+  amber: { text: 'text-amber-400', bar: 'bg-amber-400/30' },
+  blue: { text: 'text-blue-400', bar: 'bg-blue-400/30' },
+  cyan: { text: 'text-cyan-400', bar: 'bg-cyan-400/30' },
+  orange: { text: 'text-orange-400', bar: 'bg-orange-400/30' },
+  red: { text: 'text-red-400', bar: 'bg-red-400/30' },
+  rose: { text: 'text-rose-400', bar: 'bg-rose-400/30' },
+} as const;
+
+type ModuleTone = keyof typeof MODULE_TONES;
+
 interface ModuleRowProps {
   label: string;
-  labelColor?: string;
+  labelColor?: `text-${ModuleTone}-400`;
   children: ReactNode;
   href?: string;
   badge?: ReactNode;
@@ -13,20 +26,9 @@ interface ModuleRowProps {
   id?: string;
 }
 
-const getTextColorClass = (color?: string) => {
-  if (!color) return 'text-amber-400/60';
-  if (color.startsWith('text-')) return color;
-  return `text-${color}`;
-};
-
-const getBarColorClass = (color?: string) => {
-  if (!color) return 'bg-amber-400/30';
-  const match = color.match(/(?:text-)?([a-z]+-\d+(?:\/\d+)?)/);
-  if (match) {
-    const baseColor = match[1].split('/')[0];
-    return `bg-${baseColor}/30`;
-  }
-  return 'bg-amber-400/30';
+const getTone = (color?: string) => {
+  const name = color?.match(/^text-([a-z]+)-400$/)?.[1] as ModuleTone | undefined;
+  return MODULE_TONES[name && name in MODULE_TONES ? name : 'amber'];
 };
 
 export const ModuleRow: React.FC<ModuleRowProps> = ({
@@ -38,8 +40,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
   alternateBg,
   id,
 }) => {
-  const textColorClass = getTextColorClass(labelColor);
-  const barColorClass = getBarColorClass(labelColor);
+  const { text: textColorClass, bar: barColorClass } = getTone(labelColor);
 
   return (
     <div
@@ -47,7 +48,7 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
       className={cn(
         "w-full flex flex-col md:flex-row rounded-xl border border-border overflow-hidden",
         "mb-4",
-        alternateBg ? "bg-muted/20 dark:bg-white/[0.01]" : "bg-card/20"
+        alternateBg ? "bg-white/[0.02]" : "bg-card/20"
       )}
     >
       {/* Left edge: vertical label bar (desktop only) */}
@@ -64,10 +65,10 @@ export const ModuleRow: React.FC<ModuleRowProps> = ({
       {/* Main content area */}
       <div className="flex-1 min-w-0 flex flex-col">
         {/* Top: thin horizontal rule (which is the parent border-t) with module label and links */}
-        <div className="flex items-center justify-between gap-4 py-3 px-4 sm:px-5 border-b border-border bg-muted/40 dark:bg-black/10">
+        <div className="flex items-center justify-between gap-4 py-3 px-4 sm:px-5 border-b border-border bg-background/10">
           <div className="flex items-center gap-3">
-            <span className={cn('label-mono', textColorClass)}>
-              {label}
+            <span className="label-mono">
+              <span className={textColorClass}>{label}</span>
             </span>
             {badge}
           </div>

@@ -33,7 +33,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
     if (isLoading) {
         return (
             <div className="w-full space-y-4 animate-pulse">
-                <div className="h-48 bg-slate-900/50 rounded-2xl border border-white/5" />
+                <div className="h-48 bg-card/60 rounded-xl border border-border" />
             </div>
         );
     }
@@ -45,7 +45,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
             <ChinaDebtDigestCard section={latestDigest.china_debt_section} compact />
 
             {/* Main Narrative Card */}
-            <Card variant="elevated" className="overflow-hidden border-blue-500/20 bg-slate-950/80 backdrop-blur-xl relative group">
+            <Card variant="elevated" className="overflow-hidden border-blue-500/20 bg-card/90 backdrop-blur-xl relative group">
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                     <Globe size={120} className="text-blue-500" />
                 </div>
@@ -56,26 +56,26 @@ export const WeeklyRegimeDigest: React.FC = () => {
                             <ShieldCheck className="text-blue-400 h-5 w-5" />
                         </div>
                         <div className="flex flex-col">
-                            <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/80">Weekly Macro Narrative</span>
-                            <span className="text-xs font-bold text-muted-foreground/60">Regime: Fiscal Dominance Synthesis</span>
+                            <span className="text-[11px] font-semibold tracking-wider uppercase text-blue-500/80">Weekly Macro Narrative</span>
+                            <span className="text-xs font-bold text-muted-foreground">Regime: Fiscal Dominance Synthesis</span>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                         {/* Executive Summary */}
                         <div className="lg:col-span-2 space-y-6">
-                            <h2 className="text-2xl md:text-3xl font-black text-white leading-tight tracking-tight">
+                            <h2 className="text-2xl md:text-3xl font-bold text-white leading-tight tracking-tight">
                                 {latestDigest.executive_summary?.split('.')[0] || 'Executive Summary'}.
                             </h2>
                             <p className="text-lg text-muted-foreground/90 leading-relaxed font-medium">
                                 {latestDigest.executive_summary?.split('.').slice(1).join('.') || ''}
                             </p>
                             
-                            <div className="pt-6 border-t border-white/5">
-                                <p className="text-sm font-bold text-blue-400/80 uppercase tracking-widest flex items-center gap-2 mb-4">
+                            <div className="pt-6 border-t border-border">
+                                <p className="text-sm font-semibold text-blue-400/80 uppercase tracking-wider flex items-center gap-2 mb-4">
                                     <Activity size={14} /> Holistic Synthesis
                                 </p>
-                                <p className="text-muted-foreground/70 italic text-sm leading-relaxed">
+                                <p className="text-muted-foreground italic text-sm leading-relaxed">
                                     "{latestDigest.holistic_narrative}"
                                 </p>
                             </div>
@@ -83,15 +83,15 @@ export const WeeklyRegimeDigest: React.FC = () => {
 
                         {/* Regime Shifts */}
                         <div className="space-y-6">
-                            <div className="bg-white/5 rounded-2xl p-6 border border-white/10">
-                                <h3 className="text-sm font-black text-white uppercase tracking-wider mb-6 flex items-center gap-2">
+                            <div className="bg-white/5 rounded-xl p-6 border border-border">
+                                <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-6 flex items-center gap-2">
                                     <Zap size={16} className="text-amber-400" /> Key Regime Shifts
                                 </h3>
                                 <div className="space-y-6">
                                     {latestDigest.regime_shifts?.map((shift, idx) => (
                                         <div key={idx} className="space-y-2">
-                                            <p className="text-xs font-black text-white/90 uppercase tracking-wide">{shift.title}</p>
-                                            <p className="text-[13px] text-muted-foreground/60 leading-snug">{shift.description}</p>
+                                            <p className="text-xs font-semibold text-white/90 uppercase tracking-wider">{shift.title}</p>
+                                            <p className="text-sm text-muted-foreground leading-snug">{shift.description}</p>
                                         </div>
                                     ))}
                                 </div>
@@ -103,15 +103,15 @@ export const WeeklyRegimeDigest: React.FC = () => {
 
             {/* Change & Watch Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <Card variant="elevated" className="bg-slate-900/40 border-white/5 border backdrop-blur-md">
+                <Card variant="elevated" className="bg-card/40 border-border border backdrop-blur-md">
                     <CardContent className="p-6">
-                        <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                        <h3 className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-6 flex items-center gap-2">
                             <TrendingUp size={14} /> What Changed vs Last Week
                         </h3>
                         <div className="space-y-4">
                             {latestDigest.what_changed?.map((item, idx) => (
-                                <div key={idx} className="flex gap-4 items-start pb-4 border-b border-white/5 last:border-0">
-                                    <span className="text-[10px] font-black bg-white/5 border border-white/10 px-2 py-1 rounded text-muted-foreground uppercase">{item.pillar}</span>
+                                <div key={idx} className="flex gap-4 items-start pb-4 border-b border-border last:border-0">
+                                    <span className="text-[11px] font-semibold bg-white/5 border border-border px-2 py-1 rounded text-muted-foreground uppercase">{item.pillar}</span>
                                     <p className="text-sm text-muted-foreground/80 leading-snug">{item.change}</p>
                                 </div>
                             ))}
@@ -119,9 +119,9 @@ export const WeeklyRegimeDigest: React.FC = () => {
                     </CardContent>
                 </Card>
 
-                <Card variant="elevated" className="bg-slate-900/40 border-white/5 border backdrop-blur-md">
+                <Card variant="elevated" className="bg-card/40 border-border border backdrop-blur-md">
                     <CardContent className="p-6">
-                        <h3 className="text-xs font-black text-muted-foreground/50 uppercase tracking-[0.2em] mb-6 flex items-center gap-2">
+                        <h3 className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-6 flex items-center gap-2">
                             <Eye size={14} /> Tactical Watch: Next 7-14 Days
                         </h3>
                         <div className="space-y-4">
@@ -132,7 +132,7 @@ export const WeeklyRegimeDigest: React.FC = () => {
                                 </div>
                             ))}
                         </div>
-                        <div className="mt-8 pt-4 border-t border-white/5 flex items-center gap-2 text-[10px] font-bold text-muted-foreground/30 uppercase tracking-widest">
+                        <div className="mt-8 pt-4 border-t border-border flex items-center gap-2 text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">
                             <Info size={10} /> Data verified against institutional snapshots
                         </div>
                     </CardContent>

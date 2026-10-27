@@ -24,7 +24,7 @@ export const GlossaryInteractiveTools: React.FC<GlossaryInteractiveToolsProps> =
     return (
         <Suspense
             fallback={
-                <div className="h-32 animate-pulse rounded-xl border border-white/5 bg-white/[0.02]" />
+                <div className="h-32 animate-pulse rounded-xl border border-border bg-white/[0.02]" />
             }
         >
             <Explorer className={className} />

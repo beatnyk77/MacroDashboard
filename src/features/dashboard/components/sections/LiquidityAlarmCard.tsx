@@ -3,19 +3,22 @@ import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { ShieldAlert, ShieldCheck, X, Info, Target, TrendingDown, Activity, AlertTriangle, BookOpen } from 'lucide-react';
 import { useNetLiquidity } from '@/hooks/useNetLiquidity';
-import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
+import { BarChart, Bar, XAxis, Tooltip, Cell, ReferenceLine, YAxis, LineChart, Line } from 'recharts';
+import { DEFAULT_XAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { cn } from '@/lib/utils';
 import { formatBillions } from '@/utils/formatNumber';
 import { TrailLink as Link } from '@/components/TrailLink';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950 p-2 border border-white/12 rounded-lg shadow-xl">
-                <span className="text-xs font-extrabold text-muted-foreground block uppercase">Z-SCORE BIN</span>
-                <span className="text-sm font-black text-white">{payload[0].payload.bin}σ</span>
+            <div className={TOOLTIP_SHELL_CLASS}>
+                <span className="text-xs font-semibold text-slate-400 block uppercase">Z-SCORE BIN</span>
+                <span className="text-xs font-semibold text-slate-100">{payload[0].payload.bin}σ</span>
                 <div className="mt-1">
-                    <span className="text-xs font-extrabold text-muted-foreground block uppercase">FREQUENCY</span>
-                    <span className="text-xs font-black text-primary">{payload[0].value} Days</span>
+                    <span className="text-xs font-semibold text-slate-400 block uppercase">FREQUENCY</span>
+                    <span className="text-xs font-semibold text-primary">{payload[0].value} Days</span>
                 </div>
             </div>
         );
@@ -41,9 +44,9 @@ export const LiquidityAlarmCard: React.FC = () => {
     const isTightening = liq.alarm_status === 'TIGHTENING';
 
     const getStatusColor = () => {
-        if (isExtreme) return '#ef4444'; // Red
-        if (isTightening) return '#f59e0b'; // Amber
-        return '#10b981'; // Emerald
+        if (isExtreme) return CHART_COLORS.stress; // Red
+        if (isTightening) return CHART_COLORS.gold; // Amber
+        return CHART_COLORS.expansion; // Emerald
     };
 
     const getStatusClass = () => {
@@ -64,7 +67,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                 onClick={() => setIsModalOpen(true)}
                 className={cn(
                     "p-6 h-full relative overflow-hidden flex flex-col gap-4 cursor-pointer transition-all duration-300",
-                    "bg-card/40 backdrop-blur-md border border-white/12 dark:border-white/5 shadow-xl",
+                    "bg-card/40 backdrop-blur-md border border-border shadow-xl",
                     "hover:-translate-y-1 hover:shadow-2xl hover:border-primary/50",
                     isExtreme ? "border-rose-500/50 shadow-rose-500/20" : isTightening ? "border-amber-500/50 shadow-amber-500/20" : ""
                 )}
@@ -72,37 +75,37 @@ export const LiquidityAlarmCard: React.FC = () => {
                 <div className="flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         {getStatusIcon()}
-                        <h4 className="font-extrabold text-xs tracking-[0.12em] text-muted-foreground uppercase">
+                        <h4 className="font-semibold text-xs tracking-wider text-muted-foreground uppercase">
                             LIQUIDITY ALARM
                         </h4>
                     </div>
-                    <div className={cn("px-2 py-1 rounded text-xs font-black border", getStatusClass())}>
+                    <div className={cn("px-2 py-1 rounded text-xs font-bold border", getStatusClass())}>
                         {liq.alarm_status}
                     </div>
                 </div>
 
                 <div className="flex items-baseline gap-3">
                     <div className="flex flex-col">
-                        <h3 className="text-4xl font-black tracking-heading text-foreground">
+                        <h3 className="text-4xl font-bold tracking-heading text-foreground">
                             ${formatBillions(liq.current_value)}
                         </h3>
                         <div className="flex gap-2 mt-1">
-                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/12 flex items-center gap-1">
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-border flex items-center gap-1">
                                 <span className="text-xs font-bold text-muted-foreground tracking-wide">RRP</span>
-                                <span className={cn("text-xs font-black", (liq.rrp_balance || 0) > 500 ? 'text-amber-500' : 'text-foreground')}>
+                                <span className={cn("text-xs font-bold", (liq.rrp_balance || 0) > 500 ? 'text-amber-500' : 'text-foreground')}>
                                     ${formatBillions(liq.rrp_balance)}
                                 </span>
                             </div>
-                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-white/12 flex items-center gap-1">
+                            <div className="px-1.5 py-0.5 rounded bg-background/50 border border-border flex items-center gap-1">
                                 <span className="text-xs font-bold text-muted-foreground tracking-wide">TGA</span>
-                                <span className={cn("text-xs font-black", (liq.tga_balance || 0) > 750 ? 'text-rose-500' : 'text-foreground')}>
+                                <span className={cn("text-xs font-bold", (liq.tga_balance || 0) > 750 ? 'text-rose-500' : 'text-foreground')}>
                                     ${formatBillions(liq.tga_balance)}
                                 </span>
                             </div>
                         </div>
                     </div>
                     <span className={cn(
-                        "px-2 py-0.5 rounded text-xs font-black",
+                        "px-2 py-0.5 rounded text-xs font-bold",
                         (liq?.delta || 0) >= 0 ? 'text-emerald-500 bg-emerald-500/10' : 'text-rose-500 bg-rose-500/10'
                     )}>
                         {liq?.delta !== undefined && liq?.delta !== null ? (liq.delta >= 0 ? '+' : '') : ''}{liq?.delta !== undefined && liq?.delta !== null ? formatBillions(liq.delta) : '-'}
@@ -111,40 +114,38 @@ export const LiquidityAlarmCard: React.FC = () => {
 
                 <div className="flex gap-6 mt-2">
                     <div>
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">Z-SCORE (25Y)</span>
-                        <span className={cn("text-lg font-black", getStatusClass().split(' ')[0])}>
+                        <span className="text-xs font-bold text-muted-foreground tracking-wider block mb-0.5">Z-SCORE (25Y)</span>
+                        <span className={cn("text-lg font-bold", getStatusClass().split(' ')[0])}>
                             {liq?.z_score !== undefined && liq?.z_score !== null ? liq.z_score.toFixed(2) : '-'}σ
                         </span>
                     </div>
                     <div className="flex-1">
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">SOFR-EFFR</span>
+                        <span className="text-xs font-bold text-muted-foreground tracking-wider block mb-0.5">SOFR-EFFR</span>
                         <div className="flex items-center gap-2">
                             <span className={cn(
-                                "text-lg font-black px-1.5 rounded",
+                                "text-lg font-bold px-1.5 rounded",
                                 (liq.sofr_effr_spread || 0) > 15 ? 'text-rose-500 bg-rose-500/10' : (liq.sofr_effr_spread || 0) > 0 ? 'text-amber-500' : 'text-emerald-500'
                             )}>
                                 {liq?.sofr_effr_spread !== undefined ? (liq.sofr_effr_spread > 0 ? '+' : '') + liq.sofr_effr_spread.toFixed(1) : '-'} bps
                             </span>
                             {liq.sofr_effr_history && liq.sofr_effr_history.length > 0 && (
-                                <div className="w-12 h-6 opacity-80">
-                                    <ResponsiveContainer width="100%" height="100%">
+                                <MacroChartContainer height={CHART_HEIGHTS.sparkline} className="w-12 opacity-80">
                                         <LineChart data={liq.sofr_effr_history}>
                                             <Line
                                                 type="monotone"
                                                 dataKey="value"
-                                                stroke={(liq.sofr_effr_spread || 0) > 15 ? '#f43f5e' : '#3b82f6'}
+                                                stroke={(liq.sofr_effr_spread || 0) > 15 ? CHART_COLORS.east : CHART_COLORS.west}
                                                 strokeWidth={2}
                                                 dot={false}
                                             />
                                         </LineChart>
-                                    </ResponsiveContainer>
-                                </div>
+                                </MacroChartContainer>
                             )}
                         </div>
                     </div>
                     <div>
-                        <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase block mb-0.5">PERCENTILE</span>
-                        <span className="text-lg font-black text-foreground">
+                        <span className="text-xs font-bold text-muted-foreground tracking-wider block mb-0.5">PERCENTILE</span>
+                        <span className="text-lg font-bold text-foreground">
                             {liq?.percentile !== undefined && liq?.percentile !== null ? liq.percentile.toFixed(1) : '-'}%
                         </span>
                     </div>
@@ -175,17 +176,17 @@ export const LiquidityAlarmCard: React.FC = () => {
             {isModalOpen && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
                     <div
-                        className="absolute inset-0 bg-slate-950/80 backdrop-blur-sm animate-in fade-in duration-200"
+                        className="absolute inset-0 bg-card/90 backdrop-blur-sm animate-in fade-in duration-200"
                         onClick={() => setIsModalOpen(false)}
                     />
-                    <div className="relative w-full max-w-5xl bg-[#0f172a]/95 border border-white/12 rounded-2xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
+                    <div className="relative w-full max-w-5xl bg-card/95 border border-border rounded-xl shadow-2xl p-6 md:p-8 animate-in zoom-in-95 duration-200 overflow-y-auto max-h-[95vh]">
                         <div className="flex justify-between items-start mb-8">
                             <div>
                                 <div className="flex items-center gap-3 mb-2">
                                     <div className={cn("p-2 rounded-lg bg-opacity-20 flex", getStatusClass())}>
                                         {getStatusIcon()}
                                     </div>
-                                    <h2 className="text-2xl md:text-3xl font-black tracking-heading text-white">
+                                    <h2 className="text-2xl md:text-3xl font-bold tracking-heading text-white">
                                         Liquidity Regime Analysis
                                     </h2>
                                 </div>
@@ -206,24 +207,23 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Activity size={18} className="text-primary" />
-                                        <h5 className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">
+                                        <h5 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                             25-Year Z-Score Distribution
                                         </h5>
                                     </div>
-                                    <div className="h-[300px] w-full relative">
-                                        <ResponsiveContainer width="100%" height="100%">
+                                    <MacroChartContainer height={CHART_HEIGHTS.standard} className="relative">
                                             <BarChart data={distributionData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                                 <XAxis
+                                                    {...DEFAULT_XAXIS_PROPS}
                                                     dataKey="bin"
-                                                    stroke="rgba(255,255,255,0.2)"
+                                                    stroke={WHITE_ALPHA.soft}
                                                     fontSize={11}
                                                     axisLine={false}
-                                                    tickLine={false}
                                                     tickFormatter={(v) => `${v}σ`}
                                                 />
                                                 <YAxis hide />
                                                 <Tooltip
-                                                    cursor={{ fill: 'rgba(255,255,255,0.03)' }}
+                                                    cursor={{ fill: WHITE_ALPHA.ghost }}
                                                     content={<CustomTooltip />}
                                                 />
                                                 <Bar dataKey="count" radius={[6, 6, 0, 0]}>
@@ -232,22 +232,21 @@ export const LiquidityAlarmCard: React.FC = () => {
                                                         return (
                                                             <Cell
                                                                 key={`cell-${index}`}
-                                                                fill={isCurrentBin ? getStatusColor() : 'rgba(148, 163, 184, 0.15)'}
+                                                                fill={isCurrentBin ? getStatusColor() : alpha(CHART_COLORS.label, 0.15)}
                                                                 style={{ transition: 'all 0.5s ease' }}
                                                             />
                                                         );
                                                     })}
                                                 </Bar>
-                                                <ReferenceLine x={liq.z_score} stroke={getStatusColor()} strokeWidth={2} strokeDasharray="5 5" label={{ value: 'CURRENT', position: 'top', fill: getStatusColor(), fontSize: 10, fontWeight: 900 }} />
+                                                <ReferenceLine x={liq.z_score} stroke={getStatusColor()} strokeWidth={2} strokeDasharray="5 5" label={{ value: 'CURRENT', position: 'top', fill: getStatusColor(), fontSize: 11, fontWeight: 700 }} />
                                             </BarChart>
-                                        </ResponsiveContainer>
-                                    </div>
+                                    </MacroChartContainer>
                                 </div>
 
-                                <div className="p-4 bg-white/5 rounded-xl border border-white/5">
+                                <div className="p-4 bg-white/5 rounded-xl border border-border">
                                     <div className="flex items-center gap-2 mb-3">
                                         <Target size={18} className="text-secondary" />
-                                        <h5 className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Formula & Methodology</h5>
+                                        <h5 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Formula & Methodology</h5>
                                     </div>
                                     <code className="block text-sm font-bold text-primary mb-2 font-mono">
                                         Net Liquidity = WALCL - TGA - RRP
@@ -256,10 +255,10 @@ export const LiquidityAlarmCard: React.FC = () => {
                                         Calculated as the Federal Reserve Total Assets (WALCL) minus the Treasury General Account (TGA) and Reverse Repo Facility (RRP). Data ingested daily from NY Fed Markets API for high-fidelity signal.
                                     </p>
                                     <div className="flex gap-4 mt-3">
-                                        <Link to="/glossary/tga" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase transition-colors">
+                                        <Link to="/glossary/tga" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider transition-colors">
                                             <BookOpen size={12} /> What is the TGA?
                                         </Link>
-                                        <Link to="/glossary/reverse-repo-facility-rrp" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase transition-colors">
+                                        <Link to="/glossary/reverse-repo-facility-rrp" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider transition-colors">
                                             <BookOpen size={12} /> What is RRP?
                                         </Link>
                                     </div>
@@ -271,7 +270,7 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div>
                                     <div className="flex items-center gap-2 mb-4">
                                         <Info size={18} className="text-amber-500" />
-                                        <h5 className="text-xs font-black tracking-uppercase text-muted-foreground uppercase">
+                                        <h5 className="text-xs font-semibold tracking-wider text-muted-foreground uppercase">
                                             Macro Significance
                                         </h5>
                                     </div>
@@ -290,23 +289,23 @@ export const LiquidityAlarmCard: React.FC = () => {
                                 <div className="p-5 bg-rose-500/5 rounded-xl border border-rose-500/10">
                                     <div className="flex items-center gap-2 mb-4">
                                         <TrendingDown size={18} className="text-rose-500" />
-                                        <h5 className="text-xs font-black tracking-uppercase text-rose-500 uppercase">
+                                        <h5 className="text-xs font-semibold tracking-wider text-rose-500 uppercase">
                                             Historical Risk Context
                                         </h5>
                                     </div>
                                     <div className="space-y-4">
                                         <div>
-                                            <span className="text-xs font-black text-rose-400 block tracking-uppercase mb-1">DEC 2018 (QT SHOCK)</span>
+                                            <span className="text-xs font-bold text-rose-400 block tracking-wider mb-1">DEC 2018 (QT SHOCK)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Last {'>'}2σ tightening regime. SPX declined 20% in 6 months as liquidity drained.</p>
                                         </div>
                                         <div className="h-px bg-white/5" />
                                         <div>
-                                            <span className="text-xs font-black text-amber-400 block tracking-uppercase mb-1">MAR 2020 (COLLAPSE)</span>
+                                            <span className="text-xs font-bold text-amber-400 block tracking-wider mb-1">MAR 2020 (COLLAPSE)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Rapid liquidity contraction preceded the 34% SPX correction.</p>
                                         </div>
                                         <div className="h-px bg-white/5" />
                                         <div>
-                                            <span className="text-xs font-black text-emerald-400 block tracking-uppercase mb-1">JAN 2024 (RESILIENCE)</span>
+                                            <span className="text-xs font-bold text-emerald-400 block tracking-wider mb-1">JAN 2024 (RESILIENCE)</span>
                                             <p className="text-xs font-semibold text-muted-foreground">Positive liquidity z-score supported market resilience despite high rates.</p>
                                         </div>
                                     </div>

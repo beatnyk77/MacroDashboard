@@ -3,8 +3,9 @@ import { Box, IconButton } from '@mui/material';
 import { X, TrendingUp, TrendingDown, Info, ShieldCheck } from 'lucide-react';
 import { TreasuryHolder } from '@/hooks/useTreasuryHolders';
 import { cn } from '@/lib/utils';
-import { ResponsiveContainer, AreaChart, Area, Tooltip } from 'recharts';
-import { DEFAULT_TOOLTIP_STYLE } from '@/constants/chartDefaults';
+import { AreaChart, Area, Tooltip } from 'recharts';
+import { DEFAULT_TOOLTIP_STYLE, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, CHART_COLORS } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface TICStatsDrawerProps {
     country: TreasuryHolder | null;
@@ -36,14 +37,14 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                 {/* Country Profile */}
                 <div className="flex-1 space-y-6">
                     <div className="flex items-center gap-4">
-                        <div className="w-12 h-12 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
-                            <ShieldCheck className="text-cyan-600 dark:text-cyan-400" size={24} />
+                        <div className="w-12 h-12 rounded-xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+                            <ShieldCheck className=" text-cyan-400" size={24} />
                         </div>
                         <div>
-                            <h3 className="text-3xl font-black text-foreground uppercase tracking-heading italic">
+                            <h3 className="text-3xl font-bold text-foreground uppercase tracking-heading italic">
                                 {country.country_name}
                             </h3>
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                 Sovereign Exposure Profile
                             </span>
                         </div>
@@ -54,17 +55,17 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                         <StatItem
                             label="YoY Change"
                             value={`${isRising ? '+' : ''}${country.yoy_pct_change?.toFixed(1)}%`}
-                            color={isRising ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"}
+                            color={isRising ? " text-emerald-400" : " text-rose-400"}
                             icon={isRising ? <TrendingUp size={14} /> : <TrendingDown size={14} />}
                         />
                         <StatItem label="Global Share" value={`${country.pct_of_total_foreign?.toFixed(2)}%`} sub="Of total foreign ownership" />
                         <StatItem label="Risk Tier" value="STRUCTURAL" sub="Long-term accumulation" />
                     </div>
 
-                    <div className="p-6 rounded-2xl bg-muted/30 border border-border">
+                    <div className="p-6 rounded-xl bg-muted/30 border border-border">
                         <div className="flex items-center gap-2 mb-3">
-                            <Info size={14} className="text-cyan-600 dark:text-cyan-400" />
-                            <span className="text-xs font-black text-foreground uppercase tracking-uppercase">Macro Context</span>
+                            <Info size={14} className=" text-cyan-400" />
+                            <span className="text-xs font-semibold text-foreground uppercase tracking-wider">Macro Context</span>
                         </div>
                         <p className="text-sm text-muted-foreground leading-relaxed italic">
                             {country.country_name} remains a {country.pct_of_total_foreign && country.pct_of_total_foreign > 2 ? 'major' : 'significant'} pillar of UST liquidity.
@@ -75,34 +76,34 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
                 </div>
 
                 {/* Historical Sparkline */}
-                <div className="flex-1 min-h-[250px] bg-card rounded-3xl border border-border overflow-hidden p-6 relative">
+                <div className="flex-1 min-h-[250px] bg-card rounded-xl border border-border overflow-hidden p-6 relative">
                     <div className="absolute top-6 left-6 z-10">
-                        <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.22em] block mb-1">UST Accumulation Path</span>
-                        <span className="text-xs font-bold text-foreground tracking-uppercase uppercase">Historical Trend (LTM+)</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider block mb-1">UST Accumulation Path</span>
+                        <span className="text-xs font-semibold text-foreground tracking-wider uppercase">Historical Trend (LTM+)</span>
                     </div>
-                    <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height="fill">
                         <AreaChart data={history}>
                             <defs>
                                 <linearGradient id="colorHoldings" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#0891b2" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#0891b2" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={CHART_COLORS.westDeep} stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor={CHART_COLORS.westDeep} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <Area
                                 type="monotone"
                                 dataKey="holdings_usd_bn"
-                                stroke="#0891b2"
+                                stroke={CHART_COLORS.westDeep}
                                 strokeWidth={3}
                                 fillOpacity={1}
                                 fill="url(#colorHoldings)"
                             />
                             <Tooltip
+                                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 contentStyle={DEFAULT_TOOLTIP_STYLE}
-                                itemStyle={{ color: 'hsl(var(--foreground))', fontSize: '10px', fontWeight: 'bold' }}
-                                labelStyle={{ display: 'none' }}
                             />
                         </AreaChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 </div>
             </div>
         </Box>
@@ -111,11 +112,11 @@ export const TICStatsDrawer: React.FC<TICStatsDrawerProps> = ({ country, allData
 
 const StatItem = ({ label, value, sub, color = "text-foreground", icon }: any) => (
     <div className="flex flex-col gap-1">
-        <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase leading-none">{label}</span>
+        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider leading-none">{label}</span>
         <div className="flex items-center gap-2">
-            <span className={cn("text-xl font-black tabular-nums", color)}>{value}</span>
+            <span className={cn("text-xl font-bold tabular-nums", color)}>{value}</span>
             {icon}
         </div>
-        {sub && <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-heading">{sub}</span>}
+        {sub && <span className="text-xs font-semibold text-muted-foreground uppercase tracking-heading">{sub}</span>}
     </div>
 );

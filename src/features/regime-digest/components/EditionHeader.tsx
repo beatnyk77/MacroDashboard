@@ -39,7 +39,7 @@ export const EditionHeader: React.FC<EditionHeaderProps> = ({
 
   return (
     <header className="space-y-3 border-b border-border pb-8">
-      <div className="flex flex-wrap items-center gap-2 text-[9px] font-black uppercase tracking-[0.25em] text-muted-foreground">
+      <div className="flex flex-wrap items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
         <span>Monthly Regime Notebook</span>
         {editionNumber != null && (
           <span className="inline-flex items-center gap-1 text-muted-foreground">
@@ -49,11 +49,11 @@ export const EditionHeader: React.FC<EditionHeaderProps> = ({
         )}
       </div>
 
-      <h1 className="text-2xl md:text-3xl font-black tracking-tight text-foreground leading-tight">
+      <h1 className="text-2xl md:text-3xl font-bold tracking-tight text-foreground leading-tight">
         {monthLabel} Macro Regime Digest
       </h1>
 
-      <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+      <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
         Desk brief · Scoreboard · Automated rules
       </p>
 

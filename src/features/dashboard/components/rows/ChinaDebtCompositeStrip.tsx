@@ -101,16 +101,16 @@ export const ChinaDebtCompositeStrip: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-start justify-between gap-4">
                 <div>
-                    <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic mb-1">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic mb-1">
                         GraphiQuestor Proprietary Debt Signals
                     </h3>
-                    <p className="text-xs text-muted-foreground/60">
+                    <p className="text-xs text-muted-foreground">
                         Five composite indices — live inputs from IMF/BIS/PBOC, refreshed weekly
                     </p>
                 </div>
                 <Link
                     to="/methods/china-debt-iceberg"
-                    className="flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-amber-400/70 hover:text-amber-300 shrink-0"
+                    className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-amber-400/70 hover:text-amber-300 shrink-0"
                 >
                     <BookOpen size={12} />
                     Methodology

@@ -37,14 +37,14 @@ export const GfpExportButton: React.FC = () => {
   };
 
   return (
-    <div className="inline-flex flex-wrap items-center gap-2 p-3 rounded-xl border border-white/5 bg-white/[0.02]">
-      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">
+    <div className="inline-flex flex-wrap items-center gap-2 p-3 rounded-xl border border-border bg-white/[0.02]">
+      <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
         Export
       </span>
       <select
         value={dataset}
         onChange={(e) => setDataset(e.target.value as Dataset)}
-        className="text-[10px] uppercase tracking-wider bg-black/40 border border-white/10 rounded px-2 py-1 text-white/80"
+        className="text-[11px] uppercase tracking-wider bg-background/40 border border-border rounded px-2 py-1 text-white/80"
       >
         <option value="net-cost">Net cost (accrual)</option>
         <option value="outlay-rank">Outlay rank (cash)</option>
@@ -52,7 +52,7 @@ export const GfpExportButton: React.FC = () => {
       <select
         value={format}
         onChange={(e) => setFormat(e.target.value as Format)}
-        className="text-[10px] uppercase tracking-wider bg-black/40 border border-white/10 rounded px-2 py-1 text-white/80"
+        className="text-[11px] uppercase tracking-wider bg-background/40 border border-border rounded px-2 py-1 text-white/80"
       >
         <option value="csv">CSV</option>
         <option value="json">JSON</option>
@@ -61,7 +61,7 @@ export const GfpExportButton: React.FC = () => {
         type="button"
         disabled={disabled}
         onClick={onExport}
-        className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest px-3 py-1.5 rounded border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+        className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider px-3 py-1.5 rounded border border-cyan-500/30 text-cyan-300 hover:bg-cyan-500/10 disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
       >
         <Download size={12} />
         {busy ? 'Loading…' : 'Download'}

@@ -6,22 +6,22 @@ export const IndiaSavingsRiskCapitalSection: React.FC = () => {
         <section className="space-y-12">
             <div className="flex items-center gap-3 mb-8">
                 <ShieldAlert className="text-rose-500" size={24} />
-                <h2 className="text-xl font-black uppercase tracking-heading text-foreground">
+                <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">
                     The Risk Capital Bottleneck
                 </h2>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 {/* Left Column: Physical vs Financial */}
-                <div className="p-6 rounded-[2rem] bg-card border border-border">
-                    <h3 className="text-sm font-black uppercase tracking-uppercase text-muted-foreground mb-6 flex items-center gap-2">
+                <div className="p-6 rounded-xl bg-card border border-border">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6 flex items-center gap-2">
                         <BarChart2 size={14} /> Physical vs Financial Composition
                     </h3>
                     
                     <div className="space-y-6">
                         <div className="p-4 rounded-xl bg-background border border-border">
                             <div className="flex justify-between items-baseline mb-2">
-                                <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Gross Savings</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Gross Savings</span>
                                 <span className="font-mono font-medium text-lg text-foreground">31.4% GDP</span>
                             </div>
                             <div className="w-full h-2 bg-muted rounded-full overflow-hidden flex">
@@ -55,27 +55,27 @@ export const IndiaSavingsRiskCapitalSection: React.FC = () => {
                 </div>
 
                 {/* Right Column: Domestic LP Deficit */}
-                <div className="p-6 rounded-[2rem] bg-card border border-border">
-                    <h3 className="text-sm font-black uppercase tracking-uppercase text-muted-foreground mb-6 flex items-center gap-2">
+                <div className="p-6 rounded-xl bg-card border border-border">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6 flex items-center gap-2">
                         <TrendingDown size={14} /> Domestic LP Deficit
                     </h3>
                     
                     <div className="space-y-6">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="p-4 rounded-xl bg-background border border-border">
-                                <span className="block text-xs font-bold uppercase text-muted-foreground mb-1">Venture Allocation</span>
+                                <span className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Venture Allocation</span>
                                 <span className="block font-mono text-xl text-rose-500">&lt; 0.5%</span>
-                                <span className="block text-[10px] text-muted-foreground mt-1">Domestic Institutions (LIC, EPFO)</span>
+                                <span className="block text-[11px] text-muted-foreground mt-1">Domestic Institutions (LIC, EPFO)</span>
                             </div>
                             <div className="p-4 rounded-xl bg-background border border-border">
-                                <span className="block text-xs font-bold uppercase text-muted-foreground mb-1">Foreign LP Reliance</span>
+                                <span className="block text-xs font-semibold uppercase text-muted-foreground mb-1">Foreign LP Reliance</span>
                                 <span className="block font-mono text-xl text-amber-500">84.2%</span>
-                                <span className="block text-[10px] text-muted-foreground mt-1">Of domestic risk capital</span>
+                                <span className="block text-[11px] text-muted-foreground mt-1">Of domestic risk capital</span>
                             </div>
                         </div>
 
                         <div className="space-y-3">
-                            <h4 className="text-xs font-bold uppercase tracking-wider text-foreground">Key Friction Metrics</h4>
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-foreground">Key Friction Metrics</h4>
                             <ul className="space-y-2">
                                 {[
                                     'Regulatory caps on Pension/PF alternative assets (currently max ~1.5%)',
@@ -94,14 +94,14 @@ export const IndiaSavingsRiskCapitalSection: React.FC = () => {
             </div>
 
             {/* Global Peer Benchmarking */}
-            <div className="p-6 rounded-[2rem] bg-card border border-border overflow-hidden">
-                <h3 className="text-sm font-black uppercase tracking-uppercase text-muted-foreground mb-6 flex items-center gap-2">
+            <div className="p-6 rounded-xl bg-card border border-border overflow-hidden">
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-6 flex items-center gap-2">
                     <Globe2 size={14} /> Global Peer Benchmarking
                 </h3>
                 
                 <div className="overflow-x-auto">
                     <table className="w-full text-sm text-left">
-                        <thead className="text-xs text-muted-foreground font-black uppercase tracking-wider border-b border-border">
+                        <thead className="text-xs text-muted-foreground font-semibold uppercase tracking-wider border-b border-border">
                             <tr>
                                 <th className="pb-3 pr-4">Country</th>
                                 <th className="pb-3 px-4 font-mono">Savings % GDP</th>
@@ -111,31 +111,31 @@ export const IndiaSavingsRiskCapitalSection: React.FC = () => {
                             </tr>
                         </thead>
                         <tbody className="font-medium">
-                            <tr className="border-b border-border/50 bg-rose-500/5">
+                            <tr className="border-b border-border bg-rose-500/5">
                                 <td className="py-4 pr-4 text-foreground flex items-center gap-2">
-                                    🇮🇳 India
+                                    India
                                 </td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">31.4%</td>
                                 <td className="py-4 px-4 text-muted-foreground">47% / 53%</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">$4.5</td>
                                 <td className="py-4 pl-4 font-mono text-right text-rose-500">84.2%</td>
                             </tr>
-                            <tr className="border-b border-border/50">
-                                <td className="py-4 pr-4 text-foreground">🇺🇸 United States</td>
+                            <tr className="border-b border-border">
+                                <td className="py-4 pr-4 text-foreground">United States</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">17.8%</td>
                                 <td className="py-4 px-4 text-muted-foreground">88% / 12%</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">$820.0</td>
                                 <td className="py-4 pl-4 font-mono text-right text-emerald-500">14.0%</td>
                             </tr>
-                            <tr className="border-b border-border/50">
-                                <td className="py-4 pr-4 text-foreground">🇨🇳 China</td>
+                            <tr className="border-b border-border">
+                                <td className="py-4 pr-4 text-foreground">China</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">45.2%</td>
                                 <td className="py-4 px-4 text-muted-foreground">62% / 38%</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">$95.0</td>
                                 <td className="py-4 pl-4 font-mono text-right text-emerald-500">38.0%</td>
                             </tr>
                             <tr>
-                                <td className="py-4 pr-4 text-foreground">🇰🇷 South Korea</td>
+                                <td className="py-4 pr-4 text-foreground">South Korea</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">33.5%</td>
                                 <td className="py-4 px-4 text-muted-foreground">75% / 25%</td>
                                 <td className="py-4 px-4 font-mono text-muted-foreground">$142.0</td>

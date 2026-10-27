@@ -1,23 +1,15 @@
 import React, { useMemo } from 'react';
 import { useSuspenseQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Area,
-  ComposedChart,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ReferenceLine,
-} from 'recharts';
+import { LineChart, Line, Area, ComposedChart, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
 import { m } from 'framer-motion';
 import { Activity, TrendingUp, BarChart3, DollarSign } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 // ── Types ──────────────────────────────────────────────────────────
 
@@ -53,40 +45,40 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     if (data.fedBalanceT !== undefined) {
       rows.push(
         <div key="fed" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">Fed Balance Sheet</span>
-          <span className="text-cyan-600 dark:text-cyan-400 text-xs font-mono">${data.fedBalanceT.toFixed(2)}T</span>
+          <span className="text-slate-400 text-xs">Fed Balance Sheet</span>
+          <span className="text-cyan-400 text-xs font-mono">${data.fedBalanceT.toFixed(2)}T</span>
         </div>
       );
     }
     if (data.debtT !== undefined) {
       rows.push(
         <div key="debt" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">US Marketable Debt</span>
-          <span className="text-foreground text-xs font-mono">${data.debtT.toFixed(2)}T</span>
+          <span className="text-slate-400 text-xs">US Marketable Debt</span>
+          <span className="text-slate-100 text-xs font-mono">${data.debtT.toFixed(2)}T</span>
         </div>
       );
     }
     if (data.ratioPct !== undefined) {
       rows.push(
         <div key="ratio" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">Monetization Ratio</span>
-          <span className="text-emerald-600 dark:text-emerald-400 text-xs font-mono">{data.ratioPct.toFixed(2)}%</span>
+          <span className="text-slate-400 text-xs">Monetization Ratio</span>
+          <span className="text-emerald-400 text-xs font-mono">{data.ratioPct.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.yield10Y !== undefined) {
       rows.push(
         <div key="yield" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">10Y Treasury Yield</span>
-          <span className="text-amber-600 dark:text-amber-400 text-xs font-mono">{data.yield10Y.toFixed(2)}%</span>
+          <span className="text-slate-400 text-xs">10Y Treasury Yield</span>
+          <span className="text-amber-400 text-xs font-mono">{data.yield10Y.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.m2GrowthYoY !== undefined) {
       rows.push(
         <div key="m2" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">M2 Money Growth</span>
-          <span className={cn('text-xs font-mono', data.m2GrowthYoY >= 0 ? 'text-blue-600 dark:text-blue-400' : 'text-rose-600 dark:text-rose-500')}>
+          <span className="text-slate-400 text-xs">M2 Money Growth</span>
+          <span className={cn('text-xs font-mono', data.m2GrowthYoY >= 0 ? 'text-blue-400' : 'text-rose-500')}>
             {data.m2GrowthYoY.toFixed(2)}%
           </span>
         </div>
@@ -95,16 +87,16 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     if (data.cpiYoY !== undefined) {
       rows.push(
         <div key="cpi" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">CPI Inflation</span>
-          <span className="text-rose-600 dark:text-rose-500 text-xs font-mono">{data.cpiYoY.toFixed(2)}%</span>
+          <span className="text-slate-400 text-xs">CPI Inflation</span>
+          <span className="text-rose-500 text-xs font-mono">{data.cpiYoY.toFixed(2)}%</span>
         </div>
       );
     }
     if (data.realYield !== undefined) {
       rows.push(
         <div key="real" className="flex justify-between gap-8">
-          <span className="text-muted-foreground text-xs">Real Yield (est.)</span>
-          <span className={cn('text-xs font-mono', data.realYield >= 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-500')}>
+          <span className="text-slate-400 text-xs">Real Yield (est.)</span>
+          <span className={cn('text-xs font-mono', data.realYield >= 0 ? 'text-emerald-400' : 'text-rose-500')}>
             {data.realYield >= 0 ? '+' : ''}{data.realYield.toFixed(2)}%
           </span>
         </div>
@@ -112,8 +104,8 @@ const ChartTooltip: React.FC<{ active?: boolean; payload?: any[]; label?: string
     }
 
     return (
-      <div className="bg-popover/95 text-popover-foreground backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl z-50 min-w-[160px]">
-        <p className="text-foreground font-semibold mb-2 border-b border-border pb-1 text-xs uppercase tracking-wide">
+      <div className={`${TOOLTIP_SHELL_CLASS} z-50 min-w-[160px]`}>
+        <p className="text-slate-100 font-semibold mb-2 border-b border-border pb-1 text-xs uppercase tracking-wider">
           {date}
         </p>
         <div className="space-y-1.5">{rows}</div>
@@ -145,27 +137,29 @@ const MonetizationGauge: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         </h4>
         {latestRatio !== undefined && (
           <div className="flex items-center gap-2">
-            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               Fed owns
             </span>
-            <span className="text-lg font-black text-cyan-600 dark:text-cyan-400 tabular-nums">
+            <span className="text-lg font-bold text-cyan-400 tabular-nums">
               {latestRatio.toFixed(2)}%
             </span>
           </div>
         )}
       </div>
 
-      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
-        <ResponsiveContainer width="100%" height="100%">
+      <MacroChartContainer height={CHART_HEIGHTS.standard} className="bg-secondary/60 rounded-xl p-4 border border-border shadow-sm">
           <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} opacity={0.5} vertical={false} />
             <XAxis
+              {...DEFAULT_XAXIS_PROPS}
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
               tick={chartCommon.tick}
               stroke={chartCommon.stroke}
             />
             <YAxis
+              {...DEFAULT_YAXIS_PROPS}
+              width={60}
               tickFormatter={(v) => `${v.toFixed(1)}%`}
               domain={['auto', 'auto']}
               tick={chartCommon.tick}
@@ -176,14 +170,13 @@ const MonetizationGauge: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               type="monotone"
               dataKey="ratioPct"
               name="Monetization %"
-              stroke="#06b6d4"
+              stroke={CHART_COLORS.westDeep}
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 4, strokeWidth: 0 }}
             />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
+      </MacroChartContainer>
       <p className="text-muted-foreground text-xs italic text-center mt-2">
         <span className="font-semibold text-foreground">Formula:</span> Fed Assets (FRED: WALCL) ÷ Total Marketable Debt (FRED: GFDEBTN)
       </p>
@@ -203,11 +196,11 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
-        <ResponsiveContainer width="100%" height="100%">
+      <MacroChartContainer height={CHART_HEIGHTS.standard} className="bg-secondary/60 rounded-xl p-4 border border-border shadow-sm">
           <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} opacity={0.5} vertical={false} />
             <XAxis
+              {...DEFAULT_XAXIS_PROPS}
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
               tick={chartCommon.tick}
@@ -215,21 +208,25 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
             />
             {/* Left axis: Fed Balance Sheet (primary) */}
             <YAxis
+              {...DEFAULT_YAXIS_PROPS}
+              width={60}
               yAxisId="left"
               orientation="left"
               tickFormatter={(v) => `$${v.toFixed(0)}T`}
               domain={['auto', 'auto']}
               tick={chartCommon.tick}
-              stroke="#06b6d4"
+              stroke={CHART_COLORS.westDeep}
             />
             {/* Right axis: 10Y Yield (%) */}
             <YAxis
+              {...DEFAULT_YAXIS_PROPS}
+              width={60}
               yAxisId="right"
               orientation="right"
               tickFormatter={(v) => `${v.toFixed(1)}%`}
               domain={['auto', 'auto']}
               tick={chartCommon.tick}
-              stroke="#f59e0b"
+              stroke={CHART_COLORS.gold}
             />
             <Tooltip content={<ChartTooltip />} />
             <Line
@@ -237,7 +234,7 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               type="monotone"
               dataKey="fedBalanceT"
               name="Fed Assets"
-              stroke="#06b6d4"
+              stroke={CHART_COLORS.westDeep}
               strokeWidth={2.5}
               dot={false}
               activeDot={{ r: 4 }}
@@ -247,14 +244,13 @@ const YieldSuppression: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               type="monotone"
               dataKey="yield10Y"
               name="10Y Yield"
-              stroke="#f59e0b"
+              stroke={CHART_COLORS.gold}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 4 }}
             />
           </ComposedChart>
-        </ResponsiveContainer>
-      </div>
+      </MacroChartContainer>
       <p className="text-muted-foreground text-xs italic text-center mt-2">
         <span className="font-semibold text-foreground">Data:</span> Fed Assets (FRED: WALCL) vs 10Y Yield (FRED: DGS10)
       </p>
@@ -274,17 +270,19 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
-        <ResponsiveContainer width="100%" height="100%">
+      <MacroChartContainer height={CHART_HEIGHTS.standard} className="bg-secondary/60 rounded-xl p-4 border border-border shadow-sm">
           <LineChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} opacity={0.5} vertical={false} />
             <XAxis
+              {...DEFAULT_XAXIS_PROPS}
               dataKey="date"
               tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
               tick={chartCommon.tick}
               stroke={chartCommon.stroke}
             />
             <YAxis
+              {...DEFAULT_YAXIS_PROPS}
+              width={60}
               tickFormatter={(v) => `${v.toFixed(1)}%`}
               domain={['auto', 'auto']}
               tick={chartCommon.tick}
@@ -295,7 +293,7 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               type="monotone"
               dataKey="m2GrowthYoY"
               name="M2 Growth YoY"
-              stroke="#3b82f6"
+              stroke={CHART_COLORS.west}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 4 }}
@@ -304,14 +302,13 @@ const InflationTransmission: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               type="monotone"
               dataKey="cpiYoY"
               name="CPI YoY"
-              stroke="#ef4444"
+              stroke={CHART_COLORS.stress}
               strokeWidth={2}
               dot={false}
               activeDot={{ r: 4 }}
             />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
+      </MacroChartContainer>
       <p className="text-muted-foreground text-xs italic text-center mt-2">
         <span className="font-semibold text-foreground">Data:</span> M2 YoY (FRED: WM2NS or M2SL) vs Headline CPI YoY (FRED: CPIAUCSL)
       </p>
@@ -333,30 +330,31 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
         </h4>
       </div>
 
-      <div className="h-[280px] w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 relative shadow-sm">
+      <div className="h-[280px] w-full bg-secondary/60 rounded-xl p-4 border border-border relative shadow-sm">
         {!hasRealYieldData ? (
           <div className="h-full flex items-center justify-center">
-            <p className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
               TIPS real-yield data pending ingestion (FRED: T10YIE)
             </p>
           </div>
         ) : (
-          <ResponsiveContainer width="100%" height="100%">
+          <MacroChartContainer height="fill">
             <ComposedChart data={data} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
               <defs>
                 <linearGradient id="qeGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#10b981" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                  <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0} />
                 </linearGradient>
                 <linearGradient id="qtGrad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor="#ef4444" stopOpacity={0.15} />
-                  <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                  <stop offset="5%" stopColor={CHART_COLORS.stress} stopOpacity={0.15} />
+                  <stop offset="95%" stopColor={CHART_COLORS.stress} stopOpacity={0} />
                 </linearGradient>
               </defs>
 
-              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.5} vertical={false} />
+              <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} opacity={0.5} vertical={false} />
 
               <XAxis
+                {...DEFAULT_XAXIS_PROPS}
                 dataKey="date"
                 tickFormatter={(d) => new Date(d).toLocaleDateString('en-US', { month: 'short', year: '2-digit' })}
                 tick={chartCommon.tick}
@@ -364,6 +362,8 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
               />
 
               <YAxis
+                {...DEFAULT_YAXIS_PROPS}
+                width={60}
                 tickFormatter={(v) => `${v.toFixed(1)}%`}
                 domain={['auto', 'auto']}
                 tick={chartCommon.tick}
@@ -380,7 +380,7 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
                 type="monotone"
                 dataKey="realYield"
                 name="Real Yield"
-                stroke="#a855f7"
+                stroke={CHART_COLORS.violet}
                 strokeWidth={2.5}
                 dot={false}
                 activeDot={{ r: 4 }}
@@ -394,7 +394,7 @@ const RealYieldMonitor: React.FC<{ data: DataPoint[] }> = ({ data }) => {
                 fill="url(#qeGrad)"
               />
             </ComposedChart>
-          </ResponsiveContainer>
+          </MacroChartContainer>
         )}
       </div>
 
@@ -417,15 +417,15 @@ const MetricCard: React.FC<{
   <m.div
     initial={{ opacity: 0, y: 10 }}
     animate={{ opacity: 1, y: 0 }}
-    className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700/50 rounded-xl p-4 hover:border-primary/40 transition-colors shadow-sm"
+    className="bg-secondary/60 border border-border rounded-xl p-4 hover:border-primary/40 transition-colors shadow-sm"
   >
     <div className="flex items-center justify-between gap-2 mb-1">
       <div className="flex items-center gap-2 text-muted-foreground text-xs">{icon}</div>
       {trend && (
         <span
           className={cn(
-            'text-[10px] font-black uppercase px-1.5 py-0.5 rounded',
-            trend === 'up' ? 'bg-emerald-500/20 text-emerald-800 dark:text-emerald-400 font-bold' : 'bg-rose-500/20 text-rose-800 dark:text-rose-500 font-bold'
+            'text-[11px] font-semibold uppercase px-1.5 py-0.5 rounded',
+            trend === 'up' ? 'bg-emerald-500/20 text-emerald-400 font-bold' : 'bg-rose-500/20 text-rose-500 font-bold'
           )}
         >
           {trend}
@@ -434,7 +434,7 @@ const MetricCard: React.FC<{
     </div>
     <div className="text-xl font-bold text-foreground tabular-nums">{value}</div>
     <div className="text-xs text-muted-foreground mt-0.5">{label}</div>
-    {sub && <div className="text-[10px] text-muted-foreground/80 mt-1">{sub}</div>}
+    {sub && <div className="text-[11px] text-muted-foreground/80 mt-1">{sub}</div>}
   </m.div>
 );
 
@@ -643,13 +643,13 @@ export const FedMonetizationMonitor: React.FC = () => {
   const isDebtRatioUp = chartData.length > 1 && (latest?.ratioPct ?? 0) > (chartData[1]?.ratioPct ?? 0);
 
   return (
-    <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-700/50">
+    <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl shadow-sm shadow-2xl overflow-hidden border border-border">
       {/* Header */}
-      <div className="p-6 md:p-8 border-b border-border dark:border-slate-700/50">
+      <div className="p-6 md:p-8 border-b border-border">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
             <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2 flex items-center gap-3">
-              <Activity className="w-7 h-7 text-cyan-600 dark:text-cyan-400" />
+              <Activity className="w-7 h-7 text-cyan-400" />
               FED Debt Monetization & Yield Control
               <GQSignalBadge
                 tooltip="Proprietary composite: Fed balance sheet dynamics, SOMA weekly flows, real yield suppression, and M2-CPI spread — not available from any single public source."
@@ -669,7 +669,7 @@ export const FedMonetizationMonitor: React.FC = () => {
       </div>
 
       {/* Quick Metrics Row */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-muted/40 dark:bg-slate-800/20">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-6 md:p-8 bg-secondary/40">
         <MetricCard
           icon={<DollarSign className="w-5 h-5 text-cyan-400" />}
           label="Fed Assets"
@@ -734,7 +734,7 @@ export const FedMonetizationMonitor: React.FC = () => {
       {/* Source footer */}
       <div className="flex justify-center pb-6">
         <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-muted/40 border border-border">
-          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-uppercase">
+          <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
             Sources: FRED · Federal Reserve (H.4.1) · BLS · U.S. Treasury
           </span>
         </div>

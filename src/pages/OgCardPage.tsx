@@ -4,6 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { SEOManager } from '@/components/SEOManager';
 import { BrandConfig } from '@/config/brandConfig';
+import { CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 /**
  * OgCardPage — fixed 1200×630 social card rendered at /og-card/:kind/:slug.
@@ -101,9 +102,9 @@ function useOgCardData(kind?: string, slug?: string) {
 
 function regimeColor(label?: string | null): string {
     const l = (label || '').toUpperCase();
-    if (l.includes('RISK_ON') || l.includes('RISK ON')) return '#22c55e';
-    if (l.includes('RISK_OFF') || l.includes('RISK OFF')) return '#ef4444';
-    return '#f59e0b';
+    if (l.includes('RISK_ON') || l.includes('RISK ON')) return CHART_COLORS.expansion;
+    if (l.includes('RISK_OFF') || l.includes('RISK OFF')) return CHART_COLORS.stress;
+    return CHART_COLORS.gold;
 }
 
 export const OgCardPage: React.FC = () => {
@@ -133,20 +134,20 @@ export const OgCardPage: React.FC = () => {
                     justifyContent: 'space-between',
                     padding: '64px 72px',
                     boxSizing: 'border-box',
-                    background: 'radial-gradient(ellipse at top left, #0c1a33 0%, #05080f 60%, #030509 100%)',
-                    color: '#ffffff',
-                    fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
+                    background: `radial-gradient(ellipse at top left, ${CHART_COLORS.panel} 0%, ${CHART_COLORS.surface} 60%, ${CHART_COLORS.black} 100%)`,
+                    color: CHART_COLORS.white,
+                    fontFamily: 'Fira Sans, sans-serif',
                     zIndex: 9999,
                 }}
             >
                 {/* Top row: brand + regime badge */}
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
-                        <span style={{ fontSize: 34, fontWeight: 900, letterSpacing: '-0.03em' }}>
+                        <span style={{ fontSize: 34, fontWeight: 700, letterSpacing: '-0.03em' }}>
                             <span style={{ color: BrandConfig.colors.primary }}>{BrandConfig.namePrefix}</span>
                             {BrandConfig.nameSuffix}
                         </span>
-                        <span style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.25em', color: 'rgba(255,255,255,0.35)' }}>
+                        <span style={{ fontSize: 15, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.25em', color: WHITE_ALPHA.dim }}>
                             Macro Terminal
                         </span>
                     </div>
@@ -163,7 +164,7 @@ export const OgCardPage: React.FC = () => {
                             }}
                         >
                             <span style={{ width: 14, height: 14, borderRadius: '50%', background: regimeColor(data.regimeLabel) }} />
-                            <span style={{ fontSize: 22, fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.12em', color: regimeColor(data.regimeLabel) }}>
+                            <span style={{ fontSize: 22, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.12em', color: regimeColor(data.regimeLabel) }}>
                                 {data.regimeLabel.replace(/_/g, ' ')}
                                 {typeof data.regimeScore === 'number' ? ` · ${Math.round(data.regimeScore)}` : ''}
                             </span>
@@ -173,25 +174,25 @@ export const OgCardPage: React.FC = () => {
 
                 {/* Middle: kicker + headline */}
                 <div style={{ maxWidth: 1020 }}>
-                    <div style={{ fontSize: 20, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.3em', color: BrandConfig.colors.primary, marginBottom: 22 }}>
+                    <div style={{ fontSize: 20, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.3em', color: BrandConfig.colors.primary, marginBottom: 22 }}>
                         {data?.kicker ?? 'Macro Intelligence'}
                     </div>
-                    <div style={{ fontSize: 52, fontWeight: 900, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
+                    <div style={{ fontSize: 52, fontWeight: 700, lineHeight: 1.15, letterSpacing: '-0.02em' }}>
                         {truncatedHeadline}
                     </div>
                     {data?.body && (
-                        <div style={{ fontSize: 24, lineHeight: 1.45, color: 'rgba(255,255,255,0.55)', marginTop: 24, maxWidth: 900 }}>
+                        <div style={{ fontSize: 24, lineHeight: 1.45, color: WHITE_ALPHA.mid, marginTop: 24, maxWidth: 900 }}>
                             {data.body.length > 140 ? `${data.body.slice(0, 137)}…` : data.body}
                         </div>
                     )}
                 </div>
 
                 {/* Bottom row: date + domain */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: 28 }}>
-                    <span style={{ fontSize: 22, fontWeight: 700, color: 'rgba(255,255,255,0.6)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: `1px solid ${WHITE_ALPHA.line}`, paddingTop: 28 }}>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: WHITE_ALPHA.mid, textTransform: 'uppercase', letterSpacing: '0.08em' }}>
                         {data?.dateLabel ?? ''}
                     </span>
-                    <span style={{ fontSize: 22, fontWeight: 800, color: BrandConfig.colors.primary, letterSpacing: '0.02em' }}>
+                    <span style={{ fontSize: 22, fontWeight: 700, color: BrandConfig.colors.primary, letterSpacing: '0.02em' }}>
                         {BrandConfig.domain}
                     </span>
                 </div>

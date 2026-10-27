@@ -13,6 +13,7 @@ import { FYP_TargetGrid } from '@/features/dashboard/components/rows/China15thFY
 import { FYP_ImpactHeatmap } from '@/features/dashboard/components/rows/China15thFYP/FYP_ImpactHeatmap';
 import { ComparisonToggle14v15 } from '@/features/dashboard/components/rows/China15thFYP/ComparisonToggle14v15';
 import { Button } from '@/components/ui/button';
+import { LabPageHeader } from '@/components/LabPageHeader';
 import { Card, CardContent } from '@/components/ui/card';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -90,74 +91,61 @@ export const China15thFYPLab: React.FC = () => {
                 faqJsonLd
             ]}
         />
-        <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-red-500/30">
+        <div className="min-h-screen text-slate-200 selection:bg-blue-500/30">
             {/* Background Effects */}
             <div className="fixed inset-0 overflow-hidden pointer-events-none">
                 <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-red-500/5 blur-[150px] -translate-y-1/2 translate-x-1/2" />
                 <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-blue-500/5 blur-[120px] translate-y-1/2 -translate-x-1/2" />
             </div>
 
-            <div className="relative z-10 max-w-7xl mx-auto px-6 pt-24 pb-32">
+            <div className="page-shell relative z-10 pb-24">
                 {/* Header Section */}
-                <div className="flex flex-col md:flex-row justify-between items-start gap-12 mb-16">
-                    <div className="space-y-6 max-w-2xl">
-                        <div className="flex items-center gap-3">
-                            <div className="p-2 rounded-xl bg-red-500/10 border border-red-500/20">
-                                <Flag className="text-red-500 w-6 h-6" />
-                            </div>
-                            <div className="flex flex-col">
-                                <span className="text-xs font-black uppercase tracking-uppercase text-red-500">Mission Intelligence Lab</span>
-                                <div className="flex items-center gap-3">
-                                    <h1 className="text-4xl md:text-5xl font-black tracking-heading text-white italic uppercase">
-                                        China 15th <span className="text-red-500">Five-Year Plan</span>
-                                    </h1>
-                                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                                </div>
-                            </div>
-                        </div>
-                        <p className="text-lg text-slate-400 leading-relaxed font-medium">
-                            An institutional-grade telemetry dashboard tracking the 2026–2030 roadmap for high-quality development, technological self-reliance, and national economic security.
-                        </p>
+                <LabPageHeader
+                    trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                    current="China 15th Five-Year Plan"
+                    badge="Mission Intelligence Lab"
+                    badgeIcon={<Flag size={12} />}
+                    title={<>China 15th <span className="text-blue-400">Five-Year Plan</span></>}
+                    status={<FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />}
+                    thesis="An institutional-grade telemetry dashboard tracking the 2026–2030 roadmap for high-quality development, technological self-reliance, and national economic security."
+                >
+                    <div className="mt-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                         <div className="flex flex-wrap gap-4">
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-uppercase text-slate-300">
+                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-border text-[11px] font-mono font-semibold uppercase tracking-wider text-slate-300">
                                 <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
                                 Active Monitoring
                             </div>
-                            <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-white/5 border border-white/12 text-xs font-bold uppercase tracking-uppercase text-slate-300">
-                                Last Updated: March 14, 2026
-                            </div>
+                        </div>
+                        <div className="flex flex-col gap-3 sm:flex-row">
+                            <Button
+                                className="bg-red-600 hover:bg-red-700 text-white font-semibold text-[11px] tracking-wider uppercase rounded-xl px-6"
+                            >
+                                <Download size={14} className="mr-2" />
+                                Download Strategist PDF
+                            </Button>
+                            <Button
+                                variant="outline"
+                                className="border-border text-slate-300 hover:bg-white/5 hover:border-white/20 font-semibold text-[11px] tracking-wider uppercase rounded-xl px-6"
+                            >
+                                <Share2 size={14} className="mr-2" />
+                                Share Intelligence
+                            </Button>
                         </div>
                     </div>
-
-                    <div className="flex flex-col gap-3 w-full md:w-auto">
-                        <Button 
-                            className="bg-red-600 hover:bg-red-700 text-white font-black text-[10px] tracking-widest uppercase rounded-xl px-6"
-                        >
-                            <Download size={14} className="mr-2" />
-                            Download Strategist PDF
-                        </Button>
-                        <Button 
-                            variant="outline"
-                            className="border-white/10 text-white/70 hover:bg-white/5 hover:border-white/20 font-black text-[10px] tracking-widest uppercase rounded-xl px-6"
-                        >
-                            <Share2 size={14} className="mr-2" />
-                            Share Intelligence
-                        </Button>
-                    </div>
-                </div>
+                </LabPageHeader>
 
                 {/* Main Content Grid */}
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-16">
                     <div className="lg:col-span-8 space-y-8">
                         {/* Hero Timeline */}
-                        <Card className="bg-slate-900/40 border-white/5 overflow-hidden">
+                        <Card className="bg-card/40 border-border overflow-hidden">
                             <CardContent className="p-0">
-                                <div className="p-6 border-b border-white/5 flex justify-between items-center">
+                                <div className="p-6 border-b border-border flex justify-between items-center">
                                     <div className="flex items-center gap-3">
                                         <TerminalIcon className="text-red-500" size={18} />
-                                        <h2 className="text-sm font-black uppercase tracking-uppercase text-white">2026-2030 Strategic Milestone Timeline</h2>
+                                        <h2 className="text-sm font-semibold uppercase tracking-wider text-white">2026-2030 Strategic Milestone Timeline</h2>
                                     </div>
-                                    <Info size={14} className="text-muted-foreground/30 cursor-help" />
+                                    <Info size={14} className="text-muted-foreground cursor-help" />
                                 </div>
                                 <FYP_HeroTimeline />
                             </CardContent>
@@ -174,7 +162,7 @@ export const China15thFYPLab: React.FC = () => {
                         {/* Alpha Insight Box */}
                         <Card className="bg-red-500/5 border-red-500/20">
                             <CardContent className="p-6 space-y-4">
-                                <div className="flex items-center gap-2 text-red-500 uppercase font-black text-xs tracking-uppercase">
+                                <div className="flex items-center gap-2 text-red-500 uppercase font-semibold text-xs tracking-wider">
                                     <Shield size={16} />
                                     Strategist Deep Insight
                                 </div>
@@ -182,7 +170,7 @@ export const China15thFYPLab: React.FC = () => {
                                     The 15th FYP represents a fundamental shift from <span className="text-white italic">"Growth at any cost"</span> to <span className="text-white italic">"High-quality resilience."</span> The key metric to watch is R&D growth and supply chain self-sufficiency indices, which now carry higher political weighting than raw GDP.
                                 </p>
                                 <div className="pt-4 border-t border-red-500/10">
-                                    <div className="text-xs text-red-400 uppercase font-black mb-2 opacity-60 italic">Key Tipping Point: 2027</div>
+                                    <div className="text-xs text-red-400 uppercase font-semibold mb-2 opacity-60 italic">Key Tipping Point: 2027</div>
                                     <div className="text-xs font-bold text-slate-200">Military centennial goals and semiconductor node independence parity targets align.</div>
                                 </div>
                             </CardContent>
@@ -197,8 +185,8 @@ export const China15thFYPLab: React.FC = () => {
                 </div>
 
                 {/* FAQ Section */}
-                <div className="mt-16 p-8 bg-white/[0.02] border border-white/5 rounded-2xl">
-                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
+                <div className="mt-16 p-8 bg-white/[0.02] border border-border rounded-xl">
+                    <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
                     <div className="space-y-6">
                         {faqItems.map(({ question, answer }) => (
                             <div key={question} className="space-y-1">
@@ -210,7 +198,7 @@ export const China15thFYPLab: React.FC = () => {
                 </div>
 
                 {/* Footer Insight */}
-                <div className="mt-24 pt-12 border-t border-white/5 flex flex-col items-center text-center max-w-3xl mx-auto space-y-6">
+                <div className="mt-24 pt-12 border-t border-border flex flex-col items-center text-center max-w-3xl mx-auto space-y-6">
                     <div className="p-3 rounded-full bg-red-500/10">
                         <ArrowUpRight className="text-red-500 w-6 h-6" />
                     </div>

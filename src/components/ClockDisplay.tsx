@@ -18,18 +18,18 @@ export const ClockDisplay: React.FC = () => {
     return (
         <div className="hidden md:flex items-center gap-4">
             <div>
-                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
+                <span className="block text-xs font-semibold text-muted-foreground uppercase leading-none mb-0.5">
                     LOCAL TIME
                 </span>
-                <span className="text-sm font-black text-foreground font-mono">
+                <span className="text-sm font-bold text-foreground font-mono">
                     {currentTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })}
                 </span>
             </div>
             <div>
-                <span className="block text-xs font-black text-muted-foreground uppercase leading-none mb-0.5">
+                <span className="block text-xs font-semibold text-muted-foreground uppercase leading-none mb-0.5">
                     DATE
                 </span>
-                <span className="text-xs font-black text-foreground">
+                <span className="text-xs font-bold text-foreground">
                     {currentTime.toLocaleDateString(undefined, { weekday: 'short', month: 'short', day: 'numeric' })}
                 </span>
             </div>

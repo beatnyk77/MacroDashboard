@@ -5,7 +5,6 @@ import { SectionHeader } from '@/components/SectionHeader';
 
 
 import {
-    ResponsiveContainer,
     ComposedChart,
     Line,
     XAxis,
@@ -15,8 +14,11 @@ import {
     Legend,
     ReferenceLine
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { AlertCircle, Zap, ArrowRightLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { TerminalChartTooltip, type TerminalChartTooltipProps } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const EVENTS = [
     { date: '2008-09-01', label: 'GFC / QE1' },
@@ -41,8 +43,8 @@ export const CurrencyWarsMonitor: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[500px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Mapping Divergence...</span>
+            <div className="h-[500px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Mapping Divergence...</span>
             </div>
         );
     }
@@ -80,7 +82,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                 {/* Main Chart Section */}
-                <div className="lg:col-span-3 bg-white/[0.02] border border-white/5 rounded-3xl p-8 relative group">
+                <div className="lg:col-span-3 bg-white/[0.02] border border-border rounded-xl p-8 relative group">
                     <div className="absolute top-8 right-8 z-10 flex gap-2">
                         <ZoomButton active={zoom === '5Y'} onClick={() => setZoom('5Y')} label="5Y" />
                         <ZoomButton active={zoom === '25Y'} onClick={() => setZoom('25Y')} label="25Y" />
@@ -88,10 +90,9 @@ export const CurrencyWarsMonitor: React.FC = () => {
 
                     <div className="space-y-12">
                         {/* Chart 1: Policy Rates & Spot */}
-                        <div className="h-[350px] w-full">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.tall}>
                                 <ComposedChart data={filteredData} margin={{ top: 20, right: 60, left: 40, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
                                         dataKey="date"
                                         axisLine={false}
@@ -99,77 +100,79 @@ export const CurrencyWarsMonitor: React.FC = () => {
                                         hide
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         yAxisId="left"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim }}
                                         unit="%"
-                                        label={{ value: 'RATES', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                        label={{ value: 'RATES', angle: -90, position: 'insideLeft', fill: WHITE_ALPHA.soft, fontSize: 11, offset: -20, fontWeight: 700 }}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         yAxisId="right"
                                         orientation="right"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim }}
                                         domain={['auto', 'auto']}
-                                        label={{ value: 'USD/INR', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                        label={{ value: 'USD/INR', angle: 90, position: 'insideRight', fill: WHITE_ALPHA.soft, fontSize: 11, offset: -20, fontWeight: 700 }}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
                                     <Legend
                                         verticalAlign="top"
                                         align="left"
                                         iconType="circle"
-                                        wrapperStyle={{ paddingBottom: '20px', fontSize: '9px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
+                                        wrapperStyle={{ paddingBottom: '20px', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '0.1em' }}
                                     />
 
-                                    <Line yAxisId="left" type="monotone" dataKey="fed_rate" name="Fed Funds" stroke="#3b82f6" strokeWidth={2} dot={false} />
-                                    <Line yAxisId="left" type="monotone" dataKey="rbi_rate" name="RBI Repo" stroke="#f59e0b" strokeWidth={2} dot={false} />
-                                    <Line yAxisId="right" type="monotone" dataKey="usd_inr" name="USD/INR" stroke="#ffffff" strokeWidth={2} dot={false} />
+                                    <Line yAxisId="left" type="monotone" dataKey="fed_rate" name="Fed Funds" stroke={CHART_COLORS.west} strokeWidth={2} dot={false} />
+                                    <Line yAxisId="left" type="monotone" dataKey="rbi_rate" name="RBI Repo" stroke={CHART_COLORS.gold} strokeWidth={2} dot={false} />
+                                    <Line yAxisId="right" type="monotone" dataKey="usd_inr" name="USD/INR" stroke={CHART_COLORS.white} strokeWidth={2} dot={false} />
                                 </ComposedChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
 
                         {/* Chart 2: Pressure & Relative Performance */}
-                        <div className="h-[250px] w-full border-t border-white/5 pt-8">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.standard} className="border-t border-border pt-8">
                                 <ComposedChart data={filteredData} margin={{ top: 0, right: 60, left: 40, bottom: 0 }}>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
+                                        {...DEFAULT_XAXIS_PROPS}
                                         dataKey="date"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim }}
                                         minTickGap={50}
                                         tickFormatter={(str) => new Date(str).getFullYear().toString()}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         yAxisId="pressure"
                                         axisLine={false}
-                                        tickLine={false}
                                         domain={[0, 100]}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                                        label={{ value: 'PRESSURE', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim }}
+                                        label={{ value: 'PRESSURE', angle: -90, position: 'insideLeft', fill: WHITE_ALPHA.soft, fontSize: 11, offset: -20, fontWeight: 700 }}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         yAxisId="relative"
                                         orientation="right"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)' }}
-                                        label={{ value: 'VS EM PEERS', angle: 90, position: 'insideRight', fill: 'rgba(255,255,255,0.2)', fontSize: 8, offset: -20, fontWeight: 900 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim }}
+                                        label={{ value: 'VS EM PEERS', angle: 90, position: 'insideRight', fill: WHITE_ALPHA.soft, fontSize: 11, offset: -20, fontWeight: 700 }}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
-                                    <ReferenceLine y={0} yAxisId="relative" stroke="rgba(255,255,255,0.1)" />
+                                    <ReferenceLine y={0} yAxisId="relative" stroke={WHITE_ALPHA.line} />
                                     
                                     {EVENTS.map(event => (
                                         <ReferenceLine
                                             key={event.date}
                                             x={event.date}
                                             yAxisId="pressure"
-                                            stroke="rgba(255,255,255,0.1)"
+                                            stroke={WHITE_ALPHA.line}
                                             strokeDasharray="3 3"
-                                            label={{ value: event.label, position: 'top', fill: 'rgba(255,255,255,0.2)', fontSize: 7 }}
+                                            label={{ value: event.label, position: 'top', fill: WHITE_ALPHA.soft, fontSize: 11 }}
                                         />
                                     ))}
 
@@ -178,7 +181,7 @@ export const CurrencyWarsMonitor: React.FC = () => {
                                         type="monotone"
                                         dataKey="composite_pressure"
                                         name="Composite Pressure"
-                                        stroke="#f43f5e"
+                                        stroke={CHART_COLORS.east}
                                         strokeWidth={2}
                                         dot={false}
                                         strokeDasharray="5 5"
@@ -188,13 +191,12 @@ export const CurrencyWarsMonitor: React.FC = () => {
                                         type="monotone"
                                         dataKey="em_relative_pressure"
                                         name="EM Relative Performance (bps)"
-                                        stroke="#10b981"
+                                        stroke={CHART_COLORS.expansion}
                                         strokeWidth={2}
                                         dot={false}
                                     />
                                 </ComposedChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </div>
                 </div>
 
@@ -222,26 +224,26 @@ export const CurrencyWarsMonitor: React.FC = () => {
 
 
 const MetricMiniCard = ({ label, value, sub, icon }: { label: string; value: string | number; sub: string; icon: React.ReactNode }) => (
-    <div className="px-6 py-4 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center gap-4 hover:bg-white/[0.05] transition-all">
+    <div className="px-6 py-4 rounded-xl bg-white/[0.03] border border-border flex items-center gap-4 hover:bg-white/[0.05] transition-all">
         <div className="p-2 rounded-xl bg-white/[0.03]">{icon}</div>
         <div>
-            <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mb-1">{label}</div>
-            <div className="text-lg font-black tabular-nums text-white/90 leading-none">{value}</div>
-            <div className="text-xs text-muted-foreground/30 mt-1">{sub}</div>
+            <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">{label}</div>
+            <div className="text-lg font-bold tabular-nums text-white/90 leading-none">{value}</div>
+            <div className="text-xs text-terminal-dim mt-1">{sub}</div>
         </div>
     </div>
 );
 
 const InsightCard = ({ title, description, value, unit = '', trend }: { title: string; description: string; value: number | undefined; unit?: string; trend: 'critical' | 'high' | 'stable' | 'normal' }) => (
-    <div className="p-6 rounded-3xl bg-white/[0.02] border border-white/5 hover:border-white/12 transition-all flex flex-col justify-between">
+    <div className="p-6 rounded-xl bg-white/[0.02] border border-border hover:border-white/12 transition-all flex flex-col justify-between">
         <div>
-            <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 mb-4">{title}</div>
-            <p className="text-xs text-muted-foreground/60 leading-relaxed">{description}</p>
+            <div className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-4">{title}</div>
+            <p className="text-xs text-muted-foreground leading-relaxed">{description}</p>
         </div>
         <div className="mt-6 flex items-baseline justify-between">
-            <span className="text-2xl font-black text-white/90">{value?.toFixed(1)}{unit}</span>
+            <span className="text-2xl font-bold text-white/90">{value?.toFixed(1)}{unit}</span>
             <span className={cn(
-                "text-xs font-bold px-2 py-0.5 rounded-full uppercase tracking-uppercase",
+                "text-xs font-semibold px-2 py-0.5 rounded-full uppercase tracking-wider",
                 trend === 'critical' || trend === 'high' ? "bg-rose-500/10 text-rose-400" : "bg-emerald-500/10 text-emerald-400"
             )}>
                 {trend}
@@ -254,34 +256,20 @@ const ZoomButton = ({ active, onClick, label }: { active: boolean; onClick: () =
     <button
         onClick={onClick}
         className={cn(
-            "px-3 py-1 rounded-lg text-xs font-black uppercase tracking-uppercase transition-all",
-            active ? "bg-white text-black" : "bg-white/[0.05] text-muted-foreground/40 hover:bg-white/[0.1]"
+            "px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all",
+            active ? "bg-foreground text-background" : "bg-white/[0.05] text-terminal-dim hover:bg-white/[0.1]"
         )}
     >
         {label}
     </button>
 );
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-background-dashboard/90 backdrop-blur-md border border-white/12 p-4 rounded-xl shadow-2xl">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3">
-                    {new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
-                </div>
-                <div className="space-y-2">
-                    {payload.map((entry: any) => (
-                        <div key={entry.name} className="flex items-center justify-between gap-4">
-                            <div className="flex items-center gap-2">
-                                <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                                <span className="text-xs font-bold text-muted-foreground/80">{entry.name}</span>
-                            </div>
-                            <span className="text-xs font-black tabular-nums">{entry.value.toFixed(2)}{entry.name.includes('Rate') || entry.name.includes('Fed') || entry.name.includes('RBI') ? '%' : ''}</span>
-                        </div>
-                    ))}
-                </div>
-            </div>
-        );
-    }
-    return null;
-};
+const CustomTooltip = (props: TerminalChartTooltipProps) => (
+    <TerminalChartTooltip
+        {...props}
+        labelFormatter={(label) => new Date(String(label)).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}
+        valueFormatter={(value, name) =>
+            `${Number(value).toFixed(2)}${name.includes('Rate') || name.includes('Fed') || name.includes('RBI') ? '%' : ''}`
+        }
+    />
+);

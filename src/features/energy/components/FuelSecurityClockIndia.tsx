@@ -3,11 +3,7 @@ import React, { useMemo } from 'react';
 import { MotionCard } from '@/components/MotionCard';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import {
-    CHART_HEIGHTS,
-    DEFAULT_CARTESIAN_GRID_PROPS,
-    DEFAULT_TOOLTIP_STYLE,
-} from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_STYLE, CHART_FONT_FAMILY, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import {
     BarChart,
     Bar,
@@ -59,9 +55,9 @@ const getChokepointStatus = (
 };
 
 const getRiskColor = (score: number): string => {
-    if (score < 30) return '#10b981';
-    if (score < 60) return '#f59e0b';
-    return '#ef4444';
+    if (score < 30) return CHART_COLORS.expansion;
+    if (score < 60) return CHART_COLORS.gold;
+    return CHART_COLORS.stress;
 };
 
 const getRiskLevel = (days: number): { label: string; colorClass: string } => {
@@ -154,20 +150,20 @@ export const FuelSecurityClockIndia: React.FC = () => {
             {/* Header */}
             <div className="mb-8 pl-4 border-l-4 border-amber-500/30 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
                 <div>
-                    <h3 className="text-2xl font-black text-white uppercase tracking-heading">
+                    <h3 className="text-2xl font-bold text-white uppercase tracking-heading">
                         Fuel Security Clock – India
                     </h3>
-                    <p className="text-xs text-muted-foreground/60 mt-2 max-w-2xl font-medium tracking-wide">
+                    <p className="text-xs text-muted-foreground mt-2 max-w-2xl font-medium tracking-wide">
                         Strategic petroleum coverage, import origin concentration, and geopolitical stress scoring.
                     </p>
-                    <p className="text-[10px] text-muted-foreground/30 mt-1 uppercase tracking-wide">
+                    <p className="text-[11px] text-terminal-dim mt-1 uppercase tracking-wider">
                         Source: PPAC MoPNG · ISPRL · EIA International · FRED
                     </p>
                 </div>
                 {data.as_of_date && (
-                    <div className="flex items-center gap-2 self-start sm:self-auto bg-white/5 border border-white/10 px-3 py-1.5 rounded-xl">
+                    <div className="flex items-center gap-2 self-start sm:self-auto bg-white/5 border border-border px-3 py-1.5 rounded-xl">
                         <div className="w-2 h-2 rounded-full bg-amber-400 animate-pulse" />
-                        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                             As of: {data.as_of_date}
                         </span>
                     </div>
@@ -178,34 +174,34 @@ export const FuelSecurityClockIndia: React.FC = () => {
                 {/* Row 1: Countdown Clock + Official/Actual */}
                 {data.reserves_days_coverage != null ? (
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div className="p-8 rounded-[2rem] bg-amber-500/[0.03] border border-amber-500/10 backdrop-blur-sm">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-amber-400 mb-4">
+                        <div className="p-8 rounded-xl bg-amber-500/[0.03] border border-amber-500/10 backdrop-blur-sm">
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400 mb-4">
                                 Strategic Crude Reserves (SPR)
                             </h4>
                             <div className="flex items-end gap-4">
-                                <div className="text-8xl font-black italic tracking-tighter text-white">
+                                <div className="text-8xl font-bold italic tracking-tighter text-white">
                                     {Math.round(data.reserves_days_coverage)}
                                 </div>
-                                <div className="text-2xl font-black text-amber-500/60 mb-2">days</div>
+                                <div className="text-2xl font-bold text-amber-500/60 mb-2">days</div>
                             </div>
                             <div className="mt-4 flex flex-wrap items-center gap-3">
                                 <div className={cn(
-                                    'px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider inline-block border',
+                                    'px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider inline-block border',
                                     getRiskLevel(data.reserves_days_coverage).colorClass,
                                 )}>
                                     {getRiskLevel(data.reserves_days_coverage).label}
                                 </div>
-                                <span className="text-[11px] font-bold text-muted-foreground/70 uppercase">
+                                <span className="text-[11px] font-semibold text-muted-foreground uppercase">
                                     Total Petroleum Buffer: ~{data.reserves_days_actual ? Math.round(data.reserves_days_actual) : 74} Days (OMC + SPR)
                                 </span>
                             </div>
-                            <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
+                            <p className="text-[11px] text-terminal-dim mt-3 uppercase tracking-wider">
                                 * ISPRL Underground Storage: ~39.1M bbl (Visakhapatnam, Mangalore, Padur) = ~9.5 days crude demand. Total OMC commercial + strategic buffer covers ~74 days.
                             </p>
                         </div>
 
-                        <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
-                            <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">
+                        <div className="p-8 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-4">
                                 Strategic Crude vs Total Product Cover
                             </h4>
                             <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -214,43 +210,43 @@ export const FuelSecurityClockIndia: React.FC = () => {
                                     { name: 'Total Buffer (OMC+SPR)', value: data.reserves_days_actual ?? 74.0 },
                                 ]}>
                                     <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                                        <Cell fill="#3b82f6" />
-                                        <Cell fill="#10b981" />
+                                        <Cell fill={CHART_COLORS.west} />
+                                        <Cell fill={CHART_COLORS.expansion} />
                                     </Bar>
-                                    <XAxis dataKey="name" tick={{ fill: '#ffffff60', fontSize: 10 }} axisLine={false} tickLine={false} />
-                                    <YAxis tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit="d" />
-                                    <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} />
+                                    <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="name" tick={{ fontFamily: CHART_FONT_FAMILY, fill: '#ffffff60', fontSize: 11 }} axisLine={false} />
+                                    <YAxis {...DEFAULT_YAXIS_PROPS} width={60} tick={{ fontFamily: CHART_FONT_FAMILY, fill: '#ffffff40', fontSize: 11 }} axisLine={false} unit="d" />
+                                    <Tooltip labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE} itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE} contentStyle={DEFAULT_TOOLTIP_STYLE} />
                                 </BarChart>
                             </MacroChartContainer>
-                            <p className="text-xs text-muted-foreground/60 mt-4 text-center font-medium">
+                            <p className="text-xs text-muted-foreground mt-4 text-center font-medium">
                                 Sovereign Mandate Target: <span className="text-emerald-400 font-bold">90 Days (IEA Standard)</span> · Current Total Coverage: <span className="text-amber-400 font-bold">~74 Days</span>
                             </p>
                         </div>
                     </div>
                 ) : (
-                    <div className="p-8 rounded-[2rem] bg-amber-500/5 border border-amber-500/10">
+                    <div className="p-8 rounded-xl bg-amber-500/5 border border-amber-500/10">
                         <p className="text-sm text-muted-foreground">Reserves coverage data not yet available.</p>
                     </div>
                 )}
 
                 {/* Row 2: Import Origin Breakdown */}
                 <div>
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white mb-4">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-white mb-4">
                         Import Origin Breakdown (Top 8 Suppliers)
                     </h4>
                     {importOrigins.length > 0 ? (
                         <MacroChartContainer height={260}>
                             <BarChart data={importOrigins} layout="vertical" margin={{ left: 100, right: 24 }}>
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
-                                <XAxis type="number" tick={{ fill: '#ffffff40', fontSize: 10 }} axisLine={false} tickLine={false} unit=" Mbbl" />
-                                <YAxis type="category" dataKey="origin" tick={{ fill: '#ffffff60', fontSize: 10 }} axisLine={false} tickLine={false} width={96} />
-                                <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} />
-                                <Bar dataKey="volume" name="Volume (Mbbl)" radius={[0, 6, 6, 0]} fill="#f59e0b" />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} type="number" tick={{ fontFamily: CHART_FONT_FAMILY, fill: '#ffffff40', fontSize: 11 }} axisLine={false} unit=" Mbbl" />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} type="category" dataKey="origin" tick={{ fontFamily: CHART_FONT_FAMILY, fill: '#ffffff60', fontSize: 11 }} axisLine={false} width={96} />
+                                <Tooltip labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE} itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE} contentStyle={DEFAULT_TOOLTIP_STYLE} />
+                                <Bar dataKey="volume" name="Volume (Mbbl)" radius={[0, 6, 6, 0]} fill={CHART_COLORS.gold} />
                             </BarChart>
                         </MacroChartContainer>
                     ) : (
-                        <div className="h-[200px] flex items-center justify-center bg-white/[0.02] border border-white/5 rounded-2xl">
-                            <span className="text-xs text-muted-foreground/40 uppercase tracking-wide">
+                        <div className="h-[200px] flex items-center justify-center bg-white/[0.02] border border-border rounded-xl">
+                            <span className="text-xs text-terminal-dim uppercase tracking-wider">
                                 Import origin data not yet available
                             </span>
                         </div>
@@ -259,33 +255,33 @@ export const FuelSecurityClockIndia: React.FC = () => {
 
                 {/* Row 3: Brent-INR Cost + Geopolitical Risk */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="p-6 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-blue-400 mb-4">
+                    <div className="p-6 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-4">
                             Import Cost Pressure (Local Currency)
                         </h4>
                         <div className="flex items-baseline gap-3">
-                            <span className="text-5xl font-black text-white tracking-heading italic">
+                            <span className="text-5xl font-bold text-white tracking-heading italic">
                                 {data.inr_per_barrel?.toLocaleString('en-IN') || 'N/A'}
                             </span>
-                            <span className="text-sm font-black text-blue-500/40 uppercase">INR/barrel</span>
+                            <span className="text-sm font-semibold text-blue-500/40 uppercase">INR/barrel</span>
                         </div>
                         <div className="mt-4 flex items-center gap-3">
-                            <span className="text-[10px] font-black uppercase text-muted-foreground/40">Brent USD</span>
-                            <span className="text-sm font-black text-white">${data.brent_price_usd?.toFixed(2) || 'N/A'}</span>
+                            <span className="text-[11px] font-semibold uppercase text-terminal-dim">Brent USD</span>
+                            <span className="text-sm font-bold text-white">${data.brent_price_usd?.toFixed(2) || 'N/A'}</span>
                         </div>
-                        <p className="text-[10px] text-muted-foreground/40 mt-3 uppercase tracking-wide">
+                        <p className="text-[11px] text-terminal-dim mt-3 uppercase tracking-wider">
                             * Higher INR/barrel widens current account deficit pressure
                         </p>
                     </div>
 
-                    <div className="p-6 rounded-[2rem] bg-rose-500/[0.03] border border-rose-500/10 backdrop-blur-sm">
-                        <h4 className="text-xs font-black uppercase tracking-widest text-rose-400 mb-4">
+                    <div className="p-6 rounded-xl bg-rose-500/[0.03] border border-rose-500/10 backdrop-blur-sm">
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-rose-400 mb-4">
                             Geopolitical Risk Score
                         </h4>
                         <div className="flex items-center gap-6">
                             <div className="relative w-20 h-20">
                                 <svg className="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
-                                    <path d="M18 2.1 a 15.9 15.9 0 0 1 0 31.8" fill="none" stroke="rgba(255,255,255,0.05)" strokeWidth="3" />
+                                    <path d="M18 2.1 a 15.9 15.9 0 0 1 0 31.8" fill="none" stroke={WHITE_ALPHA.faint} strokeWidth="3" />
                                     <path
                                         d="M18 2.1 a 15.9 15.9 0 0 1 0 31.8"
                                         fill="none"
@@ -295,7 +291,7 @@ export const FuelSecurityClockIndia: React.FC = () => {
                                     />
                                 </svg>
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <span className="text-xl font-black text-white">{data.geopolitical_risk_score}</span>
+                                    <span className="text-xl font-bold text-white">{data.geopolitical_risk_score}</span>
                                 </div>
                             </div>
                             <div className="flex-1 space-y-2">
@@ -309,11 +305,11 @@ export const FuelSecurityClockIndia: React.FC = () => {
                                     return (
                                         <div key={chokepoint} className="flex items-center justify-between text-xs">
                                             <div>
-                                                <span className="text-muted-foreground/60 uppercase tracking-wider">{chokepoint}</span>
-                                                <div className="text-[9px] text-muted-foreground/30 uppercase tracking-wide">{subtitle}</div>
+                                                <span className="text-muted-foreground uppercase tracking-wider">{chokepoint}</span>
+                                                <div className="text-[11px] text-terminal-dim uppercase tracking-wider">{subtitle}</div>
                                             </div>
                                             <span className={cn(
-                                                'font-black px-2 py-0.5 rounded text-[10px]',
+                                                'font-bold px-2 py-0.5 rounded text-[11px]',
                                                 status === 'critical' ? 'bg-rose-500/10 text-rose-500' :
                                                 status === 'elevated' ? 'bg-amber-500/10 text-amber-500' :
                                                 'bg-emerald-500/10 text-emerald-500',
@@ -330,30 +326,33 @@ export const FuelSecurityClockIndia: React.FC = () => {
 
                 {/* Row 4: Consumption Projections */}
                 <div>
-                    <h4 className="text-sm font-black uppercase tracking-widest text-white mb-4">
+                    <h4 className="text-sm font-semibold uppercase tracking-wider text-white mb-4">
                         Consumption Trajectory & Stress Scenarios
                     </h4>
                     <MacroChartContainer height={300}>
                         <LineChart data={projData}>
                             <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                             <XAxis
+                                {...DEFAULT_XAXIS_PROPS}
                                 dataKey="date"
-                                stroke="rgba(255,255,255,0.3)"
-                                fontSize={10}
+                                stroke={WHITE_ALPHA.dim}
+                                fontSize={11}
                                 tickFormatter={d => {
                                     const date = new Date(d);
                                     return `${date.toLocaleString('default', { month: 'short' })} ${date.getDate()}`;
                                 }}
                             />
-                            <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} unit=" d" />
+                            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} stroke={WHITE_ALPHA.dim} fontSize={11} unit=" d" />
                             <Tooltip
+                                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 contentStyle={DEFAULT_TOOLTIP_STYLE}
                                 labelFormatter={label => new Date(label).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                             />
-                            <Legend wrapperStyle={{ fontSize: '10px' }} />
-                            <Line type="monotone" dataKey="baseline" stroke="#3b82f6" strokeWidth={3} dot={false} name="Baseline" />
-                            <Line type="monotone" dataKey="disruption" stroke="#f59e0b" strokeWidth={3} dot={false} name="Disruption (−30% imports)" />
-                            <Line type="monotone" dataKey="rationing" stroke="#ef4444" strokeWidth={3} dot={false} name="Rationing (−50% consumption)" />
+                            <Legend wrapperStyle={{ fontSize: '11px' }} />
+                            <Line type="monotone" dataKey="baseline" stroke={CHART_COLORS.west} strokeWidth={3} dot={false} name="Baseline" />
+                            <Line type="monotone" dataKey="disruption" stroke={CHART_COLORS.gold} strokeWidth={3} dot={false} name="Disruption (−30% imports)" />
+                            <Line type="monotone" dataKey="rationing" stroke={CHART_COLORS.stress} strokeWidth={3} dot={false} name="Rationing (−50% consumption)" />
                         </LineChart>
                     </MacroChartContainer>
                 </div>

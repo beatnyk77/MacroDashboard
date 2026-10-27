@@ -31,10 +31,10 @@ export class SectionErrorBoundary extends Component<Props, State> {
 
       return (
         <div 
-          className="p-6 rounded-2xl border border-red-500/20 bg-red-500/5 text-red-200"
+          className="p-6 rounded-xl border border-red-500/20 bg-red-500/5 text-red-200"
           style={{ backdropFilter: 'blur(10px)' }}
         >
-          <h3 className="text-sm font-bold uppercase tracking-wider mb-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wider mb-2">
             Section Error: {this.props.title || 'General'}
           </h3>
           <p className="text-xs opacity-60 font-mono mb-4">
@@ -42,7 +42,7 @@ export class SectionErrorBoundary extends Component<Props, State> {
           </p>
           <button
             onClick={() => this.setState({ hasError: false, error: null })}
-            className="text-[10px] uppercase tracking-widest font-bold px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 transition-colors"
+            className="text-[11px] uppercase tracking-wider font-semibold px-3 py-1.5 rounded bg-white/10 hover:bg-white/20 transition-colors"
           >
             Retry Section
           </button>

@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const DebtGoldZScoreChart = lazy(() => import('./DebtGoldZScoreChart').then(m => ({ default: m.DebtGoldZScoreChart })));
 
@@ -86,9 +87,9 @@ export const DebtGoldZScorePage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Hard Assets" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#f59e0b', color: '#f59e0b' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.gold, color: CHART_COLORS.gold }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             Debt/Gold Z-Score
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -100,12 +101,12 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-amber-400" />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        Rooted in the classical gold standard era, this metric asks a simple question: <strong style={{ color: '#fcd34d' }}>if the US were to back its debt with its official gold reserves at current spot prices, how does this compare historically?</strong> The US holds 8,133.5 tonnes of gold (unchanged since 1980). As debt compounds faster than gold prices, the ratio rises exponentially.
+                        Rooted in the classical gold standard era, this metric asks a simple question: <strong style={{ color: CHART_COLORS.goldSoft }}>if the US were to back its debt with its official gold reserves at current spot prices, how does this compare historically?</strong> The US holds 8,133.5 tonnes of gold (unchanged since 1980). As debt compounds faster than gold prices, the ratio rises exponentially.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
                         The Z-score normalises this against a 25-year rolling window, separating the structural trend from cyclical fluctuations in gold prices and debt issuance pace, producing a signal that identifies periods where gold is deeply undervalued relative to the implied monetary stress of the balance sheet.
@@ -113,17 +114,17 @@ export const DebtGoldZScorePage: React.FC = () => {
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#f59e0b' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.gold, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.gold }} />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#fcd34d', lineHeight: 2, border: '1px solid rgba(245,158,11,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 1: Gold Market Cap of US Reserves{'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.goldSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 1: Gold Market Cap of US Reserves{'\n'}</Box>
                         US Gold Market Cap = 8,133.5 tonnes × 32,150.7 oz/tonne × Gold Spot (USD){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 2: Debt/Gold Ratio{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 2: Debt/Gold Ratio{'\n'}</Box>
                         D/G Ratio = US Federal Debt Outstanding / US Gold Market Cap{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Step 3: Z-Score (25-year rolling){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Step 3: Z-Score (25-year rolling){'\n'}</Box>
                         Z = (D/G Ratio − μ₂₅ᵧ) / σ₂₅ᵧ
                     </Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2}>
@@ -133,8 +134,8 @@ export const DebtGoldZScorePage: React.FC = () => {
                             { label: 'US Gold Holdings', desc: '8,133.5 metric tonnes — US Treasury official holding, audited annually' },
                             { label: 'Rolling Window', desc: '25 years (quarterly data) — chosen to span full economic cycles' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#fcd34d', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.goldSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -143,8 +144,8 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.gold }} />
                         Debt/Gold Z-Score Historical (Illustrative, 2000–2024)
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -157,8 +158,8 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.gold }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -168,8 +169,8 @@ export const DebtGoldZScorePage: React.FC = () => {
                             { role: 'Family Offices', use: 'Long-run portfolio insurance allocation sizing. A rising Z-score increases the optimal gold allocation percentage in a mean-variance optimised portfolio.' },
                             { role: 'Commodity Trading Advisors', use: 'Use as a non-momentum confirmation signal for gold futures positioning. Reduces false signals from technical-only approaches.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.gold, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.gold }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -178,13 +179,13 @@ export const DebtGoldZScorePage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Debt/Gold Z-Score FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.gold, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

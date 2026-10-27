@@ -333,16 +333,15 @@ export function generateMacroBrief(
   signal: MacroSignalResult,
   scoreDelta: number
 ): { regime_line: string; driver_line: string; watch_line: string; context_line: string } {
-  const regimeEmoji = signal.regime === 'RISK_ON' ? '🟢' : signal.regime === 'RISK_OFF' ? '🔴' : '🟡';
   const deltaStr = scoreDelta >= 0 ? `+${scoreDelta.toFixed(1)}` : scoreDelta.toFixed(1);
   const dirStr = scoreDelta > 1 ? ' ↑' : scoreDelta < -1 ? ' ↓' : '';
 
-  const regime_line = `${regimeEmoji} Regime: ${signal.regime.replace('_', '-')} · Score ${signal.score.toFixed(0)}/100 (${deltaStr} vs yesterday)${dirStr} · Confidence ${signal.confidence_pct.toFixed(0)}%`;
+  const regime_line = `Regime: ${signal.regime.replace('_', '-')} · Score ${signal.score.toFixed(0)}/100 (${deltaStr} vs yesterday)${dirStr} · Confidence ${signal.confidence_pct.toFixed(0)}%`;
 
-  const driver_line = `⚡ Key Driver: ${signal.key_driver} (${signal.component_scores[Object.keys(signal.component_scores).reduce((a, b) =>
+  const driver_line = `Key Driver: ${signal.key_driver} (${signal.component_scores[Object.keys(signal.component_scores).reduce((a, b) =>
     (signal.component_scores[a as keyof ComponentScores] > signal.component_scores[b as keyof ComponentScores] ? a : b)) as keyof ComponentScores].toFixed(0)}/100)`;
 
-  const watch_line = `👁 Watch: ${signal.watch_item}`;
+  const watch_line = `Watch: ${signal.watch_item}`;
 
   const liqDir = signal.component_scores.liquidity >= 60 ? 'supportive' : signal.component_scores.liquidity <= 40 ? 'tightening' : 'neutral';
   const ratesDir = signal.component_scores.rates >= 60 ? 'accommodative' : signal.component_scores.rates <= 40 ? 'restrictive' : 'mixed';

@@ -5,6 +5,7 @@ import { Box, Typography, Skeleton } from '@mui/material';
 import { format } from 'date-fns';
 import { ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { TrailLink as Link } from '@/components/TrailLink';
+import { WHITE_ALPHA } from '@/constants/chartDefaults';
 export const USInsiderActivity: React.FC = () => {
     const { data: insiderTrades, isLoading } = useQuery({
         queryKey: ['us-insider-activity'],
@@ -33,8 +34,8 @@ export const USInsiderActivity: React.FC = () => {
     return (
         <Box sx={{ spaceY: 3 }}>
             <Box sx={{ mb: 4 }}>
-                <Typography variant="h6" sx={{ fontWeight: 900, color: 'white' }}>Live Insider Pulse</Typography>
-                <Typography variant="caption" sx={{ color: 'white/30', fontWeight: 800, textTransform: 'uppercase' }}>Recent Form 4 Filings • High Conviction Operations</Typography>
+                <Typography variant="h6" sx={{ fontWeight: 700, color: 'white' }}>Live Insider Pulse</Typography>
+                <Typography variant="caption" sx={{ color: 'white/30', fontWeight: 700, textTransform: 'uppercase' }}>Recent Form 4 Filings • High Conviction Operations</Typography>
             </Box>
 
             <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -43,7 +44,7 @@ export const USInsiderActivity: React.FC = () => {
                         p: 4,
                         borderRadius: '24px',
                         bgcolor: 'white/[0.01]',
-                        border: '1px solid rgba(255,255,255,0.05)',
+                        border: `1px solid ${WHITE_ALPHA.faint}`,
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'between',
@@ -69,18 +70,18 @@ export const USInsiderActivity: React.FC = () => {
                                 {t.transaction_type === 'BUY' ? <ArrowUpRight size={20} className="text-emerald-400" /> : <ArrowDownRight size={20} className="text-rose-400" />}
                             </Box>
                             <div>
-                                <Typography variant="body2" sx={{ fontWeight: 800, color: 'white' }}>{t.insider_name}</Typography>
-                                <Typography variant="caption" sx={{ color: 'white/40', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.6rem' }}>
+                                <Typography variant="body2" sx={{ fontWeight: 700, color: 'white' }}>{t.insider_name}</Typography>
+                                <Typography variant="caption" sx={{ color: 'white/40', fontWeight: 600, textTransform: 'uppercase', fontSize: '0.6875rem' }}>
                                     {t.insider_title} &bull; <Link to={`/us-equities/equity/${t.ticker}`} className="text-blue-400/80 hover:text-blue-400 transition-colors">{t.us_companies?.name || t.ticker}</Link>
                                 </Typography>
                             </div>
                         </Box>
 
                         <Box sx={{ textAlign: 'right' }}>
-                            <Typography variant="body1" sx={{ fontWeight: 900, color: t.transaction_type === 'BUY' ? 'emerald.400' : 'rose.400' }}>
+                            <Typography variant="body1" sx={{ fontWeight: 700, color: t.transaction_type === 'BUY' ? 'emerald.400' : 'rose.400' }}>
                                 {t.transaction_type === 'BUY' ? '+' : '-'}${Math.abs(t.total_value || 0).toLocaleString()}
                             </Typography>
-                            <Typography variant="caption" sx={{ color: 'white/20', fontWeight: 800, textTransform: 'uppercase' }}>
+                            <Typography variant="caption" sx={{ color: 'white/20', fontWeight: 700, textTransform: 'uppercase' }}>
                                 {t.shares_traded?.toLocaleString()} SHARES &bull; {format(new Date(t.transaction_date), 'dd MMM')}
                             </Typography>
                         </Box>
@@ -89,8 +90,8 @@ export const USInsiderActivity: React.FC = () => {
             </Box>
 
             {insiderTrades?.length === 0 && (
-                <Box sx={{ py: 15, textAlign: 'center', bgcolor: 'white/[0.01]', borderRadius: '32px', border: '1px dashed rgba(255,255,255,0.05)' }}>
-                    <Typography variant="body2" sx={{ color: 'white/20', fontWeight: 900, textTransform: 'uppercase' }}>
+                <Box sx={{ py: 15, textAlign: 'center', bgcolor: 'white/[0.01]', borderRadius: '32px', border: `1px dashed ${WHITE_ALPHA.faint}` }}>
+                    <Typography variant="body2" sx={{ color: 'white/20', fontWeight: 700, textTransform: 'uppercase' }}>
                         No High-Value Insider Pulse Detected
                     </Typography>
                 </Box>

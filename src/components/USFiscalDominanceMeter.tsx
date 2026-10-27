@@ -16,7 +16,9 @@ import {
     DEFAULT_CARTESIAN_GRID_PROPS,
     DEFAULT_XAXIS_PROPS,
     DEFAULT_YAXIS_PROPS,
+    CHART_COLORS,
 } from '@/constants/chartDefaults';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
 
 /**
  * US Fiscal Dominance Meter
@@ -52,41 +54,41 @@ const CustomTooltip = ({ active, payload }: any) => {
         const d = payload[0].payload;
         const numerator = d.entitlements != null ? d.interest + d.entitlements : d.interest;
         return (
-            <div className="bg-popover text-popover-foreground border border-border rounded-lg p-4 shadow-xl z-50 min-w-[220px]">
-                <p className="text-foreground font-semibold mb-2 border-b border-border pb-1 text-xs">
+            <div className={`${TOOLTIP_SHELL_CLASS} z-50 min-w-[220px]`}>
+                <p className="text-slate-100 font-semibold mb-2 border-b border-border pb-1 text-xs">
                     {new Date(d.date).toLocaleDateString('en-US', { year: 'numeric', month: 'short' })}
                 </p>
                 <div className="space-y-2 text-xs">
                     <div className="flex items-center justify-between gap-6">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
+                        <span className="text-slate-400 flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-red-500" />
                             Interest Pmts (qtr)
                         </span>
-                        <span className="text-foreground font-mono font-semibold">${(d.interest / 1000).toFixed(3)}T</span>
+                        <span className="text-slate-100 font-mono font-semibold">${(d.interest / 1000).toFixed(3)}T</span>
                     </div>
                     {d.entitlements != null && (
                         <div className="flex items-center justify-between gap-6">
-                            <span className="text-muted-foreground flex items-center gap-1.5">
+                            <span className="text-slate-400 flex items-center gap-1.5">
                                 <div className="w-2 h-2 rounded-full bg-amber-500" />
                                 SocSec + Medicare (qtr)
                             </span>
-                            <span className="text-foreground font-mono font-semibold">${(d.entitlements / 1000).toFixed(3)}T</span>
+                            <span className="text-slate-100 font-mono font-semibold">${(d.entitlements / 1000).toFixed(3)}T</span>
                         </div>
                     )}
                     <div className="flex items-center justify-between gap-6">
-                        <span className="text-foreground font-semibold">Numerator Total</span>
-                        <span className="text-red-500 dark:text-red-300 font-mono font-bold">${(numerator / 1000).toFixed(3)}T</span>
+                        <span className="text-slate-100 font-semibold">Numerator Total</span>
+                        <span className="text-red-300 font-mono font-semibold">${(numerator / 1000).toFixed(3)}T</span>
                     </div>
                     <div className="border-t border-border pt-1 flex items-center justify-between gap-6">
-                        <span className="text-muted-foreground flex items-center gap-1.5">
+                        <span className="text-slate-400 flex items-center gap-1.5">
                             <div className="w-2 h-2 rounded-full bg-cyan-500" />
                             Tax Receipts (qtr)
                         </span>
-                        <span className="text-cyan-600 dark:text-cyan-300 font-mono font-semibold">${(d.receipts / 1000).toFixed(3)}T</span>
+                        <span className="text-cyan-300 font-mono font-semibold">${(d.receipts / 1000).toFixed(3)}T</span>
                     </div>
                     <div className="border-t border-border pt-2 flex items-center justify-between gap-6">
-                        <span className="text-foreground font-black uppercase text-[10px] tracking-widest">Dominance Ratio</span>
-                        <span className={`text-lg font-bold ${d.ratio >= 100 ? 'text-red-500' : 'text-emerald-500'}`}>
+                        <span className="text-slate-100 font-semibold uppercase text-[11px] tracking-wider">Dominance Ratio</span>
+                        <span className={`text-base font-semibold ${d.ratio >= 100 ? 'text-red-500' : 'text-emerald-500'}`}>
                             {d.ratio.toFixed(1)}%
                         </span>
                     </div>
@@ -272,7 +274,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
     }));
 
     return (
-        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-red-500/20">
+        <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl shadow-sm shadow-2xl overflow-hidden border border-red-500/20">
             {/* Header */}
             <div className="p-6 md:p-8 border-b border-border">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
@@ -291,8 +293,8 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     </div>
                     <div className="flex flex-col items-end gap-1 text-muted-foreground text-sm shrink-0">
                         <span>As of: <span className="text-foreground font-semibold">{asOfDate || '—'}</span></span>
-                        <span className="text-xs italic text-muted-foreground/70">FRED · Quarterly</span>
-                        <span className="text-xs text-muted-foreground/50">A091RC1 · FGRECPT · W068RC1</span>
+                        <span className="text-xs italic text-muted-foreground">FRED · Quarterly</span>
+                        <span className="text-xs text-terminal-dim">A091RC1 · FGRECPT · W068RC1</span>
                     </div>
                 </div>
             </div>
@@ -313,7 +315,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                             <span className="text-muted-foreground text-xs font-medium">Dominance Ratio</span>
                         </div>
                         {isAboveThreshold && (
-                            <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-black bg-red-500/20 text-red-500 uppercase tracking-tighter border border-red-500/30 animate-pulse">
+                            <span className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-semibold bg-red-500/20 text-red-500 uppercase tracking-tighter border border-red-500/30 animate-pulse">
                                 Critical
                             </span>
                         )}
@@ -339,7 +341,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     </div>
                     <p className="text-2xl font-bold text-foreground">{formattedInterest}</p>
                     <p className="text-muted-foreground text-xs mt-1">Quarterly · ≈{annualInterest}</p>
-                    <p className="text-muted-foreground/60 text-[10px] mt-0.5">FRED: A091RC1Q027SBEA</p>
+                    <p className="text-muted-foreground text-[11px] mt-0.5">FRED: A091RC1Q027SBEA</p>
                 </m.div>
 
                 {/* Major Entitlements */}
@@ -355,7 +357,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     <p className="text-muted-foreground text-xs mt-1">
                         {latest.entitlements == null ? 'Populates on next ingest' : 'Quarterly benefits'}
                     </p>
-                    <p className="text-muted-foreground/60 text-[10px] mt-0.5">FRED: W068RC1Q027SBEA</p>
+                    <p className="text-muted-foreground text-[11px] mt-0.5">FRED: W068RC1Q027SBEA</p>
                 </m.div>
 
                 {/* Tax Receipts */}
@@ -369,7 +371,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                     </div>
                     <p className="text-2xl font-bold text-foreground">{formattedReceipts}</p>
                     <p className="text-muted-foreground text-xs mt-1">Quarterly receipts</p>
-                    <p className="text-muted-foreground/60 text-[10px] mt-0.5">FRED: FGRECPT</p>
+                    <p className="text-muted-foreground text-[11px] mt-0.5">FRED: FGRECPT</p>
                 </m.div>
             </div>
 
@@ -403,13 +405,13 @@ export const USFiscalDominanceMeter: React.FC = () => {
                                 <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'hsl(var(--border))', strokeWidth: 1, strokeDasharray: '3 3' }} />
                                 <ReferenceLine
                                     y={100}
-                                    stroke="#ef4444"
+                                    stroke={CHART_COLORS.stress}
                                     strokeDasharray="5 5"
                                     strokeWidth={2}
                                     label={{
                                         value: '100% Threshold',
                                         position: 'right',
-                                        fill: '#ef4444',
+                                        fill: CHART_COLORS.stress,
                                         fontSize: 11,
                                         fontWeight: 700
                                     }}
@@ -418,10 +420,10 @@ export const USFiscalDominanceMeter: React.FC = () => {
                                     type="monotone"
                                     dataKey="ratio"
                                     name="Fiscal Dominance Ratio"
-                                    stroke={isAboveThreshold ? '#ef4444' : '#22c55e'}
+                                    stroke={isAboveThreshold ? CHART_COLORS.stress : CHART_COLORS.expansion}
                                     strokeWidth={2.5}
                                     dot={false}
-                                    activeDot={{ r: 5, stroke: isAboveThreshold ? '#ef4444' : '#22c55e', fill: 'hsl(var(--background))', strokeWidth: 2 }}
+                                    activeDot={{ r: 5, stroke: isAboveThreshold ? CHART_COLORS.stress : CHART_COLORS.expansion, fill: 'hsl(var(--background))', strokeWidth: 2 }}
                                 />
                             </LineChart>
                         </MacroChartContainer>
@@ -445,7 +447,7 @@ export const USFiscalDominanceMeter: React.FC = () => {
                         </p>
                         {latest.entitlements == null && (
                             <p className="text-amber-500 text-xs mt-2 italic">
-                                ⚠ Entitlements data pending first ingest — ratio currently reflects interest payments only. Trigger ingest-us-macro to activate full formula.
+                                Entitlements data pending first ingest — ratio currently reflects interest payments only. Trigger ingest-us-macro to activate full formula.
                             </p>
                         )}
                     </div>

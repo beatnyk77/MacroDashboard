@@ -45,7 +45,7 @@ export const PendingDataState: React.FC<PendingDataStateProps> = ({
 
     return (
         <div
-            className="flex flex-col items-center justify-center bg-black/40 border border-white/[0.07] rounded-[2.5rem] backdrop-blur-3xl px-8 py-10"
+            className="flex flex-col items-center justify-center bg-background/40 border border-white/[0.07] rounded-xl backdrop-blur-3xl px-8 py-10"
             style={{ height }}
         >
             {/* Skeleton bars */}
@@ -65,7 +65,7 @@ export const PendingDataState: React.FC<PendingDataStateProps> = ({
 
             {/* Status badge */}
             <div className={cn(
-                'flex items-center gap-2 px-4 py-2 rounded-full border text-[10px] font-black uppercase tracking-widest mb-4',
+                'flex items-center gap-2 px-4 py-2 rounded-full border text-[11px] font-semibold uppercase tracking-wider mb-4',
                 accent.badge,
             )}>
                 <Clock className={cn('w-3 h-3 shrink-0', accent.icon)} />
@@ -77,7 +77,7 @@ export const PendingDataState: React.FC<PendingDataStateProps> = ({
                 <button
                     onClick={onRetry}
                     className={cn(
-                        'flex items-center gap-2 px-4 py-1.5 rounded-full border text-[10px] font-black uppercase tracking-widest transition-colors',
+                        'flex items-center gap-2 px-4 py-1.5 rounded-full border text-[11px] font-semibold uppercase tracking-wider transition-colors',
                         accent.button,
                     )}
                 >

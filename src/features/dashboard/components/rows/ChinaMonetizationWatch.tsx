@@ -1,7 +1,6 @@
 import React from 'react';
 import { Banknote, AlertTriangle } from 'lucide-react';
 import {
-    ResponsiveContainer,
     ComposedChart,
     Line,
     Bar,
@@ -11,12 +10,14 @@ import {
     Tooltip,
     ReferenceLine,
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { usePBOCOps } from '@/hooks/useChinaMacro';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useLatestChinaDebtComposites } from '@/hooks/useChinaDebt';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { cn } from '@/lib/utils';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const ChinaMonetizationWatch: React.FC = () => {
     const { data: pbocRows, isLoading } = usePBOCOps();
@@ -41,27 +42,27 @@ export const ChinaMonetizationWatch: React.FC = () => {
     const isFiscalDominance = (monetization?.value ?? 0) >= 60;
 
     if (isLoading) {
-        return <div className="h-[300px] rounded-2xl bg-white/[0.02] animate-pulse" />;
+        return <div className="h-[300px] rounded-xl bg-white/[0.02] animate-pulse" />;
     }
 
     return (
         <div className="space-y-8">
             <div className="flex items-center justify-between gap-4 flex-wrap">
                 <div className="flex items-center gap-3">
-                    <div className="p-2.5 rounded-2xl bg-purple-500/10 border border-purple-500/20">
+                    <div className="p-2.5 rounded-xl bg-purple-500/10 border border-purple-500/20">
                         <Banknote size={20} className="text-purple-400" />
                     </div>
                     <div>
-                        <h3 className="text-sm font-black text-white uppercase tracking-uppercase italic">
+                        <h3 className="text-sm font-semibold text-white uppercase tracking-wider italic">
                             Monetization Watch
                         </h3>
-                        <p className="text-xs text-muted-foreground/60">
+                        <p className="text-xs text-muted-foreground">
                             Is the PBOC quietly financing the fiscal deficit?
                         </p>
                     </div>
                 </div>
                 {isFiscalDominance && (
-                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-black uppercase tracking-uppercase">
+                    <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs font-semibold uppercase tracking-wider">
                         <AlertTriangle size={14} />
                         Fiscal Dominance Zone
                     </div>
@@ -76,43 +77,43 @@ export const ChinaMonetizationWatch: React.FC = () => {
                     { label: 'Monetization Index', value: monetization?.value, unit: '/100', warn: isFiscalDominance },
                 ].map(({ label, value, unit, warn, text }) => (
                     <div key={label} className={cn(
-                        'p-5 rounded-2xl border',
-                        warn ? 'bg-amber-500/[0.04] border-amber-500/15' : 'bg-white/[0.02] border-white/5'
+                        'p-5 rounded-xl border',
+                        warn ? 'bg-amber-500/[0.04] border-amber-500/15' : 'bg-white/[0.02] border-border'
                     )}>
-                        <p className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-2">{label}</p>
-                        <p className={cn('font-black font-mono', text ? 'text-lg text-white' : 'text-2xl text-white')}>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-2">{label}</p>
+                        <p className={cn('font-bold font-mono', text ? 'text-lg text-white' : 'text-2xl text-white')}>
                             {value != null ? (text ? String(value) : typeof value === 'number' ? value.toFixed(1) : value) : '—'}
-                            {unit && !text && <span className="text-xs text-muted-foreground/50 ml-1">{unit}</span>}
+                            {unit && !text && <span className="text-xs text-terminal-dim ml-1">{unit}</span>}
                         </p>
                     </div>
                 ))}
             </div>
 
-            <div className="p-6 rounded-2xl bg-white/[0.02] border border-white/5">
-                <h4 className="text-xs font-black uppercase tracking-uppercase text-white/40 mb-4">
+            <div className="p-6 rounded-xl bg-white/[0.02] border border-border">
+                <h4 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-4">
                     M2 Growth vs PBOC Policy Rate
                 </h4>
                 {chartData.length > 0 ? (
-                    <ResponsiveContainer width="100%" height={220}>
+                    <MacroChartContainer height={CHART_HEIGHTS.standard}>
                         <ComposedChart data={chartData} margin={{ top: 8, right: 8, left: -10, bottom: 0 }}>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" />
-                            <XAxis dataKey="date" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} />
-                            <YAxis yAxisId="left" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
-                            <YAxis yAxisId="right" orientation="right" tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10 }} axisLine={false} tickLine={false} unit="%" />
-                            <Tooltip contentStyle={{ background: '#0a0f1a', border: '1px solid rgba(255,255,255,0.1)', borderRadius: 12, fontSize: 11 }} />
-                            <ReferenceLine yAxisId="left" y={8} stroke="rgba(245,158,11,0.3)" strokeDasharray="4 4" label={{ value: 'M2 8%', fill: 'rgba(245,158,11,0.5)', fontSize: 10 }} />
-                            <Bar yAxisId="left" dataKey="m2" fill="rgba(168,85,247,0.4)" name="M2 Growth" radius={[2, 2, 0, 0]} />
-                            <Line yAxisId="right" type="monotone" dataKey="mlf" stroke="#f87171" strokeWidth={2} dot={false} name="MLF Rate" />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                            <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} />
+                            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} yAxisId="left" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} unit="%" />
+                            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} yAxisId="right" orientation="right" tick={{ fill: WHITE_ALPHA.dim, fontSize: 11 }} axisLine={false} unit="%" />
+                            <Tooltip contentStyle={DEFAULT_TOOLTIP_STYLE} labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE} itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE} />
+                            <ReferenceLine yAxisId="left" y={8} stroke={alpha(CHART_COLORS.gold, 0.3)} strokeDasharray="4 4" label={{ value: 'M2 8%', fill: alpha(CHART_COLORS.gold, 0.5), fontSize: 11 }} />
+                            <Bar yAxisId="left" dataKey="m2" fill={alpha(CHART_COLORS.violet, 0.4)} name="M2 Growth" radius={[2, 2, 0, 0]} />
+                            <Line yAxisId="right" type="monotone" dataKey="mlf" stroke={CHART_COLORS.stress} strokeWidth={2} dot={false} name="MLF Rate" />
                         </ComposedChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 ) : (
-                    <p className="text-sm text-muted-foreground/50">PBOC operations data unavailable</p>
+                    <p className="text-sm text-terminal-dim">PBOC operations data unavailable</p>
                 )}
                 <DataProvenanceBadge source="PBOC via FRED" methodology="MYAGM2CNM189N + PBoC policy rates" size="sm" className="mt-3" />
             </div>
 
-            <p className="text-sm text-muted-foreground/70 leading-relaxed p-5 rounded-2xl bg-purple-500/[0.03] border border-purple-500/10">
-                <span className="font-black uppercase text-xs text-purple-400 mr-2 tracking-uppercase">PSL Signal:</span>
+            <p className="text-sm text-muted-foreground leading-relaxed p-5 rounded-xl bg-purple-500/[0.03] border border-purple-500/10">
+                <span className="font-semibold uppercase text-xs text-purple-400 mr-2 tracking-wider">PSL Signal:</span>
                 Pledged Supplemental Lending (PSL) is China&apos;s quasi-fiscal channel via policy banks.
                 Persistent M2 growth above nominal GDP signals sterilization limits — the fiscal dominance threshold
                 approaches when interest payments exceed ~10% of fiscal revenue (including LGFV servicing).

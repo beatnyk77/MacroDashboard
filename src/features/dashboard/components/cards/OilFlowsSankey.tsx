@@ -1,10 +1,13 @@
 import React, { useMemo, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { ArrowRight } from 'lucide-react';
-import { ResponsiveContainer, Sankey, Tooltip, Layer, Rectangle, BarChart, Bar, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
+import { Sankey, Tooltip, Layer, Rectangle, BarChart, Bar, XAxis, YAxis, Legend, CartesianGrid } from 'recharts';
+import { CHART_FONT_FAMILY, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha } from '@/constants/chartDefaults';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { supabase } from '@/lib/supabase';
 import { useQuery } from '@tanstack/react-query';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface OilFlow {
     importer_country_code: string;
@@ -20,14 +23,14 @@ interface OilFlowsSankeyProps {
 }
 
 const RISK_META: Record<string, { name: string, score: number, color: string, glow: string }> = {
-    'SA': { name: 'Saudi Arabia', score: 5, color: '#f59e0b', glow: 'rgba(245, 158, 11, 0.4)' },
-    'RU': { name: 'Russia', score: 10, color: '#f43f5e', glow: 'rgba(244, 63, 94, 0.4)' },
-    'IQ': { score: 7, name: 'Iraq', color: '#fb7185', glow: 'rgba(251, 113, 133, 0.4)' },
-    'AE': { score: 4, name: 'UAE', color: '#10b981', glow: 'rgba(16, 185, 129, 0.4)' },
-    'KW': { score: 4, name: 'Kuwait', color: '#10b981', glow: 'rgba(16, 185, 129, 0.4)' },
-    'US': { score: 1, name: 'USA', color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.4)' },
-    'CA': { score: 1, name: 'Canada', color: '#3b82f6', glow: 'rgba(59, 130, 246, 0.4)' },
-    'BR': { score: 3, name: 'Brazil', color: '#34d399', glow: 'rgba(52, 211, 153, 0.4)' },
+    'SA': { name: 'Saudi Arabia', score: 5, color: CHART_COLORS.gold, glow: alpha(CHART_COLORS.gold, 0.4) },
+    'RU': { name: 'Russia', score: 10, color: CHART_COLORS.east, glow: alpha(CHART_COLORS.east, 0.4) },
+    'IQ': { score: 7, name: 'Iraq', color: CHART_COLORS.eastSoft, glow: alpha(CHART_COLORS.east, 0.4) },
+    'AE': { score: 4, name: 'UAE', color: CHART_COLORS.expansion, glow: alpha(CHART_COLORS.expansion, 0.4) },
+    'KW': { score: 4, name: 'Kuwait', color: CHART_COLORS.expansion, glow: alpha(CHART_COLORS.expansion, 0.4) },
+    'US': { score: 1, name: 'USA', color: CHART_COLORS.west, glow: alpha(CHART_COLORS.west, 0.4) },
+    'CA': { score: 1, name: 'Canada', color: CHART_COLORS.west, glow: alpha(CHART_COLORS.west, 0.4) },
+    'BR': { score: 3, name: 'Brazil', color: CHART_COLORS.expansionSoft, glow: alpha(CHART_COLORS.expansion, 0.4) },
 };
 
 const CustomNode = (props: any) => {
@@ -56,10 +59,10 @@ const CustomNode = (props: any) => {
                 x={isSource ? x - 12 : x + width + 12}
                 y={y + height / 2}
                 textAnchor={isSource ? 'end' : 'start'}
-                fontSize="10px"
+                fontSize="11px"
                 fontWeight="900"
-                fill="#f8fafc"
-                className="uppercase tracking-[0.1em] drop-shadow-sm select-none"
+                fill={CHART_COLORS.textStrong}
+                className="uppercase tracking-wider drop-shadow-sm select-none"
                 dominantBaseline="middle"
             >
                 {payload.name}
@@ -68,10 +71,10 @@ const CustomNode = (props: any) => {
                 x={isSource ? x - 12 : x + width + 12}
                 y={y + height / 2 + 12}
                 textAnchor={isSource ? 'end' : 'start'}
-                fontSize="8px"
+                fontSize="11px"
                 fontWeight="bold"
                 fill={payload.color}
-                className="uppercase tracking-uppercase opacity-80 select-none"
+                className="uppercase tracking-wider opacity-80 select-none"
                 dominantBaseline="middle"
             >
                 {isSource ? 'Source Hub' : 'Primary Sink'}
@@ -82,7 +85,7 @@ const CustomNode = (props: any) => {
 
 const CustomLink = (props: any) => {
     const { sourceX, sourceY, targetX, targetY, sourceControlX, targetControlX, linkWidth, payload } = props;
-    const color = payload.color || '#3b82f6';
+    const color = payload.color || CHART_COLORS.west;
     const id = `link-grad-${payload.source}-${payload.target}`;
 
     return (
@@ -193,11 +196,11 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
 
         const nodes = [
             ...top.map(d => {
-                const meta = RISK_META[d.exporter_country_code] || { name: d.exporter_country_name || d.exporter_country_code, color: '#94a3b8' };
+                const meta = RISK_META[d.exporter_country_code] || { name: d.exporter_country_name || d.exporter_country_code, color: CHART_COLORS.label };
                 return { name: meta.name.toUpperCase(), color: meta.color };
             }),
-            ...(otherVolume > 0 ? [{ name: 'OTHER EXPORTERS', color: '#475569' }] : []),
-            { name: activeTab === 'IN' ? 'INDIA TERMINAL' : 'CHINA TERMINAL', color: activeTab === 'IN' ? '#3b82f6' : '#ef4444' }
+            ...(otherVolume > 0 ? [{ name: 'OTHER EXPORTERS', color: CHART_COLORS.slate }] : []),
+            { name: activeTab === 'IN' ? 'INDIA TERMINAL' : 'CHINA TERMINAL', color: activeTab === 'IN' ? CHART_COLORS.west : CHART_COLORS.stress }
         ];
 
         const destIdx = nodes.length - 1;
@@ -214,53 +217,53 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                 target: destIdx,
                 value: otherVolume,
                 share: totalVolume > 0 ? (otherVolume / totalVolume) * 100 : 0,
-                color: '#475569'
+                color: CHART_COLORS.slate
             }] : [])
         ];
 
         return { nodes, links, totalVolume, latestDate };
     }, [data, activeTab]);
 
-    if (isLoading) return <div className="h-[520px] animate-pulse bg-white/5 rounded-[2.5rem]" />;
+    if (isLoading) return <div className="h-[520px] animate-pulse bg-white/5 rounded-xl" />;
 
     return (
-        <Card className="bg-slate-900/60 border-white/12 backdrop-blur-3xl overflow-hidden group min-h-[520px] h-auto flex flex-col p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative">
+        <Card className="bg-card/60 border-border backdrop-blur-3xl overflow-hidden group min-h-[520px] h-auto flex flex-col p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] relative">
             {/* Background Decorative Gradients - Tamed */}
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
             <div className="absolute bottom-0 left-0 w-96 h-96 bg-emerald-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
 
-            <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-white/12 gap-6">
+            <div className="flex flex-col md:flex-row items-center justify-between pb-8 border-b border-border gap-6">
                 <div className="space-y-2 text-center md:text-left">
                     <div className="flex items-center justify-center md:justify-start gap-4">
                         <div className={`w-12 h-1 bg-gradient-to-r ${activeTab === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent rounded-full`} />
-                        <h3 className="text-xl md:text-2xl font-black text-white uppercase tracking-heading leading-none">
-                            Asia Commodity <span className="text-muted-foreground/40 font-light">Flow Dynamics</span>
+                        <h3 className="text-xl md:text-2xl font-bold text-white uppercase tracking-heading leading-none">
+                            Asia Commodity <span className="text-terminal-dim font-light">Flow Dynamics</span>
                         </h3>
                     </div>
                     <div className="flex items-center justify-center md:justify-start gap-3 md:pl-[4rem]">
                         <div className="flex items-center gap-2">
                             <div className="w-2 h-2 rounded-full bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)] animate-pulse" />
-                            <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">
+                            <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">
                                 {processedData.latestDate ? `Synced: ${new Date(processedData.latestDate).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}` : "Connecting Feeds..."}
                             </span>
                         </div>
                         <div className="w-1 h-1 rounded-full bg-white/20" />
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">EIA International Analytics</span>
+                        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">EIA International Analytics</span>
                     </div>
                 </div>
 
-                <div className="flex items-center gap-4 bg-black/30 p-1.5 rounded-2xl border border-white/12 backdrop-blur-md">
+                <div className="flex items-center gap-4 bg-background/30 p-1.5 rounded-xl border border-border backdrop-blur-md">
                     <Tabs value={viewMode} onValueChange={(v: any) => setViewMode(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="sankey" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
-                            <TabsTrigger value="history" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Trends</TabsTrigger>
+                            <TabsTrigger value="sankey" className="rounded-lg text-xs font-semibold uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Flow</TabsTrigger>
+                            <TabsTrigger value="history" className="rounded-lg text-xs font-semibold uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-white/10 data-[state=active]:text-white data-[state=active]:shadow-lg">Trends</TabsTrigger>
                         </TabsList>
                     </Tabs>
                     <div className="w-px h-6 bg-white/10" />
                     <Tabs value={activeTab} onValueChange={(v: any) => setActiveTab(v)} className="bg-white/5 p-1 rounded-xl">
                         <TabsList className="bg-transparent border-0 gap-1 h-8">
-                            <TabsTrigger value="IN" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(37,99,235,0.4)]">INDIA</TabsTrigger>
-                            <TabsTrigger value="CN" className="rounded-lg text-xs font-black uppercase px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-rose-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(225,29,72,0.4)]">CHINA</TabsTrigger>
+                            <TabsTrigger value="IN" className="rounded-lg text-xs font-semibold uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(37,99,235,0.4)]">INDIA</TabsTrigger>
+                            <TabsTrigger value="CN" className="rounded-lg text-xs font-semibold uppercase px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-600 data-[state=active]:text-white data-[state=active]:shadow-[0_0_15px_rgba(225,29,72,0.4)]">CHINA</TabsTrigger>
                         </TabsList>
                     </Tabs>
                 </div>
@@ -269,7 +272,7 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
             <CardContent className="flex-1 p-0 mt-8 relative overflow-hidden min-h-[350px]">
                 {/* Sub-section Heading */}
                 <div className="absolute top-0 left-0 z-20">
-                    <span className="text-xs font-black text-white/30 uppercase tracking-uppercase bg-slate-900/50 backdrop-blur-sm px-3 py-1 rounded-full border border-white/5">
+                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider bg-card/60 backdrop-blur-sm px-3 py-1 rounded-full border border-border">
                         {viewMode === 'sankey' ? 'Real-time Supply Corridors' : 'Annual Sourcing Trajectory'}
                     </span>
                 </div>
@@ -278,15 +281,15 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                     <div className="h-full flex flex-col items-center justify-center text-center gap-6">
                         <div className="relative">
                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full animate-pulse" />
-                            <div className="w-16 h-16 rounded-full border-[3px] border-white/5 border-t-white animate-[spin_1.5s_linear_infinite] relative z-10" />
+                            <div className="w-16 h-16 rounded-full border-[3px] border-border border-t-white animate-[spin_1.5s_linear_infinite] relative z-10" />
                         </div>
                         <div className="space-y-2 relative z-10">
-                            <p className="text-sm font-black text-white uppercase tracking-uppercase">Normalizing Trade Data</p>
-                            <p className="text-xs uppercase tracking-[0.4em] font-medium text-muted-foreground/40">Protocol: EIA-INT-V2-ANNUAL</p>
+                            <p className="text-sm font-semibold text-white uppercase tracking-wider">Normalizing Trade Data</p>
+                            <p className="text-xs uppercase tracking-[0.4em] font-medium text-terminal-dim">Protocol: EIA-INT-V2-ANNUAL</p>
                         </div>
                     </div>
                 ) : (
-                    <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height="fill">
                         {viewMode === 'sankey' ? (
                             <Sankey
                                 data={processedData}
@@ -302,24 +305,24 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                                         if (item.sourceLinks) return null;
 
                                         return (
-                                            <div className="bg-slate-900 border border-white/20 p-5 rounded-2xl backdrop-blur-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] min-w-[240px]">
-                                                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-white/12">
+                                            <div className={`${TOOLTIP_SHELL_CLASS} min-w-[240px]`}>
+                                                <div className="flex items-center gap-3 mb-5 pb-4 border-b border-border">
                                                     <div className="w-3 h-3 rounded-full shadow-[0_0_12px_currentColor]" style={{ backgroundColor: item.color, color: item.color }} />
-                                                    <span className="text-sm font-black text-white uppercase tracking-uppercase flex items-center gap-3">
-                                                        {(item.source?.name || 'HUB')} <ArrowRight className="w-4 h-4 text-white/30" /> {(item.target?.name || 'TERMINAL')}
+                                                    <span className="text-sm font-semibold text-slate-100 uppercase tracking-wider flex items-center gap-3">
+                                                        {(item.source?.name || 'HUB')} <ArrowRight className="w-4 h-4 text-slate-400" /> {(item.target?.name || 'TERMINAL')}
                                                     </span>
                                                 </div>
                                                 <div className="space-y-4">
-                                                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-white/5">
-                                                        <span className="text-xs font-black text-white/40 uppercase tracking-uppercase">Annual Volume</span>
-                                                        <span className="text-sm font-mono font-black text-white">{item.value.toFixed(1)} <span className="text-xs opacity-30 font-sans">M·BBL</span></span>
+                                                    <div className="flex justify-between items-center bg-white/5 p-3 rounded-xl border border-border">
+                                                        <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Annual Volume</span>
+                                                        <span className="text-sm font-mono font-semibold text-slate-100">{item.value.toFixed(1)} <span className="text-xs opacity-30 font-sans">M·BBL</span></span>
                                                     </div>
                                                     <div className="space-y-2">
                                                         <div className="flex justify-between items-center px-1">
-                                                            <span className="text-xs font-black text-white/40 uppercase tracking-uppercase">Network Share</span>
-                                                            <span className="text-xs font-mono font-black text-emerald-400">{item.share.toFixed(1)}%</span>
+                                                            <span className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Network Share</span>
+                                                            <span className="text-xs font-mono font-semibold text-emerald-400">{item.share.toFixed(1)}%</span>
                                                         </div>
-                                                        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-white/5">
+                                                        <div className="w-full h-2 bg-white/5 rounded-full overflow-hidden border border-border">
                                                             <div className="h-full bg-gradient-to-r from-blue-500 to-emerald-500 shadow-[0_0_10px_rgba(59,130,246,0.3)] transition-all duration-1000" style={{ width: `${item.share}%` }} />
                                                         </div>
                                                     </div>
@@ -333,47 +336,40 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                             <BarChart data={historicalData} margin={{ top: 60, right: 30, left: 30, bottom: 20 }}>
                                 <defs>
                                     <linearGradient id="barGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="0%" stopColor="#ffffff" stopOpacity={0.1} />
-                                        <stop offset="100%" stopColor="#ffffff" stopOpacity={0.02} />
+                                        <stop offset="0%" stopColor={CHART_COLORS.white} stopOpacity={0.1} />
+                                        <stop offset="100%" stopColor={CHART_COLORS.white} stopOpacity={0.02} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="8 8" vertical={false} stroke="#ffffff08" />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="date"
-                                    axisLine={{ stroke: '#ffffff10' }}
-                                    tickLine={false}
-                                    tick={{ fontSize: 11, fill: '#f8fafc', fontWeight: 900, opacity: 0.6 }}
+                                    tick={{ fontFamily: CHART_FONT_FAMILY, fontSize: 11, fill: CHART_COLORS.textStrong, fontWeight: 700, opacity: 0.6 }}
                                     dy={15}
                                     tickFormatter={(val) => new Date(val).getFullYear().toString()}
                                 />
                                 <YAxis
+                                    {...DEFAULT_YAXIS_PROPS}
+                                    width={60}
                                     axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fontSize: 11, fill: '#f8fafc', fontWeight: 600, opacity: 0.4 }}
+                                    tick={{ fontFamily: CHART_FONT_FAMILY, fontSize: 11, fill: CHART_COLORS.textStrong, fontWeight: 600, opacity: 0.4 }}
                                     unit="M"
                                     dx={-10}
                                 />
                                 <Tooltip
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                     cursor={{ fill: 'url(#barGradient)' }}
-                                    contentStyle={{
-                                        backgroundColor: '#0f172a',
-                                        border: '1px solid rgba(255,255,255,0.2)',
-                                        borderRadius: '16px',
-                                        backdropFilter: 'blur(16px)',
-                                        boxShadow: '0 20px 50px rgba(0,0,0,0.5)',
-                                        padding: '16px'
-                                    }}
-                                    itemStyle={{ fontSize: '11px', fontWeight: '900', textTransform: 'uppercase', letterSpacing: '0.05em' }}
-                                    labelStyle={{ color: '#ffffff', fontSize: '12px', marginBottom: '12px', fontWeight: '900', textTransform: 'uppercase', opacity: 0.7 }}
                                 />
                                 <Legend
                                     iconType="circle"
                                     verticalAlign="bottom"
                                     align="center"
-                                    wrapperStyle={{ fontSize: '10px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', paddingTop: '40px', color: '#64748b' }}
+                                    wrapperStyle={{ fontSize: '11px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.2em', paddingTop: '40px', color: CHART_COLORS.tick }}
                                 />
                                 {exporters.map((exporter, idx) => {
-                                    const meta = Object.values(RISK_META).find(m => m.name === exporter) || { color: '#475569' };
+                                    const meta = Object.values(RISK_META).find(m => m.name === exporter) || { color: CHART_COLORS.slate };
                                     return (
                                         <Bar
                                             key={exporter}
@@ -387,29 +383,29 @@ export const OilFlowsSankey: React.FC<OilFlowsSankeyProps> = ({ data: propData, 
                                 })}
                             </BarChart>
                         )}
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 )}
             </CardContent>
 
-            <div className="mt-8 pt-8 border-t border-white/12">
+            <div className="mt-8 pt-8 border-t border-border">
                 <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
                     <div className="flex flex-wrap justify-center gap-8 items-center">
-                        <span className="text-xs font-black text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
+                        <span className="text-xs font-semibold text-white/20 uppercase tracking-[0.4em] mr-2">Market Risk Tiering</span>
                         {[
-                            { color: '#10b981', label: 'Tier 1 / Optimal' },
-                            { color: '#f59e0b', label: 'Tier 2 / Diversify' },
-                            { color: '#ef4444', label: 'Tier 3 / Critical' }
+                            { color: CHART_COLORS.expansion, label: 'Tier 1 / Optimal' },
+                            { color: CHART_COLORS.gold, label: 'Tier 2 / Diversify' },
+                            { color: CHART_COLORS.stress, label: 'Tier 3 / Critical' }
                         ].map(legend => (
                             <div key={legend.label} className="flex items-center gap-3 group/legend">
-                                <div className="w-2.5 h-2.5 rounded-full border border-white/12 shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
-                                <span className="text-xs font-black text-white/50 uppercase tracking-uppercase">{legend.label}</span>
+                                <div className="w-2.5 h-2.5 rounded-full border border-border shadow-[0_0_12px_rgba(255,255,255,0.1)] transition-all group-hover/legend:scale-125" style={{ backgroundColor: legend.color, color: legend.color }} />
+                                <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">{legend.label}</span>
                             </div>
                         ))}
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex flex-col items-end gap-1">
-                            <span className="text-xs font-black text-white/30 uppercase tracking-uppercase">Processing Standard</span>
-                            <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase bg-blue-500/10 px-3 py-0.5 rounded-full border border-blue-500/20">
+                            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Processing Standard</span>
+                            <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider bg-blue-500/10 px-3 py-0.5 rounded-full border border-blue-500/20">
                                 West ↔ East Corridor
                             </span>
                         </div>

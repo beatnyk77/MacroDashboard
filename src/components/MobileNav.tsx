@@ -2,13 +2,11 @@ import React, { useState } from 'react';
 import { Paper, BottomNavigation, BottomNavigationAction } from '@mui/material';
 import { Globe, ShieldAlert, FileText, LayoutDashboard, FlaskConical } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useViewContext } from '@/context/ViewContext';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const MobileNav: React.FC = () => {
     const [value, setValue] = useState(0);
     const navigate = useNavigate();
-    const { resolvedTheme } = useViewContext();
-    const isLight = resolvedTheme === 'light';
 
     return (
         <Paper sx={{
@@ -34,26 +32,26 @@ export const MobileNav: React.FC = () => {
                     }
                 }}
                 sx={{
-                    bgcolor: isLight ? 'rgba(253, 246, 227, 0.96)' : 'rgba(15, 23, 42, 0.8)',
+                    bgcolor: alpha(CHART_COLORS.panel, 0.92),
                     backdropFilter: 'blur(16px)',
-                    borderTop: isLight ? '1px solid #C8D2D5' : '1px solid rgba(255,255,255,0.05)',
+                    borderTop: `1px solid ${WHITE_ALPHA.line}`,
                     width: '100%',
                     minWidth: 0,
-                    boxShadow: isLight ? '0 -8px 24px rgba(35, 48, 56, 0.08)' : 'none',
+                    boxShadow: 'none',
                     '& .MuiBottomNavigationAction-root': {
-                        color: isLight ? '#3B4E59' : 'rgba(255,255,255,0.4)',
+                        color: CHART_COLORS.label,
                         flex: '1 1 0',
                         minWidth: 0,
                         maxWidth: 'none',
                         padding: '6px 2px',
                         '&.Mui-selected': {
-                            color: isLight ? '#FF5B04' : '#3b82f6',
+                            color: CHART_COLORS.west,
                         },
                         '& .MuiBottomNavigationAction-label': {
-                            fontSize: '0.65rem',
+                            fontSize: '0.6875rem',
                             whiteSpace: 'nowrap',
                             '&.Mui-selected': {
-                                fontSize: '0.65rem',
+                                fontSize: '0.6875rem',
                             }
                         }
                     }

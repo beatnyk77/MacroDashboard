@@ -20,17 +20,17 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
     const [isOpen, setIsOpen] = useState(defaultOpen);
 
     return (
-        <div className={cn("border border-white/5 rounded-2xl bg-white/[0.01] overflow-hidden transition-all duration-300", className)}>
+        <div className={cn("border border-border rounded-xl bg-white/[0.01] overflow-hidden transition-all duration-300", className)}>
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full px-6 py-4 flex items-center justify-between hover:bg-white/[0.02] transition-colors group text-left"
             >
                 <div>
-                    <h3 className="text-sm font-black tracking-uppercase uppercase text-foreground group-hover:text-blue-400 transition-colors">
+                    <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground group-hover:text-blue-400 transition-colors">
                         {title}
                     </h3>
                     {subtitle && (
-                        <p className="text-xs font-bold text-muted-foreground/50 mt-1 uppercase tracking-heading">
+                        <p className="text-xs font-semibold text-terminal-dim mt-1 uppercase tracking-heading">
                             {subtitle}
                         </p>
                     )}
@@ -47,7 +47,7 @@ export const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                 "transition-all duration-500 ease-in-out",
                 isOpen ? "max-h-[2000px] opacity-100 pb-8" : "max-h-0 opacity-0 invisible"
             )}>
-                <div className="px-6 border-t border-white/5 pt-6">
+                <div className="px-6 border-t border-border pt-6">
                     {children}
                 </div>
             </div>

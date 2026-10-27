@@ -15,7 +15,7 @@ export const SectionLoadingFallback: React.FC<SectionLoadingFallbackProps> = ({
 }) => (
     <div
         className={cn(
-            'w-full rounded-xl border border-white/5 bg-card/30 p-6',
+            'w-full rounded-xl border border-border bg-card/30 p-6',
             className
         )}
         style={{ minHeight }}

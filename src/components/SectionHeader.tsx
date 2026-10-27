@@ -41,7 +41,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             <div className="flex items-end justify-between border-l-4 border-blue-500 pl-6 py-2">
                 <div className="space-y-1">
                     <div className="flex items-center gap-3">
-                        <HeadingTag className="text-3xl md:text-4xl font-black tracking-heading text-foreground uppercase leading-none">
+                        <HeadingTag className="text-3xl md:text-4xl font-bold tracking-heading text-foreground uppercase leading-none">
                             {title}
                         </HeadingTag>
                         {lastUpdated && (
@@ -51,7 +51,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                         )}
                     </div>
                     {subtitle && (
-                        <p className="text-sm font-bold text-muted-foreground/60 uppercase tracking-[0.05em]">
+                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-[0.05em]">
                             {subtitle}
                         </p>
                     )}
@@ -62,7 +62,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
                     {onRefresh && (
                         <button
                             onClick={onRefresh}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-xs font-black text-muted-foreground hover:text-primary hover:bg-white/10 transition-all active:scale-95"
+                            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-border text-xs font-bold text-muted-foreground hover:text-primary hover:bg-white/10 transition-all active:scale-95"
                         >
                             <RefreshCw size={14} className={cn(isLoading && "animate-spin text-blue-400")} />
                             REFRESH SIGNAL
@@ -74,7 +74,7 @@ export const SectionHeader: React.FC<SectionHeaderProps> = ({
             {activeInterpretations && activeInterpretations.length > 0 && (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                     {activeInterpretations.map((text, i) => (
-                        <div key={i} className="relative overflow-hidden flex items-start gap-3 p-4 rounded-2xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm group/item hover:bg-blue-500/[0.05] transition-colors">
+                        <div key={i} className="relative overflow-hidden flex items-start gap-3 p-4 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 backdrop-blur-sm group/item hover:bg-blue-500/[0.05] transition-colors">
                             <div className="mt-1 shrink-0 p-1 rounded-md bg-blue-500/10 text-blue-400">
                                 <Info size={12} />
                             </div>

@@ -5,7 +5,6 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-    ChevronRight,
     ArrowLeft,
     Globe,
     ShieldAlert,
@@ -15,6 +14,8 @@ import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
 import { ChartInsightSummary } from '@/components/ChartInsightSummary';
 import { Button } from '@/components/ui/button';
 import { AfricaMacroSnapshot } from '@/features/dashboard/components/sections/AfricaMacroSnapshot';
+import { TrailLink } from '@/components/TrailLink';
+import { LabPageHeader } from '@/components/LabPageHeader';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
@@ -24,8 +25,8 @@ const AfricaComparisonHeatmap = lazy(() => import('@/features/dashboard/componen
 const CountryDeepDiveGrid = lazy(() => import('@/features/dashboard/components/sections/CountryDeepDiveGrid').then(m => ({ default: m.CountryDeepDiveGrid })));
 
 const LoadingFallback = ({ label }: { label: string }) => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">{label}</span>
+    <div className="w-full min-h-[300px] bg-white/[0.02] border border-border rounded-xl animate-pulse flex items-center justify-center">
+        <span className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
     </div>
 );
 
@@ -56,7 +57,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
     };
 
     return (
-        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
+        <div className="page-shell">
             <SEOManager
                 title="Africa Macro Pulse — Sovereign Debt"
                 description="Institutional-grade terminal for tracking African macro intelligence. Monitor fiscal stress, debt-to-GDP, and the shift towards BRICS trade gravity for"
@@ -90,33 +91,17 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     }
                 ]}
             />
-            {/* Breadcrumbs */}
-            <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40" aria-label="Breadcrumb">
-                    <a href="/" className="hover:text-white transition-colors">Home</a>
-                    <ChevronRight size={10} aria-hidden="true" />
-                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
-                    <ChevronRight size={10} aria-hidden="true" />
-                    <span className="text-blue-500">Africa Macro Pulse</span>
-                </nav>
-            </div>
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                current="Africa Macro Pulse"
+                badge="Emerging Market Intelligence"
+                badgeIcon={<Globe size={12} />}
+                title={<>Africa <span className="text-blue-400">Macro</span> Pulse</>}
+                status={<FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />}
+                thesis="Institutional-grade terminal for tracking sovereign debt sustainability, commodity exposure, and the shifting gravity of BRICS trade across the African continent."
+            />
 
-            <div className="mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-                    <Globe size={12} /> Emerging Market Intelligence
-                </div>
-                <div className="flex items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-                        Africa <span className="text-blue-500">Macro</span> Pulse
-                    </h1>
-                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                </div>
-                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    Institutional-grade terminal for tracking sovereign debt sustainability, commodity exposure, and the shifting gravity of BRICS trade across the African continent.
-                </p>
-            </div>
-
-            <div className="space-y-32">
+            <div className="space-y-16">
                 {/* Section 1: Monthly Snapshot */}
                 <section>
                     <SectionErrorBoundary name="Africa Snapshot">
@@ -129,9 +114,9 @@ export const AfricaMacroPulseLab: React.FC = () => {
                     <div className="flex items-center justify-between mb-10">
                         <div className="flex items-center gap-3">
                             <BarChart3 className="text-emerald-500" size={28} />
-                            <h2 className="text-2xl font-black uppercase tracking-heading text-white">Comparative Heatmap</h2>
+                            <h2 className="text-2xl font-bold uppercase tracking-heading text-white">Comparative Heatmap</h2>
                         </div>
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                             10 Key Economies · Debt vs Gravity
                         </div>
                     </div>
@@ -147,7 +132,7 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <ShieldAlert className="text-rose-500" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Sovereign Deep Dives</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-white">Sovereign Deep Dives</h2>
                     </div>
                     <SectionErrorBoundary name="Country Deep Dives">
                         <Suspense fallback={<LoadingFallback label="Loading Deep Dives..." />}>
@@ -157,8 +142,8 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 </section>
 
                 {/* SEO Structural Analysis Text Block */}
-                <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of African Macro Realities">
-                    <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: Resource Nationalism & Frontier Market Debt</h2>
+                <article className="mt-32 p-12 bg-white/[0.02] border border-border rounded-xl" aria-label="Structural Analysis of African Macro Realities">
+                    <h2 className="text-xl font-bold text-white uppercase tracking-wider mb-6">Structural Analysis: Resource Nationalism & Frontier Market Debt</h2>
                     <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                         <p>
                             The <strong>Africa Macro Pulse</strong> provides frontier market surveillance for the next decade of growth and volatility. As the G7 and BRICS+ compete for strategic influence across the continent, Africa's structural macro reality is defined by a unique convergence of <strong>Resource Nationalism</strong>, demographic expansion, and sovereign debt restructuring cycles.
@@ -173,15 +158,15 @@ export const AfricaMacroPulseLab: React.FC = () => {
                 </article>
             </div>
 
-            <div className="mt-24 pt-12 border-t border-white/5 text-center">
+            <div className="mt-24 pt-12 border-t border-border text-center">
                 <Button
                     variant="ghost"
-                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    className="text-muted-foreground font-semibold uppercase tracking-wider hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory/" className="flex items-center gap-2">
+                    <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
-                    </a>
+                    </TrailLink>
                 </Button>
             </div>
             <RelatedContent />

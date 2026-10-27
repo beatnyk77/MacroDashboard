@@ -1,14 +1,5 @@
 import React, { useMemo, useState } from 'react';
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend,
-} from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import { useGfpMtsOutlays } from '@/hooks/useGfpMtsOutlays';
 import { formatCashDollars } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
@@ -19,9 +10,12 @@ import {
   DEFAULT_TOOLTIP_STYLE,
   DEFAULT_LEGEND_PROPS,
   CHART_HEIGHTS,
+  DEFAULT_TOOLTIP_ITEM_STYLE,
+  DEFAULT_TOOLTIP_LABEL_STYLE,
 } from '@/constants/chartDefaults';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
 import { gfpSeriesColor } from './gfpChartColors';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const MAX_SERIES = 6;
 
@@ -32,12 +26,13 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
 
   const topAgencies = useMemo(() => {
     const rank = data?.rank ?? [];
-    return rank
+    // A classification can appear on several ranked rows; keep one entry per name so keys stay unique.
+    const names = rank
       .slice()
       .sort((a, b) => a.rnk - b.rnk)
-      .slice(0, 12)
       .map((r) => r.classification_desc)
       .filter(Boolean);
+    return [...new Set(names)].slice(0, 12);
   }, [data]);
 
   const selected = selectedOverride ?? topAgencies.slice(0, 5);
@@ -71,19 +66,19 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
   if (error || !topAgencies.length) return <GfpUnavailableState />;
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Agency Outlays Series
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             Monthly cash outlays · select up to {MAX_SERIES} agencies
           </p>
         </div>
         <GfpBasisBadge basis="cash" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.cash}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.cash}</p>
 
       <div className="flex flex-wrap gap-1.5">
         {topAgencies.map((name) => {
@@ -93,10 +88,10 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
               key={name}
               type="button"
               onClick={() => toggle(name)}
-              className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded border transition-colors ${
+              className={`text-[11px] font-semibold uppercase tracking-wider px-2 py-1 rounded border transition-colors ${
                 on
                   ? 'border-cyan-500/40 bg-cyan-500/10 text-cyan-300'
-                  : 'border-white/10 text-muted-foreground/60 hover:border-white/20'
+                  : 'border-border text-muted-foreground hover:border-white/20'
               }`}
               title={name}
             >
@@ -110,7 +105,7 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
         <GfpUnavailableState message="No monthly series for selected agencies." />
       ) : (
         <div style={{ width: '100%', height: CHART_HEIGHTS.standard }}>
-          <ResponsiveContainer>
+          <MacroChartContainer height="fill">
             <LineChart data={chartData} margin={{ top: 8, right: 12, left: 0, bottom: 0 }}>
               <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
               <XAxis
@@ -131,6 +126,8 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
                 width={56}
               />
               <Tooltip
+                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                 contentStyle={DEFAULT_TOOLTIP_STYLE}
                 formatter={(value: number, name: string) => [
                   formatCashDollars(value),
@@ -153,7 +150,7 @@ export const AgencyOutlaysSeriesChart: React.FC = () => {
                 />
               ))}
             </LineChart>
-          </ResponsiveContainer>
+          </MacroChartContainer>
         </div>
       )}
     </section>

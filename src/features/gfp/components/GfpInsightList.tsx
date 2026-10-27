@@ -13,8 +13,8 @@ export const GfpInsightList: React.FC = () => {
   }
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
-      <h3 className="text-sm font-black uppercase tracking-widest text-white">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
+      <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
         Structural Insights
       </h3>
       <ul className="space-y-2">
@@ -23,7 +23,7 @@ export const GfpInsightList: React.FC = () => {
             key={i}
             className="flex gap-2 text-xs text-white/80 leading-relaxed border-l-2 border-cyan-500/30 pl-3"
           >
-            <span className="text-muted-foreground/40 font-mono shrink-0">{String(i + 1).padStart(2, '0')}</span>
+            <span className="text-terminal-dim font-mono shrink-0">{String(i + 1).padStart(2, '0')}</span>
             <span>{line}</span>
           </li>
         ))}

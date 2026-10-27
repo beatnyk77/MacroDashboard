@@ -2,14 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend, AreaChart, Area, ReferenceArea } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import type { ValueType } from 'recharts/types/component/DefaultTooltipContent';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import {
-    CHART_HEIGHTS,
-    DEFAULT_CARTESIAN_GRID_PROPS,
-    DEFAULT_LEGEND_PROPS,
-    DEFAULT_XAXIS_PROPS,
-    DEFAULT_YAXIS_PROPS,
-} from '@/constants/chartDefaults';
+import { TerminalChartTooltip } from '@/components/charts/TerminalChartTooltip';
+import { CHART_FONT_FAMILY, CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_LEGEND_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha } from '@/constants/chartDefaults';
 import { Activity, Zap, TrendingDown, TrendingUp, AlertTriangle } from 'lucide-react';
 
 // Types
@@ -31,32 +27,17 @@ interface CombinedDataPoint {
 }
 
 const QE_PERIODS = [
-    { name: 'QE1', start: '2008-11-01', end: '2010-03-31', color: 'rgba(56, 189, 248, 0.15)' },
-    { name: 'QE2', start: '2010-11-01', end: '2011-06-30', color: 'rgba(56, 189, 248, 0.15)' },
-    { name: 'QE3', start: '2012-09-01', end: '2014-10-31', color: 'rgba(56, 189, 248, 0.15)' },
-    { name: 'Pandemic QE', start: '2020-03-01', end: '2022-03-31', color: 'rgba(56, 189, 248, 0.25)' },
+    { name: 'QE1', start: '2008-11-01', end: '2010-03-31', color: alpha(CHART_COLORS.west, 0.15) },
+    { name: 'QE2', start: '2010-11-01', end: '2011-06-30', color: alpha(CHART_COLORS.west, 0.15) },
+    { name: 'QE3', start: '2012-09-01', end: '2014-10-31', color: alpha(CHART_COLORS.west, 0.15) },
+    { name: 'Pandemic QE', start: '2020-03-01', end: '2022-03-31', color: alpha(CHART_COLORS.west, 0.25) },
 ];
 
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-        return (
-            <div className="bg-popover text-popover-foreground backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl z-50">
-                <p className="text-foreground font-semibold mb-2 border-b border-border pb-1">{label}</p>
-                {payload.map((p: any, idx: number) => (
-                    <div key={idx} className="flex items-center justify-between gap-4 py-0.5">
-                        <span className="text-xs flex items-center gap-1" style={{ color: p.color }}>
-                            <div className="w-2 h-2 rounded-full" style={{ backgroundColor: p.color }}></div>
-                            {p.name}
-                        </span>
-                        <span className="text-foreground font-mono text-sm">
-                            {p.value?.toFixed(2)}{p.dataKey.includes('Pct') || p.dataKey.includes('Yoy') || p.dataKey.includes('ield') ? '%' : 'T'}
-                        </span>
-                    </div>
-                ))}
-            </div>
-        );
-    }
-    return null;
+// Percent-scaled series carry a % unit; Fed holdings are in trillions.
+const formatFedValue = (value: ValueType, _name: string, item: { dataKey?: unknown }) => {
+    const key = String(item.dataKey ?? '');
+    const unit = key.includes('Pct') || key.includes('Yoy') || key.includes('ield') ? '%' : 'T';
+    return `${Number(value).toFixed(2)}${unit}`;
 };
 
 export const FedMonetizationMonitor: React.FC = () => {
@@ -382,8 +363,8 @@ export const FedMonetizationMonitor: React.FC = () => {
     };
 
     return (
-        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-700/50 p-6 md:p-8 space-y-8">
-            <header className="border-b border-border dark:border-slate-700/50 pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl shadow-sm shadow-2xl overflow-hidden border border-border p-6 md:p-8 space-y-8">
+            <header className="border-b border-border pb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
                         <Activity className="w-8 h-8 text-blue-500" />
@@ -394,37 +375,37 @@ export const FedMonetizationMonitor: React.FC = () => {
                     </p>
                 </div>
                 {latestGauge !== null && (
-                    <div className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700 rounded-xl p-4 flex flex-col items-center justify-center min-w-[200px] shadow-sm">
-                        <span className="text-muted-foreground text-xs uppercase tracking-widest mb-1">Monetization Gauge</span>
+                    <div className="bg-secondary/60 border border-border rounded-xl p-4 flex flex-col items-center justify-center min-w-[200px] shadow-sm">
+                        <span className="text-muted-foreground text-xs uppercase tracking-wider mb-1">Monetization Gauge</span>
                         <div className="flex items-baseline gap-1">
-                            <span className="text-3xl font-black text-blue-600 dark:text-blue-400 font-mono">{latestGauge.toFixed(1)}%</span>
+                            <span className="text-3xl font-bold text-blue-400 font-mono">{latestGauge.toFixed(1)}%</span>
                         </div>
-                        <span className="text-muted-foreground text-[10px] uppercase mt-1">Fed Ownership of Marketable Debt</span>
+                        <span className="text-muted-foreground text-[11px] uppercase mt-1">Fed Ownership of Marketable Debt</span>
                     </div>
                 )}
             </header>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 {/* Module 1: Monetization Gauge & Trend */}
-                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
+                <div className="bg-secondary/40 border border-border rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
                         <TrendingUp className="text-blue-500 w-5 h-5" />
-                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Monetization Trend</h3>
+                        <h3 className="text-foreground font-semibold uppercase tracking-wider text-sm">Monetization Trend</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <AreaChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorMonetization" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3}/>
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0}/>
+                                        <stop offset="5%" stopColor={CHART_COLORS.west} stopOpacity={0.3}/>
+                                        <stop offset="95%" stopColor={CHART_COLORS.west} stopOpacity={0}/>
                                     </linearGradient>
                                 </defs>
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
                                 <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
-                                <RechartsTooltip content={<CustomTooltip />} />
-                                <Area type="monotone" dataKey="monetizationPct" name="Debt Monetized" stroke="#3b82f6" fillOpacity={1} fill="url(#colorMonetization)" strokeWidth={2} />
+                                <RechartsTooltip content={<TerminalChartTooltip valueFormatter={formatFedValue} />} />
+                                <Area type="monotone" dataKey="monetizationPct" name="Debt Monetized" stroke={CHART_COLORS.west} fillOpacity={1} fill="url(#colorMonetization)" strokeWidth={2} />
                             </AreaChart>
                         </MacroChartContainer>
                     </div>
@@ -434,22 +415,22 @@ export const FedMonetizationMonitor: React.FC = () => {
                 </div>
 
                 {/* Module 2: Yield Suppression */}
-                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
+                <div className="bg-secondary/40 border border-border rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
                         <TrendingDown className="text-emerald-500 w-5 h-5" />
-                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Yield Suppression Mechanism</h3>
+                        <h3 className="text-foreground font-semibold uppercase tracking-wider text-sm">Yield Suppression Mechanism</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
                             <LineChart data={data.filter(d => d.yield10y !== null && d.holdings !== null)} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
-                                <YAxis yAxisId="left" {...DEFAULT_YAXIS_PROPS} tick={{ fill: '#3b82f6', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={(val) => `$${val}T`} />
-                                <YAxis yAxisId="right" orientation="right" {...DEFAULT_YAXIS_PROPS} tick={{ fill: '#10b981', fontSize: 11, fontFamily: 'IBM Plex Mono, monospace' }} tickFormatter={(val) => `${val}%`} />
-                                <RechartsTooltip content={<CustomTooltip />} />
+                                <YAxis yAxisId="left" {...DEFAULT_YAXIS_PROPS} tick={{ fill: CHART_COLORS.west, fontSize: 11, fontFamily: CHART_FONT_FAMILY }} tickFormatter={(val) => `$${val}T`} />
+                                <YAxis yAxisId="right" orientation="right" {...DEFAULT_YAXIS_PROPS} tick={{ fill: CHART_COLORS.expansion, fontSize: 11, fontFamily: CHART_FONT_FAMILY }} tickFormatter={(val) => `${val}%`} />
+                                <RechartsTooltip content={<TerminalChartTooltip valueFormatter={formatFedValue} />} />
                                 <Legend {...DEFAULT_LEGEND_PROPS} />
-                                <Line yAxisId="left" type="monotone" dataKey="holdings" name="Fed Holdings" stroke="#3b82f6" dot={false} strokeWidth={2} />
-                                <Line yAxisId="right" type="stepAfter" dataKey="yield10y" name="10Y Yield" stroke="#10b981" dot={false} strokeWidth={2} />
+                                <Line yAxisId="left" type="monotone" dataKey="holdings" name="Fed Holdings" stroke={CHART_COLORS.west} dot={false} strokeWidth={2} />
+                                <Line yAxisId="right" type="stepAfter" dataKey="yield10y" name="10Y Yield" stroke={CHART_COLORS.expansion} dot={false} strokeWidth={2} />
                             </LineChart>
                         </MacroChartContainer>
                     </div>
@@ -459,10 +440,10 @@ export const FedMonetizationMonitor: React.FC = () => {
                 </div>
 
                 {/* Module 3: Inflation Transmission */}
-                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
+                <div className="bg-secondary/40 border border-border rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
                         <AlertTriangle className="text-amber-500 w-5 h-5" />
-                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Inflation Transmission (18m Lag)</h3>
+                        <h3 className="text-foreground font-semibold uppercase tracking-wider text-sm">Inflation Transmission (18m Lag)</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -470,10 +451,10 @@ export const FedMonetizationMonitor: React.FC = () => {
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
                                 <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
-                                <RechartsTooltip content={<CustomTooltip />} />
+                                <RechartsTooltip content={<TerminalChartTooltip valueFormatter={formatFedValue} />} />
                                 <Legend {...DEFAULT_LEGEND_PROPS} />
-                                <Line type="monotone" dataKey="cpiYoy" name="CPI YoY" stroke="#ef4444" dot={false} strokeWidth={2} />
-                                <Line type="monotone" dataKey="m2YoyLagged" name="M2 YoY (18m Lead)" stroke="#f59e0b" dot={false} strokeWidth={2} strokeDasharray="5 5" />
+                                <Line type="monotone" dataKey="cpiYoy" name="CPI YoY" stroke={CHART_COLORS.stress} dot={false} strokeWidth={2} />
+                                <Line type="monotone" dataKey="m2YoyLagged" name="M2 YoY (18m Lead)" stroke={CHART_COLORS.gold} dot={false} strokeWidth={2} strokeDasharray="5 5" />
                             </LineChart>
                         </MacroChartContainer>
                     </div>
@@ -483,10 +464,10 @@ export const FedMonetizationMonitor: React.FC = () => {
                 </div>
 
                 {/* Module 4: Real Yield Reality */}
-                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700/50 rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
+                <div className="bg-secondary/40 border border-border rounded-xl p-4 md:p-6 flex flex-col shadow-sm">
                     <div className="flex items-center gap-2 mb-4">
                         <Zap className="text-cyan-500 w-5 h-5" />
-                        <h3 className="text-foreground font-bold uppercase tracking-wider text-sm">Real Yields vs QE Regimes</h3>
+                        <h3 className="text-foreground font-semibold uppercase tracking-wider text-sm">Real Yields vs QE Regimes</h3>
                     </div>
                     <div className="mt-auto">
                         <MacroChartContainer height={CHART_HEIGHTS.standard}>
@@ -494,7 +475,7 @@ export const FedMonetizationMonitor: React.FC = () => {
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                 <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" tickFormatter={formatXAxis} minTickGap={30} />
                                 <YAxis {...DEFAULT_YAXIS_PROPS} tickFormatter={(val) => `${val}%`} />
-                                <RechartsTooltip content={<CustomTooltip />} />
+                                <RechartsTooltip content={<TerminalChartTooltip valueFormatter={formatFedValue} />} />
                                 {QE_PERIODS.map(period => (
                                     <ReferenceArea 
                                         key={period.name}
@@ -502,11 +483,11 @@ export const FedMonetizationMonitor: React.FC = () => {
                                         x2={period.end} 
                                         fill={period.color} 
                                         fillOpacity={1}
-                                        label={{ value: period.name, position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 10 }}
+                                        label={{ value: period.name, position: 'insideTopLeft', fill: 'hsl(var(--muted-foreground))', fontSize: 11 }}
                                     />
                                 ))}
-                                <ReferenceArea y1={0} y2={-5} fill="rgba(239, 68, 68, 0.1)" />
-                                <Area type="stepAfter" dataKey="tips10y" name="10Y TIPS (Real Yield)" stroke="#06b6d4" fillOpacity={0} strokeWidth={2} />
+                                <ReferenceArea y1={0} y2={-5} fill={alpha(CHART_COLORS.stress, 0.1)} />
+                                <Area type="stepAfter" dataKey="tips10y" name="10Y TIPS (Real Yield)" stroke={CHART_COLORS.westDeep} fillOpacity={0} strokeWidth={2} />
                             </AreaChart>
                         </MacroChartContainer>
                     </div>

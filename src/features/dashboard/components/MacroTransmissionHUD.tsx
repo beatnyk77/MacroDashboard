@@ -88,11 +88,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-primary"></span>
                         </span>
-                        <h2 className="text-xs sm:text-sm font-black tracking-wider uppercase text-foreground">
+                        <h2 className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-foreground">
                             Macro Transmission Switchboard
                         </h2>
                     </div>
-                    <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[10px] font-mono font-black tracking-wider bg-primary/10 text-primary border border-primary/20 uppercase">
+                    <span className="hidden md:inline-flex items-center px-2 py-0.5 rounded text-[11px] font-mono font-semibold tracking-wider bg-primary/10 text-primary border border-primary/20 uppercase">
                         ALADDIN TRANSMISSION VECTOR v4.2
                     </span>
                 </div>
@@ -131,41 +131,41 @@ export const MacroTransmissionHUD: React.FC = () => {
                 >
                     <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground uppercase">
+                            <span className="text-[11px] font-mono font-semibold tracking-wider text-muted-foreground uppercase">
                                 PILLAR 01 // DURATION
                             </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/30">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-amber-500/15 text-amber-300 border border-amber-500/30">
                                 {curveSlope === null ? '—' : curveSlope >= 0 ? 'BEAR STEEPENING' : 'INVERTED DRAG'}
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
+                                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-foreground">
                                     {isLoading || tenYield === null ? '—' : `${tenYield.toFixed(2)}%`}
                                 </span>
-                                <span className="text-xs font-mono font-semibold text-amber-600 dark:text-amber-400">
+                                <span className="text-xs font-mono font-semibold text-amber-400">
                                     US 10Y Yield
                                 </span>
                             </div>
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">2s10s Spread</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">2s10s Spread</span>
                                     <span className="font-bold text-foreground">{curveSlope === null ? '—' : `${curveSlope >= 0 ? '+' : ''}${(curveSlope * 100).toFixed(0)} bps`}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">Fed Funds</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">Fed Funds</span>
                                     <span className="font-bold text-foreground">{getVal(MID.FED_FUNDS_RATE, '—', '%')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-2 pt-3 border-t border-border/60">
-                        <div className="text-[10px] font-mono font-semibold uppercase text-muted-foreground mb-1">
+                    <div className="mt-2 pt-3 border-t border-border">
+                        <div className="text-[11px] font-mono font-semibold uppercase text-muted-foreground mb-1">
                             Tactical Stance:
                         </div>
-                        <div className="text-xs font-bold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-blue-300 flex items-center gap-1.5">
                             <span className="h-1.5 w-1.5 rounded-full bg-blue-600"></span>
                             Short 7-10Y Benchmark Duration
                         </div>
@@ -188,41 +188,41 @@ export const MacroTransmissionHUD: React.FC = () => {
                 >
                     <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground uppercase">
+                            <span className="text-[11px] font-mono font-semibold tracking-wider text-muted-foreground uppercase">
                                 PILLAR 02 // FX & PLUMBING
                             </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-blue-500/15 text-blue-700 dark:text-blue-300 border border-blue-500/30">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-blue-500/15 text-blue-300 border border-blue-500/30">
                                 {dxyVal === null ? '—' : dxyVal > 104 ? 'DOLLAR SQUEEZE' : 'BALANCED SMILE'}
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
+                                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-foreground">
                                     {isLoading || dxyVal === null ? '—' : dxyVal.toFixed(1)}
                                 </span>
-                                <span className="text-xs font-mono font-semibold text-blue-600 dark:text-blue-400">
+                                <span className="text-xs font-mono font-semibold text-blue-400">
                                     DXY Index
                                 </span>
                             </div>
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">USD/INR</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">USD/INR</span>
                                     <span className="font-bold text-foreground">{inrVal === null ? '—' : inrVal.toFixed(2)}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">Net Liquidity</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">Net Liquidity</span>
                                     <span className="font-bold text-foreground">{fmtUsdBillions(MID.US_NET_LIQUIDITY_USD_BN)}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-2 pt-3 border-t border-border/60">
-                        <div className="text-[10px] font-mono font-semibold uppercase text-muted-foreground mb-1">
+                    <div className="mt-2 pt-3 border-t border-border">
+                        <div className="text-[11px] font-mono font-semibold uppercase text-muted-foreground mb-1">
                             Tactical Stance:
                         </div>
-                        <div className="text-xs font-bold text-blue-700 dark:text-blue-300 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-blue-300 flex items-center gap-1.5">
                             <span className="h-1.5 w-1.5 rounded-full bg-blue-600"></span>
                             Hedge EM Delta & Carry Exposure
                         </div>
@@ -245,41 +245,41 @@ export const MacroTransmissionHUD: React.FC = () => {
                 >
                     <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground uppercase">
+                            <span className="text-[11px] font-mono font-semibold tracking-wider text-muted-foreground uppercase">
                                 PILLAR 03 // CREDIT & SOLVENCY
                             </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/30">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-rose-500/15 text-rose-300 border border-rose-500/30">
                                 SPREAD COMPRESSION
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
+                                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-foreground">
                                     {isLoading || hyOasPct === null ? '—' : `${Math.round(hyOasPct * 100)} bps`}
                                 </span>
-                                <span className="text-xs font-mono font-semibold text-rose-600 dark:text-rose-400">
+                                <span className="text-xs font-mono font-semibold text-rose-400">
                                     US HY OAS
                                 </span>
                             </div>
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">2026-28 Wall</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">2026-28 Wall</span>
                                     <span className="font-bold text-foreground">$1.42 Trillion</span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">SOFR Spread</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">SOFR Spread</span>
                                     <span className="font-bold text-foreground">{getVal(MID.SOFR_EFFR_SPREAD_BPS, '—', 'bps')}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-2 pt-3 border-t border-border/60">
-                        <div className="text-[10px] font-mono font-semibold uppercase text-muted-foreground mb-1">
+                    <div className="mt-2 pt-3 border-t border-border">
+                        <div className="text-[11px] font-mono font-semibold uppercase text-muted-foreground mb-1">
                             Tactical Stance:
                         </div>
-                        <div className="text-xs font-bold text-rose-700 dark:text-rose-300 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-rose-300 flex items-center gap-1.5">
                             <span className="h-1.5 w-1.5 rounded-full bg-rose-600"></span>
                             Up-in-Quality to A/BBB Senior Debt
                         </div>
@@ -302,41 +302,41 @@ export const MacroTransmissionHUD: React.FC = () => {
                 >
                     <div>
                         <div className="flex items-center justify-between gap-2 mb-3">
-                            <span className="text-[10px] font-mono font-bold tracking-widest text-muted-foreground uppercase">
+                            <span className="text-[11px] font-mono font-semibold tracking-wider text-muted-foreground uppercase">
                                 PILLAR 04 // HARD RESERVES
                             </span>
-                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-mono font-bold bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
+                            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-mono font-bold bg-emerald-500/15 text-emerald-300 border border-emerald-500/30">
                                 GOLD ROTATION
                             </span>
                         </div>
 
                         <div className="mb-4">
                             <div className="flex items-baseline gap-2">
-                                <span className="text-2xl sm:text-3xl font-black font-mono tracking-tight text-foreground">
+                                <span className="text-2xl sm:text-3xl font-bold font-mono tracking-tight text-foreground">
                                     {isLoading || goldVal === null ? '—' : `$${goldVal.toLocaleString('en-US')}`}
                                 </span>
-                                <span className="text-xs font-mono font-semibold text-emerald-600 dark:text-emerald-400">
+                                <span className="text-xs font-mono font-semibold text-emerald-400">
                                     Gold Spot (USD)
                                 </span>
                             </div>
                             <div className="flex items-center gap-4 mt-2 text-xs font-mono text-muted-foreground">
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">TGA Cash</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">TGA Cash</span>
                                     <span className="font-bold text-foreground">{fmtUsdBillions(MID.TGA_BALANCE)}</span>
                                 </div>
                                 <div>
-                                    <span className="text-[10px] block uppercase text-muted-foreground/70">Fed RRP</span>
+                                    <span className="text-[11px] block uppercase text-muted-foreground">Fed RRP</span>
                                     <span className="font-bold text-foreground">{fmtUsdBillions(MID.RRP_BALANCE_BN)}</span>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div className="mt-2 pt-3 border-t border-border/60">
-                        <div className="text-[10px] font-mono font-semibold uppercase text-muted-foreground mb-1">
+                    <div className="mt-2 pt-3 border-t border-border">
+                        <div className="text-[11px] font-mono font-semibold uppercase text-muted-foreground mb-1">
                             Tactical Stance:
                         </div>
-                        <div className="text-xs font-bold text-emerald-700 dark:text-emerald-300 flex items-center gap-1.5">
+                        <div className="text-xs font-bold text-emerald-300 flex items-center gap-1.5">
                             <span className="h-1.5 w-1.5 rounded-full bg-emerald-600"></span>
                             Overweight Physical Gold Allocation
                         </div>
@@ -364,7 +364,7 @@ export const MacroTransmissionHUD: React.FC = () => {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-mono text-[11px]">
-                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-700 dark:text-blue-300 font-bold border border-blue-500/20">
+                    <span className="px-2 py-0.5 rounded bg-blue-500/10 text-blue-300 font-bold border border-blue-500/20">
                         {selectedCatalyst === 'treasury' ? '$1.2T Supply Indigestion' : '+$20/bbl Brent Crude Surge'}
                     </span>
                     <ArrowRight size={13} className="text-muted-foreground" />
@@ -372,11 +372,11 @@ export const MacroTransmissionHUD: React.FC = () => {
                         {selectedCatalyst === 'treasury' ? `RRP Buffer Depletes (${fmtUsdBillions(MID.RRP_BALANCE_BN)})` : 'India/EU Trade Deficits Expand'}
                     </span>
                     <ArrowRight size={13} className="text-muted-foreground" />
-                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/20">
+                    <span className="px-2 py-0.5 rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
                         {selectedCatalyst === 'treasury' ? '10Y Term Premium Widens (+28bps)' : 'INR & EUR Depreciate vs DXY'}
                     </span>
                     <ArrowRight size={13} className="text-muted-foreground" />
-                    <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-700 dark:text-rose-300 font-bold border border-rose-500/20">
+                    <span className="px-2 py-0.5 rounded bg-rose-500/10 text-rose-300 font-bold border border-rose-500/20">
                         Corporate Refinancing Hurdle Climbs
                     </span>
                 </div>

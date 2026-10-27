@@ -1,5 +1,6 @@
 import React from 'react';
-import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
+import { AreaChart, Area, YAxis } from 'recharts';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface HistoryPoint {
     value: number;
@@ -12,7 +13,7 @@ interface NetLiquidityGaugeChartProps {
 }
 
 export const NetLiquidityGaugeChart: React.FC<NetLiquidityGaugeChartProps> = ({ history, color }) => (
-    <ResponsiveContainer width="100%" height="100%">
+    <MacroChartContainer height="fill">
         <AreaChart data={history}>
             <defs>
                 <linearGradient id="colorValue" x1="0" y1="0" x2="0" y2="1">
@@ -23,5 +24,5 @@ export const NetLiquidityGaugeChart: React.FC<NetLiquidityGaugeChartProps> = ({ 
             <Area type="monotone" dataKey="value" stroke={color} fillOpacity={1} fill="url(#colorValue)" strokeWidth={2} isAnimationActive={false} />
             <YAxis hide domain={['auto', 'auto']} />
         </AreaChart>
-    </ResponsiveContainer>
+    </MacroChartContainer>
 );

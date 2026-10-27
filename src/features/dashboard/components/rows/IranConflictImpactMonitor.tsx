@@ -1,9 +1,9 @@
 import React from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { 
-    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    ReferenceLine
+    AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
 import { 
     Droplet, Shield, Globe, History, AlertTriangle, 
     ArrowUpRight, ArrowDownRight, TrendingUp, Info
@@ -11,6 +11,7 @@ import {
 import { useIranConflictImpact } from '@/hooks/useIranConflictImpact';
 import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/lib/utils';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const IranConflictImpactMonitor: React.FC = () => {
     const { data, isLoading } = useIranConflictImpact();
@@ -43,7 +44,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 <div className="flex items-center gap-3 px-4 py-2 bg-orange-500/10 border border-orange-500/20 rounded-lg">
                     <AlertTriangle className="text-orange-500 animate-pulse" size={18} />
                     <div>
-                        <div className="text-xs font-black uppercase text-orange-500/70 leading-none">Scenario Status</div>
+                        <div className="text-xs font-semibold uppercase text-orange-500/70 leading-none">Scenario Status</div>
                         <div className="text-sm font-bold text-orange-500">Active Monitoring / Stress Test</div>
                     </div>
                 </div>
@@ -51,14 +52,14 @@ export const IranConflictImpactMonitor: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 {/* Panel 1: Oil Price Shock Gauge */}
-                <Card className="bg-card/50 border-border/40 overflow-hidden group">
+                <Card className="bg-card/50 border-border overflow-hidden group">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <Droplet className="text-blue-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">Oil Shock Gauge</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Oil Shock Gauge</span>
                             </div>
-                            <Info size={14} className="text-muted-foreground/30 cursor-help" />
+                            <Info size={14} className="text-terminal-dim cursor-help" />
                         </div>
                         
                         <div className="relative h-32 flex items-center justify-center">
@@ -81,30 +82,30 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                 />
                                 <defs>
                                     <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                                        <stop offset="0%" stopColor="#34d399" />
-                                        <stop offset="66%" stopColor="#facc15" />
-                                        <stop offset="100%" stopColor="#f87171" />
+                                        <stop offset="0%" stopColor={CHART_COLORS.expansionSoft} />
+                                        <stop offset="66%" stopColor={CHART_COLORS.gold} />
+                                        <stop offset="100%" stopColor={CHART_COLORS.stress} />
                                     </linearGradient>
                                 </defs>
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-end pb-2">
-                                <span className="text-3xl font-black tabular-nums">${brentPrice.toFixed(1)}</span>
-                                <span className="text-xs font-bold text-muted-foreground uppercase opacity-60">Brent Crude / BBL</span>
+                                <span className="text-3xl font-bold tabular-nums">${brentPrice.toFixed(1)}</span>
+                                <span className="text-xs font-semibold text-muted-foreground uppercase opacity-60">Brent Crude / BBL</span>
                             </div>
                         </div>
 
-                        <div className="mt-4 p-3 bg-slate-900/50 rounded-lg border border-white/5">
+                        <div className="mt-4 p-3 bg-card/60 rounded-lg border border-border">
                             <div className="flex justify-between items-center mb-1">
-                                <span className="text-xs font-bold text-muted-foreground uppercase">Fiscal Sensitivity</span>
+                                <span className="text-xs font-semibold text-muted-foreground uppercase">Fiscal Sensitivity</span>
                                 <span className="text-xs font-bold text-rose-400">-${projectedAdditionalCost.toFixed(1)}B</span>
                             </div>
-                            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
+                            <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
                                 <div 
                                     className="h-full bg-rose-500 transition-all duration-1000" 
                                     style={{ width: `${Math.min(100, (projectedAdditionalCost / 25) * 100)}%` }}
                                 />
                             </div>
-                            <p className="text-xs text-muted-foreground/60 mt-2">
+                            <p className="text-xs text-muted-foreground mt-2">
                                 Est. annual import bill increase above ${oilThreshold} pivot.
                             </p>
                         </div>
@@ -112,12 +113,12 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 </Card>
 
                 {/* Panel 2: State Remittance Risk Heatmap */}
-                <Card className="bg-card/50 border-border/40 overflow-hidden">
+                <Card className="bg-card/50 border-border overflow-hidden">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <Shield className="text-orange-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">State Risk Heatmap</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">State Risk Heatmap</span>
                             </div>
                         </div>
 
@@ -129,12 +130,12 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                         "aspect-square rounded flex flex-col items-center justify-center p-1 transition-all group/cell",
                                         state.risk_score > 70 ? "bg-rose-500/80 text-white" :
                                         state.risk_score > 40 ? "bg-orange-500/60 text-white" :
-                                        "bg-slate-800 text-muted-foreground hover:bg-slate-700"
+                                        "bg-secondary text-muted-foreground hover:bg-slate-700"
                                     )}
                                 >
-                                    <span className="text-xs font-black">{state.state_code}</span>
-                                    <div className="hidden group-hover/cell:flex absolute z-50 bg-slate-950 border border-white/12 p-2 rounded shadow-2xl -translate-y-12">
-                                        <div className="text-xs font-bold uppercase whitespace-nowrap text-white">
+                                    <span className="text-xs font-bold">{state.state_code}</span>
+                                    <div className="hidden group-hover/cell:flex absolute z-50 bg-card border border-border p-2 rounded shadow-2xl -translate-y-12">
+                                        <div className="text-xs font-semibold uppercase whitespace-nowrap text-white">
                                             {state.state_name}: {state.risk_score.toFixed(0)} Risk
                                         </div>
                                     </div>
@@ -149,7 +150,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                             </div>
                             <div className="flex items-center gap-1">
                                 {stateRisks.slice(0, 3).map(s => (
-                                    <span key={s.state_code} className="px-1.5 py-0.5 bg-rose-500/10 text-rose-500 text-xs font-black border border-rose-500/20 rounded">
+                                    <span key={s.state_code} className="px-1.5 py-0.5 bg-rose-500/10 text-rose-500 text-xs font-bold border border-rose-500/20 rounded">
                                         {s.state_name}
                                     </span>
                                 ))}
@@ -159,53 +160,52 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 </Card>
 
                 {/* Panel 3: Remittance Flows vs FX Reserves Line Chart */}
-                <Card className="bg-card/50 border-border/40 overflow-hidden lg:col-span-1">
+                <Card className="bg-card/50 border-border overflow-hidden lg:col-span-1">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <TrendingUp className="text-emerald-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">Resilience Buffer</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Resilience Buffer</span>
                             </div>
                         </div>
 
-                        <div className="h-32 w-full mt-2">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.compact} className="mt-2">
                                 <AreaChart data={remittanceFlows}>
                                     <defs>
                                         <linearGradient id="colorFlow" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                            <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.3} />
+                                            <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis dataKey="date" hide />
                                     <YAxis hide domain={['auto', 'auto']} />
-                                    <Tooltip 
-                                        contentStyle={{ backgroundColor: '#020617', borderColor: 'rgba(255,255,255,0.1)', fontSize: '10px' }}
-                                        labelStyle={{ color: '#64748b' }}
+                                    <Tooltip
+                                        contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                        labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                        itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                     />
                                     <Area 
                                         type="monotone" 
                                         dataKey="value" 
-                                        stroke="#10b981" 
+                                        stroke={CHART_COLORS.expansion} 
                                         fillOpacity={1} 
                                         fill="url(#colorFlow)" 
                                         strokeWidth={2}
                                     />
-                                    <ReferenceLine y={100} stroke="#f43f5e" strokeDasharray="3 3" />
+                                    <ReferenceLine y={100} stroke={CHART_COLORS.east} strokeDasharray="3 3" />
                                 </AreaChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                         
                         <div className="flex items-center justify-between mt-4">
                             <div>
-                                <div className="text-xs font-black uppercase text-muted-foreground/50 leading-none mb-1">FX Reserve Cover</div>
-                                <div className="text-lg font-black tabular-nums">${fxReserves}B</div>
+                                <div className="text-xs font-semibold uppercase text-terminal-dim leading-none mb-1">FX Reserve Cover</div>
+                                <div className="text-lg font-bold tabular-nums">${fxReserves}B</div>
                             </div>
                             <div className="text-right">
-                                <div className="text-xs font-black uppercase text-muted-foreground/50 leading-none mb-1">Buffer Health</div>
+                                <div className="text-xs font-semibold uppercase text-terminal-dim leading-none mb-1">Buffer Health</div>
                                 <div className="flex items-center gap-1 text-emerald-400">
-                                    <span className="text-sm font-bold uppercase">Optimal</span>
+                                    <span className="text-sm font-semibold uppercase">Optimal</span>
                                     <ArrowUpRight size={14} />
                                 </div>
                             </div>
@@ -214,12 +214,12 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 </Card>
 
                 {/* Panel 4: Fiscal Buffer Comparison (1990 vs 2025) */}
-                <Card className="bg-card/50 border-border/40 overflow-hidden">
+                <Card className="bg-card/50 border-border overflow-hidden">
                     <CardContent className="p-6">
                         <div className="flex justify-between items-start mb-4">
                             <div className="flex items-center gap-2">
                                 <History className="text-purple-400" size={18} />
-                                <span className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground/80">1990 vs 2025 Baseline</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">1990 vs 2025 Baseline</span>
                             </div>
                         </div>
 
@@ -227,7 +227,7 @@ export const IranConflictImpactMonitor: React.FC = () => {
                             {resilienceMetrics.map((item, idx) => (
                                 <div key={idx} className="group/row">
                                     <div className="flex justify-between items-center mb-1">
-                                        <span className="text-xs font-bold text-muted-foreground uppercase">{item.metric}</span>
+                                        <span className="text-xs font-semibold text-muted-foreground uppercase">{item.metric}</span>
                                         {item.status === 'IMPROVED' ? (
                                             <ArrowUpRight className="text-emerald-400" size={12} />
                                         ) : item.status === 'DEGRADED' ? (
@@ -235,13 +235,13 @@ export const IranConflictImpactMonitor: React.FC = () => {
                                         ) : null}
                                     </div>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <div className="bg-slate-900/40 p-1.5 rounded border border-white/5 flex flex-col">
-                                            <span className="text-xs font-black text-muted-foreground/40 uppercase">1990</span>
+                                        <div className="bg-card/40 p-1.5 rounded border border-border flex flex-col">
+                                            <span className="text-xs font-semibold text-terminal-dim uppercase">1990</span>
                                             <span className="text-xs font-bold text-muted-foreground/80 tabular-nums">{item.val1990}</span>
                                         </div>
-                                        <div className="bg-slate-900/60 p-1.5 rounded border border-white/12 flex flex-col group-hover/row:border-blue-500/30 transition-colors">
-                                            <span className="text-xs font-black text-blue-400/50 uppercase">2025</span>
-                                            <span className="text-xs font-black text-foreground tabular-nums">{item.val2025}</span>
+                                        <div className="bg-card/60 p-1.5 rounded border border-border flex flex-col group-hover/row:border-blue-500/30 transition-colors">
+                                            <span className="text-xs font-semibold text-blue-400/50 uppercase">2025</span>
+                                            <span className="text-xs font-bold text-foreground tabular-nums">{item.val2025}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -251,13 +251,13 @@ export const IranConflictImpactMonitor: React.FC = () => {
                 </Card>
             </div>
 
-            <div className="p-4 bg-slate-900/80 border border-white/5 shadow-inner rounded-xl backdrop-blur-md">
+            <div className="p-4 bg-card/90 border border-border shadow-inner rounded-xl backdrop-blur-md">
                 <div className="flex items-start gap-4">
                     <div className="p-2 bg-orange-500/10 rounded-full">
                         <Info className="text-orange-400" size={20} />
                     </div>
                     <div className="space-y-1">
-                        <h4 className="text-xs font-black uppercase tracking-uppercase text-orange-400">Strategic Intelligence Summary</h4>
+                        <h4 className="text-xs font-semibold uppercase tracking-wider text-orange-400">Strategic Intelligence Summary</h4>
                         <p className="text-xs leading-relaxed text-muted-foreground font-medium">
                             <span className="text-foreground font-bold italic">India far more exposed but resilient</span> — $125bn remittances at risk vs $2.4bn in 1990. Oil shock threshold shifted to $80/bbl due to higher imports, however $680bn FX reserves provide 11-month cover (vs 14 days in 1990). Kerala and Tamil Nadu face highest fiscal-remittance risk correlation.
                         </p>

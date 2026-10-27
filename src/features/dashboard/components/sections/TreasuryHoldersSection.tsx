@@ -13,29 +13,8 @@ import {
     type InstitutionalColumn,
 } from '@/components/InstitutionalTable';
 import { DataStatePanel } from '@/components/DataStatePanel';
-
-const COUNTRY_FLAGS: Record<string, string> = {
-    'Japan': '🇯🇵',
-    'United Kingdom': '🇬🇧',
-    'China, Mainland': '🇨🇳',
-    'Belgium': '🇧🇪',
-    'Luxembourg': '🇱🇺',
-    'Canada': '🇨🇦',
-    'Cayman Islands': '🇰🇾',
-    'Switzerland': '🇨🇭',
-    'Ireland': '🇮🇪',
-    'Taiwan': '🇹🇼',
-    'India': '🇮🇳',
-    'Hong Kong': '🇭🇰',
-    'Singapore': '🇸🇬',
-    'Brazil': '🇧🇷',
-    'Norway': '🇳🇴',
-    'France': '🇫🇷',
-    'Germany': '🇩🇪',
-    'Israel': '🇮🇱',
-    'Total Foreign': '🌐',
-    'Grand Total': '🌐',
-};
+import { CountryCode } from '@/components/CountryCode';
+import { TREASURY_HOLDER_CODES } from '@/constants/countryCodes';
 
 const treasuryColumns: InstitutionalColumn<TreasuryHolder>[] = [
     {
@@ -43,7 +22,7 @@ const treasuryColumns: InstitutionalColumn<TreasuryHolder>[] = [
         header: 'Country / Holder',
         cell: (holder) => (
             <div className="flex items-center gap-3 normal-case tracking-normal">
-                <span className="text-xl">{COUNTRY_FLAGS[holder.country_name] || '🌐'}</span>
+                <CountryCode code={TREASURY_HOLDER_CODES[holder.country_name]} size="md" />
                 <span className="font-semibold text-xs text-foreground">{holder.country_name}</span>
             </div>
         ),
@@ -218,7 +197,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                             <>
                                 <TreasuryHoldersChart data={chartData} height={600} />
                                 <div className="mt-4 flex justify-end">
-                                    <span className="text-xs text-muted-foreground/60 italic">
+                                    <span className="text-xs text-muted-foreground italic">
                                         Showing top 15 holders. Switch to Table view for full list.
                                     </span>
                                 </div>
@@ -232,7 +211,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                             columns={treasuryColumns}
                             getRowKey={(holder) => holder.country_name}
                             maxHeight={isExpanded ? 800 : 500}
-                            className="bg-card border border-border shadow-sm dark:shadow-xl"
+                            className="bg-card border border-border shadow-xl"
                             emptyTitle="No treasury holder data"
                             emptyDescription="TIC foreign holdings are not yet available for this release window."
                         />
@@ -242,7 +221,7 @@ export const TreasuryHoldersSection: React.FC = () => {
                                 <button
                                     type="button"
                                     onClick={() => setIsExpanded(!isExpanded)}
-                                    className="inline-flex items-center gap-2 text-xs font-black text-primary hover:text-primary/80 uppercase tracking-uppercase transition-colors duration-200 hover:underline"
+                                    className="inline-flex items-center gap-2 text-xs font-semibold text-primary hover:text-primary/80 uppercase tracking-wider transition-colors duration-200 hover:underline"
                                 >
                                     {isExpanded ? (
                                         <>

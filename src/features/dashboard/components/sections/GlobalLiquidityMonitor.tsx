@@ -12,15 +12,17 @@ import {
     Zap,
     Gauge
 } from 'lucide-react';
-import { AreaChart, Area, ResponsiveContainer, YAxis } from 'recharts';
+import { AreaChart, Area, YAxis } from 'recharts';
 import { useGlobalLiquidity } from '@/hooks/useGlobalLiquidity';
 import { MotionCard } from '@/components/MotionCard';
 import { formatNumber } from '@/utils/formatNumber';
 import { formatDelta } from '@/utils/formatMetric';
+import { CHART_COLORS } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const Sparkline: React.FC<{ data: any[], dataKey: string, color: string }> = ({ data, dataKey, color }) => (
     <Box sx={{ width: '100%', height: 40 }}>
-        <ResponsiveContainer width="100%" height="100%">
+        <MacroChartContainer height="fill">
             <AreaChart data={data}>
                 <defs>
                     <linearGradient id={`gradient-${dataKey}`} x1="0" y1="0" x2="0" y2="1">
@@ -39,7 +41,7 @@ const Sparkline: React.FC<{ data: any[], dataKey: string, color: string }> = ({ 
                     isAnimationActive={false}
                 />
             </AreaChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
     </Box>
 );
 
@@ -77,7 +79,7 @@ const IndicatorCard: React.FC<{
             </Box>
 
             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 0.5 }}>
-                <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 700, fontFamily: 'monospace' }}>
+                <Typography variant="h6" sx={{ color: 'text.primary', fontWeight: 700, fontFamily: 'Fira Code, monospace' }}>
                     {typeof value === 'number' ? formatNumber(value, { decimals: 2 }) : value}{unit}
                 </Typography>
                 <Box sx={{
@@ -106,12 +108,12 @@ export const GlobalLiquidityMonitor: React.FC = () => {
     const theme = useTheme();
 
     const colors = {
-        EXPANDING: '#0df259', // Kinetic Green
-        CONTRACTING: '#f87171', // Red
-        NEUTRAL: '#fbbf24', // Amber
-        ACCELERATING: '#22d3ee', // Cyan
-        DECELERATING: '#94a3b8', // Slate
-        STEADY: '#818cf8', // Indigo
+        EXPANDING: CHART_COLORS.expansion, // Kinetic Green
+        CONTRACTING: CHART_COLORS.stress, // Red
+        NEUTRAL: CHART_COLORS.gold, // Amber
+        ACCELERATING: CHART_COLORS.west, // Cyan
+        DECELERATING: CHART_COLORS.label, // Slate
+        STEADY: CHART_COLORS.indigo, // Indigo
     };
 
     const currentRegimeColor = colors[data.regime_label] || colors.NEUTRAL;
@@ -160,14 +162,14 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                                 <DirectionIcon size={48} strokeWidth={2.5} />
                             </Box>
                             <Box>
-                                <Typography variant="h4" sx={{ fontWeight: 800, color: 'text.primary', letterSpacing: -1 }}>
+                                <Typography variant="h4" sx={{ fontWeight: 700, color: 'text.primary', letterSpacing: -1 }}>
                                     {data.regime_label}
                                 </Typography>
                                 <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                                     <Typography variant="subtitle2" sx={{ color: 'text.secondary', fontWeight: 600 }}>
                                         VELOCITY:
                                     </Typography>
-                                    <Typography variant="subtitle2" sx={{ color: currentVelocityColor, fontWeight: 800 }}>
+                                    <Typography variant="subtitle2" sx={{ color: currentVelocityColor, fontWeight: 700 }}>
                                         {data.velocity_label}
                                     </Typography>
                                 </Box>
@@ -213,7 +215,7 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                             icon={<Globe size={18} />}
                             data={data.trailing_history}
                             dataKey="m2"
-                            color="#22d3ee"
+                            color={CHART_COLORS.west}
                         />
                     </MotionCard>
                 </Grid>
@@ -226,7 +228,7 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                             icon={<Zap size={18} />}
                             data={data.trailing_history}
                             dataKey="flow"
-                            color="#818cf8"
+                            color={CHART_COLORS.indigo}
                         />
                     </MotionCard>
                 </Grid>
@@ -239,7 +241,7 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                             icon={<Activity size={18} />}
                             data={data.trailing_history}
                             dataKey="risk"
-                            color="#fbbf24"
+                            color={CHART_COLORS.gold}
                         />
                     </MotionCard>
                 </Grid>
@@ -265,9 +267,9 @@ export const GlobalLiquidityMonitor: React.FC = () => {
                     <Typography variant="caption" sx={{ color: 'text.secondary', fontWeight: 600 }}>CORRELATION: HIGH (LIQUIDITY, DEBT WALL)</Typography>
                 </Box>
                 <Box sx={{ height: 8, bgcolor: 'action.hover', borderRadius: 1, overflow: 'hidden', display: 'flex' }}>
-                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score < -15 ? 'error.main' : 'rgba(248, 113, 113, 0.2)' }} />
-                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score >= -15 && data.composite_score <= 15 ? 'warning.main' : 'rgba(251, 191, 36, 0.2)' }} />
-                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score > 15 ? 'success.main' : 'rgba(13, 242, 89, 0.2)' }} />
+                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score < -15 ? 'error.main' : alpha(CHART_COLORS.stress, 0.2) }} />
+                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score >= -15 && data.composite_score <= 15 ? 'warning.main' : alpha(CHART_COLORS.gold, 0.2) }} />
+                    <Box sx={{ width: '33.33%', height: '100%', bgcolor: data.composite_score > 15 ? 'success.main' : alpha(CHART_COLORS.expansion, 0.2) }} />
                 </Box>
             </Box>
         </Box>

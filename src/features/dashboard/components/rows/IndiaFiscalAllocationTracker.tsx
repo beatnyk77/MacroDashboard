@@ -5,22 +5,14 @@ import { SectionHeader } from '@/components/SectionHeader';
 const IndiaLeafletMap = lazy(() =>
     import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap }))
 );
-import {
-    ResponsiveContainer,
-    ComposedChart,
-    Bar,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    Cell
-} from 'recharts';
+import { ComposedChart, Bar, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { AlertTriangle, Building2, PieChart, Info, Map as MapIcon, BarChart3 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m, AnimatePresence } from 'framer-motion';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const IndiaFiscalAllocationTracker: React.FC = () => {
     const { data, isLoading, isError, refetch } = useIndiaFiscalAllocation();
@@ -70,19 +62,19 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
     }, [consolidatedData, timeRange]);
 
     const getMapColor = (val: number) => {
-        if (val >= 4) return '#10b981'; // High Capex
-        if (val >= 2.5) return '#059669';
-        if (val >= 1.5) return '#64748b'; // Neutral
-        if (val >= 1) return '#f43f5e'; // Low
-        return '#e11d48'; // Critical
+        if (val >= 4) return CHART_COLORS.expansion; // High Capex
+        if (val >= 2.5) return CHART_COLORS.expansionDeep;
+        if (val >= 1.5) return CHART_COLORS.tick; // Neutral
+        if (val >= 1) return CHART_COLORS.east; // Low
+        return CHART_COLORS.eastDeep; // Critical
     };
 
     if (isLoading) {
         return (
-            <div className="h-[800px] w-full bg-white/[0.02] border border-white/5 animate-pulse rounded-[3rem] flex items-center justify-center">
+            <div className="h-[800px] w-full bg-white/[0.02] border border-border animate-pulse rounded-xl flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-emerald-500/20 border-t-emerald-500 rounded-full animate-spin" />
-                    <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Decoding Fiscal Allocations...</span>
+                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Decoding Fiscal Allocations...</span>
                 </div>
             </div>
         );
@@ -111,9 +103,9 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                         title="India Fiscal Allocation Tracker"
                         subtitle="Capital Expenditure (Capex) vs Revenue Expenditure / Freebies mix"
                     />
-                    <div className="flex items-center gap-3 px-6 py-3 rounded-2xl bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-3 px-6 py-3 rounded-xl bg-white/[0.03] border border-border">
                         <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-                        <span className="text-xs font-black text-white/60 uppercase tracking-uppercase">Published flow: FY {latestCentral.fy}</span>
+                        <span className="text-xs font-semibold text-white/60 uppercase tracking-wider">Published flow: FY {latestCentral.fy}</span>
                     </div>
                 </div>
 
@@ -158,22 +150,22 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                     <MapIcon size={18} className="text-emerald-500" />
                                 </div>
                                 <div>
-                                    <h4 className="text-xs font-black text-white uppercase tracking-uppercase">State-Level Capex Velocity</h4>
-                                    <p className="text-xs text-muted-foreground/60 italic">Interactive choropleth: Capex % GSDP</p>
+                                    <h4 className="text-xs font-semibold text-white uppercase tracking-wider">State-Level Capex Velocity</h4>
+                                    <p className="text-xs text-muted-foreground italic">Interactive choropleth: Capex % GSDP</p>
                                 </div>
                             </div>
                             {selectedState && (
                                 <button
                                     onClick={() => setSelectedState(null)}
-                                    className="text-xs font-black text-emerald-500/60 uppercase tracking-uppercase hover:text-emerald-500 transition-colors"
+                                    className="text-xs font-semibold text-emerald-500/60 uppercase tracking-wider hover:text-emerald-500 transition-colors"
                                 >
                                     Reset Zoom
                                 </button>
                             )}
                         </div>
 
-                        <div className="h-[550px] w-full rounded-[2.5rem] bg-white/[0.01] border border-white/5 p-4 relative overflow-hidden group">
-                            <Suspense fallback={<div className="h-full w-full animate-pulse rounded-2xl bg-white/5" />}>
+                        <div className="h-[550px] w-full rounded-xl bg-white/[0.01] border border-border p-4 relative overflow-hidden group">
+                            <Suspense fallback={<div className="h-full w-full animate-pulse rounded-xl bg-white/5" />}>
                             <IndiaLeafletMap
                                 data={stateData}
                                 metric="capex_pct_gdp"
@@ -183,13 +175,13 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                 selectedStateCode={selectedState?.state_code}
                                 tooltipFormatter={(s) => `
                                     <div class="space-y-1">
-                                        <div class="text-xs font-black text-white/90 mb-1 border-b border-white/12 pb-1">${s.state_name}</div>
+                                        <div class="text-xs font-bold text-white/90 mb-1 border-b border-border pb-1">${s.state_name}</div>
                                         <div class="flex justify-between gap-4">
-                                            <span class="text-muted-foreground/60">Capex/GSDP:</span>
-                                            <span class="text-emerald-400 font-black">${s.capex_pct_gdp?.toFixed(1)}%</span>
+                                            <span class="text-muted-foreground">Capex/GSDP:</span>
+                                            <span class="text-emerald-400 font-bold">${s.capex_pct_gdp?.toFixed(1)}%</span>
                                         </div>
                                         <div class="flex justify-between gap-4">
-                                            <span class="text-muted-foreground/60">Rev. Exp/GSDP:</span>
+                                            <span class="text-muted-foreground">Rev. Exp/GSDP:</span>
                                             <span class="text-amber-400 font-bold">${s.revenue_pct_gdp?.toFixed(1)}%</span>
                                         </div>
                                     </div>
@@ -198,15 +190,15 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                             </Suspense>
 
                             {/* Legends */}
-                            <div className="absolute bottom-8 right-8 z-[1000] p-4 rounded-2xl bg-slate-950/80 backdrop-blur-xl border border-white/12 flex flex-col gap-3">
-                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase border-b border-white/5 pb-2">Capex Intensity (%)</span>
+                            <div className="absolute bottom-8 right-8 z-[1000] p-4 rounded-xl bg-card/90 backdrop-blur-xl border border-border flex flex-col gap-3">
+                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider border-b border-border pb-2">Capex Intensity (%)</span>
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-3">
                                         <div className="w-3 h-3 rounded-full bg-emerald-500" />
                                         <span className="text-xs font-bold text-white/80">High (4%+)</span>
                                     </div>
                                     <div className="flex items-center gap-3">
-                                        <div className="w-3 h-3 rounded-full bg-[#64748b]" />
+                                        <div className="w-3 h-3 rounded-full bg-slate-500" />
                                         <span className="text-xs font-bold text-white/80">Neutral (1.5 - 2.5%)</span>
                                     </div>
                                     <div className="flex items-center gap-3">
@@ -222,10 +214,10 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         initial={{ opacity: 0, x: -20 }}
                                         animate={{ opacity: 1, x: 0 }}
                                         exit={{ opacity: 0, x: -20 }}
-                                        className="absolute top-8 left-8 z-[1000] p-6 rounded-3xl bg-slate-950/90 backdrop-blur-2xl border border-emerald-500/20 max-w-[240px] shadow-3xl"
+                                        className="absolute top-8 left-8 z-[1000] p-6 rounded-xl bg-card/90 backdrop-blur-2xl border border-emerald-500/20 max-w-[240px] shadow-3xl"
                                     >
-                                        <h5 className="text-lg font-black text-white italic mb-1">{selectedState.state_name}</h5>
-                                        <p className="text-xs text-muted-foreground/60 uppercase tracking-uppercase font-black mb-6">State Profile Index</p>
+                                        <h5 className="text-lg font-bold text-white italic mb-1">{selectedState.state_name}</h5>
+                                        <p className="text-xs text-muted-foreground uppercase tracking-wider font-semibold mb-6">State Profile Index</p>
                                         <div className="space-y-4">
                                             <StateDetailRow label="Capex Strategy" value={`${selectedState.capex_pct_gdp?.toFixed(1)}%`} sub="of GSDP" color="text-emerald-500" />
                                             <StateDetailRow label="Revenue Overhang" value={`${selectedState.revenue_pct_gdp?.toFixed(1)}%`} sub="of GSDP" color="text-amber-500" />
@@ -245,8 +237,8 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                     <BarChart3 size={18} className="text-blue-500" />
                                 </div>
                                 <div>
-                                    <h4 className="text-xs font-black text-white uppercase tracking-uppercase">Efficiency Trends</h4>
-                                    <p className="text-xs text-muted-foreground/60 italic">Consolidated General Govt (Center + States)</p>
+                                    <h4 className="text-xs font-semibold text-white uppercase tracking-wider">Efficiency Trends</h4>
+                                    <p className="text-xs text-muted-foreground italic">Consolidated General Govt (Center + States)</p>
                                 </div>
                             </div>
                             <div className="flex gap-2">
@@ -255,8 +247,8 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         key={r}
                                         onClick={() => setTimeRange(r as any)}
                                         className={cn(
-                                            "px-3 py-1 rounded-lg text-xs font-black uppercase tracking-uppercase transition-all",
-                                            timeRange === r ? "bg-white/10 text-white" : "bg-white/[0.02] text-white/40 hover:bg-white/5"
+                                            "px-3 py-1 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all",
+                                            timeRange === r ? "bg-white/10 text-white" : "bg-white/[0.02] text-terminal-dim hover:bg-white/5"
                                         )}
                                     >
                                         {r}
@@ -265,52 +257,53 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="h-[550px] w-full rounded-[2.5rem] bg-white/[0.01] border border-white/5 p-8 relative group">
+                        <div className="h-[550px] w-full rounded-xl bg-white/[0.01] border border-border p-8 relative group">
                             <div className="absolute top-8 left-8 z-10">
-                                <span className="text-xs font-black text-white/20 uppercase tracking-uppercase">Capital vs Revenue Dynamics</span>
+                                <span className="text-xs font-semibold text-white/20 uppercase tracking-wider">Capital vs Revenue Dynamics</span>
                             </div>
-                            <ResponsiveContainer width="100%" height="100%">
+                            <MacroChartContainer height="fill">
                                 <ComposedChart data={filteredTrends} margin={{ top: 60, right: 30, left: 0, bottom: 20 }}>
                                     <defs>
                                         <linearGradient id="capexGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
-                                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
+                                            <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.8} />
+                                            <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0.2} />
                                         </linearGradient>
                                         <linearGradient id="revGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                            <stop offset="5%" stopColor={CHART_COLORS.gold} stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor={CHART_COLORS.gold} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
+                                        {...DEFAULT_XAXIS_PROPS}
                                         dataKey="fy"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.3)', fontWeight: 700 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim, fontWeight: 700 }}
                                         dy={10}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         yAxisId="left"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.soft }}
                                         tickFormatter={(val) => `${val}%`}
                                         domain={[0, 'auto']}
                                     />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ fill: WHITE_ALPHA.ghost }} />
                                     <Legend
                                         verticalAlign="top"
                                         align="right"
                                         iconType="circle"
                                         iconSize={6}
-                                        wrapperStyle={{ fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: '10px' }}
+                                        wrapperStyle={{ fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: '10px' }}
                                     />
 
                                     <Bar
                                         yAxisId="left"
                                         dataKey="revenue_pct_gdp"
                                         name="Combined Rev Exp %"
-                                        fill="rgba(245, 158, 11, 0.1)"
+                                        fill={alpha(CHART_COLORS.gold, 0.1)}
                                         radius={[4, 4, 0, 0]}
                                         barSize={40}
                                     />
@@ -330,22 +323,22 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
                                         type="monotone"
                                         dataKey="freebies_pct_receipts"
                                         name="Center Subsidy Burden"
-                                        stroke="#f43f5e"
+                                        stroke={CHART_COLORS.east}
                                         strokeWidth={3}
-                                        dot={{ r: 3, fill: '#f43f5e', strokeWidth: 0 }}
+                                        dot={{ r: 3, fill: CHART_COLORS.east, strokeWidth: 0 }}
                                         activeDot={{ r: 5, strokeWidth: 0 }}
                                     />
                                 </ComposedChart>
-                            </ResponsiveContainer>
+                            </MacroChartContainer>
                         </div>
                     </div>
                 </div>
 
                 {/* Footer Source */}
                 <div className="flex justify-center">
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-border">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">
                             Source: Finance.gov.in (Expenditure Profile) / RBI State Finances Report / PRS India analysis
                         </span>
                     </div>
@@ -356,13 +349,13 @@ export const IndiaFiscalAllocationTracker: React.FC = () => {
 };
 
 const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: any) => (
-    <div className="p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group relative overflow-hidden">
+    <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all group relative overflow-hidden">
         <div className="flex items-start justify-between mb-8">
-            <div className="p-3 rounded-2xl bg-white/[0.03] group-hover:scale-110 transition-transform duration-500">
+            <div className="p-3 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-transform duration-500">
                 {icon}
             </div>
             <div className={cn(
-                "px-3 py-1 rounded-full text-xs font-black uppercase tracking-heading",
+                "px-3 py-1 rounded-full text-xs font-semibold uppercase tracking-heading",
                 trendStatus === 'positive' ? "bg-emerald-500/10 text-emerald-500" :
                     trendStatus === 'warning' ? "bg-amber-500/10 text-amber-500" :
                         "bg-blue-500/10 text-blue-500"
@@ -371,12 +364,12 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
             </div>
         </div>
         <div>
-            <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-2">{title}</div>
+            <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-2">{title}</div>
             <div className="flex items-baseline gap-2 mb-4">
-                <span className="text-4xl font-black text-white italic tracking-heading tabular-nums">{value}</span>
-                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">{sub}</span>
+                <span className="text-4xl font-bold text-white italic tracking-heading tabular-nums">{value}</span>
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{sub}</span>
             </div>
-            <div className="text-xs font-bold text-muted-foreground/50 leading-relaxed italic">
+            <div className="text-xs font-bold text-terminal-dim leading-relaxed italic">
                 {description}
             </div>
         </div>
@@ -386,27 +379,27 @@ const KPICard = ({ title, value, sub, trend, trendStatus, icon, description }: a
 );
 
 const StateDetailRow = ({ label, value, sub, color }: any) => (
-    <div className="flex justify-between items-end border-b border-white/5 pb-3">
+    <div className="flex justify-between items-end border-b border-border pb-3">
         <div className="flex flex-col">
-            <span className="text-xs font-black text-white/30 uppercase tracking-uppercase leading-none mb-1">{label}</span>
-            <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-heading">{sub}</span>
+            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider leading-none mb-1">{label}</span>
+            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-heading">{sub}</span>
         </div>
-        <span className={cn("text-xl font-black tabular-nums tracking-heading", color)}>{value}</span>
+        <span className={cn("text-xl font-bold tabular-nums tracking-heading", color)}>{value}</span>
     </div>
 );
 
 const CustomTooltip = ({ active, payload, label }: any) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-slate-950/90 backdrop-blur-2xl border border-white/12 p-5 rounded-3xl shadow-3xl">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 border-b border-white/5 pb-2">
+            <div className={TOOLTIP_SHELL_CLASS}>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 border-b border-border pb-2">
                     {label} Fiscal Matrix
                 </div>
                 <div className="space-y-3">
                     {payload.map((entry: any, index: number) => (
                         <div key={index} className="flex items-center justify-between gap-12">
-                            <span className="text-xs font-bold text-muted-foreground/80">{entry.name}</span>
-                            <span className="text-sm font-black tabular-nums" style={{ color: entry.stroke || entry.fill || entry.color }}>
+                            <span className="text-xs font-bold text-slate-400">{entry.name}</span>
+                            <span className="text-xs font-semibold font-mono tabular-nums" style={{ color: entry.stroke || entry.fill || entry.color }}>
                                 {entry.value?.toFixed(2)}%
                             </span>
                         </div>

@@ -26,14 +26,14 @@ export const COTSqueezeRadarCard: React.FC = () => {
     : items.filter((item) => item.category === activeTab);
 
   return (
-    <Card className="w-full bg-card dark:bg-[#0d0f14]/90 border border-border dark:border-slate-800/80 backdrop-blur-md rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden">
+    <Card className="w-full bg-card/90 border border-slate-800/80 backdrop-blur-md rounded-xl shadow-2xl overflow-hidden">
       {/* Header */}
-      <CardHeader className="p-5 border-b border-border dark:border-slate-800/60 bg-muted/40 dark:bg-gradient-to-r dark:from-slate-950/60 dark:to-slate-900/30">
+      <CardHeader className="p-5 border-b border-slate-800/60 bg-muted/40 bg-gradient-to-r from-slate-950/60 to-slate-900/30">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
           <div>
             <div className="flex items-center space-x-2.5">
-              <div className="w-2 h-2 rounded-full bg-cyan-500 dark:bg-cyan-400 animate-pulse" />
-            <CardTitle className="font-mono text-base md:text-lg font-bold text-foreground uppercase tracking-tight">
+              <div className="w-2 h-2 rounded-full bg-cyan-400 animate-pulse" />
+            <CardTitle className="font-mono text-base md:text-lg font-semibold text-foreground uppercase tracking-tight">
                 CFTC Commitments of Traders (COT) Positioning
               </CardTitle>
             </div>
@@ -57,7 +57,7 @@ export const COTSqueezeRadarCard: React.FC = () => {
                 onClick={() => setActiveTab(tab)}
                 className={`px-3 py-1 text-xs font-mono tracking-wider uppercase transition-all whitespace-nowrap rounded-md ${
                   isActive
-                    ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 shadow-sm'
+                    ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 shadow-sm'
                     : 'text-muted-foreground bg-card hover:bg-muted hover:text-foreground border border-border'
                 }`}
               >
@@ -77,7 +77,7 @@ export const COTSqueezeRadarCard: React.FC = () => {
         ) : (
           <div className="divide-y divide-border">
             {/* Desktop Table Header */}
-              <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-muted/40 text-[10px] font-mono text-muted-foreground uppercase tracking-wider">
+              <div className="hidden lg:grid grid-cols-12 gap-4 px-6 py-2.5 bg-muted/40 text-[11px] font-mono text-muted-foreground uppercase tracking-wider">
                 <div className="col-span-3">Asset & Exchange</div>
                 <div className="col-span-2 text-right">Net Speculator</div>
                 <div className="col-span-2 text-right">1W Delta</div>
@@ -124,13 +124,13 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
         <div className="col-span-3">
           <div className="font-mono text-sm font-semibold text-foreground">{item.assetName}</div>
           <div className="flex items-center space-x-2 mt-0.5">
-            <span className="text-[10px] font-mono text-cyan-700 dark:text-cyan-400 bg-cyan-500/10 dark:bg-cyan-950/40 px-1.5 py-0.5 border border-cyan-500/30 rounded">
+            <span className="text-[11px] font-mono text-cyan-400 bg-cyan-950/40 px-1.5 py-0.5 border border-cyan-500/30 rounded">
               {item.symbol}
             </span>
             {item.asOfDate ? (
-              <span className="text-[10px] font-mono text-muted-foreground">As of {item.asOfDate}</span>
+              <span className="text-[11px] font-mono text-muted-foreground">As of {item.asOfDate}</span>
             ) : (
-              <span className="text-[10px] font-mono text-muted-foreground">Awaiting CFTC ingest</span>
+              <span className="text-[11px] font-mono text-muted-foreground">Awaiting CFTC ingest</span>
             )}
           </div>
         </div>
@@ -141,12 +141,12 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
           {item.netSpecContracts !== null ? (
             <span
               className={`font-mono text-sm font-bold ${
-                isNetLong ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'
+                isNetLong ? ' text-emerald-400' : ' text-rose-400'
               }`}
             >
               {isNetLong ? '+' : ''}
               {item.netSpecContracts.toLocaleString()}
-              <span className="text-[10px] font-normal text-muted-foreground ml-1">ctr</span>
+              <span className="text-[11px] font-normal text-muted-foreground ml-1">ctr</span>
             </span>
           ) : (
             <span className="font-mono text-xs text-muted-foreground">Awaiting Ingest</span>
@@ -159,7 +159,7 @@ const COTRowItem: React.FC<COTRowItemProps> = ({ item }) => {
           {item.delta1wContracts !== null ? (
             <span
               className={`font-mono text-xs font-semibold ${
-                isDeltaPositive ? 'text-cyan-600 dark:text-cyan-400' : 'text-amber-600 dark:text-amber-400'
+                isDeltaPositive ? ' text-cyan-400' : ' text-amber-400'
               }`}
             >
               {isDeltaPositive ? '▲ +' : '▼ '}
@@ -213,37 +213,37 @@ const SignalPill: React.FC<{ signal: COTAssetPositioning['squeezeSignal'] }> = (
   switch (signal) {
     case 'BULL_SQUEEZE_RISK':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-rose-500/15 text-rose-700 dark:text-rose-300 border border-rose-500/40 rounded animate-pulse">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider bg-rose-500/15 text-rose-300 border border-rose-500/40 rounded animate-pulse">
           BULL SQUEEZE RISK
         </span>
       );
     case 'CROWDED_LONG':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-bold uppercase tracking-wider bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40 rounded">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider bg-amber-500/15 text-amber-300 border border-amber-500/40 rounded">
           CROWDED LONG
         </span>
       );
     case 'MODERATE_LONG':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-emerald-500/15 text-emerald-700 dark:text-emerald-300 border border-emerald-500/40 rounded">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider bg-emerald-500/15 text-emerald-300 border border-emerald-500/40 rounded">
           MODERATE LONG
         </span>
       );
     case 'MODERATE_SHORT':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono font-semibold uppercase tracking-wider bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40 rounded">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono font-semibold uppercase tracking-wider bg-cyan-500/15 text-cyan-300 border border-cyan-500/40 rounded">
           SHORT BIAS
         </span>
       );
     case 'NEUTRAL_RANGE':
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-muted-foreground bg-muted border border-border rounded">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono text-muted-foreground bg-muted border border-border rounded">
           NEUTRAL RANGE
         </span>
       );
     default:
       return (
-        <span className="inline-flex items-center px-2 py-0.5 text-[10px] font-mono text-muted-foreground/60 bg-muted/60 border border-border rounded">
+        <span className="inline-flex items-center px-2 py-0.5 text-[11px] font-mono text-muted-foreground bg-muted/60 border border-border rounded">
           DATA UNAVAILABLE
         </span>
       );

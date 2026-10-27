@@ -8,6 +8,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const LoanToJobEfficiencyChart = lazy(() => import('./LoanToJobEfficiencyChart').then(m => ({ default: m.LoanToJobEfficiencyChart })));
 
@@ -80,8 +81,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Macro Indicators · India" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#818cf8', color: '#818cf8' }} />
-                    <Typography variant="h2" component="h1" fontWeight={900} gutterBottom>
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.indigo, color: CHART_COLORS.indigo }} />
+                    <Typography variant="h2" component="h1" fontWeight={700} gutterBottom>
                         Loan-to-Job Efficiency Ratio
                     </Typography>
                     <Typography component="p" variant="h6" color="text.secondary" sx={{ lineHeight: 1.7, fontWeight: 400 }}>
@@ -91,12 +92,12 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#818cf8' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.indigo }} />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        In a healthy credit cycle, bank lending grows in proportion to the formal jobs it creates. The Loan-to-Job Efficiency Ratio (L/J) measures this relationship: <strong style={{ color: '#a5b4fc' }}>for every percentage point of credit growth, how many net new formal jobs are being created?</strong>
+                        In a healthy credit cycle, bank lending grows in proportion to the formal jobs it creates. The Loan-to-Job Efficiency Ratio (L/J) measures this relationship: <strong style={{ color: CHART_COLORS.indigoSoft }}>for every percentage point of credit growth, how many net new formal jobs are being created?</strong>
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
                         A rising L/J ratio — credit growing faster than EPFO (Employees' Provident Fund Organisation) net subscriber additions — indicates credit is increasingly channelled into non-employment-generating activities: real estate speculation, personal consumption loans, and debt restructuring rather than productive capital formation.
@@ -104,16 +105,16 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(129,140,248,0.25)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#818cf8' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.indigo, 0.25)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.indigo }} />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#a5b4fc', lineHeight: 2, border: '1px solid rgba(129,140,248,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Loan-to-Job Efficiency Ratio{'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.indigoSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.indigo, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Loan-to-Job Efficiency Ratio{'\n'}</Box>
                         L/J Ratio = SCB Credit Growth (YoY %) / ∆ EPFO Net Subscribers (thousands/quarter){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Interpretation: higher = less employment per unit of credit{'\n'}</Box>
-                        <Box component="span" sx={{ color: '#64748b' }}># Trend matters more than the absolute level{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Interpretation: higher = less employment per unit of credit{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Trend matters more than the absolute level{'\n'}</Box>
                     </Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2}>
                         {[
@@ -122,10 +123,10 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                             { label: 'Base Period', source: 'Q1 FY2020 = normalised baseline for structural comparison', code: 'Quarterly aggregation' },
                             { label: 'Smoothing', source: '4-quarter centred moving average to remove seasonal EPFO registration patterns', code: 'Rolling 4Q average' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ color: '#a5b4fc', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ color: CHART_COLORS.indigoSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1} mb={0.5} sx={{ lineHeight: 1.5 }}>{d.source}</Typography>
-                                <Chip label={d.code} size="small" sx={{ bgcolor: 'rgba(255,255,255,0.04)', color: 'text.disabled', fontSize: '0.65rem' }} />
+                                <Chip label={d.code} size="small" sx={{ bgcolor: 'background.paper', color: 'text.disabled', fontSize: '0.6875rem' }} />
                             </Box>
                         ))}
                     </Box>
@@ -133,8 +134,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#818cf8' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.indigo }} />
                         Credit Growth vs. Formal Job Creation (Illustrative, Q1 2022–Q4 2024)
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -147,8 +148,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Users size={20} style={{ color: '#818cf8' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Users size={20} style={{ color: CHART_COLORS.indigo }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -158,8 +159,8 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
                             { role: 'Sovereign Credit Analysts', use: 'Monitor as an input to India\'s "inclusive growth" score. Sustained L/J divergence weakens the consumption story underpinning EM capital flows into India.' },
                             { role: 'Policy Research', use: 'Quantifies the "jobless growth" critique of India\'s post-2022 recovery — essential for ground-truthing official GDP and employment metrics against third-party EPFO data.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(129,140,248,0.04)', borderRadius: 2, border: '1px solid rgba(129,140,248,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#818cf8' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.indigo, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.indigo, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.indigo }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -168,13 +169,13 @@ export const LoanToJobEfficiencyPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Loan-to-Job Efficiency FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#818cf8', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.indigo, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

@@ -52,7 +52,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                             <div className="p-2 rounded-xl bg-primary/10 text-primary">
                                 <Calendar size={24} />
                             </div>
-                            <Typography variant="overline" className="text-primary font-black tracking-uppercase">
+                            <Typography variant="overline" className="text-primary font-bold tracking-wider">
                                 INTELLIGENCE ARCHIVE
                             </Typography>
                         </Stack>
@@ -66,7 +66,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
 
                     <Paper
                         elevation={0}
-                        className="bg-card/20 backdrop-blur-md border border-white/5 rounded-3xl overflow-hidden shadow-2xl"
+                        className="bg-card/20 backdrop-blur-md border border-border rounded-xl overflow-hidden shadow-2xl"
                     >
                         {loading ? (
                             <Box p={6}>
@@ -108,7 +108,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                                             <Chip
                                                                 label="LATEST"
                                                                 size="small"
-                                                                className="bg-primary/20 text-primary font-black text-xs tracking-uppercase border-none h-5"
+                                                                className="bg-primary/20 text-primary font-bold text-xs tracking-wider border-none h-5"
                                                             />
                                                         )}
                                                     </Box>
@@ -117,13 +117,13 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                                                     </p>
                                                 </div>
                                                 <div className="flex items-center gap-3 text-muted-foreground group-hover:text-primary transition-all group-hover:translate-x-1">
-                                                    <span className="text-xs font-black uppercase tracking-uppercase hidden md:block">Read Digest</span>
+                                                    <span className="text-xs font-semibold uppercase tracking-wider hidden md:block">Read Digest</span>
                                                     <ChevronRight size={20} />
                                                 </div>
                                             </ListItemButton>
                                         </ListItem>
                                         {index < narratives.length - 1 && (
-                                            <Divider className="border-white/5 mx-8 md:mx-12" />
+                                            <Divider className="border-border mx-8 md:mx-12" />
                                         )}
                                     </React.Fragment>
                                 ))}
@@ -134,7 +134,7 @@ export const WeeklyNarrativeArchive: React.FC = () => {
                     <Box mt={10} textAlign="center">
                         <Link
                             to="/"
-                            className="text-xs font-black text-muted-foreground hover:text-primary transition-colors uppercase tracking-uppercase"
+                            className="text-xs font-semibold text-muted-foreground hover:text-primary transition-colors uppercase tracking-wider"
                         >
                             ← Back to Dashboard
                         </Link>

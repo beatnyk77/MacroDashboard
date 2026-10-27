@@ -30,14 +30,14 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
     const [isHovered, setIsHovered] = React.useState(false);
 
     const getZScoreColor = (z?: number) => {
-        if (!z) return 'text-muted-foreground/60';
+        if (!z) return 'text-muted-foreground';
         if (Math.abs(z) > 2) return 'text-rose-500';
         if (Math.abs(z) > 1) return 'text-orange-500';
         return 'text-emerald-500';
     };
 
     const getPercentileColor = (p?: number) => {
-        if (!p) return 'text-muted-foreground/60';
+        if (!p) return 'text-muted-foreground';
         if (p > 90 || p < 10) return 'text-rose-500';
         if (p > 75 || p < 25) return 'text-orange-500';
         return 'text-emerald-500';
@@ -60,21 +60,21 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                         transition={{ duration: 0.15 }}
                         className="absolute z-50 left-1/2 -translate-x-1/2 top-full mt-2 w-80"
                     >
-                        <div className="bg-black/95 backdrop-blur-xl border border-white/12 rounded-xl p-4 shadow-2xl">
+                        <div className="bg-background/95 backdrop-blur-xl border border-border rounded-xl p-4 shadow-2xl">
                             {/* Header */}
-                            <div className="flex items-center justify-between mb-3 pb-3 border-b border-white/12">
-                                <div className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40">
+                            <div className="flex items-center justify-between mb-3 pb-3 border-b border-border">
+                                <div className="text-xs font-semibold uppercase tracking-wider text-terminal-dim">
                                     {metric}
                                 </div>
-                                <Activity size={12} className="text-muted-foreground/40" />
+                                <Activity size={12} className="text-terminal-dim" />
                             </div>
 
                             {/* Current Value */}
                             <div className="mb-3">
-                                <div className="text-xs font-bold text-muted-foreground/50 uppercase tracking-uppercase mb-1">
+                                <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">
                                     Current
                                 </div>
-                                <div className="text-2xl font-black tabular-nums text-white">
+                                <div className="text-2xl font-bold tabular-nums text-white">
                                     {currentValue.toFixed(2)} {unit}
                                 </div>
                             </div>
@@ -83,20 +83,20 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
                             <div className="grid grid-cols-2 gap-3 mb-3">
                                 {percentile !== undefined && (
                                     <div>
-                                        <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mb-1">
+                                        <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">
                                             10Y Percentile
                                         </div>
-                                        <div className={cn("text-lg font-black tabular-nums", getPercentileColor(percentile))}>
+                                        <div className={cn("text-lg font-bold tabular-nums", getPercentileColor(percentile))}>
                                             {percentile.toFixed(0)}%
                                         </div>
                                     </div>
                                 )}
                                 {zScore !== undefined && (
                                     <div>
-                                        <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mb-1">
+                                        <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">
                                             Z-Score
                                         </div>
-                                        <div className={cn("text-lg font-black tabular-nums flex items-center gap-1", getZScoreColor(zScore))}>
+                                        <div className={cn("text-lg font-bold tabular-nums flex items-center gap-1", getZScoreColor(zScore))}>
                                             {zScore > 0 ? <TrendingUp size={14} /> : zScore < 0 ? <TrendingDown size={14} /> : null}
                                             {zScore > 0 ? '+' : ''}{zScore.toFixed(2)}σ
                                         </div>
@@ -106,25 +106,25 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
                             {/* Historical Stats */}
                             {historicalStats && (
-                                <div className="pt-3 border-t border-white/12">
-                                    <div className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mb-2">
+                                <div className="pt-3 border-t border-border">
+                                    <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-2">
                                         10Y Historical Range
                                     </div>
                                     <div className="grid grid-cols-3 gap-2 text-center">
                                         <div>
-                                            <div className="text-xs text-muted-foreground/40 mb-1">MIN</div>
+                                            <div className="text-xs text-terminal-dim mb-1">MIN</div>
                                             <div className="text-xs font-bold text-rose-500/80 tabular-nums">
                                                 {historicalStats.min.toFixed(2)}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-xs text-muted-foreground/40 mb-1">AVG</div>
+                                            <div className="text-xs text-terminal-dim mb-1">AVG</div>
                                             <div className="text-xs font-bold text-blue-500/80 tabular-nums">
                                                 {historicalStats.avg.toFixed(2)}
                                             </div>
                                         </div>
                                         <div>
-                                            <div className="text-xs text-muted-foreground/40 mb-1">MAX</div>
+                                            <div className="text-xs text-terminal-dim mb-1">MAX</div>
                                             <div className="text-xs font-bold text-emerald-500/80 tabular-nums">
                                                 {historicalStats.max.toFixed(2)}
                                             </div>
@@ -135,12 +135,12 @@ export const HoverTooltip: React.FC<HoverTooltipProps> = ({
 
                             {/* Z-Score Interpretation */}
                             {zScore !== undefined && Math.abs(zScore) > 1 && (
-                                <div className="mt-3 pt-3 border-t border-white/12">
+                                <div className="mt-3 pt-3 border-t border-border">
                                     <div className={cn(
-                                        "text-xs font-bold uppercase tracking-uppercase px-2 py-1 rounded",
+                                        "text-xs font-semibold uppercase tracking-wider px-2 py-1 rounded",
                                         Math.abs(zScore) > 2 ? "bg-rose-500/20 text-rose-400" : "bg-orange-500/20 text-orange-400"
                                     )}>
-                                        {Math.abs(zScore) > 2 ? '⚠️ EXTREME VALUE' : '⚡ ELEVATED VALUE'}
+                                        {Math.abs(zScore) > 2 ? 'EXTREME VALUE' : 'ELEVATED VALUE'}
                                     </div>
                                 </div>
                             )}

@@ -5,6 +5,7 @@ import { Flame, Zap, AlertTriangle, Droplet, Activity, Clock, AlertCircle, Check
 import { cn } from '@/lib/utils';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
@@ -51,12 +52,12 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
     const ingestionSuccess = lastIngestion?.status === 'success';
 
     return (
-        <div className={cn("relative w-full h-full min-h-[500px] bg-slate-950/50 rounded-3xl overflow-hidden border border-white/5", className)}>
+        <div className={cn("relative w-full h-full min-h-[500px] bg-card/60 rounded-xl overflow-hidden border border-border", className)}>
             {/* Header with Status */}
             <div className="absolute top-4 left-4 z-10 flex items-center gap-3">
-                <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12 flex items-center gap-2">
+                <div className="px-3 py-1.5 rounded-xl bg-background/60 backdrop-blur-xl border border-border flex items-center gap-2">
                     <Activity className="w-3 h-3 text-emerald-400" />
-                    <span className="text-xs font-black text-white uppercase tracking-uppercase">
+                    <span className="text-xs font-semibold text-white uppercase tracking-wider">
                         Live Event Feed
                     </span>
                 </div>
@@ -74,7 +75,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         <AlertCircle className="w-3 h-3 text-amber-400" />
                     )}
                     <span className={cn(
-                        "text-xs font-bold uppercase tracking-uppercase",
+                        "text-xs font-semibold uppercase tracking-wider",
                         ingestionSuccess ? "text-emerald-400" : "text-amber-400"
                     )}>
                         {ingestionSuccess ? 'Feed Active' : 'Feed Degraded'}
@@ -83,7 +84,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
                 {/* Last Sync Timestamp */}
                 {lastSync && (
-                    <div className="px-3 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12 flex items-center gap-2">
+                    <div className="px-3 py-1.5 rounded-xl bg-background/60 backdrop-blur-xl border border-border flex items-center gap-2">
                         <Clock className="w-3 h-3 text-blue-400" />
                         <span className="text-xs font-mono text-muted-foreground">
                             {new Date().getTime() - lastSync.getTime() < 3600000
@@ -97,11 +98,11 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Event Count Badge */}
             {hasEvents && (
-                <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-black/60 backdrop-blur-xl border border-white/12">
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-0.5">
+                <div className="absolute top-4 right-4 z-10 px-4 py-2 rounded-xl bg-background/60 backdrop-blur-xl border border-border">
+                    <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-0.5">
                         Active Events
                     </div>
-                    <div className="text-2xl font-black text-white tabular-nums">
+                    <div className="text-2xl font-bold text-white tabular-nums">
                         {events.length}
                     </div>
                 </div>
@@ -122,12 +123,12 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                             <Geography
                                 key={geo.rsmKey}
                                 geography={geo}
-                                fill="rgba(255,255,255,0.02)"
-                                stroke="rgba(255,255,255,0.05)"
+                                fill={WHITE_ALPHA.ghost}
+                                stroke={WHITE_ALPHA.faint}
                                 strokeWidth={0.5}
                                 style={{
                                     default: { outline: 'none' },
-                                    hover: { fill: 'rgba(255,255,255,0.04)', outline: 'none' },
+                                    hover: { fill: WHITE_ALPHA.ghost, outline: 'none' },
                                     pressed: { outline: 'none' }
                                 }}
                             />
@@ -161,7 +162,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                             />
                             <circle
                                 r={2}
-                                fill="#ffffff"
+                                fill={CHART_COLORS.white}
                             />
                         </g>
                     </Marker>
@@ -170,7 +171,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Hover Tooltip */}
             {hoveredEvent && (
-                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-20 p-4 rounded-2xl bg-black/90 backdrop-blur-xl border border-white/12 shadow-2xl">
+                <div className="absolute bottom-4 left-4 right-4 md:left-auto md:right-4 md:w-80 z-20 p-4 rounded-xl bg-background/90 backdrop-blur-xl border border-border shadow-2xl">
                     <div className="flex items-start gap-3">
                         <div className={cn(
                             "p-2 rounded-xl",
@@ -179,7 +180,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                             {eventIcons[hoveredEvent.type] || eventIcons.default}
                         </div>
                         <div className="flex-1">
-                            <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase mb-1">
+                            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">
                                 {hoveredEvent.type}
                             </div>
                             <div className="text-sm font-bold text-white mb-2 line-clamp-2">
@@ -195,12 +196,12 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Empty State - Distinguish between no events and feed failure */}
             {!isLoading && !hasEvents && (
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-950/80 backdrop-blur-sm">
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-card/90 backdrop-blur-sm">
                     <div className="text-center max-w-md px-6">
                         {isFeedAvailable ? (
                             <>
                                 <Activity className="w-12 h-12 text-emerald-500/30 mx-auto mb-4" />
-                                <h3 className="text-lg font-black text-white uppercase tracking-uppercase mb-2">
+                                <h3 className="text-lg font-semibold text-white uppercase tracking-wider mb-2">
                                     All Quiet
                                 </h3>
                                 <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
@@ -213,7 +214,7 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
                         ) : (
                             <>
                                 <AlertCircle className="w-12 h-12 text-amber-500/30 mx-auto mb-4" />
-                                <h3 className="text-lg font-black text-white uppercase tracking-uppercase mb-2">
+                                <h3 className="text-lg font-semibold text-white uppercase tracking-wider mb-2">
                                     Feed Unavailable
                                 </h3>
                                 <p className="text-sm text-muted-foreground max-w-md font-medium leading-relaxed">
@@ -230,10 +231,10 @@ export const EventsMap: React.FC<{ className?: string }> = ({ className }) => {
 
             {/* Loading State */}
             {isLoading && (
-                <div className="absolute inset-0 flex items-center justify-center z-10 bg-slate-950/80 backdrop-blur-sm">
+                <div className="absolute inset-0 flex items-center justify-center z-10 bg-card/90 backdrop-blur-sm">
                     <div className="text-center">
                         <Activity className="w-12 h-12 text-blue-500 mx-auto mb-4 animate-pulse" />
-                        <p className="text-sm font-black text-muted-foreground uppercase tracking-uppercase">
+                        <p className="text-sm font-semibold text-muted-foreground uppercase tracking-wider">
                             Scanning Global Events...
                         </p>
                     </div>

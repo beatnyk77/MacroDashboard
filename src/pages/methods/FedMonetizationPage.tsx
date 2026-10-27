@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const FedMonetizationChart = lazy(() => import('./FedMonetizationChart').then(m => ({ default: m.FedMonetizationChart })));
 
@@ -86,9 +87,9 @@ export const FedMonetizationPage: React.FC = () => {
                 {/* Hero */}
                 <Box mb={8}>
                     <Chip label="Methods Article · Fiscal Dominance" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#6366f1', color: '#6366f1' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.indigo, color: CHART_COLORS.indigo }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             Fed Monetization Monitor
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -100,30 +101,30 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#6366f1' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.indigo }} />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        <strong style={{ color: '#a5b4fc' }}>Debt monetization</strong> occurs when a central bank purchases government securities, effectively financing fiscal deficits through money creation rather than market borrowing. The Fed Monetization Ratio makes this dynamic observable in real time: it measures what fraction of the total outstanding US marketable debt is held on the Federal Reserve's balance sheet.
+                        <strong style={{ color: CHART_COLORS.indigoSoft }}>Debt monetization</strong> occurs when a central bank purchases government securities, effectively financing fiscal deficits through money creation rather than market borrowing. The Fed Monetization Ratio makes this dynamic observable in real time: it measures what fraction of the total outstanding US marketable debt is held on the Federal Reserve's balance sheet.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85 }}>
-                        A rising ratio signals that private and foreign demand for Treasuries is being supplemented — or substituted — by Fed purchases. This compresses term premiums, suppresses yields below market-clearing levels, and, at the margin, funds deficit spending through seigniorage. It is the quantitative backbone of the <strong style={{ color: '#a5b4fc' }}>fiscal dominance</strong> framework.
+                        A rising ratio signals that private and foreign demand for Treasuries is being supplemented — or substituted — by Fed purchases. This compresses term premiums, suppresses yields below market-clearing levels, and, at the margin, funds deficit spending through seigniorage. It is the quantitative backbone of the <strong style={{ color: CHART_COLORS.indigoSoft }}>fiscal dominance</strong> framework.
                     </Typography>
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#6366f1' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.indigo, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.indigo }} />
                         Formula
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#a5b4fc', lineHeight: 2, border: '1px solid rgba(99,102,241,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Fed Assets (WALCL — Federal Reserve Total Assets){'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.indigoSoft, lineHeight: 2, border: `1px solid ${alpha(CHART_COLORS.indigo, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Fed Assets (WALCL — Federal Reserve Total Assets){'\n'}</Box>
                         Fed Assets = Total Federal Reserve Balance Sheet (USD billions){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Total Marketable Debt (GFDEBTN){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Total Marketable Debt (GFDEBTN){'\n'}</Box>
                         Marketable Debt = Federal Debt Held by the Public (USD billions){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Monetization Ratio{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Monetization Ratio{'\n'}</Box>
                         Monetization Ratio (%) = (WALCL ÷ GFDEBTN) × 100
                     </Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2}>
@@ -133,8 +134,8 @@ export const FedMonetizationPage: React.FC = () => {
                             { label: 'Frequency', desc: 'Weekly WALCL interpolated against quarterly GFDEBTN; monthly averages used for signal smoothing.' },
                             { label: 'Signal Threshold', desc: '>20% historically precedes policy discussions around yield curve control. 2008 baseline: ~7%.' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#a5b4fc', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.indigoSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -142,9 +143,9 @@ export const FedMonetizationPage: React.FC = () => {
                 </Paper>
 
                 {/* Historical Context */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(99,102,241,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#6366f1' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.indigo, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.indigo }} />
                         Historical Context
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -159,9 +160,9 @@ export const FedMonetizationPage: React.FC = () => {
                             { label: '2020 Peak', value: '~22%', note: 'COVID-era balance sheet expansion to $8.9T; post-CARES Act financing' },
                             { label: 'Current (2026)', value: '~16%', note: 'Post-QT drawdown; stabilising above structural pre-QE floor' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(99,102,241,0.05)', borderRadius: 2, border: '1px solid rgba(99,102,241,0.15)', textAlign: 'center' }}>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.indigo, 0.05), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.indigo, 0.15)}`, textAlign: 'center' }}>
                                 <Typography variant="caption" color="text.disabled" display="block">{d.label}</Typography>
-                                <Typography component="h2" variant="h5" fontWeight={900} sx={{ color: '#a5b4fc', my: 0.5 }}>{d.value}</Typography>
+                                <Typography component="h2" variant="h5" fontWeight={700} sx={{ color: CHART_COLORS.indigoSoft, my: 0.5 }}>{d.value}</Typography>
                                 <Typography variant="caption" color="text.secondary">{d.note}</Typography>
                             </Box>
                         ))}
@@ -170,12 +171,12 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Fiscal Dominance Framework */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#6366f1' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.indigo }} />
                         Fiscal Dominance Framework
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        The monetization ratio above 20% has historically coincided with or preceded explicit discussions of <strong style={{ color: '#a5b4fc' }}>yield curve control (YCC)</strong> — a regime in which the central bank caps yields at specific maturities to reduce the government's interest expense. Japan's BoJ has operated YCC continuously since 2016. The Fed debated it formally in 2020–2021.
+                        The monetization ratio above 20% has historically coincided with or preceded explicit discussions of <strong style={{ color: CHART_COLORS.indigoSoft }}>yield curve control (YCC)</strong> — a regime in which the central bank caps yields at specific maturities to reduce the government's interest expense. Japan's BoJ has operated YCC continuously since 2016. The Fed debated it formally in 2020–2021.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
                         The mechanism is straightforward: as the government's interest bill grows relative to tax revenues, political pressure on the central bank to suppress borrowing costs intensifies. When the Fed's balance sheet represents a large fraction of outstanding debt, its market-making function in Treasuries becomes structurally load-bearing — exit from QE risks disorderly yield moves that the fiscal position cannot absorb.
@@ -187,8 +188,8 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Database size={20} style={{ color: '#6366f1' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Database size={20} style={{ color: CHART_COLORS.indigo }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -198,8 +199,8 @@ export const FedMonetizationPage: React.FC = () => {
                             { role: 'Sovereign Wealth Funds', use: 'Benchmark US Treasury allocation decisions against the monetization regime. High ratios reduce the risk-free designation of long-duration Treasuries in a multi-decade liability context.' },
                             { role: 'Central Bank Research', use: 'Comparative analysis across G7: ECB, BoJ, and BoE equivalent ratios reveal relative fiscal dominance intensity and inform reserve currency allocation modelling.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(99,102,241,0.04)', borderRadius: 2, border: '1px solid rgba(99,102,241,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#a5b4fc' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.indigo, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.indigo, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.indigoSoft }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -208,13 +209,13 @@ export const FedMonetizationPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         Fed Monetization Monitor FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#a5b4fc', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.indigoSoft, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

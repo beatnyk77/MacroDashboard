@@ -1,5 +1,6 @@
 import React from 'react';
 import { ResponsiveContainer, AreaChart, Area, YAxis } from 'recharts';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 interface SparklineImplProps {
     data: { date: string; value: number }[];
@@ -8,7 +9,7 @@ interface SparklineImplProps {
 }
 
 export const SparklineImpl: React.FC<SparklineImplProps> = ({ data, color, height = 40 }) => {
-    const strokeColor = color || '#94a3b8';
+    const strokeColor = color || CHART_COLORS.label;
 
     if (!data || data.length === 0) return null;
 

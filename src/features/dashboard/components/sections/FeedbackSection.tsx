@@ -5,17 +5,17 @@ import { trackClick } from '@/lib/analytics';
 
 export const FeedbackSection: React.FC = () => {
     return (
-        <Card className="p-12 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl relative overflow-hidden rounded-[3rem] group">
+        <Card className="p-12 bg-background/40 backdrop-blur-3xl border-border shadow-2xl relative overflow-hidden rounded-xl group">
             {/* Ambient Background Radial */}
             <div className="absolute -bottom-24 -left-24 w-[600px] h-[600px] bg-emerald-500/5 rounded-full blur-[120px] group-hover:bg-emerald-500/10 transition-colors duration-1000" />
 
             <div className="relative z-10 flex flex-col items-center text-center max-w-2xl mx-auto space-y-8">
                 <div className="space-y-4">
                     <div className="flex items-center justify-center gap-3">
-                        <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 shadow-inner">
+                        <div className="p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/20 shadow-inner">
                             <MessageSquare className="text-emerald-500 w-6 h-6" />
                         </div>
-                        <h2 className="text-3xl font-black tracking-heading text-white uppercase italic">
+                        <h2 className="text-3xl font-bold tracking-heading text-white uppercase italic">
                             Help us improve – <span className="text-emerald-500">share feedback</span> (30 seconds)
                         </h2>
                     </div>
@@ -32,11 +32,11 @@ export const FeedbackSection: React.FC = () => {
                         onClick={() => {
                             trackClick('feedback_form', 'footer');
                         }}
-                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/12 hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
+                        className="group/btn flex items-center justify-between p-5 rounded-xl bg-white/[0.03] border border-border hover:bg-white/[0.06] hover:border-emerald-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
-                            <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase mb-1">Observation Log</span>
-                            <span className="text-sm font-black text-white">Share Feedback</span>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Observation Log</span>
+                            <span className="text-sm font-bold text-white">Share Feedback</span>
                         </div>
                         <div className="p-2 rounded-xl bg-emerald-500/10 group-hover/btn:bg-emerald-500/20 transition-colors">
                             <Send className="w-4 h-4 text-emerald-500" />
@@ -48,11 +48,11 @@ export const FeedbackSection: React.FC = () => {
                         target="_blank"
                         rel="noopener noreferrer"
                         onClick={() => trackClick('github_repo', 'footer')}
-                        className="group/btn flex items-center justify-between p-5 rounded-3xl bg-white/[0.03] border border-white/12 hover:bg-white/[0.06] hover:border-blue-500/30 transition-all duration-300"
+                        className="group/btn flex items-center justify-between p-5 rounded-xl bg-white/[0.03] border border-border hover:bg-white/[0.06] hover:border-blue-500/30 transition-all duration-300"
                     >
                         <div className="flex flex-col items-start px-2">
-                            <span className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase mb-1">Source Control</span>
-                            <span className="text-sm font-black text-white">GitHub Repository</span>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-1">Source Control</span>
+                            <span className="text-sm font-bold text-white">GitHub Repository</span>
                         </div>
                         <div className="p-2 rounded-xl bg-blue-500/10 group-hover/btn:bg-blue-500/20 transition-colors">
                             <Github className="w-4 h-4 text-blue-500" />
@@ -62,12 +62,12 @@ export const FeedbackSection: React.FC = () => {
 
                 <div className="pt-4 flex items-center gap-6 opacity-40 hover:opacity-100 transition-opacity duration-500">
                     <div className="flex flex-col items-center">
-                        <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Version</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Version</span>
                         <span className="text-xs font-mono text-white">1.0.0-PRO</span>
                     </div>
                     <div className="w-[1px] h-4 bg-white/10" />
                     <div className="flex flex-col items-center">
-                        <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Build</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Build</span>
                         <span className="text-xs font-mono text-white">2026.Q1</span>
                     </div>
                 </div>

@@ -4,6 +4,7 @@ import { useInstitutionalFeatures } from '@/hooks/useInstitutionalFeatures';
 import { Info, ShieldAlert, ShieldCheck, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Sparkline } from '@/components/Sparkline';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export const GeopoliticalRiskPulseCard: React.FC = () => {
     const { geoRisk } = useInstitutionalFeatures();
@@ -34,12 +35,12 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
 
     const renderSubMetric = (label: string, value: number | undefined, color: string) => (
         <div className="flex flex-col gap-1">
-            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">{label}</span>
+            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">{label}</span>
             <div className="flex items-baseline gap-1">
-                <span className={cn("text-lg font-black tracking-heading", color)}>
+                <span className={cn("text-lg font-bold tracking-heading", color)}>
                     {value !== undefined ? (value > 0 ? '+' : '') + value.toFixed(1) : '-'}
                 </span>
-                <span className="text-xs font-bold text-muted-foreground/40">Z</span>
+                <span className="text-xs font-bold text-terminal-dim">Z</span>
             </div>
         </div>
     );
@@ -50,18 +51,18 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
             <div className="flex justify-between items-start mb-6">
                 <div>
                     <div className="flex items-center gap-2 mb-1">
-                        <span className="text-xs font-black text-muted-foreground uppercase tracking-[0.15em]">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                             Systemic Risk Detection
                         </span>
-                        <div className={cn("px-1.5 py-0.5 rounded-[3px] border text-xs font-black", statusBg, statusColor)}>
+                        <div className={cn("px-1.5 py-0.5 rounded-[3px] border text-xs font-bold", statusBg, statusColor)}>
                             {status.toUpperCase()}
                         </div>
                     </div>
-                    <h3 className="text-lg font-black text-foreground tracking-heading">
+                    <h3 className="text-lg font-bold text-foreground tracking-heading">
                         Geopolitical Risk Pulse
                     </h3>
                 </div>
-                <Info size={16} className="text-muted-foreground/30 group-hover:text-muted-foreground transition-colors" />
+                <Info size={16} className="text-terminal-dim group-hover:text-muted-foreground transition-colors" />
             </div>
 
             {/* Main Stats Grid */}
@@ -69,19 +70,19 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                 {/* Hero Gauge Area */}
                 <div className="flex flex-col justify-center">
                     <div className="flex items-baseline gap-2 mb-2">
-                        <h2 className={cn("text-5xl font-black tracking-heading", statusColor)}>
+                        <h2 className={cn("text-5xl font-bold tracking-heading", statusColor)}>
                             {compositeZ.toFixed(2)}
                         </h2>
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase">Composite Z</span>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Composite Z</span>
                     </div>
-                    <div className={cn("flex items-center gap-2 text-xs font-extrabold uppercase tracking-heading", statusColor)}>
+                    <div className={cn("flex items-center gap-2 text-xs font-semibold uppercase tracking-heading", statusColor)}>
                         <Icon size={14} />
                         {statusText}
                     </div>
                 </div>
 
                 {/* Sub-Metric Breakdown */}
-                <div className="grid grid-cols-3 gap-2 border-l border-white/5 pl-6">
+                <div className="grid grid-cols-3 gap-2 border-l border-border pl-6">
                     {renderSubMetric('VIX (Equity)', data?.vix_z, (data?.vix_z || 0) > 1 ? 'text-rose-400' : 'text-foreground')}
                     {renderSubMetric('MOVE (Bonds)', data?.move_z, (data?.move_z || 0) > 1 ? 'text-rose-400' : 'text-foreground')}
                     {renderSubMetric('GOLD (Metal)', data?.gold_z, (data?.gold_z || 0) > 1 ? 'text-rose-400' : 'text-foreground')}
@@ -94,17 +95,17 @@ export const GeopoliticalRiskPulseCard: React.FC = () => {
                     <Sparkline
                         data={data.history}
                         height={64}
-                        color={status === 'danger' ? '#f43f5e' : (status === 'warning' ? '#f59e0b' : '#10b981')}
+                        color={status === 'danger' ? CHART_COLORS.east : (status === 'warning' ? CHART_COLORS.gold : CHART_COLORS.expansion)}
                     />
                 )}
             </div>
 
             {/* Methodology & Legend Footer */}
-            <div className="mt-auto pt-4 border-t border-white/5 space-y-3">
+            <div className="mt-auto pt-4 border-t border-border space-y-3">
                 <p className="text-xs text-muted-foreground font-medium leading-relaxed italic">
                     "Tracks systemic risk by aggregating volatility across asset classes. Extreme readings indicate geopolitical pricing that exceeds historical norms."
                 </p>
-                <div className="flex items-center justify-between text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">
+                <div className="flex items-center justify-between text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                     <div className="flex items-center gap-4">
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500" /> &lt;0.5 Calm</span>
                         <span className="flex items-center gap-1"><div className="w-1.5 h-1.5 rounded-full bg-amber-500" /> 0.5-1.5 Elevated</span>

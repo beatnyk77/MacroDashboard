@@ -19,6 +19,7 @@ import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { TrailLink } from '@/components/TrailLink';
+import { LabPageHeader } from '@/components/LabPageHeader';
 import { FiscalCockpit } from '@/features/dashboard/components/sections/FiscalCockpit';
 
 
@@ -120,37 +121,22 @@ export const USMacroFiscalLab: React.FC = () => {
                 }
             ]}
         />
-        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-                    <TrailLink to="/" className="hover:text-foreground transition-colors">Home</TrailLink>
-                    <ChevronRight size={10} />
-                    <TrailLink to="/macro-observatory/" className="hover:text-foreground transition-colors">Observatory</TrailLink>
-                    <ChevronRight size={10} />
-                    <span className="text-blue-600 dark:text-blue-500">US Macro & Fiscal</span>
-                </nav>
-            </div>
-
-            <div className="mb-12">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-600 dark:text-blue-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-                    <Zap size={12} /> Core Sovereign Telemetry
-                </div>
-                <div className="flex flex-wrap items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-foreground">
-                        US Macro & Fiscal <span className="text-blue-600 dark:text-blue-500">Lab</span>
-                    </h1>
-                    <FreshnessChip status={dataFreshness} lastUpdated={primaryMetric?.lastUpdated || undefined} sourceRef={primaryMetric?.sourceRef} provenance={primaryMetric?.provenance} isProvisional={primaryMetric?.isProvisional} />
-                </div>
-                <p className="text-muted-foreground max-w-3xl text-base md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    Published observations for Treasury funding, US fiscal capacity, and dollar liquidity, with source and data-state context attached to every value.
-                </p>
-            </div>
+        <div className="page-shell">
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                current="US Macro & Fiscal"
+                badge="Core Sovereign Telemetry"
+                badgeIcon={<Zap size={12} />}
+                title={<>US Macro & Fiscal <span className="text-blue-400">Lab</span></>}
+                status={<FreshnessChip status={dataFreshness} lastUpdated={primaryMetric?.lastUpdated || undefined} sourceRef={primaryMetric?.sourceRef} provenance={primaryMetric?.provenance} isProvisional={primaryMetric?.isProvisional} />}
+                thesis="Published observations for Treasury funding, US fiscal capacity, and dollar liquidity, with source and data-state context attached to every value."
+            />
 
             <SectionErrorBoundary name="Fiscal Cockpit">
                 <FiscalCockpit />
             </SectionErrorBoundary>
 
-            <div className="mt-20 space-y-24">
+            <div className="mt-16 space-y-16">
                 {/* Section 0.5: FOMC Minutes Intelligence */}
                 <section>
                     <SectionErrorBoundary name="FOMC Minutes Intelligence">
@@ -165,8 +151,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 1: Debt Maturity Wall */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <TrendingUp className="text-blue-600 dark:text-blue-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">US Debt Maturity Wall</h2>
+                        <TrendingUp className="text-blue-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">US Debt Maturity Wall</h2>
                     </div>
                     <SectionErrorBoundary name="US Debt Maturity Wall">
                         <LazyRender minHeight="500px">
@@ -193,8 +179,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 2: US Fiscal Dominance Meter */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <Activity className="text-red-600 dark:text-red-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">US Fiscal Dominance Meter</h2>
+                        <Activity className="text-red-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">US Fiscal Dominance Meter</h2>
                     </div>
                     <SectionErrorBoundary name="US Fiscal Dominance Meter">
                         <LazyRender minHeight="500px">
@@ -227,8 +213,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 3: Treasury Demand */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <Zap className="text-amber-600 dark:text-amber-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Auction Demand</h2>
+                        <Zap className="text-amber-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">Auction Demand</h2>
                     </div>
                     <SectionErrorBoundary name="Treasury Demand Gauge">
                         <LazyRender minHeight="300px">
@@ -242,8 +228,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 2.5: Offshore Dollar Stress */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <Zap className="text-rose-600 dark:text-rose-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Offshore Dollar Funding Stress</h2>
+                        <Zap className="text-rose-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">Offshore Dollar Funding Stress</h2>
                     </div>
                     <SectionErrorBoundary name="Offshore Dollar Stress">
                         <LazyRender minHeight="300px">
@@ -257,8 +243,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 3: Foreign Holders */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <ShieldAlert className="text-emerald-600 dark:text-emerald-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Foreign Holders</h2>
+                        <ShieldAlert className="text-emerald-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">Foreign Holders</h2>
                     </div>
                     <SectionErrorBoundary name="Top Treasury Holders">
                         <LazyRender minHeight="700px">
@@ -269,8 +255,8 @@ export const USMacroFiscalLab: React.FC = () => {
                     </SectionErrorBoundary>
                     
                     <div className="mt-6 flex justify-end">
-                        <Button variant="outline" className="text-emerald-600 dark:text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-widest text-xs font-black" asChild>
-                            <a href="/labs/us-treasury-foreign-holdings/">Deep Dive: Foreign Holder Selloff Risk <ChevronRight size={14} className="ml-2" /></a>
+                        <Button variant="outline" className="text-emerald-500 border-emerald-500/20 hover:bg-emerald-500/10 uppercase tracking-wider text-xs font-semibold" asChild>
+                            <TrailLink to="/labs/us-treasury-foreign-holdings/">Deep Dive: Foreign Holder Selloff Risk <ChevronRight size={14} className="ml-2" /></TrailLink>
                         </Button>
                     </div>
                 </section>
@@ -278,8 +264,8 @@ export const USMacroFiscalLab: React.FC = () => {
                 {/* Section 4: US Fiscal Comparison */}
                 <section>
                     <div className="flex items-center gap-3 mb-8">
-                        <TrendingUp className="text-indigo-600 dark:text-indigo-500" size={24} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-foreground">Defense vs Interest</h2>
+                        <TrendingUp className="text-indigo-500" size={24} />
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-foreground">Defense vs Interest</h2>
                     </div>
                     <SectionErrorBoundary name="US Fiscal Comparison">
                         <LazyRender minHeight="400px">
@@ -294,8 +280,8 @@ export const USMacroFiscalLab: React.FC = () => {
             </div>
 
             {/* SEO methodology and discovery text block */}
-            <article className="mt-24 p-8 sm:p-12 bg-card border border-border rounded-3xl shadow-sm" aria-label="US Treasury and fiscal data methodology">
-                <h3 className="text-xl font-black text-foreground uppercase tracking-uppercase mb-6">How to read the US Treasury and fiscal monitor</h3>
+            <article className="mt-24 p-8 sm:p-12 bg-card border border-border rounded-xl shadow-sm" aria-label="US Treasury and fiscal data methodology">
+                <h3 className="text-xl font-bold text-foreground uppercase tracking-wider mb-6">How to read the US Treasury and fiscal monitor</h3>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>US Macro & Fiscal Lab</strong> is a published-observation monitor for Treasury funding, Federal Reserve liquidity facilities, fiscal burden ratios, and Treasury market data. Each usable value carries an as-of date, source, frequency, and provenance state. The coverage register identifies metrics that are unavailable or lagged.
@@ -304,7 +290,7 @@ export const USMacroFiscalLab: React.FC = () => {
                         The maturity wall reports scheduled Treasury maturities across the available windows. Auction demand reports observed bid-to-cover, yield, and bidder participation fields when the Treasury auction feed is populated. These modules answer different questions and should be read together with their source dates.
                     </p>
                     <p>
-                        The <a href="/glossary/tga/" className="text-blue-600 dark:text-blue-400 hover:underline">Treasury General Account (TGA)</a> and Overnight Reverse Repo Facility (RRP) are shown as separate liquidity observations. Their levels can be compared with Standing Repo Facility usage and FX swap line balances when those feeds are available. The page preserves native units so cross-series comparisons remain explicit.
+                        The <TrailLink to="/glossary/tga/" className="text-blue-400 hover:underline">Treasury General Account (TGA)</TrailLink> and Overnight Reverse Repo Facility (RRP) are shown as separate liquidity observations. Their levels can be compared with Standing Repo Facility usage and FX swap line balances when those feeds are available. The page preserves native units so cross-series comparisons remain explicit.
                     </p>
                     <p>
                         Fiscal burden panels use published fiscal-stress rows and explicitly labelled derived ratios. A missing or provisional upstream record is not converted into zero. Methodology links and source metadata provide the audit trail for any downstream interpretation.
@@ -313,7 +299,7 @@ export const USMacroFiscalLab: React.FC = () => {
 
                 {/* Visible FAQ block, mirrors the FAQPage JSON-LD above */}
                 <div className="mt-10 pt-8 border-t border-border space-y-5">
-                    <h4 className="text-sm font-black text-foreground uppercase tracking-widest mb-2">Frequently Asked Questions</h4>
+                    <h4 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-2">Frequently Asked Questions</h4>
                     {faqItems.map(({ question, answer }) => (
                         <div key={question}>
                             <p className="text-sm font-bold text-foreground/90 mb-1">{question}</p>
@@ -326,12 +312,12 @@ export const USMacroFiscalLab: React.FC = () => {
             <div className="mt-24 pt-12 border-t border-border text-center">
                 <Button
                     variant="ghost"
-                    className="text-muted-foreground/60 font-black uppercase tracking-uppercase hover:text-foreground transition-colors"
+                    className="text-muted-foreground font-semibold uppercase tracking-wider hover:text-foreground transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory/" className="flex items-center gap-2">
+                    <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
-                    </a>
+                    </TrailLink>
                 </Button>
             </div>
             <RelatedContent />

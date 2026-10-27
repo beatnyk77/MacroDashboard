@@ -40,7 +40,7 @@ export const StatusChip: React.FC<StatusChipProps> = ({ status, className }) => 
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[9px] font-black uppercase tracking-wider',
+        'inline-flex items-center gap-1 px-1.5 py-0.5 rounded border text-[11px] font-semibold uppercase tracking-wider',
         ui.className,
         className,
       )}

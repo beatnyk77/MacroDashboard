@@ -7,10 +7,11 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    ResponsiveContainer,
     Cell,
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS } from '@/constants/chartDefaults';
 import { useLatestChinaDebtLayers, LAYER_META, type ChinaDebtLayerCode } from '@/hooks/useChinaDebt';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const STACK_ORDER: ChinaDebtLayerCode[] = [
     'central_official',
@@ -60,18 +61,20 @@ export const ChinaDebtIcebergChart: React.FC = () => {
 
     return (
         <>
-            <ResponsiveContainer width="100%" height={280}>
+            <MacroChartContainer height={CHART_HEIGHTS.standard}>
                 <BarChart data={chartData} layout="vertical" margin={{ top: 5, right: 20, left: 10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" horizontal={false} />
-                    <XAxis type="number" domain={[0, 'auto']} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
+                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
+                    <XAxis {...DEFAULT_XAXIS_PROPS} type="number" domain={[0, 'auto']} unit="%" />
                     <YAxis
+                        {...DEFAULT_YAXIS_PROPS}
                         type="category"
                         dataKey="label"
                         width={120}
-                        tick={{ fontSize: 10, fill: '#94a3b8' }}
                     />
                     <Tooltip
-                        contentStyle={{ background: '#0f172a', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8 }}
+                        contentStyle={DEFAULT_TOOLTIP_STYLE}
+                        labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                        itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                         formatter={(v: number) => [`${v.toFixed(1)}% GDP`, 'Layer']}
                     />
                     <Bar dataKey="value" radius={[0, 4, 4, 0]}>
@@ -80,7 +83,7 @@ export const ChinaDebtIcebergChart: React.FC = () => {
                         ))}
                     </Bar>
                 </BarChart>
-            </ResponsiveContainer>
+            </MacroChartContainer>
             <Box display="flex" gap={3} mt={1} flexWrap="wrap">
                 <Typography variant="caption" color="text.secondary">▲ Blue = MoF-reported (above waterline)</Typography>
                 <Typography variant="caption" color="text.secondary">▼ Amber/red = shadow layers (IMF Article IV ranges)</Typography>

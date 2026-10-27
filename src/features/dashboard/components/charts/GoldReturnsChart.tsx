@@ -1,20 +1,12 @@
 import React, { useState, useMemo } from 'react';
-import {
-    ComposedChart,
-    Bar,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    ResponsiveContainer,
-    Cell,
-    ReferenceLine,
-    Brush,
-} from 'recharts';
+import { ComposedChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Cell, ReferenceLine, Brush } from 'recharts';
+import { CHART_FONT_FAMILY, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { Box, Button, Typography, useTheme, useMediaQuery } from '@mui/material';
 import { Card } from '@/components/ui/card';
 import { ZoomOut, Maximize2 } from 'lucide-react';
 import { useGoldReturns } from '@/hooks/useGoldReturns';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.[0]) return null;
@@ -22,32 +14,32 @@ const CustomTooltip = ({ active, payload }: any) => {
     const data = payload[0].payload;
 
     return (
-        <Card variant="default" className="bg-slate-950/90 border border-white/12 backdrop-blur-xl max-w-[280px] p-2">
-            <p className="text-xs font-mono text-muted-foreground/60 mb-0.5">
+        <Card variant="default" className={`${TOOLTIP_SHELL_CLASS} max-w-[280px]`}>
+            <p className="text-xs font-mono text-slate-400 mb-0.5">
                 {data.formattedDate}
             </p>
 
             <div className="flex items-baseline gap-1 mb-1">
-                <h5 className={`text-lg font-black font-mono ${data.return_pct >= 0 ? 'text-success' : 'text-error'}`}>
+                <h5 className={`text-lg font-semibold font-mono ${data.return_pct >= 0 ? 'text-success' : 'text-error'}`}>
                     {data.return_pct >= 0 ? '+' : ''}{data.return_pct.toFixed(2)}%
                 </h5>
-                <span className="text-xs text-muted-foreground/50">Monthly Return</span>
+                <span className="text-xs text-slate-400">Monthly Return</span>
             </div>
 
-            <p className="text-xs font-mono text-muted-foreground/60">
+            <p className="text-xs font-mono text-slate-400">
                 Gold: ${data.gold_price?.toFixed(2)}/oz
             </p>
 
             {data.event_name && (
-                <div className="mt-4 pt-4 border-t border-white/10">
-                    <p className="text-xs font-black text-warning mb-1 uppercase tracking-uppercase">
-                        ⚡ {data.event_name}
+                <div className="mt-4 pt-4 border-t border-border">
+                    <p className="text-xs font-semibold text-warning mb-1 uppercase tracking-wider">
+                        {data.event_name}
                     </p>
-                    <p className="text-xs text-muted-foreground/60 leading-relaxed">
+                    <p className="text-xs text-slate-400 leading-relaxed">
                         {data.event_description}
                     </p>
                     {data.macro_regime && (
-                        <span className="inline-block mt-1 px-1 py-0.5 bg-white/5 rounded text-xs font-mono text-muted-foreground/50">
+                        <span className="inline-block mt-1 px-1 py-0.5 bg-white/5 rounded text-xs font-mono text-slate-400">
                             {data.macro_regime}
                         </span>
                     )}
@@ -76,7 +68,7 @@ const GoldReturnsChart: React.FC = () => {
                     year: 'numeric',
                     timeZone: 'UTC'
                 }),
-                color: r.return_pct >= 0 ? '#10b981' : '#ef4444',
+                color: r.return_pct >= 0 ? CHART_COLORS.expansion : CHART_COLORS.stress,
             };
         });
     }, [returns]);
@@ -114,7 +106,7 @@ const GoldReturnsChart: React.FC = () => {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                bgcolor: 'rgba(0,0,0,0.2)',
+                bgcolor: alpha(CHART_COLORS.black, 0.2),
                 borderRadius: 2,
                 border: '1px solid',
                 borderColor: 'divider'
@@ -141,7 +133,7 @@ const GoldReturnsChart: React.FC = () => {
             position: 'relative',
             height: isMobile ? 350 : 450,
             width: '100%',
-            bgcolor: 'rgba(0,0,0,0.2)',
+            bgcolor: alpha(CHART_COLORS.black, 0.2),
             borderRadius: 2,
             p: isMobile ? 1 : 2,
             border: '1px solid',
@@ -160,16 +152,16 @@ const GoldReturnsChart: React.FC = () => {
                         onClick={resetZoom}
                         startIcon={<ZoomOut size={14} />}
                         sx={{
-                            bgcolor: 'rgba(255,255,255,0.1)',
+                            bgcolor: WHITE_ALPHA.line,
                             color: 'text.primary',
                             fontSize: '0.7rem',
                             py: 0.5,
                             px: 1.5,
                             backdropFilter: 'blur(10px)',
-                            border: '1px solid rgba(255,255,255,0.1)',
+                            border: `1px solid ${WHITE_ALPHA.line}`,
                             '&:hover': {
-                                bgcolor: 'rgba(255,255,255,0.2)',
-                                borderColor: 'rgba(255,255,255,0.2)'
+                                bgcolor: WHITE_ALPHA.soft,
+                                borderColor: WHITE_ALPHA.soft
                             }
                         }}
                     >
@@ -189,13 +181,13 @@ const GoldReturnsChart: React.FC = () => {
                     gap: 1,
                     px: 1.5,
                     py: 0.5,
-                    bgcolor: 'rgba(255,255,255,0.05)',
+                    bgcolor: WHITE_ALPHA.faint,
                     borderRadius: 1,
-                    border: '1px solid rgba(255,255,255,0.1)'
+                    border: `1px solid ${WHITE_ALPHA.line}`
                 }}>
                     <Maximize2 size={12} style={{ color: theme.palette.text.disabled }} />
                     <Typography variant="caption" sx={{
-                        fontSize: '0.65rem',
+                        fontSize: '0.6875rem',
                         color: 'text.disabled',
                         fontWeight: 600
                     }}>
@@ -204,7 +196,7 @@ const GoldReturnsChart: React.FC = () => {
                 </Box>
             )}
 
-            <ResponsiveContainer width="100%" height="100%">
+            <MacroChartContainer height="fill">
                 <ComposedChart
                     data={displayData}
                     margin={isMobile
@@ -214,30 +206,28 @@ const GoldReturnsChart: React.FC = () => {
                 >
                     <defs>
                         <linearGradient id="positiveReturn" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#10b981" stopOpacity={0.9} />
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.2} />
+                            <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.9} />
+                            <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0.2} />
                         </linearGradient>
                         <linearGradient id="negativeReturn" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.9} />
-                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0.2} />
+                            <stop offset="5%" stopColor={CHART_COLORS.stress} stopOpacity={0.9} />
+                            <stop offset="95%" stopColor={CHART_COLORS.stress} stopOpacity={0.2} />
                         </linearGradient>
                     </defs>
 
                     <CartesianGrid
-                        strokeDasharray="3 3"
-                        stroke="rgba(255,255,255,0.05)"
+                        {...DEFAULT_CARTESIAN_GRID_PROPS}
                         vertical={false}
                     />
 
                     <XAxis
+                        {...DEFAULT_XAXIS_PROPS}
                         dataKey="formattedDate"
                         tick={{
                             fill: theme.palette.text.disabled,
                             fontSize: isMobile ? 8 : 10,
-                            fontFamily: 'monospace'
-                        }}
-                        axisLine={{ stroke: 'rgba(255,255,255,0.1)' }}
-                        tickLine={false}
+                            fontFamily: CHART_FONT_FAMILY}}
+                        axisLine={{ stroke: WHITE_ALPHA.line }}
                         angle={-45}
                         textAnchor="end"
                         height={60}
@@ -245,20 +235,20 @@ const GoldReturnsChart: React.FC = () => {
                     />
 
                     <YAxis
+                        {...DEFAULT_YAXIS_PROPS}
+                        width={60}
                         tick={{
                             fill: theme.palette.text.disabled,
                             fontSize: isMobile ? 9 : 10,
-                            fontFamily: 'monospace'
-                        }}
+                            fontFamily: CHART_FONT_FAMILY}}
                         axisLine={false}
-                        tickLine={false}
                         domain={yDomain}
                         tickFormatter={(val) => `${val}%`}
                     />
 
                     <Tooltip
                         content={<CustomTooltip />}
-                        cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                        cursor={{ fill: WHITE_ALPHA.faint }}
                     />
 
                     <ReferenceLine
@@ -277,13 +267,13 @@ const GoldReturnsChart: React.FC = () => {
                             <Cell
                                 key={`cell-${index}`}
                                 fill={entry.event_name
-                                    ? '#eab308'
+                                    ? CHART_COLORS.gold
                                     : entry.return_pct >= 0
                                         ? 'url(#positiveReturn)'
                                         : 'url(#negativeReturn)'
                                 }
                                 fillOpacity={entry.event_name ? 1 : 0.8}
-                                stroke={entry.event_name ? '#eab308' : 'none'}
+                                stroke={entry.event_name ? CHART_COLORS.gold : 'none'}
                                 strokeWidth={entry.event_name ? 2 : 0}
                             />
                         ))}
@@ -294,14 +284,14 @@ const GoldReturnsChart: React.FC = () => {
                         dataKey="formattedDate"
                         height={25}
                         stroke={theme.palette.primary.main}
-                        fill="rgba(15, 23, 42, 0.8)"
+                        fill={alpha(CHART_COLORS.panel, 0.8)}
                         travellerWidth={10}
                         onChange={handleBrushChange}
                         startIndex={zoomDomain?.startIndex ?? Math.max(0, chartData.length - 120)}
                         endIndex={zoomDomain?.endIndex ?? chartData.length - 1}
                     />
                 </ComposedChart>
-            </ResponsiveContainer>
+            </MacroChartContainer>
         </Box>
     );
 };

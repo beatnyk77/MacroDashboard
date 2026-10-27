@@ -59,16 +59,16 @@ export const EngagementNewsletterPrompt: React.FC = () => {
             role="dialog"
             aria-label="Weekly Regime Digest signup"
         >
-            <div className="relative rounded-2xl border border-blue-500/25 bg-slate-950/95 p-4 shadow-2xl backdrop-blur-xl">
+            <div className="relative rounded-xl border border-blue-500/25 bg-card/90 p-4 shadow-2xl backdrop-blur-xl">
                 <button
                     type="button"
                     onClick={dismiss}
-                    className="absolute right-3 top-3 rounded-md p-1 text-white/30 transition-colors hover:text-white/70"
+                    className="absolute right-3 top-3 rounded-md p-1 text-terminal-dim transition-colors hover:text-white/70"
                     aria-label="Dismiss"
                 >
                     <X size={16} />
                 </button>
-                <p className="mb-3 pr-6 text-[10px] font-black uppercase tracking-[0.18em] text-blue-400/80">
+                <p className="mb-3 pr-6 text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                     Before you go — Weekly Regime Digest
                 </p>
                 <SubscribeCard source={`engagement-prompt-${trigger}`} className="max-w-none border-0 bg-transparent p-0" />

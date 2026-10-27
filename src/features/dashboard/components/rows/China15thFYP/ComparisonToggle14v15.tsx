@@ -31,17 +31,17 @@ export const ComparisonToggle14v15: React.FC = () => {
         <div className="space-y-6">
             <div className="flex items-center gap-3">
                 <History className="text-red-500" size={18} />
-                <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Strategic Policy Shifts: 14th vs 15th Plan</h3>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Strategic Policy Shifts: 14th vs 15th Plan</h3>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                 {SHIFTS.map((shift, idx) => {
                     const Icon = shift.icon;
                     return (
-                        <Card key={idx} className="bg-white/[0.02] border-white/5 relative overflow-hidden h-full">
+                        <Card key={idx} className="bg-white/[0.02] border-border relative overflow-hidden h-full">
                             <CardContent className="p-6">
                                 <div className="flex justify-between items-start mb-4">
-                                    <div className="text-xs font-black text-red-400 uppercase tracking-uppercase">{shift.pillar}</div>
+                                    <div className="text-xs font-semibold text-red-400 uppercase tracking-wider">{shift.pillar}</div>
                                     <div className="p-1.5 rounded-lg bg-red-500/10 text-red-500">
                                         <Icon size={14} />
                                     </div>
@@ -49,10 +49,10 @@ export const ComparisonToggle14v15: React.FC = () => {
                                 
                                 <div className="space-y-4">
                                     <div className="flex items-center gap-2 opacity-40">
-                                        <div className="text-xs font-bold text-muted-foreground uppercase">14th FYP</div>
+                                        <div className="text-xs font-semibold text-muted-foreground uppercase">14th FYP</div>
                                         <div className="flex-1 h-[1px] bg-white/5" />
                                     </div>
-                                    <div className="text-sm font-bold text-muted-foreground/60">{shift.from}</div>
+                                    <div className="text-sm font-bold text-muted-foreground">{shift.from}</div>
                                     
                                     <div className="flex justify-center py-2">
                                         <div className="p-1.5 rounded-full bg-red-500/10">
@@ -61,10 +61,10 @@ export const ComparisonToggle14v15: React.FC = () => {
                                     </div>
 
                                     <div className="flex items-center gap-2">
-                                        <div className="text-xs font-black text-red-400 uppercase">15th FYP</div>
+                                        <div className="text-xs font-semibold text-red-400 uppercase">15th FYP</div>
                                         <div className="flex-1 h-[1px] bg-red-500/20" />
                                     </div>
-                                    <div className="text-lg font-black text-white leading-tight">{shift.to}</div>
+                                    <div className="text-lg font-bold text-white leading-tight">{shift.to}</div>
                                 </div>
 
                                 <p className="mt-6 text-xs text-muted-foreground leading-relaxed">

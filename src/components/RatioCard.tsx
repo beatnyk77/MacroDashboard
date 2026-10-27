@@ -31,7 +31,7 @@ interface RatioCardProps {
 const getZScoreColorClass = (z: number) => {
     if (z > 2) return 'text-rose-500 bg-rose-500/15 border-rose-500/25';
     if (z < -2) return 'text-emerald-500 bg-emerald-500/15 border-emerald-500/25';
-    return 'text-muted-foreground bg-muted/20 border-border/50';
+    return 'text-muted-foreground bg-muted/20 border-border';
 };
 
 export const RatioCard: React.FC<RatioCardProps> = ({
@@ -83,7 +83,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             id={metricId || primaryLabel}
             className={cn(
                 "relative flex flex-col p-5 h-[250px] overflow-hidden",
-                "backdrop-blur-md border-white/12 dark:border-white/5",
+                "backdrop-blur-md border-white/5",
                 "hover:shadow-xl hover:-translate-y-0.5 hover:border-primary/50",
                 isHighlighted && "ring-2 ring-primary ring-offset-2 ring-offset-background animate-pulse",
                 "group"
@@ -98,14 +98,14 @@ export const RatioCard: React.FC<RatioCardProps> = ({
             <div className="mb-3">
                 <div className="flex justify-between items-start mb-2">
                     <div className="flex items-center gap-2">
-                        <span className="text-xs font-bold text-muted-foreground tracking-uppercase">
+                        <span className="text-xs font-bold text-muted-foreground tracking-wider">
                             {primaryLabel}
                         </span>
                     </div>
 
                     {!isLoading && typeof zScore === 'number' && !isNaN(zScore) && (
                         <div className={cn(
-                            "px-2 py-0.5 rounded text-xs font-black border",
+                            "px-2 py-0.5 rounded text-xs font-bold border",
                             getZScoreColorClass(zScore),
                             Math.abs(zScore) > 2 && "animate-pulse"
                         )}>
@@ -113,7 +113,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                         </div>
                     )}
                 </div>
-                <span className="block text-xs font-medium text-muted-foreground/70">
+                <span className="block text-xs font-medium text-muted-foreground">
                     {subtitle}
                 </span>
             </div>
@@ -122,12 +122,12 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 {isLoading ? (
                     <Skeleton className="h-10 w-[60%]" />
                 ) : isNullValue ? (
-                    <h4 className="text-3xl font-bold text-muted-foreground/50">
+                    <h4 className="text-3xl font-bold text-terminal-dim">
                         No data
                     </h4>
                 ) : (
                     <>
-                        <h3 className="text-4xl font-extrabold text-foreground tracking-heading">
+                        <h3 className="text-4xl font-bold text-foreground tracking-heading">
                             {formattedValue}
                         </h3>
                         {typeof zScore === 'number' && !isNaN(zScore) && Math.abs(zScore) > 2 && (
@@ -144,15 +144,15 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                 {typeof percentile === 'number' && !isNaN(percentile) && !isLoading && (
                     <div className="space-y-1">
                         <div className="flex justify-between">
-                            <span className="text-xs font-extrabold text-muted-foreground tracking-uppercase uppercase">VALUATION PERCENTILE</span>
+                            <span className="text-xs font-semibold text-muted-foreground tracking-wider uppercase">VALUATION PERCENTILE</span>
                             <span className={cn(
-                                "text-xs font-black",
+                                "text-xs font-bold",
                                 percentile > 90 || percentile < 10 ? "text-amber-500" : "text-primary"
                             )}>
                                 {formatPercentage(percentile, { decimals: 0 })}
                             </span>
                         </div>
-                        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-white/5">
+                        <div className="w-full bg-white/5 rounded-full h-1.5 overflow-hidden border border-border">
                             <div
                                 className={cn(
                                     "h-full rounded-full transition-all duration-500",
@@ -175,7 +175,7 @@ export const RatioCard: React.FC<RatioCardProps> = ({
                     {timeLabel && (
                         <span className={cn(
                             "block mt-1 text-xs font-bold",
-                            stalenessState === 'stale' || stalenessState === 'overdue' ? "text-rose-500" : "text-muted-foreground/50"
+                            stalenessState === 'stale' || stalenessState === 'overdue' ? "text-rose-500" : "text-terminal-dim"
                         )}>
                             Updated {timeLabel}
                         </span>

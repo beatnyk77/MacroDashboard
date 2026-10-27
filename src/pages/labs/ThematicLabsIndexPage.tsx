@@ -10,6 +10,7 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { TrailLink } from '@/components/TrailLink';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 interface LabItem {
     id: string;
@@ -257,7 +258,7 @@ const labsList: LabItem[] = [
 
 export const ThematicLabsIndexPage: React.FC = () => {
     return (
-        <div className="w-full max-w-[1400px] mx-auto space-y-12 pb-24 px-4 sm:px-6">
+        <div className="page-shell space-y-12">
             <SEOManager
                 title="Thematic Macro Labs"
                 description="GraphiQuestor analytical laboratories tracking structural macroeconomic shifts: US net liquidity plumbline, sovereign stress thresholds, de-dollarization"
@@ -282,43 +283,36 @@ export const ThematicLabsIndexPage: React.FC = () => {
                 }}
             />
 
-            {/* Header section with Outfit-style typography */}
-            <div className="space-y-4 text-center mt-12">
-                <div className="inline-flex items-center justify-center p-3 rounded-2xl bg-blue-500/10 mb-2 border border-blue-500/20">
-                    <Library className="w-8 h-8 text-blue-400 animate-pulse" />
-                </div>
-                <h1 className="text-4xl md:text-5xl font-black text-white italic tracking-heading uppercase">
-                    Thematic Macro Labs
-                </h1>
-                <p className="text-xs sm:text-sm font-bold text-blue-400/80 uppercase tracking-[0.25em] max-w-2xl mx-auto">
-                    Structural Telemetry • Regime Detection • Multipolar Research Hubs
-                </p>
-                <p className="text-sm text-white/50 max-w-2xl mx-auto mt-4 font-medium leading-relaxed">
-                    Surveillance modules cataloging the fracturing of the post-1971 fiat monetary regime. We monitor real-time flows, liquidity corridors, and sovereign stress markers — bypassing retail narratives.
-                </p>
-            </div>
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }]}
+                current="Thematic Labs"
+                badge="Structural Telemetry • Regime Detection • Multipolar Research Hubs"
+                badgeIcon={<Library className="w-3 h-3" />}
+                title="Thematic Macro Labs"
+                thesis="Surveillance modules cataloging the fracturing of the post-1971 fiat monetary regime. We monitor real-time flows, liquidity corridors, and sovereign stress markers — bypassing retail narratives."
+            />
 
-            <div className="border-t border-white/5 pt-8">
+            <div className="border-t border-border pt-8">
                 {/* Labs Card Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {labsList.map((lab) => (
                         <Card 
                             key={lab.id} 
-                            className={`relative overflow-hidden bg-slate-950/40 backdrop-blur-md border border-white/5 transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 bg-gradient-to-br ${lab.color}`}
+                            className={`relative overflow-hidden bg-card/40 backdrop-blur-md border border-border transition-all duration-300 hover:shadow-2xl hover:-translate-y-1 bg-gradient-to-br ${lab.color}`}
                         >
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/[0.01] rounded-full blur-2xl pointer-events-none" />
                             
                             <CardHeader className="pb-4">
                                 <div className="flex items-center justify-between gap-3 mb-2">
-                                    <div className="p-3 rounded-xl bg-white/5 border border-white/5 shrink-0">
+                                    <div className="p-3 rounded-xl bg-white/5 border border-border shrink-0">
                                         {lab.icon}
                                     </div>
-                                    <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/5 border border-white/10 text-white/60">
+                                    <span className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-white/5 border border-border text-white/60">
                                         <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                                         {lab.status}
                                     </span>
                                 </div>
-                                <CardTitle as="h2" className="text-lg font-black text-white uppercase tracking-tight leading-snug">
+                                <CardTitle as="h2" className="text-lg font-semibold text-white uppercase tracking-tight leading-snug">
                                     {lab.name}
                                 </CardTitle>
                             </CardHeader>
@@ -329,23 +323,23 @@ export const ThematicLabsIndexPage: React.FC = () => {
                                 </p>
                                 
                                 <div className="border-t border-white/[0.05] pt-3">
-                                    <span className="block text-[9px] font-black uppercase tracking-wider text-blue-400/80 mb-1">
+                                    <span className="block text-[11px] font-semibold uppercase tracking-wider text-blue-400/80 mb-1">
                                         Methodology Core
                                     </span>
-                                    <p className="text-[10px] font-medium text-white/35 leading-relaxed">
+                                    <p className="text-[11px] font-medium text-terminal-dim leading-relaxed">
                                         {lab.methodology}
                                     </p>
                                 </div>
 
                                 <div className="space-y-1">
-                                    <span className="block text-[9px] font-black uppercase tracking-wider text-blue-400/80">
+                                    <span className="block text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                                         Surveillance Telemetry
                                     </span>
                                     <div className="flex flex-wrap gap-1 mt-1.5">
                                         {lab.primaryIndicators.map(ind => (
                                             <span 
                                                 key={ind} 
-                                                className="text-[9px] font-bold px-2 py-0.5 rounded bg-white/[0.03] text-white/50 border border-white/[0.04]"
+                                                className="text-[11px] font-bold px-2 py-0.5 rounded bg-white/[0.03] text-white/50 border border-white/[0.04]"
                                             >
                                                 {ind}
                                             </span>
@@ -354,10 +348,10 @@ export const ThematicLabsIndexPage: React.FC = () => {
                                 </div>
 
                                 <div className="flex items-center justify-between border-t border-white/[0.05] pt-4 mt-2">
-                                    <span className="text-[9px] font-black text-white/20 uppercase tracking-widest">
+                                    <span className="text-[11px] font-semibold text-white/20 uppercase tracking-wider">
                                         Source: {lab.dataSource}
                                     </span>
-                                    <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-black text-[10px] uppercase tracking-wider px-3 h-8">
+                                    <Button asChild size="sm" className="bg-blue-600 hover:bg-blue-700 text-white font-semibold text-[11px] uppercase tracking-wider px-3 h-8">
                                         <TrailLink to={lab.path}>
                                             Enter Lab →
                                         </TrailLink>

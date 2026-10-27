@@ -8,10 +8,10 @@ export const OilStressSignal: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-border">
                 <div className="flex items-center gap-3">
                     <Activity className="w-5 h-5 text-muted-foreground animate-spin" />
-                    <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Scanning Oil Market...</span>
+                    <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Scanning Oil Market...</span>
                 </div>
             </div>
         );
@@ -19,16 +19,16 @@ export const OilStressSignal: React.FC = () => {
 
     if (error || !spreadData) {
         return (
-            <div className="flex items-center justify-between p-4 rounded-2xl bg-card border border-border opacity-60">
+            <div className="flex items-center justify-between p-4 rounded-xl bg-card border border-border opacity-60">
                 <div className="flex items-center gap-3">
-                    <Droplet className="w-5 h-5 text-muted-foreground/40" />
+                    <Droplet className="w-5 h-5 text-terminal-dim" />
                     <div className="space-y-0.5">
-                        <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">WTI Spread</span>
-                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest">Awaiting data sync...</p>
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">WTI Spread</span>
+                        <p className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Awaiting data sync...</p>
                     </div>
                 </div>
                 <div className="text-right">
-                    <span className="text-sm font-black text-muted-foreground font-mono tracking-tighter">--.--</span>
+                    <span className="text-sm font-bold text-muted-foreground font-mono tracking-tighter">--.--</span>
                 </div>
             </div>
         );
@@ -59,7 +59,7 @@ export const OilStressSignal: React.FC = () => {
     const Icon = isTightening ? Flame : Droplet;
 
     return (
-        <div className="group relative overflow-hidden rounded-2xl bg-card border border-border hover:bg-muted/40 transition-all duration-300 cursor-pointer">
+        <div className="group relative overflow-hidden rounded-xl bg-card border border-border hover:bg-muted/40 transition-all duration-300 cursor-pointer">
             <div className="p-4 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <div className={cn("p-2.5 rounded-xl border transition-transform group-hover:scale-110", getRegimeColor(regime))}>
@@ -67,27 +67,27 @@ export const OilStressSignal: React.FC = () => {
                     </div>
                     <div className="space-y-0.5">
                         <div className="flex items-center gap-2">
-                            <span className="text-sm font-black text-foreground uppercase tracking-heading italic">WTI Spread</span>
-                            <span className={cn("text-[10px] px-2 py-0.5 rounded-md font-black uppercase tracking-wider border", getRegimeColor(regime))}>
+                            <span className="text-sm font-semibold text-foreground uppercase tracking-heading italic">WTI Spread</span>
+                            <span className={cn("text-[11px] px-2 py-0.5 rounded-md font-semibold uppercase tracking-wider border", getRegimeColor(regime))}>
                                 {regime}
                             </span>
                         </div>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{getActionableInsight()}</p>
+                        <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">{getActionableInsight()}</p>
                     </div>
                 </div>
 
                 <div className="text-right space-y-0.5">
                     <div className="flex items-center justify-end gap-2">
-                        <span className="text-xl font-black text-foreground font-mono tracking-tighter">{spread > 0 ? '+' : ''}{spread.toFixed(2)}</span>
+                        <span className="text-xl font-bold text-foreground font-mono tracking-tighter">{spread > 0 ? '+' : ''}{spread.toFixed(2)}</span>
                         <div className={cn(
-                            "flex items-center px-1.5 py-0.5 rounded text-[10px] font-black font-mono",
+                            "flex items-center px-1.5 py-0.5 rounded text-[11px] font-bold font-mono",
                             change_1d > 0 ? "bg-rose-500/10 text-rose-500" : "bg-emerald-500/10 text-emerald-500"
                         )}>
                             {change_1d > 0 ? <ArrowUpRight className="w-3 h-3 mr-0.5" /> : <ArrowDownRight className="w-3 h-3 mr-0.5" />}
                             {Math.abs(change_1d).toFixed(2)}
                         </div>
                     </div>
-                    <div className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest font-mono">
+                    <div className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider font-mono">
                         24H DELTA PULSE
                     </div>
                 </div>

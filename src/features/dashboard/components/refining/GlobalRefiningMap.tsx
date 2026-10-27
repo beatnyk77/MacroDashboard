@@ -4,14 +4,15 @@ import { useGlobalRefiningData, GlobalRefiningFacility } from '@/hooks/useGlobal
 import { Activity, Info, Shield } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m, AnimatePresence } from 'framer-motion';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const geoUrl = 'https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json';
 
 const statusColors = {
-    Expansion: '#3B82F6',
-    Conversion: '#10B981',
-    Closure: '#EF4444',
-    Operating: '#6B7280',
+    Expansion: CHART_COLORS.west,
+    Conversion: CHART_COLORS.expansion,
+    Closure: CHART_COLORS.stress,
+    Operating: CHART_COLORS.tick,
 };
 
 const tankerRoutes = [
@@ -32,32 +33,32 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
     const facilities = data?.facilities || [];
 
     return (
-        <div className={cn("relative w-full h-[650px] bg-black/40 rounded-[2rem] overflow-hidden border border-white/5 backdrop-blur-sm", className)}>
+        <div className={cn("relative w-full h-[650px] bg-background/40 rounded-xl overflow-hidden border border-border backdrop-blur-sm", className)}>
             {/* Header Overlay */}
             <div className="absolute top-8 left-8 z-10 space-y-2 pointer-events-none">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-black uppercase tracking-uppercase">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-500 text-xs font-semibold uppercase tracking-wider">
                     <Activity size={12} /> Capacity Elasticity Grid
                 </div>
-                <h2 className="text-3xl font-black text-white uppercase tracking-heading">Global Refining <span className="text-blue-500">Imbalance Monitor</span></h2>
-                <p className="text-xs text-muted-foreground/60 uppercase font-bold tracking-uppercase max-w-sm">
+                <h2 className="text-3xl font-bold text-white uppercase tracking-heading">Global Refining <span className="text-blue-500">Imbalance Monitor</span></h2>
+                <p className="text-xs text-muted-foreground uppercase font-semibold tracking-wider max-w-sm">
                     Structural shift visualization: West closing infrastructure vs. East/ME mega-complex expansion.
                 </p>
             </div>
 
             {/* Legend Overlay */}
             <div className="absolute bottom-8 right-8 z-10 hidden md:block">
-                <div className="px-5 py-4 rounded-2xl bg-black/80 backdrop-blur-xl border border-white/12 space-y-3 shadow-2xl">
-                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Status Protocol</span>
+                <div className="px-5 py-4 rounded-xl bg-background/80 backdrop-blur-xl border border-border space-y-3 shadow-2xl">
+                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider block mb-1">Status Protocol</span>
                     {Object.entries(statusColors).map(([status, color]) => (
                         <div key={status} className="flex items-center gap-3">
                             <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color, boxShadow: `0 0 8px ${color}80` }} />
-                            <span className="text-xs font-black text-white/70 uppercase tracking-uppercase">{status}</span>
+                            <span className="text-xs font-semibold text-white/70 uppercase tracking-wider">{status}</span>
                         </div>
                     ))}
-                    <div className="pt-2 border-t border-white/5">
+                    <div className="pt-2 border-t border-border">
                         <div className="flex items-center gap-3">
                             <div className="w-4 h-[1px] border-t border-dashed border-white/40" />
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Tanker Routes</span>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Tanker Routes</span>
                         </div>
                     </div>
                 </div>
@@ -78,12 +79,12 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                             <Geography
                                 key={geo.rsmKey}
                                 geography={geo}
-                                fill="rgba(255,255,255,0.02)"
-                                stroke="rgba(255,255,255,0.06)"
+                                fill={WHITE_ALPHA.ghost}
+                                stroke={WHITE_ALPHA.faint}
                                 strokeWidth={0.5}
                                 style={{
                                     default: { outline: 'none' },
-                                    hover: { fill: 'rgba(255,255,255,0.04)', outline: 'none' },
+                                    hover: { fill: WHITE_ALPHA.ghost, outline: 'none' },
                                 }}
                             />
                         ))
@@ -96,7 +97,7 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         key={i}
                         from={route.from as [number, number]}
                         to={route.to as [number, number]}
-                        stroke="rgba(59, 130, 246, 0.2)"
+                        stroke={alpha(CHART_COLORS.west, 0.2)}
                         strokeWidth={1}
                         strokeDasharray="4 4"
                     />
@@ -106,15 +107,15 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                 {chokepoints.map((cp, i) => (
                     <Marker key={i} coordinates={cp.coordinates as [number, number]}>
                         <g>
-                            <circle r={4} fill="#EF4444" className="animate-pulse opacity-40" />
-                            <circle r={1.5} fill="#EF4444" />
+                            <circle r={4} fill={CHART_COLORS.stress} className="animate-pulse opacity-40" />
+                            <circle r={1.5} fill={CHART_COLORS.stress} />
                         </g>
                     </Marker>
                 ))}
 
                 {/* Facility Bubbles */}
                 {facilities.map((fac) => {
-                    const color = statusColors[fac.status] || '#6B7280';
+                    const color = statusColors[fac.status] || CHART_COLORS.tick;
                     const radius = Math.sqrt(fac.capacity_mbpd) * 0.8 + 2;
 
                     return (
@@ -150,40 +151,40 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                         initial={{ x: 400 }}
                         animate={{ x: 0 }}
                         exit={{ x: 400 }}
-                        className="absolute top-6 bottom-6 right-6 w-80 z-20 p-6 rounded-[2rem] bg-black/90 backdrop-blur-3xl border border-white/12 shadow-2xl flex flex-col"
+                        className="absolute top-6 bottom-6 right-6 w-80 z-20 p-6 rounded-xl bg-background/90 backdrop-blur-3xl border border-border shadow-2xl flex flex-col"
                     >
                         <button
                             onClick={() => setSelectedFacility(null)}
-                            className="absolute top-6 right-6 text-muted-foreground/40 hover:text-white transition-colors"
+                            className="absolute top-6 right-6 text-terminal-dim hover:text-white transition-colors"
                         >
                             <Info size={20} />
                         </button>
 
                         <div className="pt-4 mb-8">
-                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-3">
+                            <div className="inline-block px-2 py-0.5 rounded bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-3">
                                 {selectedFacility.status} ASSET
                             </div>
-                            <h3 className="text-xl font-black text-white uppercase tracking-heading leading-tight">{selectedFacility.facility_name}</h3>
-                            <div className="text-xs font-bold text-muted-foreground/60 uppercase tracking-uppercase mt-1 border-l-2 border-white/12 pl-3">
+                            <h3 className="text-xl font-bold text-white uppercase tracking-heading leading-tight">{selectedFacility.facility_name}</h3>
+                            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mt-1 border-l-2 border-border pl-3">
                                 {selectedFacility.country} • {selectedFacility.region} Region
                             </div>
                         </div>
 
                         <div className="space-y-6 flex-1">
                             <div className="grid grid-cols-2 gap-4">
-                                <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Capacity</span>
-                                    <div className="text-xl font-black text-white italic">{selectedFacility.capacity_mbpd}<span className="text-xs ml-1 not-italic opacity-40">MBPD</span></div>
+                                <div className="p-4 rounded-xl bg-white/[0.03] border border-border">
+                                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider block mb-1">Capacity</span>
+                                    <div className="text-xl font-bold text-white italic">{selectedFacility.capacity_mbpd}<span className="text-xs ml-1 not-italic opacity-40">MBPD</span></div>
                                 </div>
-                                <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/5">
-                                    <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase block mb-1">Utilization</span>
-                                    <div className="text-xl font-black text-emerald-400 italic">{selectedFacility.utilization_pct}%</div>
+                                <div className="p-4 rounded-xl bg-white/[0.03] border border-border">
+                                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider block mb-1">Utilization</span>
+                                    <div className="text-xl font-bold text-emerald-400 italic">{selectedFacility.utilization_pct}%</div>
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-gradient-to-br from-white/[0.04] to-transparent border border-white/5">
+                            <div className="p-4 rounded-xl bg-gradient-to-br from-white/[0.04] to-transparent border border-border">
                                 <div className="flex justify-between items-center mb-3">
-                                    <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase underline decoration-blue-500/30 underline-offset-4">
+                                    <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider underline decoration-blue-500/30 underline-offset-4">
                                         Import Dependency
                                     </span>
                                     <Shield size={12} className="text-blue-500/50" />
@@ -195,25 +196,25 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
                                     <m.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${selectedFacility.import_dependency_correlation * 100}%` }}
-                                        className="h-full bg-blue-500 shadow-[0_0_10px_#3B82F6]"
+                                        className="h-full bg-blue-500 shadow-[0_0_10px_theme(colors.blue.500)]"
                                     />
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-3 p-4 rounded-2xl bg-amber-500/5 border border-amber-500/10">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-amber-500/5 border border-amber-500/10">
                                 <Activity size={16} className="text-amber-500" />
-                                <div className="text-xs text-amber-500/80 font-black uppercase tracking-heading">
+                                <div className="text-xs text-amber-500/80 font-semibold uppercase tracking-heading">
                                     Historical Median: {selectedFacility.historical_median_pct}%
                                 </div>
                             </div>
                         </div>
 
-                        <div className="mt-8 pt-6 border-t border-white/12 flex items-center justify-between">
+                        <div className="mt-8 pt-6 border-t border-border flex items-center justify-between">
                             <div className="flex items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                                <span className="text-xs font-bold text-muted-foreground uppercase">Data Verified</span>
+                                <span className="text-xs font-semibold text-muted-foreground uppercase">Data Verified</span>
                             </div>
-                            <span className="text-xs font-mono text-muted-foreground/40">{selectedFacility.as_of_date}</span>
+                            <span className="text-xs font-mono text-terminal-dim">{selectedFacility.as_of_date}</span>
                         </div>
                     </m.div>
                 )}
@@ -222,10 +223,10 @@ export const GlobalRefiningMap: React.FC<{ className?: string }> = ({ className 
             {/* Chokepoint Alerts (Static labels) */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 translate-y-12 pointer-events-none">
                 <div className="flex gap-4">
-                    <div className="px-2 py-1 bg-black/40 border border-white/5 backdrop-blur-md rounded text-xs font-black text-white/40 uppercase tracking-uppercase">
+                    <div className="px-2 py-1 bg-background/40 border border-border backdrop-blur-md rounded text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                         Malacca Transit Open
                     </div>
-                    <div className="px-2 py-1 bg-rose-500/10 border border-rose-500/20 backdrop-blur-md rounded text-xs font-black text-rose-500 uppercase tracking-uppercase animate-pulse">
+                    <div className="px-2 py-1 bg-rose-500/10 border border-rose-500/20 backdrop-blur-md rounded text-xs font-semibold text-rose-500 uppercase tracking-wider animate-pulse">
                         Hormuz Risk Elevated
                     </div>
                 </div>

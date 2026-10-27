@@ -27,11 +27,11 @@ export const RegimeDigestSection: React.FC = () => {
 
     if (isLoading) {
         return (
-            <Card variant="elevated" className="overflow-hidden border-white/5 bg-slate-950/40">
+            <Card variant="elevated" className="overflow-hidden border-border bg-card/40">
                 <CardContent className="h-[220px] flex items-center justify-center">
                     <div className="flex flex-col items-center gap-4">
                         <RefreshCw className="h-6 w-6 text-blue-500 animate-spin" />
-                        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-[0.3em] animate-pulse">Synchronizing Intelligence...</span>
+                        <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider animate-pulse">Synchronizing Intelligence...</span>
                     </div>
                 </CardContent>
             </Card>
@@ -40,15 +40,15 @@ export const RegimeDigestSection: React.FC = () => {
 
     if (!latestDigest) {
         return (
-            <Card variant="elevated" className="overflow-hidden border-white/5 bg-slate-950/60">
+            <Card variant="elevated" className="overflow-hidden border-border bg-card/60">
                 <CardContent className="p-6 md:p-10">
                     <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                         <div className="space-y-3">
                             <div className="flex items-center gap-2">
                                 <Newspaper className="text-blue-500/50 h-4 w-4" />
-                                <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500/50">Monthly Regime Digest</span>
+                                <span className="text-[11px] font-semibold tracking-wider uppercase text-blue-500/50">Monthly Regime Digest</span>
                             </div>
-                            <p className="text-sm font-bold text-muted-foreground/40 uppercase tracking-widest">
+                            <p className="text-sm font-semibold text-terminal-dim uppercase tracking-wider">
                                 No digest generated yet for this period.
                             </p>
                         </div>
@@ -56,7 +56,7 @@ export const RegimeDigestSection: React.FC = () => {
                             <Button
                                 onClick={() => regenerate(undefined)}
                                 disabled={isRegenerating}
-                                className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shrink-0"
+                                className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-[11px] tracking-wider uppercase h-11 px-8 rounded-lg shrink-0"
                             >
                                 {isRegenerating ? (
                                     <RefreshCw className="mr-2 h-3 w-3 animate-spin" />
@@ -84,7 +84,7 @@ export const RegimeDigestSection: React.FC = () => {
         .trim() ?? latestDigest.plain_text.substring(0, 200);
 
     return (
-        <Card variant="elevated" className="overflow-hidden border-blue-500/10 bg-slate-950 group relative">
+        <Card variant="elevated" className="overflow-hidden border-blue-500/10 bg-card group relative">
             <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent pointer-events-none" />
 
             <CardContent className="p-0">
@@ -93,7 +93,7 @@ export const RegimeDigestSection: React.FC = () => {
                         <div className="flex items-center gap-4">
                             <div className="flex items-center gap-2">
                                 <Newspaper className="text-blue-500 h-4 w-4" />
-                                <span className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-500">Monthly Regime Digest</span>
+                                <span className="text-[11px] font-semibold tracking-wider uppercase text-blue-500">Monthly Regime Digest</span>
                             </div>
                             <div className="h-px w-12 bg-white/5" />
                             <FreshnessChip
@@ -104,10 +104,10 @@ export const RegimeDigestSection: React.FC = () => {
                         </div>
 
                         <div>
-                            <h3 className="text-2xl md:text-3xl font-black text-white mb-3 tracking-tighter leading-none group-hover:text-blue-400 transition-colors">
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-3 tracking-tighter leading-none group-hover:text-blue-400 transition-colors">
                                 {latestDigest.subject_line}
                             </h3>
-                            <div className="flex items-center gap-4 text-xs font-bold text-muted-foreground/40 uppercase tracking-widest">
+                            <div className="flex items-center gap-4 text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                                 <div className="flex items-center gap-1.5">
                                     <Calendar size={12} className="text-blue-500/50" />
                                     <span>{dateFormatted} Edition</span>
@@ -123,7 +123,7 @@ export const RegimeDigestSection: React.FC = () => {
                     </div>
 
                     <div className="flex flex-col sm:flex-row md:flex-col gap-3 min-w-[180px]">
-                        <Button asChild className="bg-blue-600 hover:bg-blue-500 text-white font-black text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02]">
+                        <Button asChild className="bg-blue-600 hover:bg-blue-500 text-white font-semibold text-[11px] tracking-wider uppercase h-11 px-8 rounded-lg shadow-lg shadow-blue-500/10 transition-all hover:scale-[1.02]">
                             <Link to={`/regime-digest/${year}/${month}`}>
                                 Read Full Digest <ChevronRight size={14} className="ml-2" />
                             </Link>
@@ -133,7 +133,7 @@ export const RegimeDigestSection: React.FC = () => {
                                 onClick={() => regenerate(undefined)}
                                 disabled={isRegenerating}
                                 variant="outline"
-                                className="border-white/10 hover:bg-white/5 text-white font-bold text-[10px] tracking-widest uppercase h-11 px-8 rounded-lg"
+                                className="border-border hover:bg-white/5 text-white font-semibold text-[11px] tracking-wider uppercase h-11 px-8 rounded-lg"
                             >
                                 {isRegenerating ? (
                                     <RefreshCw className="mr-2 h-3 w-3 animate-spin" />

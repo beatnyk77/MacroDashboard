@@ -6,6 +6,7 @@ import { Sparkline } from '@/components/Sparkline';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { getStaleness } from '@/hooks/useStaleness';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 interface GlossaryMetricPanelProps {
     metricId: string;
@@ -31,8 +32,8 @@ export const GlossaryMetricPanel: React.FC<GlossaryMetricPanelProps> = ({ metric
                 p: 3,
                 mb: 4,
                 borderRadius: 2,
-                border: '1px solid rgba(59,130,246,0.15)',
-                bgcolor: 'rgba(59,130,246,0.03)',
+                border: `1px solid ${alpha(CHART_COLORS.west, 0.15)}`,
+                bgcolor: alpha(CHART_COLORS.west, 0.03),
             }}
         >
             <Box display="flex" alignItems="center" justifyContent="space-between" mb={2}>
@@ -40,7 +41,7 @@ export const GlossaryMetricPanel: React.FC<GlossaryMetricPanelProps> = ({ metric
                     component="h2"
                     variant="subtitle2"
                     sx={{
-                        fontWeight: 800,
+                        fontWeight: 700,
                         textTransform: 'uppercase',
                         letterSpacing: 1.5,
                         display: 'flex',
@@ -64,7 +65,7 @@ export const GlossaryMetricPanel: React.FC<GlossaryMetricPanelProps> = ({ metric
                 <Box>
                     <Typography
                         sx={{
-                            fontFamily: 'JetBrains Mono, monospace',
+                            fontFamily: 'Fira Code, monospace',
                             fontSize: '2rem',
                             fontWeight: 700,
                             color: 'primary.main',
@@ -86,7 +87,7 @@ export const GlossaryMetricPanel: React.FC<GlossaryMetricPanelProps> = ({ metric
                 </Box>
                 {metric.history.length > 1 && (
                     <Suspense fallback={<ChartSkeleton height={48} className="min-w-[120px]" />}>
-                        <Sparkline data={metric.history} color="#3b82f6" height={48} />
+                        <Sparkline data={metric.history} color={CHART_COLORS.west} height={48} />
                     </Suspense>
                 )}
             </Box>

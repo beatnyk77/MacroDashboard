@@ -7,6 +7,7 @@ import { DataProvenanceBadge } from '@/components/DataProvenanceBadge';
 import { GQSignalBadge } from '@/components/GQSignalBadge';
 
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export const NetLiquidityRow: React.FC = () => {
     const { data: liquidity } = useNetLiquidity();
@@ -27,7 +28,7 @@ export const NetLiquidityRow: React.FC = () => {
                     <div className="h-24 w-64">
                         <Sparkline
                             data={liquidity?.history || []}
-                            color={trend === 'up' ? '#3b82f6' : '#ef4444'}
+                            color={trend === 'up' ? CHART_COLORS.west : CHART_COLORS.stress}
                         />
                     </div>
                 </RatioRow>

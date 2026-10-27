@@ -1,6 +1,9 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
-import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const quadrantData = [
     { creditGrowth: 14.2, cdRatio: 76, year: '2007', quadrant: 'Expansion' },
@@ -25,22 +28,24 @@ const quadrantData = [
 ];
 
 const quadrantColors: Record<string, string> = {
-    Expansion: '#22c55e',
-    Recovery: '#3b82f6',
-    Downturn: '#f59e0b',
-    Repair: '#ef4444',
+    Expansion: CHART_COLORS.expansion,
+    Recovery: CHART_COLORS.west,
+    Downturn: CHART_COLORS.gold,
+    Repair: CHART_COLORS.stress,
 };
 
 function ScatterTooltipContent({ active, payload }: { active?: boolean; payload?: { payload: typeof quadrantData[0] }[] }) {
     if (active && payload && payload.length) {
         const d = payload[0].payload;
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(34,197,94,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary">{d.year}</Typography>
-                <Typography variant="body2" fontWeight={700} sx={{ color: quadrantColors[d.quadrant] }}>{d.quadrant}</Typography>
-                <Typography variant="caption" color="text.secondary" display="block">Credit Growth: {d.creditGrowth}% YoY</Typography>
-                <Typography variant="caption" color="text.secondary" display="block">CD Ratio: {d.cdRatio}%</Typography>
-            </Box>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{d.year}</TerminalTooltipLabel>
+                <div className="mb-1 text-xs font-semibold" style={{ color: quadrantColors[d.quadrant] }}>{d.quadrant}</div>
+                <div className="space-y-1">
+                    <TerminalTooltipRow label="Credit Growth">{d.creditGrowth}% YoY</TerminalTooltipRow>
+                    <TerminalTooltipRow label="CD Ratio">{d.cdRatio}%</TerminalTooltipRow>
+                </div>
+            </TerminalTooltipShell>
         );
     }
     return null;
@@ -48,25 +53,25 @@ function ScatterTooltipContent({ active, payload }: { active?: boolean; payload?
 
 export const IndiaCreditCycleChart: React.FC = () => (
     <>
-        <ResponsiveContainer width="100%" height={280}>
+        <MacroChartContainer height={CHART_HEIGHTS.standard}>
             <ScatterChart margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                <XAxis dataKey="creditGrowth" name="Credit Growth YoY %" type="number" domain={[0, 26]} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
-                <YAxis dataKey="cdRatio" name="CD Ratio" type="number" domain={[62, 84]} tick={{ fontSize: 11, fill: '#64748b' }} unit="%" />
+                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+                <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="creditGrowth" name="Credit Growth YoY %" type="number" domain={[0, 26]} unit="%" />
+                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} dataKey="cdRatio" name="CD Ratio" type="number" domain={[62, 84]} unit="%" />
                 <Tooltip content={<ScatterTooltipContent />} />
-                <ReferenceLine x={12} stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" />
-                <ReferenceLine y={74} stroke="rgba(255,255,255,0.2)" strokeDasharray="4 4" />
+                <ReferenceLine x={12} stroke={WHITE_ALPHA.soft} strokeDasharray="4 4" />
+                <ReferenceLine y={74} stroke={WHITE_ALPHA.soft} strokeDasharray="4 4" />
                 <Scatter
                     data={quadrantData}
-                    fill="#6366f1"
+                    fill={CHART_COLORS.indigo}
                     shape={(props: { cx?: number; cy?: number; payload?: typeof quadrantData[0] }) => {
                         const { cx = 0, cy = 0, payload } = props;
-                        const color = payload ? quadrantColors[payload.quadrant] : '#6366f1';
+                        const color = payload ? quadrantColors[payload.quadrant] : CHART_COLORS.indigo;
                         return <circle cx={cx} cy={cy} r={5} fill={color} fillOpacity={0.8} />;
                     }}
                 />
             </ScatterChart>
-        </ResponsiveContainer>
+        </MacroChartContainer>
         <Box display="flex" gap={3} mt={2} flexWrap="wrap">
             {Object.entries(quadrantColors).map(([name, color]) => (
                 <Box key={name} display="flex" alignItems="center" gap={1}>

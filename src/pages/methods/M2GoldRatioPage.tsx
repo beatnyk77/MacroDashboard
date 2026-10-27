@@ -15,6 +15,7 @@ import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
 import { M2GoldRatioExplorer } from '@/components/engagement/M2GoldRatioExplorer';
 import { PremiumActionBar } from '@/components/engagement/PremiumActionBar';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const M2GoldRatioChart = lazy(() => import('./M2GoldRatioChart').then(m => ({ default: m.M2GoldRatioChart })));
 
@@ -25,7 +26,7 @@ const episodes = [
         ratio: '95 → 72 (−24%)',
         goldMove: '+660% ($250 → $1,900)',
         detail: 'Post dot-com bust, the Fed cut rates aggressively. Global M2 grew, but gold rerated far faster, compressing the ratio from its peak. Every 10-point ratio decline corresponded to gold outperforming the monetary base expansion.',
-        color: '#22c55e',
+        color: CHART_COLORS.expansion,
     },
     {
         period: '2011 – 2015',
@@ -33,7 +34,7 @@ const episodes = [
         ratio: '72 → 102 (+42%)',
         goldMove: '−44% ($1,900 → $1,050)',
         detail: 'Dollar strengthening and Fed tapering drove gold lower while global M2 continued growing. Ratio reverted to its long-run mean, clearing the way for the next bull cycle.',
-        color: '#ef4444',
+        color: CHART_COLORS.stress,
     },
     {
         period: '2020',
@@ -41,7 +42,7 @@ const episodes = [
         ratio: '112 → 148 (+32% in 18 months)',
         goldMove: '+25% (insufficient to absorb M2 surge)',
         detail: 'Central banks injected ~$25 trillion into global M2 in under two years. Gold rose 25%, but the monetary expansion was 5–6× larger in absolute terms. The ratio hit its highest level in 30+ years — setting up the subsequent structural gold re-rating.',
-        color: '#f59e0b',
+        color: CHART_COLORS.gold,
     },
     {
         period: '2022 – 2023',
@@ -49,7 +50,7 @@ const episodes = [
         ratio: '148 → 124 (−16%)',
         goldMove: '−4% (held relatively firm)',
         detail: 'Aggressive Fed rate hikes and quantitative tightening reduced US M2 by ~$900B. Gold fell less than expected, suggesting structural demand from central bank gold buying was absorbing selling pressure.',
-        color: '#3b82f6',
+        color: CHART_COLORS.west,
     },
     {
         period: '2024 – 2026',
@@ -57,16 +58,16 @@ const episodes = [
         ratio: '124 → ~108 (compressing)',
         goldMove: '+50%+ ($2,000 → $3,000+)',
         detail: 'Gold\'s breakout to $3,000+ has begun compressing the ratio back toward long-run fair value. Fiscal deficits are re-expanding M2, but gold is outpacing — exactly the mean-reversion episode the 2020 spike historically preceded.',
-        color: '#a78bfa',
+        color: CHART_COLORS.violet,
     },
 ];
 
 const interpretationRows = [
-    { signal: 'Ratio rising >10% YoY', regime: 'Debasement Accelerating', implication: 'Gold undervalued vs monetary growth; structural long gold thesis building', color: '#f59e0b' },
-    { signal: 'Ratio at cycle high (>2σ)', regime: 'Extreme Overextension', implication: 'Historical mean-reversion precursor; strongest conviction long gold signal', color: '#ef4444' },
-    { signal: 'Ratio falling >10% YoY', regime: 'Gold Re-rating Phase', implication: 'Gold outperforming M2; confirm with momentum — trend may extend', color: '#22c55e' },
-    { signal: 'Ratio at cycle low (<−1σ)', regime: 'Gold Overvalued vs M2', implication: 'Caution — potential consolidation; reduce tactical exposure', color: '#64748b' },
-    { signal: 'Ratio flat, M2 contracting', regime: 'QT / Deflationary Risk', implication: 'Gold may underperform; monitor for demand signals from central banks', color: '#3b82f6' },
+    { signal: 'Ratio rising >10% YoY', regime: 'Debasement Accelerating', implication: 'Gold undervalued vs monetary growth; structural long gold thesis building', color: CHART_COLORS.gold },
+    { signal: 'Ratio at cycle high (>2σ)', regime: 'Extreme Overextension', implication: 'Historical mean-reversion precursor; strongest conviction long gold signal', color: CHART_COLORS.stress },
+    { signal: 'Ratio falling >10% YoY', regime: 'Gold Re-rating Phase', implication: 'Gold outperforming M2; confirm with momentum — trend may extend', color: CHART_COLORS.expansion },
+    { signal: 'Ratio at cycle low (<−1σ)', regime: 'Gold Overvalued vs M2', implication: 'Caution — potential consolidation; reduce tactical exposure', color: CHART_COLORS.tick },
+    { signal: 'Ratio flat, M2 contracting', regime: 'QT / Deflationary Risk', implication: 'Gold may underperform; monitor for demand signals from central banks', color: CHART_COLORS.west },
 ];
 
 const faqItems = [
@@ -159,10 +160,10 @@ export const M2GoldRatioPage: React.FC = () => {
                 <Box mb={8}>
                     <Chip label="Methods Article · Hard Assets"
                         variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#f59e0b', color: '#f59e0b' }}
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.gold, color: CHART_COLORS.gold }}
                     />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             M2/Gold Ratio
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -181,8 +182,8 @@ export const M2GoldRatioPage: React.FC = () => {
                 </Box>
 
                 {/* TL;DR */}
-                <Paper elevation={0} sx={{ p: 4, mb: 6, bgcolor: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
-                    <Typography variant="overline" sx={{ color: '#f59e0b', fontWeight: 800, letterSpacing: 2 }}>TL;DR</Typography>
+                <Paper elevation={0} sx={{ p: 4, mb: 6, bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px solid ${alpha(CHART_COLORS.gold, 0.2)}`, borderRadius: 3 }}>
+                    <Typography variant="overline" sx={{ color: CHART_COLORS.gold, fontWeight: 700, letterSpacing: '0.1em' }}>TL;DR</Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8, mt: 1 }}>
                         The M2/Gold Ratio compares global money supply to gold's market cap. The higher the ratio, the more "debased" fiat currencies are relative to the hard asset. The 2020 COVID stimulus pushed the ratio to its highest level in 30 years — a reading that has historically been followed by multi-year gold bull markets as the ratio mean-reverts. As of 2025–2026, gold's breakout above $3,000 is actively compressing the ratio back toward long-run fair value.
                     </Typography>
@@ -190,12 +191,12 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Definition */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
                         <BookOpen size={20} className="text-amber-400" />
                         Definition &amp; Intuition
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        The M2/Gold Ratio is a macro valuation metric that asks a fundamental question: <strong style={{ color: '#fcd34d' }}>how much fiat currency has been created relative to the finite stock of hard money that exists in the world?</strong> M2 represents the broadest commonly reported measure of money supply — cash, deposits, and near-money instruments. Gold represents the oldest, most universally recognised store of value with a supply that can only grow ~1.5% per year through mining.
+                        The M2/Gold Ratio is a macro valuation metric that asks a fundamental question: <strong style={{ color: CHART_COLORS.goldSoft }}>how much fiat currency has been created relative to the finite stock of hard money that exists in the world?</strong> M2 represents the broadest commonly reported measure of money supply — cash, deposits, and near-money instruments. Gold represents the oldest, most universally recognised store of value with a supply that can only grow ~1.5% per year through mining.
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
                         When central banks expand M2 through quantitative easing, credit creation, or fiscal monetisation, they increase the numerator. When gold prices rise — reflecting increased demand for monetary insurance — the denominator rises. The ratio captures the <em>relative velocity</em> of each: a rising ratio means fiat is being created faster than gold is being repriced to reflect it, implying gold is structurally undervalued relative to the monetary base.
@@ -207,13 +208,13 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         M2 to Gold Ratio FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.gold, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>
@@ -225,17 +226,17 @@ export const M2GoldRatioPage: React.FC = () => {
                 </Paper>
 
                 {/* Formula */}
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#f59e0b' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.gold, 0.2)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.gold }} />
                         Formula &amp; Data Components
                     </Typography>
-                    <Box sx={{ p: 3, mb: 4, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.9rem', color: '#fcd34d', lineHeight: 2.2, border: '1px solid rgba(245,158,11,0.15)', overflowX: 'auto' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Numerator: Global M2{'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 4, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.9rem', color: CHART_COLORS.goldSoft, lineHeight: 2.2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.15)}`, overflowX: 'auto' }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Numerator: Global M2{'\n'}</Box>
                         Global M2 = US M2 + Eurozone M2 + China M2 + Japan M2 + UK M2 + RoW M2{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Denominator: Above-Ground Gold Market Cap{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Denominator: Above-Ground Gold Market Cap{'\n'}</Box>
                         Gold Mkt Cap = 212,582 tonnes × 32,150.7 oz/tonne × XAU/USD spot{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># The Ratio{'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># The Ratio{'\n'}</Box>
                         M2/Gold = Global M2 (USD) / Gold Market Cap (USD)
                     </Box>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2}>
@@ -247,8 +248,8 @@ export const M2GoldRatioPage: React.FC = () => {
                             { label: 'XAU/USD Spot', desc: 'LBMA PM Gold Fix — daily benchmark used by central banks and institutional market makers.' },
                             { label: 'Update Frequency', desc: 'Monthly (constrained by M2 publication lag from ECB and PBoC). US M2 updates weekly.' },
                         ].map(d => (
-                            <Box key={d.label} sx={{ p: 3, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
-                                <Typography variant="caption" sx={{ fontFamily: 'monospace', color: '#fcd34d', fontWeight: 700 }}>{d.label}</Typography>
+                            <Box key={d.label} sx={{ p: 3, bgcolor: 'background.paper', borderRadius: 2, border: '1px solid', borderColor: 'divider' }}>
+                                <Typography variant="caption" sx={{ fontFamily: CHART_FONT_FAMILY, color: CHART_COLORS.goldSoft, fontWeight: 700 }}>{d.label}</Typography>
                                 <Typography variant="body2" color="text.secondary" mt={1}>{d.desc}</Typography>
                             </Box>
                         ))}
@@ -257,8 +258,8 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Chart */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Activity size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Activity size={20} style={{ color: CHART_COLORS.gold }} />
                         M2/Gold Ratio — Historical Index (2000–2026, Illustrative)
                     </Typography>
                     <Typography variant="caption" color="text.disabled" display="block" mb={3}>
@@ -271,8 +272,8 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Interpretation Framework */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <TrendingUp size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <TrendingUp size={20} style={{ color: CHART_COLORS.gold }} />
                         Interpretation Framework
                     </Typography>
                     <Typography variant="body2" color="text.secondary" sx={{ mb: 4, lineHeight: 1.75 }}>
@@ -280,9 +281,9 @@ export const M2GoldRatioPage: React.FC = () => {
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                         {interpretationRows.map((row) => (
-                            <Box key={row.signal} sx={{ p: 3, borderRadius: 2, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid', borderColor: 'divider', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr 2fr' }, gap: 2, alignItems: 'start' }}>
+                            <Box key={row.signal} sx={{ p: 3, borderRadius: 2, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', display: 'grid', gridTemplateColumns: { xs: '1fr', md: '1.2fr 1fr 2fr' }, gap: 2, alignItems: 'start' }}>
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: row.color, fontWeight: 700, fontFamily: 'monospace' }}>{row.signal}</Typography>
+                                    <Typography variant="caption" sx={{ color: row.color, fontWeight: 700, fontFamily: CHART_FONT_FAMILY }}>{row.signal}</Typography>
                                 </Box>
                                 <Typography variant="caption" sx={{ color: row.color, fontWeight: 600 }}>{row.regime}</Typography>
                                 <Typography variant="caption" color="text.secondary">{row.implication}</Typography>
@@ -293,8 +294,8 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Historical Episodes */}
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Database size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Database size={20} style={{ color: CHART_COLORS.gold }} />
                         Five Key Historical Episodes
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
@@ -302,12 +303,12 @@ export const M2GoldRatioPage: React.FC = () => {
                             <Box key={ep.period} sx={{ p: 4, borderRadius: 2, border: `1px solid ${ep.color}22`, bgcolor: `${ep.color}08` }}>
                                 <Box display="flex" justifyContent="space-between" alignItems="flex-start" flexWrap="wrap" gap={1} mb={1.5}>
                                     <Box>
-                                        <Typography variant="caption" sx={{ color: ep.color, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>{ep.period}</Typography>
-                                        <Typography component="h2" variant="h6" fontWeight={800} sx={{ color: 'text.primary' }}>{ep.title}</Typography>
+                                        <Typography variant="caption" sx={{ color: ep.color, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>{ep.period}</Typography>
+                                        <Typography component="h2" variant="h6" fontWeight={700} sx={{ color: 'text.primary' }}>{ep.title}</Typography>
                                     </Box>
                                     <Box display="flex" gap={1} flexWrap="wrap">
                                         <Chip size="small" label={`Ratio: ${ep.ratio}`} sx={{ bgcolor: `${ep.color}18`, color: ep.color, fontWeight: 700, fontSize: '0.7rem' }} />
-                                        <Chip size="small" label={`Gold: ${ep.goldMove}`} sx={{ bgcolor: 'rgba(255,255,255,0.05)', color: 'text.secondary', fontSize: '0.7rem' }} />
+                                        <Chip size="small" label={`Gold: ${ep.goldMove}`} sx={{ bgcolor: 'action.hover', color: 'text.secondary', fontSize: '0.7rem' }} />
                                     </Box>
                                 </Box>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>{ep.detail}</Typography>
@@ -318,8 +319,8 @@ export const M2GoldRatioPage: React.FC = () => {
 
                 {/* Institutional Use Cases */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Lightbulb size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Lightbulb size={20} style={{ color: CHART_COLORS.gold }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3} mt={2}>
@@ -341,8 +342,8 @@ export const M2GoldRatioPage: React.FC = () => {
                                 use: 'Non-momentum confirmation signal for gold futures positioning. Reduces false reversal signals from technical-only approaches by anchoring to a fundamental debasement thesis. Most effective as a filter on momentum systems.',
                             },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b', mb: 1.5 }}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.gold, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.gold, mb: 1.5 }}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.75 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -350,8 +351,8 @@ export const M2GoldRatioPage: React.FC = () => {
                 </Paper>
 
                 {/* Limitations */}
-                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'rgba(239,68,68,0.04)', border: '1px solid rgba(239,68,68,0.15)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h6" fontWeight={800} gutterBottom sx={{ color: '#ef4444' }}>
+                <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: alpha(CHART_COLORS.stress, 0.04), border: `1px solid ${alpha(CHART_COLORS.stress, 0.15)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h6" fontWeight={700} gutterBottom sx={{ color: CHART_COLORS.stress }}>
                         Known Limitations
                     </Typography>
                     <Box component="ul" sx={{ m: 0, pl: 2, color: 'text.secondary' }}>

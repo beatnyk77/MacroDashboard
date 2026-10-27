@@ -1,10 +1,12 @@
 import React from 'react';
 import { Box, Paper, Typography, Grid, Stack, Divider, LinearProgress } from '@mui/material';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, ResponsiveContainer, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Legend } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { SectionHeader } from '@/components/SectionHeader';
 import { useDeDollarization, useDeDollarizationHistory } from '@/hooks/useDeDollarization';
 import { useBricsTracker } from '@/hooks/useBricsTracker';
 import { TrendingDown, TrendingUp, Shield } from 'lucide-react';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const TradeSettlementFlows = React.memo(() => {
     const { data: deDollar } = useDeDollarization();
@@ -39,7 +41,7 @@ export const TradeSettlementFlows = React.memo(() => {
             value: deDollar.usdShare?.value ?? 0,
             delta: deDollar.usdShare?.delta_yoy ?? 0,
             unit: '%',
-            color: '#3b82f6',
+            color: CHART_COLORS.west,
             trend: (deDollar.usdShare?.delta_yoy ?? 0) > 0 ? 'up' : 'down'
         },
         {
@@ -47,7 +49,7 @@ export const TradeSettlementFlows = React.memo(() => {
             value: deDollar.goldShare?.value ?? 0,
             delta: deDollar.goldShare?.delta_yoy ?? 0,
             unit: '%',
-            color: '#fbbf24',
+            color: CHART_COLORS.goldSoft,
             trend: (deDollar.goldShare?.delta_yoy ?? 0) > 0 ? 'up' : 'down'
         },
         {
@@ -55,7 +57,7 @@ export const TradeSettlementFlows = React.memo(() => {
             value: brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.value ?? 0,
             delta: brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.delta_qoq ?? 0,
             unit: '%',
-            color: '#f59e0b',
+            color: CHART_COLORS.gold,
             trend: (brics.metrics.find(m => m.metric_id === 'BRICS_USD_RESERVE_SHARE_PCT')?.delta_qoq ?? 0) > 0 ? 'up' : 'down'
         }
     ];
@@ -79,39 +81,41 @@ export const TradeSettlementFlows = React.memo(() => {
                         borderRadius: 2,
                         height: 400
                     }}>
-                        <Typography variant="overline" sx={{ fontWeight: 900, color: 'text.secondary', mb: 2, display: 'block' }}>
+                        <Typography variant="overline" sx={{ fontWeight: 700, color: 'text.secondary', mb: 2, display: 'block' }}>
                             GLOBAL RESERVE COMPOSITION (USD VS GOLD)
                         </Typography>
-                        <ResponsiveContainer width="100%" height="85%">
+                        <MacroChartContainer height="85%">
                             <AreaChart data={mergedHistory} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="colorUsd" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        <stop offset="5%" stopColor={CHART_COLORS.west} stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor={CHART_COLORS.west} stopOpacity={0} />
                                     </linearGradient>
                                     <linearGradient id="colorGold" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.1} />
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                        <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.1} />
+                                        <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="date"
-                                    stroke="rgba(255,255,255,0.3)"
-                                    fontSize={10}
+                                    stroke={WHITE_ALPHA.dim}
+                                    fontSize={11}
                                     tickFormatter={(val) => new Date(val).getFullYear().toString()}
                                     interval={20}
                                 />
-                                <YAxis stroke="rgba(255,255,255,0.3)" fontSize={10} domain={[0, 80]} />
+                                <YAxis {...DEFAULT_YAXIS_PROPS} width={60} stroke={WHITE_ALPHA.dim} fontSize={11} domain={[0, 80]} />
                                 <RechartsTooltip
-                                    contentStyle={{ backgroundColor: '#0a1929', border: '1px solid rgba(255,255,255,0.1)' }}
-                                    itemStyle={{ fontSize: '0.75rem' }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 />
-                                <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ fontSize: '0.65rem', fontWeight: 900 }} />
-                                <Area type="monotone" dataKey="usd" name="USD Allocation (%)" stroke="#3b82f6" fillOpacity={1} fill="url(#colorUsd)" strokeWidth={2} />
-                                <Area type="monotone" dataKey="gold" name="Gold Allocation (%)" stroke="#10b981" fillOpacity={1} fill="url(#colorGold)" strokeWidth={2} />
+                                <Legend verticalAlign="top" align="right" iconType="circle" wrapperStyle={{ fontSize: '0.6875rem', fontWeight: 700 }} />
+                                <Area type="monotone" dataKey="usd" name="USD Allocation (%)" stroke={CHART_COLORS.west} fillOpacity={1} fill="url(#colorUsd)" strokeWidth={2} />
+                                <Area type="monotone" dataKey="gold" name="Gold Allocation (%)" stroke={CHART_COLORS.expansion} fillOpacity={1} fill="url(#colorGold)" strokeWidth={2} />
                             </AreaChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </Paper>
                 </Grid>
 
@@ -128,25 +132,25 @@ export const TradeSettlementFlows = React.memo(() => {
                         display: 'flex',
                         flexDirection: 'column'
                     }}>
-                        <Typography variant="overline" sx={{ fontWeight: 900, color: 'text.secondary', mb: 3, display: 'block' }}>
+                        <Typography variant="overline" sx={{ fontWeight: 700, color: 'text.secondary', mb: 3, display: 'block' }}>
                             INSTITUTIONAL MOMENTUM
                         </Typography>
 
-                        <Stack spacing={4} divider={<Divider sx={{ borderColor: 'rgba(255,255,255,0.03)' }} />}>
+                        <Stack spacing={4} divider={<Divider sx={{ borderColor: WHITE_ALPHA.ghost }} />}>
                             {stats.map((s, idx) => (
                                 <Box key={idx}>
                                     <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 1 }}>
-                                        <Typography variant="caption" sx={{ fontWeight: 800, color: 'text.secondary', textTransform: 'uppercase' }}>
+                                        <Typography variant="caption" sx={{ fontWeight: 700, color: 'text.secondary', textTransform: 'uppercase' }}>
                                             {s.label}
                                         </Typography>
                                         <Stack direction="row" alignItems="center" spacing={0.5}>
-                                            {s.trend === 'up' ? <TrendingUp size={12} color="#10b981" /> : <TrendingDown size={12} color="#ef4444" />}
-                                            <Typography variant="caption" sx={{ fontWeight: 900, color: s.color }}>
+                                            {s.trend === 'up' ? <TrendingUp size={12} color={CHART_COLORS.expansion} /> : <TrendingDown size={12} color={CHART_COLORS.stress} />}
+                                            <Typography variant="caption" sx={{ fontWeight: 700, color: s.color }}>
                                                 {s.delta && s.delta > 0 ? '+' : ''}{s.delta?.toFixed(1)}{s.unit}
                                             </Typography>
                                         </Stack>
                                     </Stack>
-                                    <Typography variant="h4" sx={{ fontWeight: 900, fontFamily: 'monospace' }}>
+                                    <Typography variant="h4" sx={{ fontWeight: 700, fontFamily: 'Fira Code, monospace' }}>
                                         {s.value?.toFixed(1)}{s.unit}
                                     </Typography>
                                     <LinearProgress
@@ -156,7 +160,7 @@ export const TradeSettlementFlows = React.memo(() => {
                                             mt: 1.5,
                                             height: 4,
                                             borderRadius: 1,
-                                            bgcolor: 'rgba(255,255,255,0.03)',
+                                            bgcolor: WHITE_ALPHA.ghost,
                                             '& .MuiLinearProgress-bar': { bgcolor: s.color }
                                         }}
                                     />
@@ -164,14 +168,14 @@ export const TradeSettlementFlows = React.memo(() => {
                             ))}
                         </Stack>
 
-                        <Box sx={{ mt: 'auto', p: 2, borderRadius: 1, bgcolor: 'rgba(245, 158, 11, 0.05)', border: '1px dashed rgba(245, 158, 11, 0.2)' }}>
+                        <Box sx={{ mt: 'auto', p: 2, borderRadius: 1, bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px dashed ${alpha(CHART_COLORS.gold, 0.2)}` }}>
                             <Stack direction="row" spacing={1} alignItems="center">
-                                <Shield size={14} color="#f59e0b" />
-                                <Typography variant="caption" sx={{ color: '#f59e0b', fontWeight: 900, fontSize: '0.65rem' }}>
+                                <Shield size={14} color={CHART_COLORS.gold} />
+                                <Typography variant="caption" sx={{ color: CHART_COLORS.gold, fontWeight: 700, fontSize: '0.6875rem' }}>
                                     CENTRAL BANK FRONT-RUNNING DETECTED
                                 </Typography>
                             </Stack>
-                            <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: 'text.disabled', fontSize: '0.6rem', fontWeight: 600 }}>
+                            <Typography variant="caption" sx={{ display: 'block', mt: 0.5, color: 'text.disabled', fontSize: '0.6875rem', fontWeight: 600 }}>
                                 BRICS+ Gold accumulation has accelerated 14% YoY, exceeding private sector demand by 3.2x.
                             </Typography>
                         </Box>

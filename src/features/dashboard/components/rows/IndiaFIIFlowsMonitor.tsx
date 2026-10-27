@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid,
-    Tooltip, ResponsiveContainer, Cell, ReferenceLine
+    Tooltip, Cell, ReferenceLine
 } from 'recharts';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { useMetricHistory } from '@/hooks/useMetricHistory';
@@ -10,13 +10,8 @@ import { ChartSkeleton } from '@/components/ui/skeleton';
 import { Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
-import {
-    DEFAULT_CARTESIAN_GRID_PROPS,
-    DEFAULT_XAXIS_PROPS,
-    DEFAULT_YAXIS_PROPS,
-    DEFAULT_TOOLTIP_STYLE,
-    CHART_HEIGHTS
-} from '@/constants/chartDefaults';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, DEFAULT_TOOLTIP_STYLE, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const parseDateSafe = (dateStr: string) => {
     const parts = dateStr.split('-');
@@ -52,12 +47,12 @@ const CustomTooltip = ({ active, payload }: any) => {
         const val = Number(item.value);
         return (
             <div style={DEFAULT_TOOLTIP_STYLE} className="shadow-2xl">
-                <div className="text-[10px] font-black text-slate-500 uppercase tracking-uppercase mb-2 pb-1 border-b border-white/5">
+                <div className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider mb-2 pb-1 border-b border-border">
                     {formattedDate}
                 </div>
                 <div className="flex justify-between items-center gap-6">
-                    <span className="text-slate-400 font-bold uppercase text-[10px] tracking-wider">Net Flow</span>
-                    <span className={cn("font-black font-mono text-xs", val >= 0 ? "text-emerald-400" : "text-rose-400")}>
+                    <span className="text-slate-400 font-semibold uppercase text-[11px] tracking-wider">Net Flow</span>
+                    <span className={cn("font-semibold font-mono text-xs", val >= 0 ? "text-emerald-400" : "text-rose-400")}>
                         {formatValue(val)}
                     </span>
                 </div>
@@ -125,8 +120,8 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[400px] w-full bg-white/[0.02] animate-pulse rounded-[2.5rem] flex items-center justify-center border border-white/5">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-widest font-mono">
+            <div className="h-[400px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center border border-border">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider font-mono">
                     Analyzing FII flows...
                 </span>
             </div>
@@ -150,25 +145,25 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                     />
                 </div>
 
-                <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden shadow-2xl">
+                <div className="bg-white/[0.02] border border-border rounded-xl p-10 relative overflow-hidden shadow-2xl">
                     <div className="absolute top-0 right-0 w-96 h-96 bg-emerald-500/5 blur-3xl rounded-full translate-x-24 -translate-y-24 pointer-events-none" />
 
                     {!hasData ? (
                         // PLACEHOLDER STATE
                         <div className="space-y-8">
-                            <div className="p-6 rounded-[1.5rem] bg-blue-500/[0.03] border border-blue-500/10 flex items-start gap-4">
+                            <div className="p-6 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 flex items-start gap-4">
                                 <Info className="w-5 h-5 text-blue-400 shrink-0 mt-0.5 animate-pulse" />
                                 <div className="space-y-1">
-                                    <p className="text-sm text-slate-200 font-bold uppercase tracking-wider">
+                                    <p className="text-sm text-slate-200 font-semibold uppercase tracking-wider">
                                         FII flow data pending ingestion
                                     </p>
-                                    <p className="text-xs text-muted-foreground/60 leading-relaxed font-semibold">
+                                    <p className="text-xs text-muted-foreground leading-relaxed font-semibold">
                                         Source: SEBI/NSDL monthly release. Available T+15 days after month end.
                                     </p>
                                 </div>
                             </div>
                             <div>
-                                <p className="text-[10px] font-black text-slate-500 uppercase tracking-uppercase mb-4">Historical Net Flow (12M Chart Scaffold)</p>
+                                <p className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider mb-4">Historical Net Flow (12M Chart Scaffold)</p>
                                 <ChartSkeleton height={CHART_HEIGHTS.standard} />
                             </div>
                         </div>
@@ -179,7 +174,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                             <div className="flex flex-wrap items-center gap-4">
                                 {/* YTD Net */}
                                 <div className={cn(
-                                    "px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 font-black text-xs font-mono uppercase tracking-wider",
+                                    "px-4 py-2 rounded-xl bg-white/[0.03] border border-border font-semibold text-xs font-mono uppercase tracking-wider",
                                     ytdSum >= 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
                                     {formatYtd(ytdSum)}
@@ -187,7 +182,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
 
                                 {/* 3M Trend */}
                                 <div className={cn(
-                                    "px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 font-black text-xs font-mono uppercase tracking-wider",
+                                    "px-4 py-2 rounded-xl bg-white/[0.03] border border-border font-semibold text-xs font-mono uppercase tracking-wider",
                                     Math.abs(avg3m) < 1.0 ? "text-slate-400" : avg3m > 0 ? "text-emerald-400" : "text-rose-400"
                                 )}>
                                     3M Trend: {Math.abs(avg3m) < 1.0 ? "Neutral" : avg3m > 0 ? "Net Buying" : "Net Selling"}
@@ -196,7 +191,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                                 {/* Current Month */}
                                 {latestVal !== null && (
                                     <div className={cn(
-                                        "px-4 py-2 rounded-xl bg-white/[0.03] border border-white/5 font-black text-xs font-mono uppercase tracking-wider flex items-center gap-1",
+                                        "px-4 py-2 rounded-xl bg-white/[0.03] border border-border font-semibold text-xs font-mono uppercase tracking-wider flex items-center gap-1",
                                         latestVal >= 0 ? "text-emerald-400" : "text-rose-400"
                                     )}>
                                     Current: {formatValue(latestVal)} {latestVal >= 0 ? '↑' : '↓'}
@@ -205,8 +200,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                             </div>
 
                             {/* Chart */}
-                            <div className="h-[240px] w-full mt-4">
-                                <ResponsiveContainer width="100%" height="100%">
+                            <MacroChartContainer height={CHART_HEIGHTS.standard} className="mt-4">
                                     <BarChart data={chartData} margin={{ top: 10, right: 10, left: -10, bottom: 0 }}>
                                         <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                         <XAxis
@@ -217,14 +211,14 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                                             {...DEFAULT_YAXIS_PROPS}
                                             tickFormatter={(val) => `${val >= 0 ? '+' : ''}${val}`}
                                         />
-                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: 'rgba(255,255,255,0.02)' }} />
-                                        <ReferenceLine y={0} stroke="rgba(255,255,255,0.1)" strokeWidth={1} />
+                                        <Tooltip content={<CustomTooltip />} cursor={{ fill: WHITE_ALPHA.ghost }} />
+                                        <ReferenceLine y={0} stroke={WHITE_ALPHA.line} strokeWidth={1} />
                                         <Bar
                                             dataKey="value"
                                             radius={[4, 4, 0, 0]}
                                         >
                                             {chartData.map((entry, index) => {
-                                                const fill = entry.value >= 0 ? '#10b981' : '#f43f5e';
+                                                const fill = entry.value >= 0 ? CHART_COLORS.expansion : CHART_COLORS.east;
                                                 return (
                                                     <Cell
                                                         key={`cell-${index}`}
@@ -235,8 +229,7 @@ export const IndiaFIIFlowsMonitor: React.FC = () => {
                                             })}
                                         </Bar>
                                     </BarChart>
-                                </ResponsiveContainer>
-                            </div>
+                            </MacroChartContainer>
                         </div>
                     )}
                 </div>

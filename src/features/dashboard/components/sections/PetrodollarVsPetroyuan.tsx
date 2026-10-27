@@ -17,7 +17,7 @@ const ESTIMATED_NON_USD_SHARE = 20; // 20% estimate
 
 export const PetrodollarVsPetroyuan: React.FC<PetrodollarVsPetroyuanProps> = ({ className }) => {
     return (
-        <Card className={cn("w-full bg-black/40 border-white/12 backdrop-blur-xl relative overflow-hidden", className)}>
+        <Card className={cn("w-full bg-background/40 border-border backdrop-blur-xl relative overflow-hidden", className)}>
             <div className="absolute -top-40 -right-40 w-96 h-96 rounded-full blur-[120px] bg-amber-500/10 pointer-events-none" />
             <div className="absolute -bottom-40 -left-40 w-96 h-96 rounded-full blur-[120px] bg-red-500/10 pointer-events-none" />
 
@@ -42,10 +42,10 @@ export const PetrodollarVsPetroyuan: React.FC<PetrodollarVsPetroyuanProps> = ({ 
                 
                 {/* Gauge / Share Section */}
                 <div className="flex flex-col gap-6">
-                    <div className="bg-black/20 border border-white/5 rounded-xl p-6">
+                    <div className="bg-background/20 border border-border rounded-xl p-6">
                         <h3 className="text-sm font-mono font-semibold text-white/80 uppercase mb-4">Parallel Oil System Share</h3>
                         <div className="flex flex-col items-center justify-center">
-                            <div className="text-5xl font-black text-amber-500 mb-2">{ESTIMATED_NON_USD_SHARE}%</div>
+                            <div className="text-5xl font-bold text-amber-500 mb-2">{ESTIMATED_NON_USD_SHARE}%</div>
                             <div className="text-xs font-mono text-muted-foreground uppercase text-center max-w-[200px]">
                                 Estimated global oil trade settled in non-USD currencies
                             </div>
@@ -64,7 +64,7 @@ export const PetrodollarVsPetroyuan: React.FC<PetrodollarVsPetroyuanProps> = ({ 
                         </div>
                     </div>
 
-                    <div className="p-4 rounded-lg bg-white/[0.02] border border-white/5 text-xs font-mono text-muted-foreground leading-relaxed">
+                    <div className="p-4 rounded-lg bg-white/[0.02] border border-border text-xs font-mono text-muted-foreground leading-relaxed">
                         <span className="text-amber-500 font-semibold">Insight:</span> The expiration of the 1974 US-Saudi Petrodollar agreement marked a psychological shift, but structural de-dollarization in energy is led by Russia (sanctions) and China's bilateral swap lines, aiming to price commodities outside the SWIFT network.
                     </div>
                 </div>
@@ -75,19 +75,19 @@ export const PetrodollarVsPetroyuan: React.FC<PetrodollarVsPetroyuanProps> = ({ 
                     
                     <div className="space-y-3">
                         {DEALS.map((deal, idx) => (
-                            <div key={idx} className="bg-white/[0.02] hover:bg-white/[0.04] transition-colors border border-white/5 rounded-lg p-3 flex items-center justify-between">
+                            <div key={idx} className="bg-white/[0.02] hover:bg-white/[0.04] transition-colors border border-border rounded-lg p-3 flex items-center justify-between">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-white/10 text-white/60">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 flex items-center justify-center border border-border text-white/60">
                                         <Banknote size={14} />
                                     </div>
                                     <div>
                                         <div className="font-mono text-sm font-bold text-white/90">{deal.country} / China</div>
-                                        <div className="font-mono text-[10px] text-muted-foreground uppercase">{deal.date}</div>
+                                        <div className="font-mono text-[11px] text-muted-foreground uppercase">{deal.date}</div>
                                     </div>
                                 </div>
                                 <div className="text-right">
                                     <div className="font-mono text-xs font-bold text-red-400">{deal.currency} Settlement</div>
-                                    <div className="font-mono text-[10px] text-white/50 bg-white/5 px-2 py-0.5 rounded-full mt-1 border border-white/5">
+                                    <div className="font-mono text-[11px] text-white/50 bg-white/5 px-2 py-0.5 rounded-full mt-1 border border-border">
                                         {deal.volume}
                                     </div>
                                 </div>

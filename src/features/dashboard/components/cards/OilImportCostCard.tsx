@@ -4,9 +4,10 @@ import { TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { ComposedChart, Line, XAxis, YAxis, Tooltip, CartesianGrid, Legend, Area } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import { CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS } from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, CHART_COLORS, alpha } from '@/constants/chartDefaults';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { m } from 'framer-motion';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
 
 interface OilData {
     date: string;
@@ -163,37 +164,37 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, ease: "easeOut" }}
         >
-            <Card className="bg-slate-900/60 border-white/12 backdrop-blur-3xl overflow-hidden group p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] min-h-[520px] h-auto flex flex-col relative">
+            <Card className="bg-card/60 border-border backdrop-blur-3xl overflow-hidden group p-6 sm:p-8 transition-all hover:bg-slate-900/80 shadow-[0_32px_64px_-12px_rgba(0,0,0,0.6)] min-h-[520px] h-auto flex flex-col relative">
                 {/* Background Decorative Gradients - Tamed */}
                 <div className="absolute top-0 right-0 w-96 h-96 bg-rose-500/5 blur-[120px] -mr-48 -mt-48 pointer-events-none" />
                 <div className="absolute bottom-0 left-0 w-96 h-96 bg-blue-500/5 blur-[120px] -ml-48 -mb-48 pointer-events-none" />
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-white/5 relative gap-4">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 border-b border-border relative gap-4">
                     <div className="space-y-1.5 font-sans">
                         <div className="flex items-center gap-3">
                             <div className={`w-10 h-px bg-gradient-to-r ${activeCountry === 'IN' ? 'from-blue-500' : 'from-rose-500'} to-transparent`} />
-                            <h3 className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+                            <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                                 Local <span className="text-white">Import Pressure</span>
                             </h3>
                         </div>
                         <div className="flex items-center gap-3 pl-[3.25rem]">
-                            <p className="text-xs text-muted-foreground/60 font-bold uppercase tracking-uppercase leading-none">
+                            <p className="text-xs text-muted-foreground font-semibold uppercase tracking-wider leading-none">
                                 Measuring FX Sensitivity vs. Brent Benchmark
                             </p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4 self-end sm:self-auto">
                         {stats && (
-                            <div className="hidden xs:flex px-3 py-1.5 rounded-xl bg-black/40 border border-white/5 items-center gap-2">
+                            <div className="hidden xs:flex px-3 py-1.5 rounded-xl bg-background/40 border border-border items-center gap-2">
                                 <div className="w-1.5 h-1.5 rounded-full bg-emerald-500/80 shadow-[0_0_8px_rgba(16,185,129,0.4)] animate-pulse" />
-                                <span className="text-xs text-white font-black uppercase tracking-uppercase">
+                                <span className="text-xs text-white font-semibold uppercase tracking-wider">
                                     FY {stats.year}
                                 </span>
                             </div>
                         )}
-                        <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-black/40 p-1 rounded-2xl border border-white/5">
+                        <Tabs value={activeCountry} onValueChange={(v: any) => setActiveCountry(v)} className="bg-background/40 p-1 rounded-xl border border-border">
                             <TabsList className="bg-transparent border-0 gap-1 h-8">
-                                <TabsTrigger value="IN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
-                                <TabsTrigger value="CN" className="rounded-xl text-xs font-black uppercase px-4 sm:px-6 h-7 tracking-uppercase transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
+                                <TabsTrigger value="IN" className="rounded-xl text-xs font-semibold uppercase px-4 sm:px-6 h-7 tracking-wider transition-all data-[state=active]:bg-blue-500/20 data-[state=active]:text-blue-400">BHARAT</TabsTrigger>
+                                <TabsTrigger value="CN" className="rounded-xl text-xs font-semibold uppercase px-4 sm:px-6 h-7 tracking-wider transition-all data-[state=active]:bg-rose-500/20 data-[state=active]:text-rose-400">CHINA</TabsTrigger>
                             </TabsList>
                         </Tabs>
                     </div>
@@ -201,20 +202,20 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
 
                 <CardContent className="p-0 mt-8 flex-1 min-h-0 relative z-10">
                     <div className="grid grid-cols-1 lg:grid-cols-10 h-full gap-8 lg:gap-12">
-                        <div className="lg:col-span-3 lg:border-r border-white/5 lg:pr-10 flex flex-col justify-between gap-8">
+                        <div className="lg:col-span-3 lg:border-r border-border lg:pr-10 flex flex-col justify-between gap-8">
                             {stats ? (
                                 <div className="space-y-6 sm:space-y-10">
                                     <div className="space-y-2">
-                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Weighted Avg Cost</p>
+                                        <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Weighted Avg Cost</p>
                                         <div className="flex items-baseline gap-3 flex-wrap">
-                                            <span className={`text-3xl sm:text-5xl font-black text-white drop-shadow-[0_0_15px_${stats.color === 'blue' ? 'rgba(59,130,246,0.2)' : 'rgba(239,68,68,0.2)'}]`}>
+                                            <span className={`text-3xl sm:text-5xl font-bold text-white drop-shadow-[0_0_15px_${stats.color === 'blue' ? alpha(CHART_COLORS.west, 0.2) : alpha(CHART_COLORS.stress, 0.2)}]`}>
                                                 {stats.currency}{stats.currentVal.toLocaleString(undefined, { maximumFractionDigits: 0 })}
                                             </span>
-                                            <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">/BBL</span>
+                                            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">/BBL</span>
                                         </div>
                                         <div className="flex items-center gap-3 mt-4">
                                             {stats.yoyDelta !== null && (
-                                                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black border ${stats.yoyDelta > 0 ? 'bg-rose-500/5 border-rose-500/20 text-rose-500' : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-500'}`}>
+                                                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold border ${stats.yoyDelta > 0 ? 'bg-rose-500/5 border-rose-500/20 text-rose-500' : 'bg-emerald-500/5 border-emerald-500/20 text-emerald-500'}`}>
                                                     {stats.yoyDelta > 0 ? <TrendingUp className="h-3.5 w-3.5" /> : <TrendingDown className="h-3.5 w-3.5" />}
                                                     {Math.abs(stats.yoyDelta).toFixed(1)}% YoY
                                                 </div>
@@ -223,44 +224,44 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                     </div>
 
                                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-4 lg:gap-5">
-                                        <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-white/5 space-y-3 relative overflow-hidden group/metric">
+                                        <div className="p-4 sm:p-5 rounded-xl bg-background/40 border border-border space-y-3 relative overflow-hidden group/metric">
                                             <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/metric:opacity-30 transition-opacity">
                                                 <DollarSign className="h-6 sm:h-8 w-6 sm:w-8 text-amber-500" />
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className="w-1 h-3 rounded-full bg-amber-500/50" />
-                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Brent Benchmark</span>
+                                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Brent Benchmark</span>
                                             </div>
                                             <div className="flex items-baseline gap-2">
-                                                <p className="text-xl sm:text-2xl font-black text-white">{stats.brentVal != null ? `$${stats.brentVal.toFixed(2)}` : '—'}</p>
-                                                <span className="text-xs font-bold text-muted-foreground/30">AVG</span>
+                                                <p className="text-xl sm:text-2xl font-bold text-white">{stats.brentVal != null ? `$${stats.brentVal.toFixed(2)}` : '—'}</p>
+                                                <span className="text-xs font-bold text-terminal-dim">AVG</span>
                                             </div>
                                         </div>
 
-                                        <div className="p-4 sm:p-5 rounded-2xl bg-black/40 border border-white/5 space-y-3 relative overflow-hidden group/metric">
+                                        <div className="p-4 sm:p-5 rounded-xl bg-background/40 border border-border space-y-3 relative overflow-hidden group/metric">
                                             <div className="absolute top-0 right-0 p-2 opacity-10 group-hover/metric:opacity-30 transition-opacity">
                                                 <Info className="h-6 sm:h-8 w-6 sm:w-8 text-blue-500" />
                                             </div>
                                             <div className="flex items-center gap-2">
                                                 <div className={`w-1 h-3 rounded-full ${stats.color === 'blue' ? 'bg-blue-500/50' : 'bg-rose-500/50'}`} />
-                                                <span className="text-xs font-black text-muted-foreground/60 uppercase tracking-uppercase">Currency Sensitivity</span>
+                                                <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Currency Sensitivity</span>
                                             </div>
-                                            <p className="text-xs font-bold text-white uppercase tracking-heading leading-relaxed">
+                                            <p className="text-xs font-semibold text-white uppercase tracking-heading leading-relaxed">
                                                 {activeCountry === 'IN' ? 'INR RISK: High Vol' : 'CNY RISK: Managed Float'}
                                             </p>
-                                            <p className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading italic">Amplification: {activeCountry === 'IN' ? '+18%' : '+12%'} vs USD</p>
+                                            <p className="text-xs text-terminal-dim font-semibold uppercase tracking-heading italic">Amplification: {activeCountry === 'IN' ? '+18%' : '+12%'} vs USD</p>
                                         </div>
                                     </div>
                                 </div>
                             ) : (
                                 <div className="h-full flex flex-col items-center justify-center text-center gap-4 py-12">
-                                    <div className="w-10 h-10 rounded-full border-2 border-white/5 border-t-emerald-500 animate-spin" />
-                                    <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Awaiting Feed Integration</p>
+                                    <div className="w-10 h-10 rounded-full border-2 border-border border-t-emerald-500 animate-spin" />
+                                    <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Awaiting Feed Integration</p>
                                 </div>
                             )}
 
-                            <div className="mt-auto pt-6 border-t border-white/5 hidden lg:block">
-                                <p className="text-xs text-muted-foreground/30 font-black uppercase tracking-uppercase leading-relaxed">
+                            <div className="mt-auto pt-6 border-t border-border hidden lg:block">
+                                <p className="text-xs text-terminal-dim font-semibold uppercase tracking-wider leading-relaxed">
                                     Terminal Source: EIA-X8 / FRED-M2<br />
                                     Composite calculation enabled.
                                 </p>
@@ -272,8 +273,8 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                     <ComposedChart data={chartData} margin={{ top: 40, right: 10, left: -20, bottom: 20 }}>
                                         <defs>
                                             <linearGradient id="colorCost" x1="0" y1="0" x2="0" y2="1">
-                                                <stop offset="5%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0.2} />
-                                                <stop offset="95%" stopColor={activeCountry === 'IN' ? '#3b82f6' : '#ef4444'} stopOpacity={0} />
+                                                <stop offset="5%" stopColor={activeCountry === 'IN' ? CHART_COLORS.west : CHART_COLORS.stress} stopOpacity={0.2} />
+                                                <stop offset="95%" stopColor={activeCountry === 'IN' ? CHART_COLORS.west : CHART_COLORS.stress} stopOpacity={0} />
                                             </linearGradient>
                                             <filter id="glow-line">
                                                 <feGaussianBlur stdDeviation="3" result="coloredBlur" />
@@ -285,17 +286,16 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                         </defs>
                                         <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
                                         <XAxis
+                                            {...DEFAULT_XAXIS_PROPS}
                                             dataKey="date"
                                             axisLine={false}
-                                            tickLine={false}
-                                            tick={{ fontSize: 9, fill: '#64748b', fontWeight: 900 }}
                                             padding={{ left: 10, right: 10 }}
                                         />
                                         <YAxis
                                             yAxisId="left"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 9, fill: '#f59e0b', fontWeight: 700 }}
+                                            tick={{ fontSize: 11, fill: CHART_COLORS.gold, fontWeight: 700 }}
                                             domain={['auto', 'auto']}
                                             hide
                                         />
@@ -304,7 +304,7 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             orientation="right"
                                             axisLine={false}
                                             tickLine={false}
-                                            tick={{ fontSize: 9, fill: activeCountry === 'IN' ? '#3b82f6' : '#ef4444', fontWeight: 700 }}
+                                            tick={{ fontSize: 11, fill: activeCountry === 'IN' ? CHART_COLORS.west : CHART_COLORS.stress, fontWeight: 700 }}
                                             domain={['auto', 'auto']}
                                             hide
                                         />
@@ -313,16 +313,16 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             content={({ active, payload, label }) => {
                                                 if (!active || !payload) return null;
                                                 return (
-                                                    <div className="bg-slate-950/95 border border-white/12 p-4 sm:p-5 rounded-2xl backdrop-blur-3xl shadow-[0_20px_50px_rgba(0,0,0,0.5)] border-t-white/20 min-w-[180px] sm:min-w-[200px] z-[100]">
-                                                        <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 pb-3 border-b border-white/12">{label} RECAPITULATION</p>
+                                                    <div className={`${TOOLTIP_SHELL_CLASS} min-w-[180px] z-[100]`}>
+                                                        <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 pb-3 border-b border-border">{label} RECAPITULATION</p>
                                                         <div className="space-y-3">
                                                             {payload.map((entry: any) => (
                                                                 <div key={entry.name} className="flex justify-between items-center gap-6 sm:gap-10">
                                                                     <div className="flex items-center gap-3">
                                                                         <div className="w-2 h-2 rounded-full shadow-[0_0_8px_currentColor]" style={{ backgroundColor: entry.color, color: entry.color }} />
-                                                                        <span className="text-xs font-black text-muted-foreground uppercase">{entry.name}</span>
+                                                                        <span className="text-xs font-semibold text-slate-400 uppercase">{entry.name}</span>
                                                                     </div>
-                                                                    <span className="text-xs sm:text-sm font-mono font-black text-white">
+                                                                    <span className="text-xs sm:text-sm font-mono font-semibold text-slate-100">
                                                                         {entry.name.includes('USD') ? '$' : (activeCountry === 'IN' ? '₹' : '¥')}
                                                                         {entry.value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                                                                     </span>
@@ -337,14 +337,14 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             verticalAlign="top"
                                             align="right"
                                             iconType="circle"
-                                            wrapperStyle={{ fontSize: '9px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.15em', paddingBottom: '20px', top: -20, opacity: 0.6 }}
+                                            wrapperStyle={{ fontSize: '11px', fontWeight: 'black', textTransform: 'uppercase', letterSpacing: '0.15em', paddingBottom: '20px', top: -20, opacity: 0.6 }}
                                         />
                                         <Area
                                             yAxisId="right"
                                             type="monotone"
                                             dataKey={activeCountry === 'IN' ? "cost_inr" : "cost_cny"}
                                             name={activeCountry === 'IN' ? "LOCAL COST UNIT" : "LOCAL COST UNIT"}
-                                            stroke={activeCountry === 'IN' ? "#3b82f6" : "#ef4444"}
+                                            stroke={activeCountry === 'IN' ? CHART_COLORS.west : CHART_COLORS.stress}
                                             fill="url(#colorCost)"
                                             strokeWidth={4}
                                             filter="url(#glow-line)"
@@ -355,9 +355,9 @@ export const OilImportCostCard: React.FC<OilImportCostCardProps> = ({ importData
                                             type="monotone"
                                             dataKey="brent"
                                             name="GLOBAL BRENT (USD)"
-                                            stroke="#f59e0b"
+                                            stroke={CHART_COLORS.gold}
                                             strokeWidth={3}
-                                            dot={{ r: 3, fill: '#f59e0b', strokeWidth: 1.5, stroke: '#000' }}
+                                            dot={{ r: 3, fill: CHART_COLORS.gold, strokeWidth: 1.5, stroke: '#000' }}
                                             activeDot={{ r: 5, strokeWidth: 0, fill: '#fff' }}
                                             animationDuration={1500}
                                         />

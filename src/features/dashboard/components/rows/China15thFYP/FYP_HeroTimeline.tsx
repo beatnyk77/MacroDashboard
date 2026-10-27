@@ -23,17 +23,17 @@ export const FYP_HeroTimeline: React.FC = () => {
                     >
                         {/* Year Node */}
                         <div className="mb-6 relative">
-                            <div className="w-12 h-12 rounded-full bg-slate-900 border-2 border-red-500/20 flex items-center justify-center group-hover:border-red-500 transition-colors shadow-[0_0_15px_rgba(239,68,68,0.1)]">
+                            <div className="w-12 h-12 rounded-full bg-card border-2 border-red-500/20 flex items-center justify-center group-hover:border-red-500 transition-colors shadow-[0_0_15px_rgba(239,68,68,0.1)]">
                                 <Calendar className="text-red-500" size={20} />
                             </div>
-                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-lg font-black text-white italic">
+                            <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-lg font-bold text-white italic">
                                 {ms.label}
                             </div>
                         </div>
 
                         {/* Event Content */}
-                        <div className="text-center space-y-2 p-4 rounded-2xl bg-white/[0.02] border border-white/5 group-hover:bg-white/[0.05] transition-all group-hover:border-red-500/30">
-                            <h4 className="text-xs font-black uppercase tracking-uppercase text-red-400">
+                        <div className="text-center space-y-2 p-4 rounded-xl bg-white/[0.02] border border-border group-hover:bg-white/[0.05] transition-all group-hover:border-red-500/30">
+                            <h4 className="text-xs font-semibold uppercase tracking-wider text-red-400">
                                 {ms.value_target}
                             </h4>
                             <p className="text-xs text-muted-foreground leading-relaxed line-clamp-3">

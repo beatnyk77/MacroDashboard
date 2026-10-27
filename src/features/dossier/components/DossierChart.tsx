@@ -1,9 +1,11 @@
 import React, { useMemo, useState } from 'react';
-import { CartesianGrid, Line, LineChart, ReferenceLine, ResponsiveContainer, Tooltip, XAxis, YAxis } from 'recharts';
+import { CartesianGrid, Line, LineChart, ReferenceLine, Tooltip, XAxis, YAxis } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS } from '@/constants/chartDefaults';
 import { cn } from '@/lib/utils';
 import type { DossierUnit } from '../dossierRegistry';
 import { downsample, findGaps, shiftDate, type SeriesPoint } from '../dossierStats';
 import { formatDate, formatValue } from '../dossierNarrative';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export interface ChartEpisode {
     n: number;
@@ -102,11 +104,11 @@ export const DossierChart: React.FC<DossierChartProps> = ({ points, unit, decima
                     </button>
                 )}
             </div>
-            <div className="h-80 w-full">
-                <ResponsiveContainer width="100%" height="100%">
+            <MacroChartContainer height={CHART_HEIGHTS.tall}>
                     <LineChart data={data} margin={{ top: 16, right: 12, bottom: 0, left: 0 }}>
-                        <CartesianGrid stroke="hsl(var(--border))" strokeOpacity={0.6} vertical={false} />
+                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                         <XAxis
+                            {...DEFAULT_XAXIS_PROPS}
                             dataKey="t"
                             type="number"
                             scale="time"
@@ -117,6 +119,7 @@ export const DossierChart: React.FC<DossierChartProps> = ({ points, unit, decima
                             stroke="hsl(var(--border))"
                         />
                         <YAxis
+                            {...DEFAULT_YAXIS_PROPS}
                             scale={log ? 'log' : 'linear'}
                             domain={['auto', 'auto']}
                             allowDataOverflow={log}
@@ -126,16 +129,11 @@ export const DossierChart: React.FC<DossierChartProps> = ({ points, unit, decima
                             stroke="hsl(var(--border))"
                         />
                         <Tooltip
+                            contentStyle={DEFAULT_TOOLTIP_STYLE}
+                            labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                            itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                             labelFormatter={(t: number) => formatDate(new Date(t).toISOString().slice(0, 10), monthly)}
                             formatter={(v: number) => [formatValue(v, unit, decimals), 'Value']}
-                            contentStyle={{
-                                background: 'hsl(var(--card))',
-                                border: '1px solid hsl(var(--border))',
-                                borderRadius: 4,
-                                fontSize: 12,
-                                fontFamily: 'Fira Code',
-                            }}
-                            labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
                         />
                         {visibleEpisodes.map((e) => (
                             <ReferenceLine
@@ -149,8 +147,7 @@ export const DossierChart: React.FC<DossierChartProps> = ({ points, unit, decima
                         ))}
                         <Line type="linear" dataKey="value" stroke="hsl(var(--chart-2))" strokeWidth={1.75} dot={false} isAnimationActive={false} />
                     </LineChart>
-                </ResponsiveContainer>
-            </div>
+            </MacroChartContainer>
         </div>
     );
 };

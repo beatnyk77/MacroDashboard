@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const ljeData = [
     { quarter: 'Q1 22', creditGrowth: 8.2, epfo: 1450, ratio: 5.7 },
@@ -20,31 +22,33 @@ const ljeData = [
 function LjTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
     if (active && payload && payload.length) {
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1}>{label}</Typography>
-                {payload.map(p => (
-                    <Typography key={p.name} variant="caption" display="block" sx={{ color: p.color }}>
-                        {p.name}: {typeof p.value === 'number' ? p.value.toFixed(1) : p.value}
-                        {p.name === 'Credit Growth' ? '%' : p.name === 'EPFO Additions' ? 'k' : 'x'}
-                    </Typography>
-                ))}
-            </Box>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <div className="space-y-1">
+                    {payload.map(p => (
+                        <TerminalTooltipRow key={p.name} label={p.name} swatch={p.color}>
+                            {typeof p.value === 'number' ? p.value.toFixed(1) : p.value}
+                            {p.name === 'Credit Growth' ? '%' : p.name === 'EPFO Additions' ? 'k' : 'x'}
+                        </TerminalTooltipRow>
+                    ))}
+                </div>
+            </TerminalTooltipShell>
         );
     }
     return null;
 }
 
 export const LoanToJobEfficiencyChart: React.FC = () => (
-    <ResponsiveContainer width="100%" height={260}>
+    <MacroChartContainer height={CHART_HEIGHTS.standard}>
         <LineChart data={ljeData} margin={{ top: 5, right: 20, left: -10, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="quarter" tick={{ fontSize: 10, fill: '#64748b' }} />
-            <YAxis yAxisId="left" tick={{ fontSize: 10, fill: '#64748b' }} domain={[5, 20]} label={{ value: 'Credit %', angle: -90, position: 'insideLeft', fill: '#64748b', fontSize: 10 }} />
-            <YAxis yAxisId="right" orientation="right" tick={{ fontSize: 10, fill: '#64748b' }} domain={[1200, 1800]} label={{ value: 'EPFO (k)', angle: 90, position: 'insideRight', fill: '#64748b', fontSize: 10 }} />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+            <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="quarter" />
+            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} yAxisId="left" domain={[5, 20]} label={{ value: 'Credit %', angle: -90, position: 'insideLeft', fill: CHART_COLORS.tick, fontSize: 11 }} />
+            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} yAxisId="right" orientation="right" domain={[1200, 1800]} label={{ value: 'EPFO (k)', angle: 90, position: 'insideRight', fill: CHART_COLORS.tick, fontSize: 11 }} />
             <Tooltip content={<LjTooltip />} />
-            <Legend wrapperStyle={{ fontSize: '0.75rem', color: '#94a3b8' }} />
-            <Line yAxisId="left" type="monotone" dataKey="creditGrowth" name="Credit Growth" stroke="#818cf8" strokeWidth={2} dot={false} />
-            <Line yAxisId="right" type="monotone" dataKey="epfo" name="EPFO Additions" stroke="#34d399" strokeWidth={2} dot={false} strokeDasharray="5 5" />
+            <Legend wrapperStyle={{ fontSize: '0.75rem', color: CHART_COLORS.label }} />
+            <Line yAxisId="left" type="monotone" dataKey="creditGrowth" name="Credit Growth" stroke={CHART_COLORS.indigo} strokeWidth={2} dot={false} />
+            <Line yAxisId="right" type="monotone" dataKey="epfo" name="EPFO Additions" stroke={CHART_COLORS.expansion} strokeWidth={2} dot={false} strokeDasharray="5 5" />
         </LineChart>
-    </ResponsiveContainer>
+    </MacroChartContainer>
 );

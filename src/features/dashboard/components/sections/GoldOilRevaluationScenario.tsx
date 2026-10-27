@@ -1,10 +1,13 @@
 import React, { useState, useMemo } from 'react';
 
 import { Card } from "@/components/ui/card";
-import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, ReferenceDot } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid, ReferenceLine, ReferenceDot } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { useGoldOilPrices } from '@/hooks/useGoldOilPrices';
 import { cn } from '@/lib/utils';
 import { Zap, ShieldCheck, Coins, Layers } from 'lucide-react';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface HistoricalPoint {
     year: string;
@@ -42,18 +45,18 @@ const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload || !payload.length) return null;
     const data: HistoricalPoint = payload[0].payload;
     return (
-        <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-            <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1.5">
+        <div className={TOOLTIP_SHELL_CLASS}>
+            <p className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
                 Year {data.year}
             </p>
             <div className="space-y-1">
                 <div className="flex items-center gap-6 justify-between">
-                    <span className="text-xs font-bold text-white/80">Gold/Oil Ratio:</span>
-                    <span className="text-xs font-black text-amber-500">{data.ratio.toFixed(1)} bbl/oz</span>
+                    <span className="text-xs font-bold text-slate-400">Gold/Oil Ratio:</span>
+                    <span className="text-xs font-semibold text-amber-500">{data.ratio.toFixed(1)} bbl/oz</span>
                 </div>
                 {data.event && (
-                    <div className="text-[10px] font-bold text-blue-400 mt-1 border-t border-white/5 pt-1">
-                        💡 {data.event}
+                    <div className="text-[11px] font-bold text-blue-400 mt-1 border-t border-border pt-1">
+                        {data.event}
                     </div>
                 )}
             </div>
@@ -119,7 +122,7 @@ export const GoldOilRevaluationScenario: React.FC = () => {
     }, []);
 
     return (
-        <Card className="p-8 bg-black/40 backdrop-blur-3xl border border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group w-full">
+        <Card className="p-8 bg-background/40 backdrop-blur-3xl border border-border shadow-2xl overflow-hidden rounded-xl relative group w-full">
             {/* Background Ambient Radial Glow */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-amber-500/5 rounded-full blur-[140px] -mr-64 -mt-64 group-hover:bg-amber-500/10 transition-colors duration-1000" />
 
@@ -131,7 +134,7 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                             <div className="p-2 rounded-xl bg-amber-500/10 border border-amber-500/20 shadow-inner">
                                 <Coins className="text-amber-500 w-5 h-5 fill-amber-500/20" />
                             </div>
-                            <h2 className="text-2xl font-black tracking-heading text-white uppercase italic">
+                            <h2 className="text-2xl font-bold tracking-heading text-white uppercase italic">
                                 Sovereign Energy Pricing & <span className="text-amber-500">Gold/Oil Revaluation</span>
                             </h2>
                         </div>
@@ -142,13 +145,13 @@ export const GoldOilRevaluationScenario: React.FC = () => {
 
                     {/* Scale Mode Switcher */}
                     <div className="flex flex-col justify-center items-start lg:items-end gap-2">
-                        <span className="text-[9px] font-black uppercase tracking-uppercase text-muted-foreground/50">Chart Y-Scale Focus</span>
-                        <div className="flex bg-white/5 border border-white/10 rounded-xl p-1 w-fit">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Chart Y-Scale Focus</span>
+                        <div className="flex bg-white/5 border border-border rounded-xl p-1 w-fit">
                             <button
                                 onClick={() => setYScale('log')}
                                 className={cn(
-                                    "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-uppercase transition-all",
-                                    yScale === 'log' ? "bg-amber-500 text-black font-black" : "text-muted-foreground hover:text-white"
+                                    "px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all",
+                                    yScale === 'log' ? "bg-amber-500 text-black font-bold" : "text-muted-foreground hover:text-white"
                                 )}
                             >
                                 Logarithmic Reset (5x-1200x)
@@ -156,8 +159,8 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                             <button
                                 onClick={() => setYScale('linear')}
                                 className={cn(
-                                    "px-3 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-uppercase transition-all",
-                                    yScale === 'linear' ? "bg-amber-500 text-black font-black" : "text-muted-foreground hover:text-white"
+                                    "px-3 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all",
+                                    yScale === 'linear' ? "bg-amber-500 text-black font-bold" : "text-muted-foreground hover:text-white"
                                 )}
                             >
                                 Linear Historical (0x-100x)
@@ -168,38 +171,39 @@ export const GoldOilRevaluationScenario: React.FC = () => {
 
                 {/* 2. Main Chart Section */}
                 <div className="h-[400px] w-full relative">
-                    <div className="absolute inset-0 bg-white/[0.01] rounded-[2.5rem] -m-4 border border-white/[0.02]" />
+                    <div className="absolute inset-0 bg-white/[0.01] rounded-xl -m-4 border border-white/[0.02]" />
 
-                    <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height="fill">
                         <AreaChart data={chartData} margin={{ top: 20, right: 10, left: -20, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="grad-ratio" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.25} />
-                                    <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={CHART_COLORS.gold} stopOpacity={0.25} />
+                                    <stop offset="95%" stopColor={CHART_COLORS.gold} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.02)" vertical={false} />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
 
                             <XAxis
+                                {...DEFAULT_XAXIS_PROPS}
                                 dataKey="year"
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
-                                tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 800 }}
+                                stroke={WHITE_ALPHA.line}
+                                fontSize={11}
+                                tick={{ fill: WHITE_ALPHA.dim, fontWeight: 700 }}
                                 axisLine={false}
-                                tickLine={false}
                                 dy={10}
                             />
                             
                             <YAxis
-                                stroke="rgba(255,255,255,0.1)"
-                                fontSize={9}
+                                {...DEFAULT_YAXIS_PROPS}
+                                width={60}
+                                stroke={WHITE_ALPHA.line}
+                                fontSize={11}
                                 scale={yScale === 'log' ? 'log' : 'auto'}
                                 domain={yScale === 'log' ? [4, 1200] : [0, 100]}
                                 allowDataOverflow={true}
                                 tickFormatter={(v) => `${v}x`}
-                                tick={{ fill: 'rgba(255,255,255,0.3)', fontWeight: 800 }}
+                                tick={{ fill: WHITE_ALPHA.dim, fontWeight: 700 }}
                                 axisLine={false}
-                                tickLine={false}
                             />
 
                             <Tooltip content={<CustomTooltip />} />
@@ -208,23 +212,23 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                             {yScale === 'log' && (
                                 <>
                                     {/* 500x Reset Level */}
-                                    <ReferenceLine y={500} stroke="#f43f5e" strokeDasharray="5 5" label={{ value: '500x Hard Money Anchor', fill: '#f43f5e', fontSize: 9, fontWeight: 900, position: 'bottom', dy: -5 }} />
+                                    <ReferenceLine y={500} stroke={CHART_COLORS.east} strokeDasharray="5 5" label={{ value: '500x Hard Money Anchor', fill: CHART_COLORS.east, fontSize: 11, fontWeight: 700, position: 'bottom', dy: -5 }} />
                                     {/* 1000x Reset Level */}
-                                    <ReferenceLine y={1000} stroke="#f43f5e" strokeDasharray="5 5" label={{ value: '1,000x Systemic Sovereign Floor', fill: '#f43f5e', fontSize: 9, fontWeight: 900, position: 'top', dy: 5 }} />
+                                    <ReferenceLine y={1000} stroke={CHART_COLORS.east} strokeDasharray="5 5" label={{ value: '1,000x Systemic Sovereign Floor', fill: CHART_COLORS.east, fontSize: 11, fontWeight: 700, position: 'top', dy: 5 }} />
                                 </>
                             )}
 
                             {/* Current Actual Observation reference line */}
-                            <ReferenceLine y={currentActualRatio} stroke="#3b82f6" strokeWidth={1} opacity={0.4} label={{ value: `Actual: ${currentActualRatio}x`, fill: '#3b82f6', fontSize: 9, fontWeight: 800, position: 'insideBottomRight' }} />
+                            <ReferenceLine y={currentActualRatio} stroke={CHART_COLORS.west} strokeWidth={1} opacity={0.4} label={{ value: `Actual: ${currentActualRatio}x`, fill: CHART_COLORS.west, fontSize: 11, fontWeight: 700, position: 'insideBottomRight' }} />
 
                             <Area
                                 type="monotone"
                                 dataKey="ratio"
                                 name="Gold/Oil Ratio"
-                                stroke="#f59e0b"
+                                stroke={CHART_COLORS.gold}
                                 fill="url(#grad-ratio)"
                                 strokeWidth={2.5}
-                                dot={{ r: 3, fill: '#000', stroke: '#f59e0b', strokeWidth: 1.5 }}
+                                dot={{ r: 3, fill: '#000', stroke: CHART_COLORS.gold, strokeWidth: 1.5 }}
                                 activeDot={{ r: 5, strokeWidth: 0, fill: '#fff' }}
                             />
 
@@ -233,24 +237,24 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                 x="2026"
                                 y={liveRatio}
                                 r={6}
-                                fill="#ffffff"
-                                stroke="#f59e0b"
+                                fill={CHART_COLORS.white}
+                                stroke={CHART_COLORS.gold}
                                 strokeWidth={3}
                                 className="animate-ping"
                                 style={{ transformOrigin: 'center' }}
                             />
                         </AreaChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 </div>
 
                 {/* 3. Slider Controls & Live Output */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-white/5 items-center">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-8 border-t border-border items-center">
                     {/* Left Column: Sliders */}
                     <div className="md:col-span-2 space-y-6">
                         {/* Gold Price Slider */}
                         <div className="space-y-2">
-                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-uppercase">
-                                <span className="text-muted-foreground/60">Simulated Gold Price</span>
+                            <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider">
+                                <span className="text-muted-foreground">Simulated Gold Price</span>
                                 <span className="text-amber-500 font-mono font-bold text-sm">{formatCurrency(goldPrice)}/oz</span>
                             </div>
                             <input
@@ -262,7 +266,7 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                 onChange={(e) => setCustomGoldPrice(Number(e.target.value))}
                                 className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-amber-500 hover:accent-amber-400 focus:outline-none"
                             />
-                            <div className="flex justify-between text-[9px] text-muted-foreground/35 font-bold uppercase tracking-[0.15em]">
+                            <div className="flex justify-between text-[11px] text-terminal-dim font-semibold uppercase tracking-wider">
                                 <span>$1,000</span>
                                 <span>$12,500</span>
                                 <span>$25,000</span>
@@ -271,8 +275,8 @@ export const GoldOilRevaluationScenario: React.FC = () => {
 
                         {/* Oil Price Slider */}
                         <div className="space-y-2">
-                            <div className="flex justify-between items-center text-xs font-black uppercase tracking-uppercase">
-                                <span className="text-muted-foreground/60">Simulated Brent Oil Price</span>
+                            <div className="flex justify-between items-center text-xs font-semibold uppercase tracking-wider">
+                                <span className="text-muted-foreground">Simulated Brent Oil Price</span>
                                 <span className="text-blue-400 font-mono font-bold text-sm">{formatCurrency(oilPrice)}/bbl</span>
                             </div>
                             <input
@@ -284,7 +288,7 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                 onChange={(e) => setCustomOilPrice(Number(e.target.value))}
                                 className="w-full h-1 bg-white/10 rounded-lg appearance-none cursor-pointer accent-blue-500 hover:accent-blue-400 focus:outline-none"
                             />
-                            <div className="flex justify-between text-[9px] text-muted-foreground/35 font-bold uppercase tracking-[0.15em]">
+                            <div className="flex justify-between text-[11px] text-terminal-dim font-semibold uppercase tracking-wider">
                                 <span>$20</span>
                                 <span>$135</span>
                                 <span>$250</span>
@@ -293,17 +297,17 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                     </div>
 
                     {/* Right Column: Calculated State */}
-                    <div className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 flex flex-col justify-center items-center text-center h-full relative overflow-hidden">
+                    <div className="p-6 rounded-xl bg-white/[0.01] border border-border flex flex-col justify-center items-center text-center h-full relative overflow-hidden">
                         <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-500/[0.03] to-transparent blur-xl pointer-events-none" />
-                        <span className="text-[10px] font-black uppercase tracking-uppercase text-muted-foreground/45 mb-2">Simulated State</span>
-                        <div className="text-4xl font-black text-white tracking-heading tabular-nums leading-none">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim mb-2">Simulated State</span>
+                        <div className="text-4xl font-bold text-white tracking-heading tabular-nums leading-none">
                             {liveRatio.toFixed(1)}x
                         </div>
-                        <span className="text-[10px] font-black uppercase tracking-uppercase text-amber-500/80 mt-2">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-amber-500/80 mt-2">
                             Barrels of Oil per Ounce
                         </span>
                         
-                        <div className="mt-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-white/10 text-[9px] font-black uppercase tracking-uppercase text-muted-foreground/65">
+                        <div className="mt-4 flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/5 border border-border text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                             {liveRatio > 400 ? (
                                 <>
                                     <Zap size={10} className="text-rose-500" /> Extreme Revaluation Mode
@@ -325,55 +329,55 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                 <div className="space-y-4">
                     <div className="flex items-center gap-2">
                         <Layers size={14} className="text-rose-500" />
-                        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground/80">Implied Sovereign Reset Matrix</h3>
+                        <h3 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground/80">Implied Sovereign Reset Matrix</h3>
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {/* 500x Panel */}
-                        <div className="p-6 rounded-3xl bg-rose-950/5 border border-rose-500/10 hover:border-rose-500/20 transition-all duration-300 relative group/card">
+                        <div className="p-6 rounded-xl bg-rose-950/5 border border-rose-500/10 hover:border-rose-500/20 transition-all duration-300 relative group/card">
                             <div className="absolute -top-px left-8 w-16 h-px bg-rose-500/30" />
                             <div className="flex justify-between items-start mb-4">
-                                <span className="text-[10px] font-black uppercase tracking-uppercase text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">500 Barrels / Ounce</span>
-                                <span className="text-[9px] font-bold text-muted-foreground/40 uppercase">Stress Ratio A</span>
+                                <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">500 Barrels / Ounce</span>
+                                <span className="text-[11px] font-semibold text-terminal-dim uppercase">Stress Ratio A</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+                            <div className="grid grid-cols-2 gap-4 border-t border-border pt-4">
                                 <div>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/45">Implied Gold Price</span>
-                                    <div className="text-lg font-black text-white font-mono mt-1 group-hover/card:text-amber-500 transition-colors">
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Implied Gold Price</span>
+                                    <div className="text-lg font-bold text-white font-mono mt-1 group-hover/card:text-amber-500 transition-colors">
                                         {formatCurrency(impliedPrices[500].gold)}
                                     </div>
-                                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">(at current oil)</span>
+                                    <span className="text-[11px] text-terminal-dim font-semibold uppercase">(at current oil)</span>
                                 </div>
                                 <div>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/45">Implied Oil Price</span>
-                                    <div className="text-lg font-black text-white font-mono mt-1 group-hover/card:text-blue-400 transition-colors">
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Implied Oil Price</span>
+                                    <div className="text-lg font-bold text-white font-mono mt-1 group-hover/card:text-blue-400 transition-colors">
                                         {formatCurrency(impliedPrices[500].oil, 2)}
                                     </div>
-                                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">(at current gold)</span>
+                                    <span className="text-[11px] text-terminal-dim font-semibold uppercase">(at current gold)</span>
                                 </div>
                             </div>
                         </div>
 
                         {/* 1,000x Panel */}
-                        <div className="p-6 rounded-3xl bg-rose-950/5 border border-rose-500/10 hover:border-rose-500/20 transition-all duration-300 relative group/card">
+                        <div className="p-6 rounded-xl bg-rose-950/5 border border-rose-500/10 hover:border-rose-500/20 transition-all duration-300 relative group/card">
                             <div className="absolute -top-px left-8 w-16 h-px bg-rose-500/30" />
                             <div className="flex justify-between items-start mb-4">
-                                <span className="text-[10px] font-black uppercase tracking-uppercase text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">1,000 Barrels / Ounce</span>
-                                <span className="text-[9px] font-bold text-muted-foreground/40 uppercase">Stress Ratio B</span>
+                                <span className="text-[11px] font-semibold uppercase tracking-wider text-rose-400 bg-rose-500/10 px-2 py-0.5 rounded border border-rose-500/20">1,000 Barrels / Ounce</span>
+                                <span className="text-[11px] font-semibold text-terminal-dim uppercase">Stress Ratio B</span>
                             </div>
-                            <div className="grid grid-cols-2 gap-4 border-t border-white/5 pt-4">
+                            <div className="grid grid-cols-2 gap-4 border-t border-border pt-4">
                                 <div>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/45">Implied Gold Price</span>
-                                    <div className="text-lg font-black text-white font-mono mt-1 group-hover/card:text-amber-500 transition-colors">
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Implied Gold Price</span>
+                                    <div className="text-lg font-bold text-white font-mono mt-1 group-hover/card:text-amber-500 transition-colors">
                                         {formatCurrency(impliedPrices[1000].gold)}
                                     </div>
-                                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">(at current oil)</span>
+                                    <span className="text-[11px] text-terminal-dim font-semibold uppercase">(at current oil)</span>
                                 </div>
                                 <div>
-                                    <span className="text-[9px] font-black uppercase tracking-[0.1em] text-muted-foreground/45">Implied Oil Price</span>
-                                    <div className="text-lg font-black text-white font-mono mt-1 group-hover/card:text-blue-400 transition-colors">
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Implied Oil Price</span>
+                                    <div className="text-lg font-bold text-white font-mono mt-1 group-hover/card:text-blue-400 transition-colors">
                                         {formatCurrency(impliedPrices[1000].oil, 2)}
                                     </div>
-                                    <span className="text-[8px] text-muted-foreground/30 font-bold uppercase">(at current gold)</span>
+                                    <span className="text-[11px] text-terminal-dim font-semibold uppercase">(at current gold)</span>
                                 </div>
                             </div>
                         </div>
@@ -381,12 +385,12 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                 </div>
 
                 {/* 5. Scenario Framework & Implications Matrix */}
-                <div className="space-y-6 pt-6 border-t border-white/5">
+                <div className="space-y-6 pt-6 border-t border-border">
                     {/* Tab Navigation */}
-                    <div className="flex justify-between items-center border-b border-white/5 pb-3">
+                    <div className="flex justify-between items-center border-b border-border pb-3">
                         <div className="flex items-center gap-2">
                             <Layers size={14} className="text-amber-500" />
-                            <h3 className="text-xs font-black uppercase tracking-[0.2em] text-white">Systemic Monetary Regimes</h3>
+                            <h3 className="text-xs font-semibold uppercase tracking-wider text-white">Systemic Monetary Regimes</h3>
                         </div>
                         <div className="flex bg-white/5 rounded-xl p-1">
                             {(['base', 'hard', 'fiat'] as const).map(tab => (
@@ -394,7 +398,7 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                     key={tab}
                                     onClick={() => setActiveTab(tab)}
                                     className={cn(
-                                        "px-4 py-1.5 rounded-lg text-[9px] font-black uppercase tracking-uppercase transition-all",
+                                        "px-4 py-1.5 rounded-lg text-[11px] font-semibold uppercase tracking-wider transition-all",
                                         activeTab === tab ? "bg-white/10 text-white" : "text-muted-foreground hover:text-white"
                                     )}
                                 >
@@ -407,15 +411,15 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                     </div>
 
                     {/* Active Tab Narrative Content */}
-                    <div className="p-6 rounded-3xl bg-white/[0.01] border border-white/5 min-h-[120px] flex items-center">
+                    <div className="p-6 rounded-xl bg-white/[0.01] border border-border min-h-[120px] flex items-center">
                         {activeTab === 'base' && (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
                                 <div className="space-y-1">
-                                    <span className="text-[8px] font-black uppercase tracking-uppercase text-muted-foreground/50">Expected Ratio</span>
-                                    <div className="text-xl font-black text-white">25x – 35x</div>
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Expected Ratio</span>
+                                    <div className="text-xl font-bold text-white">25x – 35x</div>
                                 </div>
                                 <div className="md:col-span-3 space-y-2">
-                                    <h4 className="text-xs font-black text-amber-500 uppercase tracking-uppercase">Slow Bifurcation & Multi-polarity</h4>
+                                    <h4 className="text-xs font-semibold text-amber-500 uppercase tracking-wider">Slow Bifurcation & Multi-polarity</h4>
                                     <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium">
                                         The US dollar maintains primary global reserve dominance (~58% reserve share) while trade networks slowly fragment. Bilateral deals in petroyuan and local currencies (Rupee/Rial) grow gradually within BRICS+ corridors. Financialized G7 debt continues under mild financial repression.
                                     </p>
@@ -425,11 +429,11 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                         {activeTab === 'hard' && (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
                                 <div className="space-y-1">
-                                    <span className="text-[8px] font-black uppercase tracking-uppercase text-muted-foreground/50">Expected Ratio</span>
-                                    <div className="text-xl font-black text-white">500x – 1,000x</div>
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Expected Ratio</span>
+                                    <div className="text-xl font-bold text-white">500x – 1,000x</div>
                                 </div>
                                 <div className="md:col-span-3 space-y-2">
-                                    <h4 className="text-xs font-black text-rose-400 uppercase tracking-uppercase">Hard Asset Reset & Sovereign Anchor Shifts</h4>
+                                    <h4 className="text-xs font-semibold text-rose-400 uppercase tracking-wider">Hard Asset Reset & Sovereign Anchor Shifts</h4>
                                     <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium">
                                         Legacy fiat credit systems debase rapidly to match physical reserves. Net energy and commodity producers enforce pricing strictly in physical gold grams or gold-backed settlement tokens. Net importers without significant gold assets suffer balance of payments shocks and hyper-inflation. Real asset repricing reaches historic extremes.
                                     </p>
@@ -439,11 +443,11 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                         {activeTab === 'fiat' && (
                             <div className="grid grid-cols-1 md:grid-cols-4 gap-6 w-full">
                                 <div className="space-y-1">
-                                    <span className="text-[8px] font-black uppercase tracking-uppercase text-muted-foreground/50">Expected Ratio</span>
-                                    <div className="text-xl font-black text-white">10x – 20x</div>
+                                    <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Expected Ratio</span>
+                                    <div className="text-xl font-bold text-white">10x – 20x</div>
                                 </div>
                                 <div className="md:col-span-3 space-y-2">
-                                    <h4 className="text-xs font-black text-blue-400 uppercase tracking-uppercase">Technocratic Centralization & Digital Ledgers</h4>
+                                    <h4 className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Technocratic Centralization & Digital Ledgers</h4>
                                     <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium">
                                         G7 central banks successfully coordinate a hyper-efficient digital fiat CBDC network, establishing absolute capital controls. Physical gold is isolated to a secondary hedging tool, while shale oil supply and G7 recycling channels maintain credit standard anchors. Growth equities retain bubble premiums.
                                     </p>
@@ -454,24 +458,24 @@ export const GoldOilRevaluationScenario: React.FC = () => {
 
                     {/* Winners vs Losers Matrix */}
                     <div className="space-y-3 pt-6">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 block">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground block">
                             Sector Revaluation Matrix (Hard Reset Focus)
                         </span>
                         
-                        <div className="overflow-x-auto w-full border border-white/5 rounded-2xl bg-white/[0.01]">
+                        <div className="overflow-x-auto w-full border border-border rounded-xl bg-white/[0.01]">
                             <table className="w-full text-left border-collapse text-xs">
                                 <thead>
-                                    <tr className="border-b border-white/10 bg-white/[0.02]">
-                                        <th className="p-4 font-black text-[9px] uppercase tracking-uppercase text-muted-foreground/50">Asset Class / Sector</th>
-                                        <th className="p-4 font-black text-[9px] uppercase tracking-uppercase text-muted-foreground/50 text-center">Stress Impact</th>
-                                        <th className="p-4 font-black text-[9px] uppercase tracking-uppercase text-muted-foreground/50">Strategic Allocator Rationale</th>
+                                    <tr className="border-b border-border bg-white/[0.02]">
+                                        <th className="p-4 font-semibold text-[11px] uppercase tracking-wider text-terminal-dim">Asset Class / Sector</th>
+                                        <th className="p-4 font-semibold text-[11px] uppercase tracking-wider text-terminal-dim text-center">Stress Impact</th>
+                                        <th className="p-4 font-semibold text-[11px] uppercase tracking-wider text-terminal-dim">Strategic Allocator Rationale</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Physical Gold & Silver</td>
+                                    <tr className="border-b border-border hover:bg-white/[0.01] transition-colors">
+                                        <td className="p-4 font-bold text-white">Physical Gold & Silver</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Structural Win
                                             </span>
                                         </td>
@@ -479,10 +483,10 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                             Repriced directly to clear extreme public debt loads and act as the core physical settlement asset.
                                         </td>
                                     </tr>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Net Energy Exporters with Gold</td>
+                                    <tr className="border-b border-border hover:bg-white/[0.01] transition-colors">
+                                        <td className="p-4 font-bold text-white">Net Energy Exporters with Gold</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Win
                                             </span>
                                         </td>
@@ -490,10 +494,10 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                             Captures peak terms-of-trade leverage by demanding payment strictly in physical gold, bypassing the USD network.
                                         </td>
                                     </tr>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Highly Financialized G7 Debt</td>
+                                    <tr className="border-b border-border hover:bg-white/[0.01] transition-colors">
+                                        <td className="p-4 font-bold text-white">Highly Financialized G7 Debt</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Severe Loss
                                             </span>
                                         </td>
@@ -501,10 +505,10 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                             Hyper-depreciation in real buying power as nominal yields fail to offset rapid debasement against gold-based items.
                                         </td>
                                     </tr>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Energy Importers with Low Gold</td>
+                                    <tr className="border-b border-border hover:bg-white/[0.01] transition-colors">
+                                        <td className="p-4 font-bold text-white">Energy Importers with Low Gold</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Severe Loss
                                             </span>
                                         </td>
@@ -512,10 +516,10 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                             Balance-of-payments crisis; currency defenses collapse under skyrocketing oil-in-fiat prices.
                                         </td>
                                     </tr>
-                                    <tr className="border-b border-white/5 hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Hard Infrastructure & Real Estate</td>
+                                    <tr className="border-b border-border hover:bg-white/[0.01] transition-colors">
+                                        <td className="p-4 font-bold text-white">Hard Infrastructure & Real Estate</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Win
                                             </span>
                                         </td>
@@ -524,9 +528,9 @@ export const GoldOilRevaluationScenario: React.FC = () => {
                                         </td>
                                     </tr>
                                     <tr className="hover:bg-white/[0.01] transition-colors">
-                                        <td className="p-4 font-black text-white">Financialized Equities (Tech/Growth)</td>
+                                        <td className="p-4 font-bold text-white">Financialized Equities (Tech/Growth)</td>
                                         <td className="p-4 text-center">
-                                            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-black text-[8px] uppercase tracking-uppercase">
+                                            <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-400 font-semibold text-[11px] uppercase tracking-wider">
                                                 Downside
                                             </span>
                                         </td>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { m } from 'framer-motion';
 import { cn } from "@/lib/utils";
+import { alpha, CHART_COLORS } from '@/constants/chartDefaults';
 
 const countries = [
     { iso: 'ZA', name: 'South Africa', debt_gdp: 72.3, china_gravity: 35.2, oil_exp: 0, inflation: 5.3 },
@@ -32,13 +33,13 @@ export const AfricaComparisonHeatmap: React.FC = () => {
     };
 
     return (
-        <div className="w-full overflow-x-auto rounded-3xl border border-white/5 bg-white/[0.01] backdrop-blur-sm">
+        <div className="w-full overflow-x-auto rounded-xl border border-border bg-white/[0.01] backdrop-blur-sm">
             <table className="w-full border-collapse">
                 <thead>
-                    <tr className="border-b border-white/10">
-                        <th className="p-6 text-left text-[10px] font-black uppercase tracking-widest text-white/30">Country</th>
+                    <tr className="border-b border-border">
+                        <th className="p-6 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Country</th>
                         {metrics.map(metric => (
-                            <th key={metric.key} className="p-6 text-center text-[10px] font-black uppercase tracking-widest text-white/30">{metric.label}</th>
+                            <th key={metric.key} className="p-6 text-center text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">{metric.label}</th>
                         ))}
                     </tr>
                 </thead>
@@ -47,10 +48,10 @@ export const AfricaComparisonHeatmap: React.FC = () => {
                         <tr key={c.iso} className="border-b border-white/[0.02] hover:bg-white/[0.02] transition-colors">
                             <td className="p-6">
                                 <div className="flex items-center gap-3">
-                                    <div className="w-8 h-8 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-[10px] font-black text-white/60">
+                                    <div className="w-8 h-8 rounded-full bg-white/5 border border-border flex items-center justify-center text-[11px] font-bold text-white/60">
                                         {c.iso}
                                     </div>
-                                    <div className="text-sm font-black text-white">{c.name}</div>
+                                    <div className="text-sm font-bold text-white">{c.name}</div>
                                 </div>
                             </td>
                             {metrics.map(metric => {
@@ -63,18 +64,18 @@ export const AfricaComparisonHeatmap: React.FC = () => {
                                             animate={{ opacity: 1, scale: 1 }}
                                             transition={{ delay: idx * 0.05 }}
                                             className={cn(
-                                                "h-12 flex items-center justify-center rounded-xl text-xs font-mono font-black tabular-nums border",
+                                                "h-12 flex items-center justify-center rounded-xl text-xs font-mono font-bold tabular-nums border",
                                                 metric.color === 'rose' ? `bg-rose-500/[${intensity * 0.2}] border-rose-500/[${intensity * 0.3}] text-rose-400` :
                                                 metric.color === 'blue' ? `bg-blue-500/[${intensity * 0.2}] border-blue-500/[${intensity * 0.3}] text-blue-400` :
                                                 `bg-amber-500/[${intensity * 0.2}] border-amber-500/[${intensity * 0.3}] text-amber-400`
                                             )}
                                             style={{
-                                                backgroundColor: metric.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.2})` :
-                                                                 metric.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.2})` :
-                                                                 `rgba(245, 158, 11, ${intensity * 0.2})`,
-                                                borderColor: metric.color === 'rose' ? `rgba(244, 63, 94, ${intensity * 0.3})` :
-                                                             metric.color === 'blue' ? `rgba(59, 130, 246, ${intensity * 0.3})` :
-                                                             `rgba(245, 158, 11, ${intensity * 0.3})`
+                                                backgroundColor: metric.color === 'rose' ? alpha(CHART_COLORS.east, intensity * 0.2) :
+                                                                 metric.color === 'blue' ? alpha(CHART_COLORS.west, intensity * 0.2) :
+                                                                 alpha(CHART_COLORS.gold, intensity * 0.2),
+                                                borderColor: metric.color === 'rose' ? alpha(CHART_COLORS.east, intensity * 0.3) :
+                                                             metric.color === 'blue' ? alpha(CHART_COLORS.west, intensity * 0.3) :
+                                                             alpha(CHART_COLORS.gold, intensity * 0.3)
                                             }}
                                         >
                                             {val}%

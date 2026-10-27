@@ -53,10 +53,10 @@ export class GlobalErrorBoundary extends Component<Props, State> {
         if (this.state.hasError) {
             const soft = this.state.isEmailLanding;
             return (
-                <div className="flex min-h-screen items-center justify-center bg-slate-950 p-4 text-white">
+                <div className="flex min-h-screen items-center justify-center bg-card p-4 text-white">
                     <div className="mx-auto w-full max-w-sm">
                         <div
-                            className={`flex flex-col items-center gap-3 rounded-3xl border p-6 text-center backdrop-blur-lg ${
+                            className={`flex flex-col items-center gap-3 rounded-xl border p-6 text-center backdrop-blur-lg ${
                                 soft
                                     ? 'border-amber-500/25 bg-amber-500/5'
                                     : 'border-red-500/20 bg-red-500/5'
@@ -69,7 +69,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                                 aria-hidden
                             />
                             <h2
-                                className={`text-2xl font-black tracking-tight ${
+                                className={`text-2xl font-bold tracking-tight ${
                                     soft ? 'text-amber-300' : 'text-red-400'
                                 }`}
                                 style={{ letterSpacing: '-0.02em' }}
@@ -108,7 +108,7 @@ export class GlobalErrorBoundary extends Component<Props, State> {
                                     <Button
                                         onClick={this.handleHome}
                                         variant="outline"
-                                        className="min-h-[44px] border-white/20 font-bold uppercase tracking-wider text-white/80 hover:bg-white/5"
+                                        className="min-h-[44px] border-white/20 font-semibold uppercase tracking-wider text-white/80 hover:bg-white/5"
                                         aria-label="Open free terminal"
                                     >
                                         <Home size={16} className="mr-2" />

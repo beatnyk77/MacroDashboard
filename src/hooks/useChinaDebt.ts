@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export type ChinaDebtLayerCode =
     | 'central_official'
@@ -32,12 +33,12 @@ export interface ChinaDebtComposite {
 }
 
 export const LAYER_META: Record<ChinaDebtLayerCode, { label: string; aboveWater: boolean; color: string }> = {
-    central_official: { label: 'Central Government', aboveWater: true, color: '#3b82f6' },
-    local_gov:        { label: 'Local Government (Explicit)', aboveWater: true, color: '#60a5fa' },
-    lgfv:             { label: 'LGFV (Implicit LG)', aboveWater: false, color: '#f59e0b' },
-    policy_bank:      { label: 'Policy Banks', aboveWater: false, color: '#a855f7' },
-    soe_contingent:   { label: 'SOE Contingent Liability', aboveWater: false, color: '#ef4444' },
-    consolidated:     { label: 'Consolidated Public Sector', aboveWater: false, color: '#f97316' },
+    central_official: { label: 'Central Government', aboveWater: true, color: CHART_COLORS.west },
+    local_gov:        { label: 'Local Government (Explicit)', aboveWater: true, color: CHART_COLORS.westSoft },
+    lgfv:             { label: 'LGFV (Implicit LG)', aboveWater: false, color: CHART_COLORS.gold },
+    policy_bank:      { label: 'Policy Banks', aboveWater: false, color: CHART_COLORS.violet },
+    soe_contingent:   { label: 'SOE Contingent Liability', aboveWater: false, color: CHART_COLORS.stress },
+    consolidated:     { label: 'Consolidated Public Sector', aboveWater: false, color: CHART_COLORS.orange },
 };
 
 export function useChinaDebtLayers() {

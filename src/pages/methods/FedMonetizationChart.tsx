@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const monetizationData = [
     { year: '2000', ratio: 5.2 },
@@ -23,32 +25,32 @@ function AreaTooltip({ active, payload, label }: { active?: boolean; payload?: {
     if (active && payload && payload.length) {
         const v = payload[0].value;
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(99,102,241,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary">{label}</Typography>
-                <Typography variant="body2" fontWeight={700} color={v > 20 ? '#f59e0b' : v > 15 ? '#fb923c' : '#94a3b8'}>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <TerminalTooltipRow label="Fed share" valueClassName={v > 20 ? 'text-amber-400' : v > 15 ? 'text-orange-400' : 'text-slate-400'}>
                     {v.toFixed(1)}%
-                </Typography>
-            </Box>
+                </TerminalTooltipRow>
+            </TerminalTooltipShell>
         );
     }
     return null;
 }
 
 export const FedMonetizationChart: React.FC = () => (
-    <ResponsiveContainer width="100%" height={240}>
+    <MacroChartContainer height={CHART_HEIGHTS.standard}>
         <AreaChart data={monetizationData} margin={{ top: 5, right: 10, left: -15, bottom: 0 }}>
             <defs>
                 <linearGradient id="monetGrad" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#6366f1" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#6366f1" stopOpacity={0.02} />
+                    <stop offset="5%" stopColor={CHART_COLORS.indigo} stopOpacity={0.3} />
+                    <stop offset="95%" stopColor={CHART_COLORS.indigo} stopOpacity={0.02} />
                 </linearGradient>
             </defs>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-            <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[0, 28]} unit="%" />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+            <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" />
+            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} domain={[0, 28]} unit="%" />
             <Tooltip content={<AreaTooltip />} />
-            <ReferenceLine y={20} stroke="#f59e0b" strokeDasharray="5 5" strokeOpacity={0.7} label={{ value: 'YCC threshold', fill: '#f59e0b', fontSize: 10, position: 'insideTopRight' }} />
-            <Area type="monotone" dataKey="ratio" stroke="#6366f1" strokeWidth={2} fill="url(#monetGrad)" dot={false} />
+            <ReferenceLine y={20} stroke={CHART_COLORS.gold} strokeDasharray="5 5" strokeOpacity={0.7} label={{ value: 'YCC threshold', fill: CHART_COLORS.gold, fontSize: 11, position: 'insideTopRight' }} />
+            <Area type="monotone" dataKey="ratio" stroke={CHART_COLORS.indigo} strokeWidth={2} fill="url(#monetGrad)" dot={false} />
         </AreaChart>
-    </ResponsiveContainer>
+    </MacroChartContainer>
 );

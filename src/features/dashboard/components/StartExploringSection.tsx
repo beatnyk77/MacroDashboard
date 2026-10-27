@@ -91,7 +91,7 @@ export const StartExploringSection: React.FC = () => {
         <section id="start-exploring" className="mb-10 scroll-mt-24">
             <div className="mb-5 flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                 <div>
-                    <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+                    <h2 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                         Start Exploring
                     </h2>
                     <p className="mt-1 text-sm text-white/50">
@@ -100,7 +100,7 @@ export const StartExploringSection: React.FC = () => {
                 </div>
                 <TrailLink
                     to="/glossary"
-                    className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-uppercase text-emerald-400/80 no-underline transition-colors hover:text-emerald-400"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400/80 no-underline transition-colors hover:text-emerald-400"
                 >
                     Full Glossary
                     <ArrowRight size={12} />
@@ -114,10 +114,10 @@ export const StartExploringSection: React.FC = () => {
                         <TrailLink
                             key={card.to}
                             to={withTrailingSlash(card.to)}
-                            className="group flex flex-col rounded-xl border border-white/[0.08] bg-slate-900/40 p-4 no-underline backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/[0.04] hover:shadow-lg hover:shadow-blue-500/5"
+                            className="group flex flex-col rounded-xl border border-white/[0.08] bg-card/40 p-4 no-underline backdrop-blur-xl transition-all duration-200 hover:-translate-y-0.5 hover:border-white/15 hover:bg-white/[0.04] hover:shadow-lg hover:shadow-blue-500/5"
                         >
                             <div className="mb-3 flex items-center justify-between">
-                                <span className={`inline-flex items-center gap-1.5 rounded border px-1.5 py-0.5 text-[8px] font-black uppercase tracking-widest ${style.color}`}>
+                                <span className={`inline-flex items-center gap-1.5 rounded border px-1.5 py-0.5 text-[11px] font-semibold uppercase tracking-wider ${style.color}`}>
                                     {card.icon}
                                     {style.label}
                                 </span>
@@ -126,10 +126,10 @@ export const StartExploringSection: React.FC = () => {
                                     className="text-white/20 transition-all group-hover:translate-x-0.5 group-hover:text-white/60"
                                 />
                             </div>
-                            <h3 className="mb-1.5 text-sm font-extrabold text-white/90 transition-colors group-hover:text-white">
+                            <h3 className="mb-1.5 text-sm font-bold text-white/90 transition-colors group-hover:text-white">
                                 {card.title}
                             </h3>
-                            <p className="flex-1 text-xs leading-relaxed text-white/40 transition-colors group-hover:text-white/55">
+                            <p className="flex-1 text-xs leading-relaxed text-terminal-dim transition-colors group-hover:text-white/55">
                                 {card.description}
                             </p>
                         </TrailLink>

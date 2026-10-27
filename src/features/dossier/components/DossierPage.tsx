@@ -182,7 +182,7 @@ export const DossierPage: React.FC<DossierPageProps> = ({ spec, entry }) => {
             <div ref={shareRef} className="space-y-10">
                 <header className="space-y-3">
                     <div className="flex items-start justify-between gap-4">
-                        <h1 className="text-3xl font-extrabold leading-tight text-foreground sm:text-4xl">{spec.h1}</h1>
+                        <h1 className="text-3xl font-bold leading-tight text-foreground sm:text-4xl">{spec.h1}</h1>
                         <ShareButton targetRef={shareRef} title={name} dataSource={sourceList} href={`/metrics/${spec.id}/`} />
                     </div>
                     <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-sm text-muted-foreground">
@@ -384,12 +384,12 @@ export const DossierPage: React.FC<DossierPageProps> = ({ spec, entry }) => {
                     </div>
                     <div className="mt-3 flex flex-wrap gap-x-6 gap-y-2 text-sm font-semibold">
                         {spec.glossary && (
-                            <Link to={spec.glossary.to} className="inline-flex items-center gap-1.5 text-blue-700 hover:underline dark:text-blue-300">
+                            <Link to={spec.glossary.to} className="inline-flex items-center gap-1.5 hover:underline text-blue-300">
                                 <BookOpen size={14} aria-hidden="true" /> Glossary: {spec.glossary.label}
                             </Link>
                         )}
                         {entry.relatedPage && (
-                            <Link to={entry.relatedPage} className="inline-flex items-center gap-1.5 text-blue-700 hover:underline dark:text-blue-300">
+                            <Link to={entry.relatedPage} className="inline-flex items-center gap-1.5 hover:underline text-blue-300">
                                 <BookOpen size={14} aria-hidden="true" /> {entry.relatedPageLabel ?? 'Methodology deep dive'}
                             </Link>
                         )}
@@ -417,12 +417,12 @@ export const DossierPage: React.FC<DossierPageProps> = ({ spec, entry }) => {
                                 {spec.upstream.map((u, i) => (
                                     <React.Fragment key={u.url + i}>
                                         {i > 0 && ' · '}
-                                        <a href={u.url} rel="noopener" target={u.url.startsWith(BASE) ? undefined : '_blank'} className="font-semibold text-blue-700 hover:underline dark:text-blue-300">
+                                        <a href={u.url} rel="noopener" target={u.url.startsWith(BASE) ? undefined : '_blank'} className="font-semibold hover:underline text-blue-300">
                                             {u.label}
                                         </a>
                                     </React.Fragment>
                                 ))}
-                                . Observational composite, not a forecast. See <Link to="/for-researchers/" className="font-semibold text-blue-700 hover:underline dark:text-blue-300">citation guidelines</Link>.
+                                . Observational composite, not a forecast. See <Link to="/for-researchers/" className="font-semibold hover:underline text-blue-300">citation guidelines</Link>.
                             </span>
                         </div>
                     </div>

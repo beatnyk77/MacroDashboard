@@ -2,17 +2,13 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import {
-    CHART_HEIGHTS,
-    DEFAULT_CARTESIAN_GRID_PROPS,
-    DEFAULT_XAXIS_PROPS,
-    DEFAULT_YAXIS_PROPS,
-} from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, CHART_COLORS, alpha } from '@/constants/chartDefaults';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line } from 'recharts';
 import { TrendingUp, Calendar, DollarSign, AlertTriangle, ArrowUpRight, Percent, Activity, BookOpen } from 'lucide-react';
 import { m } from 'framer-motion';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { ChartAccessibleTranscript } from '@/components/charts/ChartAccessibleTranscript';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
 interface MaturityBucket {
     bucket: string;
     amount: number;
@@ -36,10 +32,10 @@ interface HistoricalData {
 const BUCKET_ORDER = ['<1M', '1-3M', '3-6M', '6-12M', '1-2Y', '2-5Y', '5-10Y', '10Y+'];
 // Solid colors for the stacked bars
 const COST_COLORS = {
-    low: '#22c55e',    // green-500
-    medium: '#f59e0b', // amber-500
-    high: '#ef4444',   // red-500
-    tbill: '#94a3b8'    // slate-400
+    low: CHART_COLORS.expansion,    // green-500
+    medium: CHART_COLORS.gold, // amber-500
+    high: CHART_COLORS.stress,   // red-500
+    tbill: CHART_COLORS.label    // slate-400
 };
 
 const CustomTooltip = ({ active, payload, viewMode }: any) => {
@@ -48,45 +44,45 @@ const CustomTooltip = ({ active, payload, viewMode }: any) => {
         const total = dataPoint.amount;
         const isClass = viewMode === 'security_class';
         return (
-            <div className="bg-popover text-popover-foreground backdrop-blur-sm border border-border rounded-lg p-3 shadow-xl z-50">
-                <p className="text-foreground font-semibold mb-2 border-b border-border pb-1">{dataPoint.bucket}</p>
+            <div className={`${TOOLTIP_SHELL_CLASS} z-50`}>
+                <p className="text-slate-100 font-semibold mb-2 border-b border-border pb-1">{dataPoint.bucket}</p>
                 <div className="space-y-1">
                     {dataPoint.tbill > 0 && (
                         <div className="flex items-center justify-between gap-4">
-                            <span className="text-muted-foreground text-xs flex items-center gap-1">
-                                <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-slate-200"></div>
+                            <span className="text-slate-400 text-xs flex items-center gap-1">
+                                <div className="w-2 h-2 rounded-full bg-slate-400 border border-dashed border-border"></div>
                                 T-Bills{dataPoint.tbillYield ? ` @ ${dataPoint.tbillYield.toFixed(2)}%` : ''}
                             </span>
-                            <span className="text-foreground font-mono">${dataPoint.tbill.toFixed(2)}T</span>
+                            <span className="text-slate-100 font-mono">${dataPoint.tbill.toFixed(2)}T</span>
                         </div>
                     )}
                     {isClass ? (
                         <div className="flex items-center justify-between gap-4">
-                            <span className="text-cyan-500 dark:text-cyan-400 text-xs flex items-center gap-1">
+                            <span className="text-cyan-400 text-xs flex items-center gap-1">
                                 <div className="w-2 h-2 rounded-full bg-cyan-500"></div>
                                 Marketable excl. bills (Notes/Bonds/TIPS/FRN)
                             </span>
-                            <span className="text-foreground font-mono">${(dataPoint.couponMarketable ?? 0).toFixed(2)}T</span>
+                            <span className="text-slate-100 font-mono">${(dataPoint.couponMarketable ?? 0).toFixed(2)}T</span>
                         </div>
                     ) : (
                         <>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-rose-500 dark:text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
-                                <span className="text-foreground font-mono">${dataPoint.high.toFixed(2)}T</span>
+                                <span className="text-red-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-red-500"></div>High Cost (&gt;4%)</span>
+                                <span className="text-slate-100 font-mono">${dataPoint.high.toFixed(2)}T</span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-amber-500 dark:text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
-                                <span className="text-foreground font-mono">${dataPoint.medium.toFixed(2)}T</span>
+                                <span className="text-amber-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-amber-500"></div>Medium (2-4%)</span>
+                                <span className="text-slate-100 font-mono">${dataPoint.medium.toFixed(2)}T</span>
                             </div>
                             <div className="flex items-center justify-between gap-4">
-                                <span className="text-emerald-600 dark:text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
-                                <span className="text-foreground font-mono">${dataPoint.low.toFixed(2)}T</span>
+                                <span className="text-green-400 text-xs flex items-center gap-1"><div className="w-2 h-2 rounded-full bg-green-500"></div>Low Cost (&lt;2%)</span>
+                                <span className="text-slate-100 font-mono">${dataPoint.low.toFixed(2)}T</span>
                             </div>
                         </>
                     )}
                     <div className="border-t border-border pt-1 mt-1 flex items-center justify-between gap-4">
-                        <span className="text-muted-foreground text-xs font-semibold">Total marketable</span>
-                        <span className="text-cyan-600 dark:text-cyan-400 font-bold">${total.toFixed(2)}T</span>
+                        <span className="text-slate-400 text-xs font-semibold">Total marketable</span>
+                        <span className="text-cyan-400 font-semibold">${total.toFixed(2)}T</span>
                     </div>
                 </div>
             </div>
@@ -300,40 +296,40 @@ export const USDebtMaturityWall: React.FC = () => {
         : '—';
 
     return (
-        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-800 dark:to-slate-900 rounded-2xl shadow-sm dark:shadow-2xl overflow-hidden border border-border dark:border-slate-700/50">
+        <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 rounded-xl shadow-sm shadow-2xl overflow-hidden border border-border">
             {/* Header */}
-            <div className="p-6 md:p-8 border-b border-border dark:border-slate-700/50">
+            <div className="p-6 md:p-8 border-b border-border">
                 <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                     <div>
                         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2 flex items-center gap-3">
-                            <Calendar className="w-8 h-8 text-cyan-500 dark:text-cyan-400" />
+                            <Calendar className="w-8 h-8 text-cyan-400" />
                             US Debt Maturity Wall
                         </h2>
                         <p className="text-muted-foreground text-sm md:text-base max-w-2xl">
-                            Treasury Securities Redemption Schedule • <span className="text-amber-600 dark:text-amber-400 font-medium">Highlighting Rollover Risk</span>
+                            Treasury Securities Redemption Schedule • <span className="text-amber-400 font-medium">Highlighting Rollover Risk</span>
                         </p>
                     </div>
                     <div className="flex items-center gap-2 text-muted-foreground text-sm">
                         <span>Updated: {new Date(latestDate).toLocaleDateString('en-US', { month: 'short', year: 'numeric' })}</span>
-                        <span className="text-muted-foreground/40">•</span>
+                        <span className="text-terminal-dim">•</span>
                         <span className="text-xs italic">U.S. Treasury MSPD</span>
                     </div>
                 </div>
             </div>
 
             {/* Key Callouts */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 md:p-8 bg-muted/40 dark:bg-slate-800/30">
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-6 md:p-8 bg-secondary/40">
                 <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
-                    className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700/50 rounded-xl p-5 hover:border-cyan-500/40 transition-colors shadow-sm"
+                    className="bg-secondary/60 border border-border rounded-xl p-5 hover:border-cyan-500/40 transition-colors shadow-sm"
                 >
                     <div className="flex items-center justify-between gap-3 mb-2">
                         <div className="flex items-center gap-3">
-                            <DollarSign className="w-6 h-6 text-cyan-500 dark:text-cyan-400" />
+                            <DollarSign className="w-6 h-6 text-cyan-400" />
                             <span className="text-muted-foreground text-sm font-medium">Total Marketable Debt</span>
                         </div>
                         {latestTotalDebt !== null && (
-                            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-black bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 uppercase tracking-tighter border border-cyan-500/30 animate-pulse">
+                            <span className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[11px] font-semibold bg-cyan-500/10 text-cyan-400 uppercase tracking-tighter border border-cyan-500/30 animate-pulse">
                                 Live
                             </span>
                         )}
@@ -346,10 +342,10 @@ export const USDebtMaturityWall: React.FC = () => {
 
                 <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2 }}
-                    className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700/50 rounded-xl p-5 hover:border-orange-500/40 transition-colors shadow-sm"
+                    className="bg-secondary/60 border border-border rounded-xl p-5 hover:border-orange-500/40 transition-colors shadow-sm"
                 >
                     <div className="flex items-center gap-3 mb-2">
-                        <AlertTriangle className="w-6 h-6 text-orange-500 dark:text-orange-400" />
+                        <AlertTriangle className="w-6 h-6 text-orange-400" />
                         <span className="text-muted-foreground text-sm font-medium">Maturing &lt;1 Year</span>
                     </div>
                     <p className="text-3xl font-bold text-foreground">${shortTermTrillions}T</p>
@@ -364,7 +360,7 @@ export const USDebtMaturityWall: React.FC = () => {
                 >
                     <Link
                         to="/glossary/sovereign-rollover-risk"
-                        className="block bg-card dark:bg-gradient-to-br dark:from-red-500/10 dark:to-red-600/5 border border-red-500/30 rounded-xl p-5 relative overflow-hidden group hover:border-red-500/60 transition-colors cursor-pointer shadow-sm"
+                        className="block bg-card bg-gradient-to-br from-red-500/10 to-red-600/5 border border-red-500/30 rounded-xl p-5 relative overflow-hidden group hover:border-red-500/60 transition-colors cursor-pointer shadow-sm"
                         title="View Glossary Definition"
                     >
                         <div className="absolute top-0 right-0 p-2 opacity-10 group-hover:opacity-20 transition-opacity">
@@ -374,13 +370,13 @@ export const USDebtMaturityWall: React.FC = () => {
                             <BookOpen className="w-4 h-4 text-red-400" />
                         </div>
                         <div className="flex items-center gap-3 mb-2 relative z-10">
-                            <Activity className="w-6 h-6 text-red-500 dark:text-red-400" />
-                            <span className="text-red-700 dark:text-red-200 text-sm font-medium">Rollover Shock Risk</span>
+                            <Activity className="w-6 h-6 text-red-400" />
+                            <span className="text-red-200 text-sm font-medium">Rollover Shock Risk</span>
                         </div>
                         <p className="text-3xl font-bold text-foreground relative z-10">${rolloverRiskTrillions}T</p>
                         <div className="relative z-10 mt-1">
                             <div className="flex items-center gap-2">
-                                <span className="text-red-700 dark:text-red-300 text-xs bg-red-500/10 dark:bg-red-500/20 px-1.5 py-0.5 rounded font-bold">Low-Cost Debt</span>
+                                <span className="text-red-300 text-xs bg-red-500/20 px-1.5 py-0.5 rounded font-bold">Low-Cost Debt</span>
                                 <span className="text-muted-foreground text-xs">maturing &lt;1Y</span>
                             </div>
                         </div>
@@ -389,7 +385,7 @@ export const USDebtMaturityWall: React.FC = () => {
 
                 <m.div
                     initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }}
-                    className="bg-card dark:bg-slate-800/50 border border-border dark:border-slate-700/50 rounded-xl p-5 hover:border-border transition-colors shadow-sm"
+                    className="bg-secondary/60 border border-border rounded-xl p-5 hover:border-border transition-colors shadow-sm"
                 >
                     <div className="flex items-center gap-3 mb-2">
                         <TrendingUp className="w-6 h-6 text-muted-foreground" />
@@ -404,17 +400,17 @@ export const USDebtMaturityWall: React.FC = () => {
 
             {/* Security-class summary strip */}
             <div className="px-6 md:px-8 pb-2 grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="rounded-lg border border-border bg-card dark:bg-slate-800/30 px-4 py-3 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Marketable excl. bills</p>
-                    <p className="text-xl font-mono font-bold text-cyan-600 dark:text-cyan-300">${totalCouponAll.toFixed(2)}T</p>
+                <div className="rounded-lg border border-border bg-secondary/40 px-4 py-3 shadow-sm">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Marketable excl. bills</p>
+                    <p className="text-xl font-mono font-bold text-cyan-300">${totalCouponAll.toFixed(2)}T</p>
                 </div>
-                <div className="rounded-lg border border-border bg-card dark:bg-slate-800/30 px-4 py-3 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">T-Bills only</p>
+                <div className="rounded-lg border border-border bg-secondary/40 px-4 py-3 shadow-sm">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">T-Bills only</p>
                     <p className="text-xl font-mono font-bold text-foreground">${totalTbillAll.toFixed(2)}T</p>
                 </div>
-                <div className="rounded-lg border border-border bg-card dark:bg-slate-800/30 px-4 py-3 shadow-sm">
-                    <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground">Bill share of marketable</p>
-                    <p className="text-xl font-mono font-bold text-amber-600 dark:text-amber-300">{billSharePct}%</p>
+                <div className="rounded-lg border border-border bg-secondary/40 px-4 py-3 shadow-sm">
+                    <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">Bill share of marketable</p>
+                    <p className="text-xl font-mono font-bold text-amber-300">{billSharePct}%</p>
                 </div>
             </div>
 
@@ -433,7 +429,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                     onClick={() => setViewMode('security_class')}
                                     className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide rounded-md transition-colors ${
                                         viewMode === 'security_class'
-                                            ? 'bg-cyan-500/15 text-cyan-700 dark:text-cyan-300 border border-cyan-500/40'
+                                            ? 'bg-cyan-500/15 text-cyan-300 border border-cyan-500/40'
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
@@ -444,7 +440,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                     onClick={() => setViewMode('rollover_cost')}
                                     className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wide rounded-md transition-colors ${
                                         viewMode === 'rollover_cost'
-                                            ? 'bg-amber-500/15 text-amber-700 dark:text-amber-300 border border-amber-500/40'
+                                            ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40'
                                             : 'text-muted-foreground hover:text-foreground'
                                     }`}
                                 >
@@ -453,7 +449,7 @@ export const USDebtMaturityWall: React.FC = () => {
                             </div>
                             <div className="flex gap-3" role="legend" aria-label="Maturity legend">
                                 <div className="flex items-center gap-2" role="listitem">
-                                    <div className="w-3 h-3 rounded-sm bg-slate-400 border border-dashed border-slate-200" aria-hidden="true"></div>
+                                    <div className="w-3 h-3 rounded-sm bg-slate-400 border border-dashed border-border" aria-hidden="true"></div>
                                     <span className="text-muted-foreground text-xs">T-Bills</span>
                                 </div>
                                 {viewMode === 'security_class' ? (
@@ -481,7 +477,7 @@ export const USDebtMaturityWall: React.FC = () => {
                         </div>
                     </div>
 
-                    <div className="w-full bg-card dark:bg-slate-800/50 rounded-xl p-4 border border-border dark:border-slate-700/30 shadow-sm">
+                    <div className="w-full bg-secondary/60 rounded-xl p-4 border border-border shadow-sm">
                         <MacroChartContainer height={CHART_HEIGHTS.tall}>
                             <BarChart data={chartData} layout="vertical" margin={{ top: 10, right: 30, left: 40, bottom: 0 }}>
                                 <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
@@ -496,10 +492,10 @@ export const USDebtMaturityWall: React.FC = () => {
                                     {...DEFAULT_YAXIS_PROPS}
                                     width={50}
                                 />
-                                <Tooltip content={<CustomTooltip viewMode={viewMode} />} cursor={{ fill: 'rgba(148, 163, 184, 0.05)' }} />
-                                <Bar dataKey="tbill" name="T-Bills" stackId="a" fill={COST_COLORS.tbill} radius={[0, 0, 0, 0]} stroke="#cbd5e1" strokeDasharray="3 3" />
+                                <Tooltip content={<CustomTooltip viewMode={viewMode} />} cursor={{ fill: alpha(CHART_COLORS.label, 0.05) }} />
+                                <Bar dataKey="tbill" name="T-Bills" stackId="a" fill={COST_COLORS.tbill} radius={[0, 0, 0, 0]} stroke={CHART_COLORS.label} strokeDasharray="3 3" />
                                 {viewMode === 'security_class' ? (
-                                    <Bar dataKey="couponMarketable" name="Marketable excl. bills" stackId="a" fill="#06b6d4" radius={[0, 4, 4, 0]} />
+                                    <Bar dataKey="couponMarketable" name="Marketable excl. bills" stackId="a" fill={CHART_COLORS.west} radius={[0, 4, 4, 0]} />
                                 ) : (
                                     <>
                                         <Bar dataKey="low" name="Low Cost" stackId="a" fill={COST_COLORS.low} />
@@ -542,7 +538,7 @@ export const USDebtMaturityWall: React.FC = () => {
                 </div>
 
                 {/* Impacts of Rising Yield Curve - Educational Section */}
-                <div className="bg-card dark:bg-slate-800/30 border border-border dark:border-slate-700 rounded-xl p-6 space-y-6 shadow-sm">
+                <div className="bg-secondary/40 border border-border rounded-xl p-6 space-y-6 shadow-sm">
                     <h4 className="text-lg font-bold text-foreground border-b border-border pb-2">Impacts of a Rising Yield Curve</h4>
 
                     <div className="space-y-4">
@@ -551,7 +547,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                 <ArrowUpRight className="w-5 h-5 text-red-500" />
                             </div>
                             <div>
-                                <h5 className="text-red-700 dark:text-red-200 font-semibold text-sm">Interest Expense Shock</h5>
+                                <h5 className="text-red-200 font-semibold text-sm">Interest Expense Shock</h5>
                                 <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
                                     Refinancing <strong>${rolloverRiskTrillions}T</strong> of low-cost debt at current rates (~4.5%) significantly increases annual interest payments, consuming more of the federal budget.
                                 </p>
@@ -563,7 +559,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                 <Percent className="w-5 h-5 text-amber-500" />
                             </div>
                             <div>
-                                <h5 className="text-amber-700 dark:text-amber-200 font-semibold text-sm">Crowding Out Effect</h5>
+                                <h5 className="text-amber-200 font-semibold text-sm">Crowding Out Effect</h5>
                                 <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
                                     Higher government borrowing costs compete with private sector investment, potentially slowing economic growth and cap-ex cycles.
                                 </p>
@@ -575,7 +571,7 @@ export const USDebtMaturityWall: React.FC = () => {
                                 <Activity className="w-5 h-5 text-blue-500" />
                             </div>
                             <div>
-                                <h5 className="text-blue-700 dark:text-blue-200 font-semibold text-sm">Refinancing Wall</h5>
+                                <h5 className="text-blue-200 font-semibold text-sm">Refinancing Wall</h5>
                                 <p className="text-muted-foreground text-xs mt-1 leading-relaxed">
                                     A high concentration of short-term debt (<strong>{((parseFloat(shortTermTrillions) / parseFloat(totalDebtTrillions)) * 100).toFixed(0)}%</strong> in &lt;1Y) exposes the Treasury to immediate interest rate volatility.
                                 </p>
@@ -587,7 +583,7 @@ export const USDebtMaturityWall: React.FC = () => {
 
             {/* Secondary Chart: Historical Trend */}
             {historicalData.length > 1 && (
-                <div className="p-6 md:p-8 border-t border-border bg-muted/20 dark:bg-slate-800/20">
+                <div className="p-6 md:p-8 border-t border-border bg-secondary/40">
                     <h3 className="text-xl font-bold text-foreground mb-4 flex items-center gap-2">
                         <span className="w-1 h-6 bg-cyan-500 rounded-full"></span>
                         Historical Maturity Profile
@@ -606,38 +602,34 @@ export const USDebtMaturityWall: React.FC = () => {
                                     tickFormatter={(value) => `$${(value / 1_000_000).toFixed(0)}T`}
                                 />
                                 <Tooltip
-                                    contentStyle={{
-                                        backgroundColor: 'hsl(var(--popover))',
-                                        border: '1px solid hsl(var(--border))',
-                                        borderRadius: '8px',
-                                        color: 'hsl(var(--popover-foreground))',
-                                        fontSize: '12px'
-                                    }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                     labelFormatter={(date) => new Date(date).toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
                                     formatter={(value: any) => [`$${(value / 1_000_000).toFixed(2)}T`, '']}
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey="short_term"
-                                    stroke="#ef4444"
+                                    stroke={CHART_COLORS.stress}
                                     strokeWidth={2}
-                                    dot={{ fill: '#ef4444', r: 3 }}
+                                    dot={{ fill: CHART_COLORS.stress, r: 3 }}
                                     name="<1Y"
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey="medium_term"
-                                    stroke="#eab308"
+                                    stroke={CHART_COLORS.gold}
                                     strokeWidth={2}
-                                    dot={{ fill: '#eab308', r: 3 }}
+                                    dot={{ fill: CHART_COLORS.goldSoft, r: 3 }}
                                     name="1-5Y"
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey="long_term"
-                                    stroke="#06b6d4"
+                                    stroke={CHART_COLORS.west}
                                     strokeWidth={2}
-                                    dot={{ fill: '#06b6d4', r: 3 }}
+                                    dot={{ fill: CHART_COLORS.west, r: 3 }}
                                     name="5Y+"
                                 />
                             </LineChart>

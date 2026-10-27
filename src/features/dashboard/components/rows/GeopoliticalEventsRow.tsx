@@ -12,7 +12,7 @@ export const GeopoliticalEventsRow: React.FC = () => {
                 sectionId="geo-matrix"
             />
             <SectionErrorBoundary name="Geopolitical Map Row">
-                <Suspense fallback={<div className="h-[600px] w-full animate-pulse bg-white/5 rounded-3xl" />}>
+                <Suspense fallback={<div className="h-[600px] w-full animate-pulse bg-white/5 rounded-xl" />}>
                     <EventsMap className="h-[600px] w-full" />
                 </Suspense>
             </SectionErrorBoundary>

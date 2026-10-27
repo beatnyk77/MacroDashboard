@@ -44,7 +44,7 @@ export const TerminalSidebar: React.FC = () => {
             aria-label="Terminal Navigation Sidebar"
         >
             <div className="px-4 mb-5 pt-3">
-                <span className="text-xs font-black tracking-uppercase text-primary uppercase flex items-center gap-2">
+                <span className="text-xs font-semibold tracking-wider text-primary uppercase flex items-center gap-2">
                     <Activity size={10} /> Terminal Active
                 </span>
             </div>
@@ -52,7 +52,7 @@ export const TerminalSidebar: React.FC = () => {
             <nav className="flex-1 px-3" aria-label="Main terminal navigation">
                 {(['OVERVIEW', 'INTELLIGENCE', 'MARKETS', 'REGIONS', 'RESEARCH'] as const).map((group) => (
                     <div key={group} className="mb-5">
-                        <h2 className="mb-2 px-4 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground">{group}</h2>
+                        <h2 className="mb-2 px-4 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{group}</h2>
                         <ul className="space-y-1">
                     {terminalNavItems.filter((item) => item.group === group).map((item) => {
                         const normPath = withoutTrailingSlash(location.pathname);
@@ -93,7 +93,7 @@ export const TerminalSidebar: React.FC = () => {
 
             <div className="mt-auto px-4 py-4 border-t border-border">
                 <div className="p-3 rounded-lg bg-card border border-border shadow-sm">
-                    <span className="block text-xs font-black tracking-uppercase text-muted-foreground/70 uppercase mb-2">
+                    <span className="block text-xs font-semibold tracking-wider text-muted-foreground uppercase mb-2">
                         Data Pipeline
                     </span>
                     <div className="flex items-center gap-2">
@@ -101,7 +101,7 @@ export const TerminalSidebar: React.FC = () => {
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-secondary opacity-60"></span>
                             <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-secondary shadow-[0_0_8px_rgba(7,80,86,0.35)]"></span>
                         </div>
-                        <span className="text-xs font-bold text-secondary uppercase tracking-uppercase leading-none">
+                        <span className="text-xs font-semibold text-secondary uppercase tracking-wider leading-none">
                             All Systems Nominal
                         </span>
                     </div>

@@ -1,12 +1,15 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
+import { StatusDot, type StatusTone } from '@/components/StatusDot';
 import { useChinaMacroPulse } from '@/hooks/useChinaMacro';
 import { usePBOCOps } from '@/hooks/useChinaMacro';
 import {
-    RadarChart, PolarGrid, PolarAngleAxis, Radar, ResponsiveContainer, Tooltip,
+    RadarChart, PolarGrid, PolarAngleAxis, Radar, Tooltip,
     AreaChart, Area, XAxis, YAxis, CartesianGrid, ReferenceLine
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
 import { Cpu, TrendingUp, TrendingDown } from 'lucide-react';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const SignalCard: React.FC<{
     label: string;
@@ -18,15 +21,16 @@ const SignalCard: React.FC<{
     borderColor: string;
     desc: string;
     interpretation: string;
-}> = ({ label, sublabel, value, delta, trend, color, borderColor, desc, interpretation }) => (
-    <div className={cn('p-5 rounded-2xl bg-card border shadow-sm transition-all hover:border-border/80', borderColor)}>
-        <p className={cn('text-xs font-black uppercase tracking-uppercase mb-1', color)}>{label}</p>
+    tone?: StatusTone;
+}> = ({ label, sublabel, value, delta, trend, color, borderColor, desc, interpretation, tone }) => (
+    <div className={cn('p-5 rounded-xl bg-card border shadow-sm transition-all hover:border-border/80', borderColor)}>
+        <p className={cn('text-xs font-semibold uppercase tracking-wider mb-1', color)}>{label}</p>
         <p className="text-xs text-muted-foreground mb-3">{sublabel}</p>
         <div className="flex items-baseline justify-between mb-2">
-            <p className={cn('text-3xl font-black tabular-nums tracking-heading', color)}>{value}</p>
+            <p className={cn('text-3xl font-bold tabular-nums tracking-heading', color)}>{value}</p>
             {delta && (
-                <div className={cn('flex items-center gap-0.5 text-xs font-black',
-                    trend === 'up' ? 'text-emerald-700 dark:text-emerald-400' : trend === 'down' ? 'text-rose-700 dark:text-rose-400' : 'text-muted-foreground'
+                <div className={cn('flex items-center gap-0.5 text-xs font-bold',
+                    trend === 'up' ? 'text-emerald-400' : trend === 'down' ? 'text-rose-400' : 'text-muted-foreground'
                 )}>
                     {trend === 'up' ? <TrendingUp size={12} /> : trend === 'down' ? <TrendingDown size={12} /> : null}
                     {delta}
@@ -35,6 +39,7 @@ const SignalCard: React.FC<{
         </div>
         <p className="text-xs text-muted-foreground/80 mb-2">{desc}</p>
         <div className={cn('p-2 rounded-xl text-xs text-muted-foreground leading-relaxed border bg-muted/30', borderColor)}>
+            {tone && <StatusDot tone={tone} className="mr-2" />}
             {interpretation}
         </div>
     </div>
@@ -91,11 +96,11 @@ export const ChinaProprietarySignals: React.FC = () => {
             {/* Header */}
             <div className="flex items-center gap-3 border-b border-border pb-6">
                 <div className="p-2 rounded-xl bg-purple-500/10 border border-purple-500/20">
-                    <Cpu className="text-purple-600 dark:text-purple-400 w-5 h-5" />
+                    <Cpu className="text-purple-400 w-5 h-5" />
                 </div>
                 <div>
-                    <h3 className="text-xl font-black tracking-heading text-foreground uppercase">
-                        Proprietary <span className="text-purple-600 dark:text-purple-400">Alpha Signals</span>
+                    <h3 className="text-xl font-bold tracking-heading text-foreground uppercase">
+                        Proprietary <span className="text-purple-400">Alpha Signals</span>
                     </h3>
                     <p className="text-muted-foreground text-xs mt-0.5">Credit Impulse · De-Dollarization · Distress · PBOC/Fed Divergence</p>
                 </div>
@@ -113,18 +118,19 @@ export const ChinaProprietarySignals: React.FC = () => {
                     trend={latestCI?.value != null && creditImpulse?.[1]?.value != null
                         ? latestCI.value > creditImpulse[1].value ? 'up' : 'down'
                         : 'neutral'}
-                    color="text-amber-600 dark:text-amber-400"
+                    color="text-amber-400"
                     borderColor="border-border"
                     desc="Source: PBoC Total Social Financing / Nominal GDP"
                     interpretation={
                         latestCI?.value == null
                             ? 'No data available for this window.'
                             : latestCI.value > 1.5
-                            ? '🟢 Rising impulse → bullish for commodities & EM equities in 9-12M'
+                            ? 'Rising impulse → bullish for commodities & EM equities in 9-12M'
                             : latestCI.value > 0
-                            ? '🟡 Positive but decelerating → mixed signal'
-                            : '🔴 Negative impulse → demand contraction signal'
+                            ? 'Positive but decelerating → mixed signal'
+                            : 'Negative impulse → demand contraction signal'
                     }
+                    tone={latestCI?.value == null ? undefined : latestCI.value > 1.5 ? 'ok' : latestCI.value > 0 ? 'caution' : 'stress'}
                 />
 
                 <SignalCard
@@ -133,18 +139,19 @@ export const ChinaProprietarySignals: React.FC = () => {
                     value={latestDD?.value != null ? `${latestDD.value.toFixed(1)}%` : '--'}
                     delta={latestDD?.value != null ? `${latestDD.value.toFixed(1)}% YoY` : undefined}
                     trend={latestDD?.value != null ? (latestDD.value < 0 ? 'down' : 'up') : 'neutral'}
-                    color="text-red-600 dark:text-red-400"
+                    color="text-red-400"
                     borderColor="border-border"
                     desc="Source: IMF COFER database (quarterly)"
                     interpretation={
                         latestDD?.value == null
                             ? 'No data available for this window.'
                             : latestDD.value < -1.0
-                            ? '🔴 Accelerating USD decoupling — CIPS + CNY trade routes expanding'
+                            ? 'Accelerating USD decoupling — CIPS + CNY trade routes expanding'
                             : latestDD.value < 0
-                            ? '🟡 Slow de-dollarization — structural but gradual'
-                            : '⬜ USD dominance stable'
+                            ? 'Slow de-dollarization — structural but gradual'
+                            : 'USD dominance stable'
                     }
+                    tone={latestDD?.value == null ? undefined : latestDD.value < -1.0 ? 'stress' : latestDD.value < 0 ? 'caution' : 'neutral'}
                 />
 
                 <SignalCard
@@ -157,90 +164,92 @@ export const ChinaProprietarySignals: React.FC = () => {
                     trend={latestCD?.value != null && corpDistress?.[1]?.value != null
                         ? latestCD.value < corpDistress[1].value ? 'down' : 'up'
                         : 'neutral'}
-                    color={latestCD?.value == null ? 'text-muted-foreground' : latestCD.value < -1.5 ? 'text-rose-600 dark:text-rose-400' : 'text-amber-600 dark:text-amber-400'}
+                    color={latestCD?.value == null ? 'text-muted-foreground' : latestCD.value < -1.5 ? 'text-rose-400' : 'text-amber-400'}
                     borderColor="border-border"
                     desc="Negative = PPI deflation faster than CPI → industrial margin squeeze"
                     interpretation={
                         latestCD?.value == null
                             ? 'No data available for this window.'
                             : latestCD.value < -2.0
-                            ? '🔴 Severe margin compression → watch for credit defaults & SOE support'
+                            ? 'Severe margin compression → watch for credit defaults & SOE support'
                             : latestCD.value < -1.0
-                            ? '🟡 Moderate pressure → property + industrial sector stress'
-                            : '🟢 Spreads recovering → earnings stabilization signal'
+                            ? 'Moderate pressure → property + industrial sector stress'
+                            : 'Spreads recovering → earnings stabilization signal'
                     }
+                    tone={latestCD?.value == null ? undefined : latestCD.value < -2.0 ? 'stress' : latestCD.value < -1.0 ? 'caution' : 'ok'}
                 />
 
                 <SignalCard
                     label="PBOC vs Fed Divergence"
                     sublabel="MLF Rate minus Fed Funds Rate"
                     value={pbocFedGap != null ? `${pbocFedGap.toFixed(2)}%` : '--'}
-                    color={pbocFedGap == null ? 'text-muted-foreground' : pbocFedGap < -2 ? 'text-rose-600 dark:text-rose-400' : 'text-emerald-700 dark:text-emerald-400'}
+                    color={pbocFedGap == null ? 'text-muted-foreground' : pbocFedGap < -2 ? 'text-rose-400' : 'text-emerald-400'}
                     borderColor="border-border"
                     desc="Source: PBOC (MLF 1Y) vs Fed Funds Effective Rate"
                     interpretation={
                         pbocFedGap == null
                             ? 'No data available for this window.'
                             : pbocFedGap < -2
-                                ? `🔴 ${pbocDivergenceLabel} — negative carry on CNY-denominated assets vs USD`
-                                : `🟢 ${pbocDivergenceLabel} — narrowing differential reduces outflow pressure`
+                                ? `${pbocDivergenceLabel} — negative carry on CNY-denominated assets vs USD`
+                                : `${pbocDivergenceLabel} — narrowing differential reduces outflow pressure`
                     }
+                    tone={pbocFedGap == null ? undefined : pbocFedGap < -2 ? 'stress' : 'ok'}
                 />
             </div>
 
             {/* Credit Impulse Trend */}
             {ciTrend.length > 0 && (
-                <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
+                <div className="p-5 rounded-xl bg-card border border-border shadow-sm">
                     <div className="flex justify-between items-center mb-4">
-                        <p className="text-xs font-black text-foreground uppercase tracking-uppercase">Credit Impulse Trend — Lead Indicator for Global Demand</p>
+                        <p className="text-xs font-semibold text-foreground uppercase tracking-wider">Credit Impulse Trend — Lead Indicator for Global Demand</p>
                         <span className="text-xs text-muted-foreground">9-12M forward lead</span>
                     </div>
-                    <ResponsiveContainer width="100%" height={150}>
+                    <MacroChartContainer height={CHART_HEIGHTS.compact}>
                         <AreaChart data={ciTrend}>
                             <defs>
                                 <linearGradient id="ciGradPos" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#fbbf24" stopOpacity={0.2} />
-                                    <stop offset="95%" stopColor="#fbbf24" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={CHART_COLORS.gold} stopOpacity={0.2} />
+                                    <stop offset="95%" stopColor={CHART_COLORS.gold} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
-                            <CartesianGrid strokeDasharray="3 3" stroke="currentColor" className="text-border/40" />
-                            <XAxis dataKey="date" tick={{ fill: 'currentColor', fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
-                            <YAxis tick={{ fill: 'currentColor', fontSize: 9 }} tickLine={false} axisLine={false} className="text-muted-foreground" />
+                            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} className="text-border/40" />
+                            <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="date" axisLine={false} className="text-muted-foreground" />
+                            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} axisLine={false} className="text-muted-foreground" />
                             <Tooltip
-                                contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: 8, fontSize: 10, color: 'hsl(var(--popover-foreground))' }}
-                                labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
-                                itemStyle={{ color: '#fbbf24' }}
+                                contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                             />
                             <ReferenceLine y={0} stroke="currentColor" className="text-border" strokeDasharray="4 4" />
-                            <Area type="monotone" dataKey="value" stroke="#fbbf24" strokeWidth={2.5} fill="url(#ciGradPos)" name="Credit Impulse (%GDP)" />
+                            <Area type="monotone" dataKey="value" stroke={CHART_COLORS.gold} strokeWidth={2.5} fill="url(#ciGradPos)" name="Credit Impulse (%GDP)" />
                         </AreaChart>
-                    </ResponsiveContainer>
+                    </MacroChartContainer>
                 </div>
             )}
 
             {/* Macro Radar */}
-            <div className="p-5 rounded-2xl bg-card border border-border shadow-sm">
-                <p className="text-xs font-black text-foreground uppercase tracking-uppercase mb-4">China Macro Composite — Radar View</p>
-                <ResponsiveContainer width="100%" height={220}>
+            <div className="p-5 rounded-xl bg-card border border-border shadow-sm">
+                <p className="text-xs font-semibold text-foreground uppercase tracking-wider mb-4">China Macro Composite — Radar View</p>
+                <MacroChartContainer height={CHART_HEIGHTS.standard}>
                     <RadarChart data={radarData}>
                         <PolarGrid stroke="currentColor" className="text-border/40" />
-                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'currentColor', fontSize: 10, fontWeight: 800 }} className="text-muted-foreground" />
+                        <PolarAngleAxis dataKey="subject" tick={{ fill: 'currentColor', fontSize: 11, fontWeight: 700 }} className="text-muted-foreground" />
                         <Radar
                             name="China Signal"
                             dataKey="value"
-                            stroke="#f87171"
-                            fill="#f87171"
+                            stroke={CHART_COLORS.stress}
+                            fill={CHART_COLORS.stress}
                             fillOpacity={0.12}
                             strokeWidth={2}
                         />
                         <Tooltip
-                            contentStyle={{ backgroundColor: 'hsl(var(--popover))', borderColor: 'hsl(var(--border))', borderRadius: 8, fontSize: 10, color: 'hsl(var(--popover-foreground))' }}
-                            labelStyle={{ color: 'hsl(var(--muted-foreground))' }}
-                            itemStyle={{ color: '#f87171' }}
+                            contentStyle={DEFAULT_TOOLTIP_STYLE}
+                            labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                            itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                             formatter={(val: number) => [`${val.toFixed(0)}/100`, 'Score']}
                         />
                     </RadarChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
             </div>
         </div>
     );

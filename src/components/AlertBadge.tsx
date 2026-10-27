@@ -1,6 +1,7 @@
 import React from 'react';
 import { m } from 'framer-motion';
 import { cn } from '@/lib/utils';
+import { StatusDot } from '@/components/StatusDot';
 
 interface AlertBadgeProps {
     zScore: number;
@@ -23,7 +24,7 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             className={cn(
-                "inline-flex items-center gap-1 rounded-full font-black uppercase tracking-uppercase",
+                "inline-flex items-center gap-1 rounded-full font-semibold uppercase tracking-wider",
                 sizeClasses[size],
                 absZ > 3 ? "bg-rose-500/20 text-rose-400 border border-rose-500/30" : "bg-orange-500/20 text-orange-400 border border-orange-500/30"
             )}
@@ -32,7 +33,7 @@ export const AlertBadge: React.FC<AlertBadgeProps> = ({ zScore, size = 'md' }) =
                 animate={{ scale: [1, 1.2, 1] }}
                 transition={{ repeat: Infinity, duration: 2 }}
             >
-                {absZ > 3 ? '🔴' : '⚡'}
+                <StatusDot tone={absZ > 3 ? 'stress' : 'warn'} />
             </m.span>
             {absZ > 3 ? 'EXTREME' : 'ELEVATED'}
         </m.div>

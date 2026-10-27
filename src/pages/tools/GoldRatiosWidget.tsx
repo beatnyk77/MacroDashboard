@@ -6,13 +6,14 @@ import { ExternalLink, ArrowUpRight, ArrowDownRight } from 'lucide-react';
 import { useGoldRatios } from '@/hooks/useGoldRatios';
 import { SEOManager } from '@/components/SEOManager';
 import { EmbedCodeBlock } from '@/components/EmbedCodeBlock';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 function zColor(z: number): string {
-    if (z >= 1.5) return '#f43f5e';
-    if (z >= 0.5) return '#f59e0b';
-    if (z <= -1.5) return '#10b981';
-    if (z <= -0.5) return '#3b82f6';
-    return 'rgba(255,255,255,0.6)';
+    if (z >= 1.5) return CHART_COLORS.east;
+    if (z >= 0.5) return CHART_COLORS.gold;
+    if (z <= -1.5) return CHART_COLORS.expansion;
+    if (z <= -0.5) return CHART_COLORS.west;
+    return WHITE_ALPHA.mid;
 }
 
 /**
@@ -28,7 +29,7 @@ export const GoldRatiosWidget: React.FC = () => {
     return (
         <Box sx={{
             minHeight: isEmbedded ? 'auto' : '100vh',
-            bgcolor: '#050810',
+            bgcolor: CHART_COLORS.surface,
             color: 'white',
             pt: isEmbedded ? 0 : 12,
             pb: isEmbedded ? 0 : 8,
@@ -47,9 +48,9 @@ export const GoldRatiosWidget: React.FC = () => {
             <Container maxWidth="sm">
                 <Paper elevation={0} sx={{
                     p: 6,
-                    bgcolor: 'rgba(15, 23, 42, 0.5)',
+                    bgcolor: alpha(CHART_COLORS.panel, 0.5),
                     borderRadius: 6,
-                    border: '1px solid rgba(255,255,255,0.05)',
+                    border: 1, borderColor: 'divider',
                     backdropFilter: 'blur(20px)',
                     position: 'relative',
                     overflow: 'hidden',
@@ -57,8 +58,8 @@ export const GoldRatiosWidget: React.FC = () => {
                     {/* Branding */}
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 5 }}>
                         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: '#f59e0b', boxShadow: '0 0 10px #f59e0b' }} />
-                            <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: 2, color: 'rgba(255,255,255,0.4)' }}>
+                            <Box sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: CHART_COLORS.gold, boxShadow: `0 0 10px ${CHART_COLORS.gold}` }} />
+                            <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: '0.1em', color: 'text.disabled' }}>
                                 GraphiQuestor Terminal
                             </Typography>
                         </Box>
@@ -72,21 +73,21 @@ export const GoldRatiosWidget: React.FC = () => {
                         )}
                     </Box>
 
-                    <Typography variant="h5" component="h1" sx={{ fontWeight: 900, textAlign: 'center', mb: 1, letterSpacing: '0.05em', color: 'white' }}>
+                    <Typography variant="h5" component="h1" sx={{ fontWeight: 700, textAlign: 'center', mb: 1, letterSpacing: '0.1em', color: 'white' }}>
                         GOLD RATIOS MONITOR
                     </Typography>
-                    <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mb: 4, color: 'rgba(255,255,255,0.4)', fontWeight: 700 }}>
+                    <Typography variant="caption" sx={{ display: 'block', textAlign: 'center', mb: 4, color: 'text.disabled', fontWeight: 700 }}>
                         MONETARY DEBASEMENT GAUGES · Z-SCORED VS HISTORY
                     </Typography>
 
                     {isLoading || !ratios ? (
                         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
                             {[1, 2, 3, 4].map(i => (
-                                <Skeleton key={i} variant="rounded" height={72} sx={{ bgcolor: 'rgba(255,255,255,0.05)' }} />
+                                <Skeleton key={i} variant="rounded" height={72} sx={{ bgcolor: 'action.hover' }} />
                             ))}
                         </Box>
                     ) : ratios.length === 0 ? (
-                        <Typography sx={{ textAlign: 'center', color: 'rgba(255,255,255,0.4)', fontSize: '0.8rem', py: 4 }}>
+                        <Typography sx={{ textAlign: 'center', color: 'text.disabled', fontSize: '0.8rem', py: 4 }}>
                             Ratio data temporarily unavailable.
                         </Typography>
                     ) : (
@@ -96,25 +97,25 @@ export const GoldRatiosWidget: React.FC = () => {
                                 const spark = ratio.history?.slice(-30) ?? [];
                                 const trendUp = spark.length >= 2 && spark[spark.length - 1].value >= spark[0].value;
                                 return (
-                                    <Box key={ratio.ratio_name} sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.5, borderRadius: 3, bgcolor: 'rgba(255,255,255,0.02)', border: '1px solid rgba(255,255,255,0.05)' }}>
+                                    <Box key={ratio.ratio_name} sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2.5, borderRadius: 3, bgcolor: 'background.paper', border: 1, borderColor: 'divider' }}>
                                         <Box sx={{ flex: 1 }}>
-                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: 1, color: 'rgba(255,255,255,0.8)' }}>
+                                            <Typography sx={{ fontSize: '0.75rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', color: 'text.primary' }}>
                                                 {ratio.ratio_name}
                                             </Typography>
-                                            <Typography sx={{ fontSize: '10px', color: 'rgba(255,255,255,0.35)', fontWeight: 700 }}>
+                                            <Typography sx={{ fontSize: '11px', color: 'text.disabled', fontWeight: 700 }}>
                                                 {Math.round(ratio.percentile)}th percentile
                                             </Typography>
                                         </Box>
                                         <Box sx={{ textAlign: 'right' }}>
                                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5, justifyContent: 'flex-end' }}>
                                                 {trendUp
-                                                    ? <ArrowUpRight size={14} color="rgba(255,255,255,0.4)" />
-                                                    : <ArrowDownRight size={14} color="rgba(255,255,255,0.4)" />}
-                                                <Typography sx={{ fontWeight: 900, fontSize: '1rem' }}>
+                                                    ? <ArrowUpRight size={14} color={WHITE_ALPHA.dim} />
+                                                    : <ArrowDownRight size={14} color={WHITE_ALPHA.dim} />}
+                                                <Typography sx={{ fontWeight: 700, fontSize: '1rem' }}>
                                                     {ratio.current_value >= 100 ? ratio.current_value.toFixed(0) : ratio.current_value.toFixed(2)}
                                                 </Typography>
                                             </Box>
-                                            <Typography sx={{ fontSize: '10px', fontWeight: 800, color }}>
+                                            <Typography sx={{ fontSize: '11px', fontWeight: 700, color }}>
                                                 z {ratio.z_score > 0 ? '+' : ''}{ratio.z_score.toFixed(2)}
                                             </Typography>
                                         </Box>
@@ -125,9 +126,9 @@ export const GoldRatiosWidget: React.FC = () => {
                     )}
 
                     {/* Footer / backlink */}
-                    <Box sx={{ mt: 4, pt: 3, borderTop: '1px solid rgba(255,255,255,0.05)', display: 'flex', justifyContent: 'center' }}>
+                    <Box sx={{ mt: 4, pt: 3, borderTop: 1, borderColor: 'divider', display: 'flex', justifyContent: 'center' }}>
                         <a href="https://graphiquestor.com" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#3b82f6', fontSize: '10px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, '&:hover': { opacity: 0.8 } }}>
+                            <Typography sx={{ color: CHART_COLORS.west, fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', '&:hover': { opacity: 0.8 } }}>
                                 Powered by GraphiQuestor Macro Engines
                             </Typography>
                         </a>
@@ -138,7 +139,7 @@ export const GoldRatiosWidget: React.FC = () => {
                     <Box sx={{ mt: 4, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 2 }}>
                         <EmbedCodeBlock path="/tools/gold-ratios" height={560} />
                         <Link to="/tools" style={{ textDecoration: 'none' }}>
-                            <Typography sx={{ color: '#3b82f6', fontSize: '0.8rem', fontWeight: 900, '&:hover': { textDecoration: 'underline' } }}>
+                            <Typography sx={{ color: CHART_COLORS.west, fontSize: '0.8rem', fontWeight: 700, '&:hover': { textDecoration: 'underline' } }}>
                                 ← ALL EMBEDDABLE TOOLS
                             </Typography>
                         </Link>

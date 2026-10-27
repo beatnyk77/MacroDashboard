@@ -32,10 +32,10 @@ export const ValueProgressionPath: React.FC<ValueProgressionPathProps> = ({ clas
 
     return (
         <nav
-            className={cn('rounded-xl border border-white/[0.08] bg-slate-900/40 p-4 backdrop-blur-xl', className)}
+            className={cn('rounded-xl border border-white/[0.08] bg-card/40 p-4 backdrop-blur-xl', className)}
             aria-label="Intelligence progression"
         >
-            <p className="mb-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50">
+            <p className="mb-3 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                 Your Intelligence Path
             </p>
             <ol className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-0">
@@ -61,19 +61,19 @@ export const ValueProgressionPath: React.FC<ValueProgressionPathProps> = ({ clas
                                     isActive
                                         ? 'border-blue-500/40 bg-blue-500/10 text-blue-400'
                                         : isPast
-                                          ? 'border-white/10 bg-white/[0.03] text-white/60 hover:border-white/20'
-                                          : 'border-white/[0.06] bg-white/[0.02] text-white/40 hover:border-white/15 hover:text-white/70'
+                                          ? 'border-border bg-white/[0.03] text-white/60 hover:border-white/20'
+                                          : 'border-white/[0.06] bg-white/[0.02] text-terminal-dim hover:border-white/15 hover:text-white/70'
                                 )}
                             >
                                 <Icon size={14} className={isActive ? 'text-blue-400' : ''} />
-                                <span className="text-[10px] font-black uppercase tracking-uppercase">{step.label}</span>
+                                <span className="text-[11px] font-semibold uppercase tracking-wider">{step.label}</span>
                             </TrailLink>
                         </li>
                     );
                 })}
             </ol>
             {activeIdx < STEPS.length - 1 && (
-                <p className="mt-3 text-center text-[11px] text-white/35">
+                <p className="mt-3 text-center text-[11px] text-terminal-dim">
                     Next:{' '}
                     <TrailLink
                         to={STEPS[activeIdx + 1].to}

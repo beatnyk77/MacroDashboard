@@ -7,6 +7,7 @@ import {
     DEFAULT_CARTESIAN_GRID_PROPS,
     DEFAULT_XAXIS_PROPS,
     DEFAULT_YAXIS_PROPS,
+    CHART_COLORS,
 } from '@/constants/chartDefaults';
 import {
     AreaChart,
@@ -20,31 +21,10 @@ import {
 import { useNetLiquidityHistory } from '@/hooks/useNetLiquidityHistory';
 import { Info, Zap, BookOpen } from 'lucide-react';
 import { TrailLink as Link } from '@/components/TrailLink';
-const CustomTooltip = ({ active, payload, label }: any) => {
-    if (!active || !payload || !payload.length) return null;
-    return (
-        <div className="bg-slate-950/95 border border-white/12 p-4 rounded-xl shadow-2xl backdrop-blur-xl">
-            <p className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-3">
-                {new Date(label).toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' })}
-            </p>
-            <div className="space-y-2.5">
-                {payload.map((entry: any) => (
-                    <div key={entry.name} className="flex items-center justify-between gap-6">
-                        <div className="flex items-center gap-2">
-                            <div className="w-1.5 h-1.5 rounded-full" style={{ backgroundColor: entry.color }} />
-                            <span className="text-xs font-bold text-white/80 tracking-heading">{entry.name}</span>
-                        </div>
-                        <div className="text-right">
-                            <div className="text-xs font-black text-white">
-                                ${entry.value.toFixed(2)}T
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
+import { TerminalChartTooltip, type TerminalChartTooltipProps } from '@/components/charts/TerminalChartTooltip';
+const CustomTooltip = (props: TerminalChartTooltipProps) => (
+    <TerminalChartTooltip {...props} valueFormatter={(value) => `$${Number(value).toFixed(2)}T`} />
+);
 
 export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
     const { data: history } = useNetLiquidityHistory();
@@ -70,7 +50,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
     }, [history]);
 
     if (!history) {
-        return <ChartSkeleton height={500} className="w-full rounded-[2.5rem]" />;
+        return <ChartSkeleton height={500} className="w-full rounded-xl" />;
     }
 
     if (history.length === 0) {
@@ -87,7 +67,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
     const latest = history[history.length - 1];
 
     return (
-        <Card className="p-6 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group">
+        <Card className="p-6 bg-background/40 backdrop-blur-3xl border-border shadow-2xl overflow-hidden rounded-xl relative group">
             {/* Ambient Background Radial */}
             <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-blue-500/5 rounded-full blur-[120px] -mr-64 -mt-64 group-hover:bg-blue-500/10 transition-colors duration-1000" />
 
@@ -107,19 +87,19 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="bg-white/5 border border-white/12 rounded-3xl p-5 flex flex-col justify-center">
+                    <div className="bg-white/5 border border-border rounded-xl p-5 flex flex-col justify-center">
                         <div className="flex items-center justify-between mb-1">
-                            <span className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">Current Outstanding</span>
+                            <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Current Outstanding</span>
                             <div className="w-2 h-2 rounded-full bg-emerald-500/80" />
                         </div>
-                        <div className="text-4xl font-black text-white tracking-heading tabular-nums">
-                            ${latest?.value.toFixed(2)}<span className="textxl text-muted-foreground/60 ml-1">T</span>
+                        <div className="text-4xl font-bold text-white tracking-heading tabular-nums">
+                            ${latest?.value.toFixed(2)}<span className="textxl text-muted-foreground ml-1">T</span>
                         </div>
-                        <div className="mt-3 pt-3 border-t border-white/5">
-                            <span className="text-xs text-muted-foreground font-black uppercase tracking-uppercase flex items-center gap-1.5 leading-none">
+                        <div className="mt-3 pt-3 border-t border-border">
+                            <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider flex items-center gap-1.5 leading-none">
                                 DATA CURRENT AS OF: {latest ? new Date(latest.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).toUpperCase() : '--'}
                             </span>
-                            <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading mt-1 block">Updated Weekly via Federal Reserve H.4.1</span>
+                            <span className="text-xs text-terminal-dim font-semibold uppercase tracking-heading mt-1 block">Updated Weekly via Federal Reserve H.4.1</span>
                         </div>
                     </div>
                 </div>
@@ -130,8 +110,8 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                         <AreaChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                             <defs>
                                 <linearGradient id="liquidityGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.4} />
-                                    <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={CHART_COLORS.west} stopOpacity={0.4} />
+                                    <stop offset="95%" stopColor={CHART_COLORS.west} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
@@ -152,14 +132,14 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                             {latest && (
                                 <ReferenceLine
                                     y={latest.value}
-                                    stroke="#3b82f6"
+                                    stroke={CHART_COLORS.west}
                                     strokeDasharray="3 3"
                                     label={{
                                         position: 'right',
                                         value: 'Current',
-                                        fill: '#3b82f6',
-                                        fontSize: 10,
-                                        fontWeight: 900,
+                                        fill: CHART_COLORS.west,
+                                        fontSize: 11,
+                                        fontWeight: 700,
                                         className: 'uppercase'
                                     }}
                                 />
@@ -169,7 +149,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 type="monotone"
                                 dataKey="value"
                                 name="Net Liquidity"
-                                stroke="#3b82f6"
+                                stroke={CHART_COLORS.west}
                                 strokeWidth={3}
                                 fillOpacity={1}
                                 fill="url(#liquidityGradient)"
@@ -180,7 +160,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 type="monotone"
                                 dataKey="trend"
                                 name="3Y Moving Trend"
-                                stroke="#fbbf24"
+                                stroke={CHART_COLORS.gold}
                                 strokeWidth={2.5}
                                 strokeDasharray="8 4"
                                 fill="transparent"
@@ -190,11 +170,11 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                 </div>
 
                 {/* Analysis Grid */}
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-white/5">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8 pt-8 border-t border-border">
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <Info className="text-blue-400 w-4 h-4" />
-                            <h3 className="text-xs font-black text-white uppercase tracking-uppercase">Why It Matters</h3>
+                            <h3 className="text-xs font-semibold text-white uppercase tracking-wider">Why It Matters</h3>
                         </div>
                         <div className="space-y-3">
                             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -203,7 +183,7 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                                 <span className="text-white font-bold"> TGA</span> or drained via the
                                 <span className="text-white font-bold"> RRP</span>.
                             </p>
-                            <Link to="/glossary/stealth-qe" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-black uppercase tracking-uppercase mt-2 transition-colors">
+                            <Link to="/glossary/stealth-qe" className="inline-flex items-center gap-1.5 text-blue-400 hover:text-blue-300 text-xs font-semibold uppercase tracking-wider mt-2 transition-colors">
                                 <BookOpen size={12} /> Learn about Stealth QE
                             </Link>
                         </div>
@@ -212,18 +192,18 @@ export const GlobalNetLiquidityHistoricalChart: React.FC = () => {
                     <div className="space-y-4">
                         <div className="flex items-center gap-2">
                             <Zap className="text-amber-400 w-4 h-4" />
-                            <h3 className="text-xs font-black text-white uppercase tracking-uppercase">Historical Interpretation</h3>
+                            <h3 className="text-xs font-semibold text-white uppercase tracking-wider">Historical Interpretation</h3>
                         </div>
-                        <div className="bg-white/[0.02] border border-white/5 rounded-2xl p-4 space-y-4">
+                        <div className="bg-white/[0.02] border border-border rounded-xl p-4 space-y-4">
                             <div className="flex justify-between items-center text-xs">
-                                <span className="text-muted-foreground uppercase font-bold">Formula:</span>
+                                <span className="text-muted-foreground uppercase font-semibold">Formula:</span>
                                 <span className="text-white font-mono font-bold">Assets - TGA - RRP</span>
                             </div>
                             <div className="space-y-2">
                                 <div className="flex items-center gap-2">
                                     <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
                                     <p className="text-xs text-muted-foreground">
-                                        <span className="text-white font-bold uppercase">Expansion:</span> Floor support for Risk Assets.
+                                        <span className="text-white font-semibold uppercase">Expansion:</span> Floor support for Risk Assets.
                                     </p>
                                 </div>
                             </div>

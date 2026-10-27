@@ -38,11 +38,11 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
 
     return (
         <div className={cn(
-            "inline-flex flex-wrap items-center rounded border border-white/12 bg-white/5 text-white/40 font-mono uppercase tracking-widest",
+            "inline-flex flex-wrap items-center rounded border border-border bg-white/5 text-terminal-dim font-mono uppercase tracking-wider",
             sizeClasses[size],
             className
         )}>
-            <div className="flex items-center gap-1.5 border-r border-white/12 pr-2 mr-0.5">
+            <div className="flex items-center gap-1.5 border-r border-border pr-2 mr-0.5">
                 <StatusIcon className={cn(statusColors, iconSizes[size])} />
                 <span className="text-white/60">
                     {snapshot.source.source_name ?? 'Unknown Source'}
@@ -50,7 +50,7 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
             </div>
             
             {snapshot.methodology_version && (
-                <div className="flex items-center gap-1.5 border-r border-white/12 pr-2 mr-0.5">
+                <div className="flex items-center gap-1.5 border-r border-border pr-2 mr-0.5">
                     <Database className={iconSizes[size]} />
                     <span>v{snapshot.methodology_version}</span>
                 </div>
@@ -65,7 +65,7 @@ export const DataProvenanceBadge: React.FC<DataProvenanceBadgeProps> = ({
                 </span>
             </div>
             
-            <div className="flex items-center gap-1.5 pl-2 ml-0.5 border-l border-white/12">
+            <div className="flex items-center gap-1.5 pl-2 ml-0.5 border-l border-border">
                 <span>
                     {snapshot.published_at 
                         ? `Pub ${new Date(snapshot.published_at).toISOString().split('T')[0]}`

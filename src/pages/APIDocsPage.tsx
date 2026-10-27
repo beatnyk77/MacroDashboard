@@ -4,6 +4,7 @@ import { apiDocsMeta } from '@/lib/seoTemplates';
 import { CodeBlock } from '@/components/docs/CodeBlock';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { InfiniteFAQ } from '@/components/faq';
+import { CHART_COLORS } from '@/constants/chartDefaults';
 // ─── Nav structure ────────────────────────────────────────────────────────────
 
 const NAV_SECTIONS = [
@@ -71,8 +72,8 @@ const METRIC_REFERENCE: { id: string; label: string; source: string }[] = [
 
 function MethodBadge({ method }: { method: string }) {
     return (
-        <span className="inline-block px-2 py-0.5 rounded text-xs font-bold tracking-widest bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
-            style={{ fontFamily: "'IBM Plex Mono', 'Fira Code', monospace" }}>
+        <span className="inline-block px-2 py-0.5 rounded text-xs font-bold tracking-wider bg-emerald-500/15 text-emerald-400 border border-emerald-500/30"
+            style={{ fontFamily: "'Fira Code', monospace" }}>
             {method}
         </span>
     );
@@ -87,25 +88,25 @@ interface Param {
 
 function ParamTable({ params }: { params: Param[] }) {
     return (
-        <div className="overflow-x-auto rounded-lg border border-slate-800">
+        <div className="overflow-x-auto rounded-lg border border-border">
             <table className="w-full text-sm">
                 <thead>
-                    <tr className="border-b border-slate-800 bg-slate-900/60">
-                        <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Name</th>
-                        <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Type</th>
-                        <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Required</th>
-                        <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Description</th>
+                    <tr className="border-b border-border bg-card/60">
+                        <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Name</th>
+                        <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Type</th>
+                        <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Required</th>
+                        <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Description</th>
                     </tr>
                 </thead>
                 <tbody>
                     {params.map((p, i) => (
-                        <tr key={p.name} className={i % 2 === 0 ? 'bg-slate-950/40' : 'bg-transparent'}>
-                            <td className="px-4 py-2.5" style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#93c5fd', fontSize: 12 }}>{p.name}</td>
-                            <td className="px-4 py-2.5" style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#fcd34d', fontSize: 12 }}>{p.type}</td>
+                        <tr key={p.name} className={i % 2 === 0 ? 'bg-card/40' : 'bg-transparent'}>
+                            <td className="px-4 py-2.5" style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft, fontSize: 12 }}>{p.name}</td>
+                            <td className="px-4 py-2.5" style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.goldSoft, fontSize: 12 }}>{p.type}</td>
                             <td className="px-4 py-2.5">
                                 {p.required
-                                    ? <span className="text-[10px] font-bold text-rose-400 uppercase">required</span>
-                                    : <span className="text-[10px] font-bold text-slate-500 uppercase">optional</span>}
+                                    ? <span className="text-[11px] font-semibold text-rose-400 uppercase">required</span>
+                                    : <span className="text-[11px] font-semibold text-terminal-dim uppercase">optional</span>}
                             </td>
                             <td className="px-4 py-2.5 text-slate-400 text-xs">{p.description}</td>
                         </tr>
@@ -130,7 +131,7 @@ function EndpointHeader({ id, method, path, description }: {
                 <MethodBadge method={method} />
                 <code
                     className="text-slate-100 text-sm font-medium"
-                    style={{ fontFamily: "'IBM Plex Mono', 'Fira Code', monospace" }}>
+                    style={{ fontFamily: "'Fira Code', monospace" }}>
                     {path}
                 </code>
             </div>
@@ -140,13 +141,13 @@ function EndpointHeader({ id, method, path, description }: {
 }
 
 function Divider() {
-    return <div className="border-t border-slate-800/60 my-12" />;
+    return <div className="border-t border-border my-12" />;
 }
 
 function Note({ children }: { children: React.ReactNode }) {
     return (
         <div className="flex gap-3 p-4 rounded-lg bg-blue-500/5 border border-blue-500/20 text-sm text-blue-300/80">
-            <span className="shrink-0 text-blue-400 font-bold text-xs uppercase tracking-widest mt-0.5">Note</span>
+            <span className="shrink-0 text-blue-400 font-semibold text-xs uppercase tracking-wider mt-0.5">Note</span>
             <div>{children}</div>
         </div>
     );
@@ -154,7 +155,7 @@ function Note({ children }: { children: React.ReactNode }) {
 
 function ProprietaryBadge() {
     return (
-        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest bg-violet-500/10 border border-violet-500/20 text-violet-400">
+        <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider bg-violet-500/10 border border-violet-500/20 text-violet-400">
             ◆ GQ SIGNAL
         </span>
     );
@@ -227,16 +228,16 @@ export const APIDocsPage = () => {
             />
 
             {/* Mobile sticky top nav */}
-            <div className="lg:hidden sticky top-0 z-30 bg-slate-950/95 backdrop-blur border-b border-slate-800 overflow-x-auto">
+            <div className="lg:hidden sticky top-0 z-30 bg-card/90 backdrop-blur border-b border-border overflow-x-auto">
                 <div className="flex gap-1 px-4 py-2 whitespace-nowrap">
                     {mobileNavItems.map(item => (
                         <button
                             key={item.id}
                             onClick={() => scrollTo(item.id)}
-                            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-widest transition-colors ${
+                            className={`px-3 py-1.5 rounded text-xs font-bold uppercase tracking-wider transition-colors ${
                                 activeId === item.id
                                     ? 'bg-blue-500/15 text-blue-400'
-                                    : 'text-slate-500 hover:text-slate-300'
+                                    : 'text-terminal-dim hover:text-slate-300'
                             }`}
                         >
                             {item.label}
@@ -250,7 +251,7 @@ export const APIDocsPage = () => {
                 {/* Desktop sticky left nav */}
                 <aside className="hidden lg:block w-52 shrink-0">
                     <div className="sticky top-24 space-y-0.5">
-                        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-600 mb-3 px-3">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim mb-3 px-3">
                             Documentation
                         </p>
                         {NAV_SECTIONS.map(section => (
@@ -266,7 +267,7 @@ export const APIDocsPage = () => {
                                     {section.label}
                                 </button>
                                 {section.sub && (
-                                    <div className="ml-3 mt-0.5 space-y-0.5 border-l border-slate-800 pl-3">
+                                    <div className="ml-3 mt-0.5 space-y-0.5 border-l border-border pl-3">
                                         {section.sub.map(sub => (
                                             <button
                                                 key={sub.id}
@@ -274,9 +275,9 @@ export const APIDocsPage = () => {
                                                 className={`w-full text-left py-1 text-[11px] font-medium transition-colors truncate block ${
                                                     activeId === sub.id
                                                         ? 'text-emerald-400'
-                                                        : 'text-slate-500 hover:text-slate-300'
+                                                        : 'text-terminal-dim hover:text-slate-300'
                                                 }`}
-                                                style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                                                style={{ fontFamily: "'Fira Code', monospace" }}
                                             >
                                                 {sub.label}
                                             </button>
@@ -289,7 +290,7 @@ export const APIDocsPage = () => {
                         <div className="pt-6 px-3">
                             <Link
                                 to="/api-access"
-                                className="block text-center py-2 rounded-lg text-xs font-bold uppercase tracking-widest bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors"
+                                className="block text-center py-2 rounded-lg text-xs font-semibold uppercase tracking-wider bg-blue-500/10 border border-blue-500/20 text-blue-400 hover:bg-blue-500/20 transition-colors"
                             >
                                 Get API Key
                             </Link>
@@ -305,11 +306,11 @@ export const APIDocsPage = () => {
                     ══════════════════════════════════════════════ */}
                     <SectionAnchor id="overview" />
                     <div className="mb-3">
-                        <span className="text-[10px] font-bold uppercase tracking-widest text-blue-400">
+                        <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-400">
                             GraphiQuestor REST API
                         </span>
                     </div>
-                    <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white mb-3 leading-tight">
+                    <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-white mb-3 leading-tight">
                         Institutional Macro Intelligence
                     </h1>
                     <p className="text-slate-400 text-base mb-10 max-w-2xl">
@@ -319,9 +320,9 @@ export const APIDocsPage = () => {
 
                     {/* Authentication */}
                     <div className="mb-8">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Authentication</h2>
+                        <h2 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-3">Authentication</h2>
                         <CodeBlock lang="http" code={`Authorization: Bearer YOUR_API_KEY`} />
-                        <div className="mt-3 text-xs text-slate-500 space-y-1">
+                        <div className="mt-3 text-xs text-terminal-dim space-y-1">
                             <p>API keys are available via the <Link to="/api-access" className="text-blue-400 hover:underline">API Access page</Link>.</p>
                             <p>Free tier: <span className="text-slate-300">100 requests/day</span> · Institutional tier: <a href="mailto:api@graphiquestor.com" className="text-blue-400 hover:underline">api@graphiquestor.com</a></p>
                         </div>
@@ -329,9 +330,9 @@ export const APIDocsPage = () => {
 
                     {/* Base URL */}
                     <div className="mb-12">
-                        <h2 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-3">Base URL</h2>
+                        <h2 className="text-xs font-semibold uppercase tracking-wider text-terminal-dim mb-3">Base URL</h2>
                         <CodeBlock lang="url" code={`https://graphiquestor.com/api/v1`} />
-                        <p className="mt-2 text-xs text-slate-500">All endpoints are HTTPS-only. Responses are JSON with UTF-8 encoding.</p>
+                        <p className="mt-2 text-xs text-terminal-dim">All endpoints are HTTPS-only. Responses are JSON with UTF-8 encoding.</p>
                     </div>
 
                     <Divider />
@@ -340,7 +341,7 @@ export const APIDocsPage = () => {
                         SECTION 2 — ENDPOINTS
                     ══════════════════════════════════════════════ */}
                     <SectionAnchor id="endpoints" />
-                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-10">Endpoints</h2>
+                    <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-10">Endpoints</h2>
 
                     {/* ── EP 1: /metrics ── */}
                     <div className="mb-12">
@@ -571,9 +572,9 @@ export const APIDocsPage = () => {
                         SECTION 3 — METRIC REFERENCE
                     ══════════════════════════════════════════════ */}
                     <SectionAnchor id="metric-reference" />
-                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-2">Metric ID Reference</h2>
+                    <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-2">Metric ID Reference</h2>
                     <p className="text-slate-400 text-sm mb-6">
-                        Use these IDs in the <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#93c5fd' }}>metric_id</code> parameter.
+                        Use these IDs in the <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>metric_id</code> parameter.
                         Showing {filteredMetrics.length} of {METRIC_REFERENCE.length} metrics.
                     </p>
 
@@ -583,34 +584,34 @@ export const APIDocsPage = () => {
                             placeholder="Filter by ID, label, or source…"
                             value={metricFilter}
                             onChange={e => setMetricFilter(e.target.value)}
-                            className="w-full px-4 py-2.5 rounded-lg bg-slate-900 border border-slate-700 text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500/50 transition-colors"
-                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}
+                            className="w-full px-4 py-2.5 rounded-lg bg-card border border-border text-sm text-slate-200 placeholder-slate-600 focus:outline-none focus:border-blue-500/50 transition-colors"
+                            style={{ fontFamily: "'Fira Code', monospace" }}
                         />
                     </div>
 
-                    <div className="overflow-x-auto rounded-lg border border-slate-800 mb-12">
+                    <div className="overflow-x-auto rounded-lg border border-border mb-12">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-slate-800 bg-slate-900/60">
-                                    <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Metric ID</th>
-                                    <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Label</th>
-                                    <th className="px-4 py-2.5 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Source</th>
+                                <tr className="border-b border-border bg-card/60">
+                                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Metric ID</th>
+                                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Label</th>
+                                    <th className="px-4 py-2.5 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Source</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {filteredMetrics.map((m, i) => (
-                                    <tr key={m.id} className={i % 2 === 0 ? 'bg-slate-950/40' : 'bg-transparent'}>
+                                    <tr key={m.id} className={i % 2 === 0 ? 'bg-card/40' : 'bg-transparent'}>
                                         <td className="px-4 py-2.5 text-[12px] text-blue-300/90 whitespace-nowrap"
-                                            style={{ fontFamily: "'IBM Plex Mono', monospace" }}>
+                                            style={{ fontFamily: "'Fira Code', monospace" }}>
                                             {m.id}
                                         </td>
                                         <td className="px-4 py-2.5 text-xs text-slate-300">{m.label}</td>
-                                        <td className="px-4 py-2.5 text-xs text-slate-500">{m.source}</td>
+                                        <td className="px-4 py-2.5 text-xs text-terminal-dim">{m.source}</td>
                                     </tr>
                                 ))}
                                 {filteredMetrics.length === 0 && (
                                     <tr>
-                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-slate-600">
+                                        <td colSpan={3} className="px-4 py-8 text-center text-sm text-terminal-dim">
                                             No metrics match "{metricFilter}"
                                         </td>
                                     </tr>
@@ -625,13 +626,13 @@ export const APIDocsPage = () => {
                         SECTION 4 — USE CASES
                     ══════════════════════════════════════════════ */}
                     <SectionAnchor id="use-cases" />
-                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-10">Use Cases</h2>
+                    <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-10">Use Cases</h2>
 
                     {/* 4a: Embed */}
                     <div className="mb-10">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-1">Embed in your platform</h3>
-                        <p className="text-slate-500 text-sm mb-4">
-                            Every GQ component supports <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#6ee7b7' }}>?embed=true</code> for chromeless iframe embedding.
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-1">Embed in your platform</h3>
+                        <p className="text-terminal-dim text-sm mb-4">
+                            Every GQ component supports <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.expansionSoft }}>?embed=true</code> for chromeless iframe embedding.
                             White-label available for institutional partners.
                         </p>
                         <CodeBlock lang="html" code={`<!-- GraphiQuestor Regime Signal — embeddable widget -->
@@ -644,8 +645,8 @@ export const APIDocsPage = () => {
   allow="fullscreen"
   title="GraphiQuestor Macro Regime Signal"
 ></iframe>`} />
-                        <p className="mt-3 text-xs text-slate-500">
-                            Replace <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#6ee7b7' }}>/embed/regime</code> with any page path.
+                        <p className="mt-3 text-xs text-terminal-dim">
+                            Replace <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.expansionSoft }}>/embed/regime</code> with any page path.
                             White-label domain aliasing available for institutional partners —{' '}
                             <a href="mailto:api@graphiquestor.com" className="text-blue-400 hover:underline">contact us</a>.
                         </p>
@@ -653,7 +654,7 @@ export const APIDocsPage = () => {
 
                     {/* 4b: White-label */}
                     <div className="mb-10 p-5 rounded-lg bg-violet-500/5 border border-violet-500/15">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-violet-300 mb-2">White-label integration</h3>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-violet-300 mb-2">White-label integration</h3>
                         <p className="text-sm text-slate-400 leading-relaxed">
                             GraphiQuestor's India Macro Terminal and De-Dollarization Lab are available for
                             white-label embedding in institutional research platforms, Bloomberg portals,
@@ -661,7 +662,7 @@ export const APIDocsPage = () => {
                         </p>
                         <a
                             href="mailto:api@graphiquestor.com"
-                            className="inline-block mt-4 px-4 py-2 rounded-lg text-xs font-bold uppercase tracking-widest bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-colors"
+                            className="inline-block mt-4 px-4 py-2 rounded-lg text-xs font-semibold uppercase tracking-wider bg-violet-500/10 border border-violet-500/20 text-violet-400 hover:bg-violet-500/20 transition-colors"
                         >
                             Contact: api@graphiquestor.com
                         </a>
@@ -669,7 +670,7 @@ export const APIDocsPage = () => {
 
                     {/* 4c: MCP */}
                     <div className="mb-10 p-5 rounded-lg bg-cyan-500/5 border border-cyan-500/15">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-cyan-300 mb-2">AI agent integration (MCP)</h3>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-cyan-300 mb-2">AI agent integration (MCP)</h3>
                         <p className="text-sm text-slate-400 leading-relaxed mb-4">
                             The <strong className="text-slate-300">graphiquestor/macro-intelligence</strong> MCP server
                             mirrors these REST endpoints as typed tools for Cursor, Claude Desktop, and Smithery.
@@ -685,18 +686,18 @@ npx -y @smithery/cli@latest mcp add graphiquestor/macro-intelligence --client cu
 npm install && npm run build
 export SUPABASE_URL="..." SUPABASE_ANON_KEY="..."
 node dist/index.js`} />
-                        <p className="mt-3 text-xs text-slate-500">
-                            Tools: <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_regime_current</code>,{' '}
-                            <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_composite_scores</code>,{' '}
-                            <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#67e8f9' }}>get_india_summary</code>, and 5 more.{' '}
+                        <p className="mt-3 text-xs text-terminal-dim">
+                            Tools: <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>get_regime_current</code>,{' '}
+                            <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>get_composite_scores</code>,{' '}
+                            <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>get_india_summary</code>, and 5 more.{' '}
                             <Link to="/mcp" className="text-cyan-400 hover:underline">Full MCP protocol →</Link>
                         </p>
                     </div>
 
                     {/* 4d: Python */}
                     <div className="mb-12">
-                        <h3 className="text-sm font-bold uppercase tracking-widest text-slate-300 mb-1">Data science / quant integration</h3>
-                        <p className="text-slate-500 text-sm mb-4">
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-300 mb-1">Data science / quant integration</h3>
+                        <p className="text-terminal-dim text-sm mb-4">
                             Pull the India macro snapshot directly into Python for quant analysis or model inputs.
                         </p>
                         <CodeBlock lang="python" code={`import requests
@@ -722,20 +723,20 @@ print(metrics)`} />
                         SECTION 5 — RATE LIMITS
                     ══════════════════════════════════════════════ */}
                     <SectionAnchor id="rate-limits" />
-                    <h2 className="text-xl font-black uppercase tracking-tight text-white mb-6">Rate Limits</h2>
+                    <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-6">Rate Limits</h2>
 
-                    <div className="overflow-x-auto rounded-lg border border-slate-800 mb-6">
+                    <div className="overflow-x-auto rounded-lg border border-border mb-6">
                         <table className="w-full text-sm">
                             <thead>
-                                <tr className="border-b border-slate-800 bg-slate-900/60">
-                                    <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Tier</th>
-                                    <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Requests / day</th>
-                                    <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">History</th>
-                                    <th className="px-5 py-3 text-left text-[10px] font-bold uppercase tracking-widest text-slate-500">Composite Scores</th>
+                                <tr className="border-b border-border bg-card/60">
+                                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Tier</th>
+                                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Requests / day</th>
+                                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">History</th>
+                                    <th className="px-5 py-3 text-left text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">Composite Scores</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr className="border-b border-slate-800/50">
+                                <tr className="border-b border-border">
                                     <td className="px-5 py-3 text-sm font-semibold text-slate-300">Free</td>
                                     <td className="px-5 py-3 text-sm text-slate-400">100</td>
                                     <td className="px-5 py-3 text-sm text-slate-400">90 days</td>
@@ -755,14 +756,14 @@ print(metrics)`} />
                         </table>
                     </div>
 
-                    <p className="text-sm text-slate-500">
+                    <p className="text-sm text-terminal-dim">
                         Rate limit headers are included in every response:{' '}
-                        <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#93c5fd' }}>X-RateLimit-Limit</code>,{' '}
-                        <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#93c5fd' }}>X-RateLimit-Remaining</code>,{' '}
-                        <code style={{ fontFamily: "'IBM Plex Mono', monospace", color: '#93c5fd' }}>X-RateLimit-Reset</code>.
+                        <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>X-RateLimit-Limit</code>,{' '}
+                        <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>X-RateLimit-Remaining</code>,{' '}
+                        <code style={{ fontFamily: "'Fira Code', monospace", color: CHART_COLORS.westSoft }}>X-RateLimit-Reset</code>.
                         Burst allowance: up to 20 requests/minute on Free, 200/minute on Institutional.
                     </p>
-                    <p className="text-sm text-slate-500 mt-3">
+                    <p className="text-sm text-terminal-dim mt-3">
                         For institutional access or custom arrangements:{' '}
                         <a href="mailto:api@graphiquestor.com" className="text-blue-400 hover:underline">
                             api@graphiquestor.com
@@ -782,11 +783,11 @@ print(metrics)`} />
                     <div className="mt-16 p-6 rounded-xl bg-blue-500/5 border border-blue-500/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <p className="text-sm font-bold text-slate-200 mb-1">Ready to integrate?</p>
-                            <p className="text-xs text-slate-500">Get your API key and start pulling institutional macro data in minutes.</p>
+                            <p className="text-xs text-terminal-dim">Get your API key and start pulling institutional macro data in minutes.</p>
                         </div>
                         <Link
                             to="/api-access"
-                            className="shrink-0 px-5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-widest bg-blue-500 text-white hover:bg-blue-400 transition-colors"
+                            className="shrink-0 px-5 py-2.5 rounded-lg text-xs font-semibold uppercase tracking-wider bg-blue-500 text-white hover:bg-blue-400 transition-colors"
                         >
                             Get API Key →
                         </Link>

@@ -48,13 +48,13 @@ export const ChartAccessibleTranscript: React.FC<ChartAccessibleTranscriptProps>
   return (
     <figcaption className={cn("mt-4 space-y-3 font-sans", className)}>
       {/* 1. Core Institutional Takeaway Callout */}
-      <div className="rounded-xl border border-border bg-card/80 dark:bg-card/40 p-3.5 backdrop-blur-sm shadow-sm">
+      <div className="rounded-xl border border-border bg-card/40 p-3.5 backdrop-blur-sm shadow-sm">
         <div className="flex items-start gap-2.5">
-          <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded bg-cyan-500/10 text-cyan-600 dark:text-cyan-400">
+          <div className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded bg-cyan-500/10 text-cyan-400">
             <Info className="h-3 w-3" />
           </div>
           <div className="flex-1 space-y-1">
-            <div className="text-[10px] font-black uppercase tracking-wider text-cyan-700 dark:text-cyan-400 font-mono">
+            <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan-400 font-mono">
               Chart Takeaway & Macro Signal
             </div>
             <div className="text-xs font-medium leading-relaxed text-foreground">
@@ -73,13 +73,13 @@ export const ChartAccessibleTranscript: React.FC<ChartAccessibleTranscriptProps>
       {/* 2. Search Keywords Strip (Visible for Ctrl+F & Crawlers) */}
       {searchKeywords && searchKeywords.length > 0 && (
         <div className="flex flex-wrap items-center gap-1.5 px-1 py-0.5">
-          <span className="text-[9px] font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-1">
+          <span className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-1">
             <Tag className="h-2.5 w-2.5" /> Tags:
           </span>
           {searchKeywords.map((kw) => (
             <span
               key={kw}
-              className="text-[10px] font-mono px-2 py-0.5 rounded bg-muted/60 border border-border text-muted-foreground"
+              className="text-[11px] font-mono px-2 py-0.5 rounded bg-muted/60 border border-border text-muted-foreground"
             >
               {kw}
             </span>
@@ -93,7 +93,7 @@ export const ChartAccessibleTranscript: React.FC<ChartAccessibleTranscriptProps>
           <button
             type="button"
             onClick={() => setIsTableOpen(!isTableOpen)}
-            className="w-full flex items-center justify-between px-3 py-2 text-[10px] font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
+            className="w-full flex items-center justify-between px-3 py-2 text-[11px] font-mono uppercase tracking-wider text-muted-foreground hover:text-foreground hover:bg-muted/40 transition-colors"
             aria-expanded={isTableOpen}
           >
             <span className="flex items-center gap-1.5">
@@ -117,7 +117,7 @@ export const ChartAccessibleTranscript: React.FC<ChartAccessibleTranscriptProps>
                   <caption className="sr-only">{tableData.caption}</caption>
                 )}
                 <thead>
-                  <tr className="border-b border-border text-[9px] font-mono uppercase tracking-wider text-muted-foreground">
+                  <tr className="border-b border-border text-[11px] font-mono uppercase tracking-wider text-muted-foreground">
                     {tableData.headers.map((h, idx) => (
                       <th key={idx} className="pb-1.5 pr-3 font-bold">
                         {h}
@@ -147,19 +147,19 @@ export const ChartAccessibleTranscript: React.FC<ChartAccessibleTranscriptProps>
                     key={idx}
                     className="p-2 rounded bg-muted/40 border border-border space-y-0.5"
                   >
-                    <dt className="text-[9px] font-mono uppercase tracking-wider text-muted-foreground truncate">
+                    <dt className="text-[11px] font-mono uppercase tracking-wider text-muted-foreground truncate">
                       {r.label}
                     </dt>
                     <dd className="text-xs font-mono font-bold text-foreground">
                       {r.value}
                       {r.change && (
-                        <span className="ml-1 text-[10px] text-cyan-600 dark:text-cyan-400 font-normal">
+                        <span className="ml-1 text-[11px] text-cyan-400 font-normal">
                           ({r.change})
                         </span>
                       )}
                     </dd>
                     {r.note && (
-                      <div className="text-[9px] text-muted-foreground truncate">
+                      <div className="text-[11px] text-muted-foreground truncate">
                         {r.note}
                       </div>
                     )}

@@ -7,7 +7,6 @@ export type G20Region = 'G7' | 'BRICS' | 'Other';
 export interface G20MatrixPoint {
     code: string;
     name: string;
-    flag: string;
     region: G20Region;
     debtGdpPct: number;       // X-axis: Debt/GDP %
     gdpGrowthPct: number;     // Y-axis: Real GDP growth %
@@ -24,27 +23,27 @@ export interface G20MatrixPoint {
     growthStatus: string;
 }
 
-const G20_MEMBERS: Record<string, { name: string; flag: string; region: G20Region }> = {
-    US: { name: 'United States', flag: '🇺🇸', region: 'G7' },
-    GB: { name: 'United Kingdom', flag: '🇬🇧', region: 'G7' },
-    FR: { name: 'France', flag: '🇫🇷', region: 'G7' },
-    DE: { name: 'Germany', flag: '🇩🇪', region: 'G7' },
-    IT: { name: 'Italy', flag: '🇮🇹', region: 'G7' },
-    CA: { name: 'Canada', flag: '🇨🇦', region: 'G7' },
-    JP: { name: 'Japan', flag: '🇯🇵', region: 'G7' },
-    CN: { name: 'China', flag: '🇨🇳', region: 'BRICS' },
-    IN: { name: 'India', flag: '🇮🇳', region: 'BRICS' },
-    RU: { name: 'Russia', flag: '🇷🇺', region: 'BRICS' },
-    BR: { name: 'Brazil', flag: '🇧🇷', region: 'BRICS' },
-    ZA: { name: 'South Africa', flag: '🇿🇦', region: 'BRICS' },
-    AU: { name: 'Australia', flag: '🇦🇺', region: 'Other' },
-    KR: { name: 'South Korea', flag: '🇰🇷', region: 'Other' },
-    MX: { name: 'Mexico', flag: '🇲🇽', region: 'Other' },
-    ID: { name: 'Indonesia', flag: '🇮🇩', region: 'Other' },
-    TR: { name: 'Turkey', flag: '🇹🇷', region: 'Other' },
-    SA: { name: 'Saudi Arabia', flag: '🇸🇦', region: 'Other' },
-    AR: { name: 'Argentina', flag: '🇦🇷', region: 'Other' },
-    EU: { name: 'Eurozone', flag: '🇪🇺', region: 'G7' },
+const G20_MEMBERS: Record<string, { name: string; region: G20Region }> = {
+    US: { name: 'United States', region: 'G7' },
+    GB: { name: 'United Kingdom', region: 'G7' },
+    FR: { name: 'France', region: 'G7' },
+    DE: { name: 'Germany', region: 'G7' },
+    IT: { name: 'Italy', region: 'G7' },
+    CA: { name: 'Canada', region: 'G7' },
+    JP: { name: 'Japan', region: 'G7' },
+    CN: { name: 'China', region: 'BRICS' },
+    IN: { name: 'India', region: 'BRICS' },
+    RU: { name: 'Russia', region: 'BRICS' },
+    BR: { name: 'Brazil', region: 'BRICS' },
+    ZA: { name: 'South Africa', region: 'BRICS' },
+    AU: { name: 'Australia', region: 'Other' },
+    KR: { name: 'South Korea', region: 'Other' },
+    MX: { name: 'Mexico', region: 'Other' },
+    ID: { name: 'Indonesia', region: 'Other' },
+    TR: { name: 'Turkey', region: 'Other' },
+    SA: { name: 'Saudi Arabia', region: 'Other' },
+    AR: { name: 'Argentina', region: 'Other' },
+    EU: { name: 'Eurozone', region: 'G7' },
 };
 
 function zScore(value: number, mean: number, std: number): number {
@@ -150,7 +149,6 @@ export function useG20SovereignMatrix() {
                 return {
                     code,
                     name: member.name,
-                    flag: member.flag,
                     region: member.region,
                     debtGdpPct,
                     gdpGrowthPct,

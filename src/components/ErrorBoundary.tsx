@@ -2,6 +2,7 @@ import { Component, ErrorInfo, ReactNode } from 'react';
 import { Box, Typography, Button, Container } from '@mui/material';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 import { reportClientError } from '@/lib/errorReporting';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 interface Props {
     children?: ReactNode;
@@ -51,7 +52,7 @@ export class ErrorBoundary extends Component<Props, State> {
                             sx={{
                                 p: 2,
                                 borderRadius: '50%',
-                                bgcolor: 'rgba(239, 68, 68, 0.1)',
+                                bgcolor: alpha(CHART_COLORS.stress, 0.1),
                                 color: 'error.main',
                             }}
                         >

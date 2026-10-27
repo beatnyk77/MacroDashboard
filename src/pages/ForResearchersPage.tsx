@@ -60,11 +60,11 @@ export const ForResearchersPage: React.FC = () => {
             />
 
             <header className="mb-10">
-                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">
+                <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-violet-500/20 bg-violet-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-violet-400">
                     <Bot size={12} />
                     AI &amp; Research Protocol
                 </div>
-                <h1 className="mb-4 text-3xl font-black tracking-heading text-white md:text-4xl">
+                <h1 className="mb-4 text-3xl font-bold tracking-heading text-white md:text-4xl">
                     For AI Assistants &amp; Researchers
                 </h1>
                 <p className="max-w-2xl text-sm leading-relaxed text-white/55 sm:text-base">
@@ -86,52 +86,52 @@ export const ForResearchersPage: React.FC = () => {
                         <Terminal size={20} className="text-cyan-400" />
                     </div>
                     <div>
-                        <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-400/70">
+                        <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan-400/70">
                             Agent Integration Protocol
                         </div>
-                        <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                        <div className="text-sm font-bold text-white/90 group-hover:text-white">
                             MCP Server — macro-intelligence
                         </div>
-                        <p className="mt-1 max-w-xl text-xs leading-relaxed text-white/45">
+                        <p className="mt-1 max-w-xl text-xs leading-relaxed text-terminal-dim">
                             8 typed tools for Cursor, Claude, and Smithery. Structured data, institutional commentary,
                             dashboard deep links — never fabricated values.
                         </p>
                     </div>
                 </div>
-                <span className="shrink-0 text-xs font-black uppercase tracking-uppercase text-cyan-400/80 group-hover:text-cyan-300">
+                <span className="shrink-0 text-xs font-semibold uppercase tracking-wider text-cyan-400/80 group-hover:text-cyan-300">
                     View MCP Protocol →
                 </span>
             </TrailLink>
 
-            <section className="mb-10 rounded-xl border border-white/[0.08] bg-slate-900/40 p-6 backdrop-blur-xl">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">
+            <section className="mb-10 rounded-xl border border-white/[0.08] bg-card/40 p-6 backdrop-blur-xl">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white/80">
                     <FileText size={16} className="text-violet-400" />
                     Machine-Readable Context Files
                 </h2>
                 <div className="grid gap-3 sm:grid-cols-2">
                     <a
                         href="/llms.txt"
-                        className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70 no-underline transition-colors hover:border-violet-500/30 hover:text-white"
+                        className="flex items-center justify-between rounded-lg border border-border bg-background/20 px-4 py-3 text-sm text-white/70 no-underline transition-colors hover:border-violet-500/30 hover:text-white"
                     >
                         <span>llms.txt — agent index</span>
                         <ExternalLink size={14} />
                     </a>
                     <a
                         href="/llm.txt"
-                        className="flex items-center justify-between rounded-lg border border-white/10 bg-black/20 px-4 py-3 text-sm text-white/70 no-underline transition-colors hover:border-violet-500/30 hover:text-white"
+                        className="flex items-center justify-between rounded-lg border border-border bg-background/20 px-4 py-3 text-sm text-white/70 no-underline transition-colors hover:border-violet-500/30 hover:text-white"
                     >
                         <span>llm.txt — institutional brief</span>
                         <ExternalLink size={14} />
                     </a>
                 </div>
-                <p className="mt-4 text-xs leading-relaxed text-white/40">
+                <p className="mt-4 text-xs leading-relaxed text-terminal-dim">
                     Referenced in robots.txt as <code className="text-violet-300/80">X-LLM-Context</code>.
                     Rebuilt on every production deploy with glossary and methodology URLs.
                 </p>
             </section>
 
             <section className="mb-10">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white/80">
                     <BookOpen size={16} className="text-emerald-400" />
                     Glossary — Citable Definitions
                 </h2>
@@ -143,21 +143,21 @@ export const ForResearchersPage: React.FC = () => {
                                 className="flex items-center justify-between rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-sm no-underline transition-colors hover:border-emerald-500/25"
                             >
                                 <span className="font-semibold text-white/85">{term.term}</span>
-                                <span className="text-[10px] uppercase tracking-wider text-white/35">{term.category}</span>
+                                <span className="text-[11px] uppercase tracking-wider text-terminal-dim">{term.category}</span>
                             </TrailLink>
                         </li>
                     ))}
                 </ul>
                 <TrailLink
                     to="/glossary"
-                    className="mt-4 inline-block text-xs font-bold uppercase tracking-uppercase text-emerald-400/80 no-underline hover:text-emerald-300"
+                    className="mt-4 inline-block text-xs font-semibold uppercase tracking-wider text-emerald-400/80 no-underline hover:text-emerald-300"
                 >
                     View all {glossaryData.length} terms →
                 </TrailLink>
             </section>
 
             <section className="mb-10">
-                <h2 className="mb-4 flex items-center gap-2 text-sm font-black uppercase tracking-uppercase text-white/80">
+                <h2 className="mb-4 flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-white/80">
                     <Globe2 size={16} className="text-blue-400" />
                     Methodology Articles
                 </h2>
@@ -169,21 +169,21 @@ export const ForResearchersPage: React.FC = () => {
                                 className="block rounded-lg border border-white/[0.06] bg-white/[0.02] px-4 py-3 text-sm no-underline transition-colors hover:border-blue-500/25"
                             >
                                 <div className="font-semibold text-white/85">{m.title}</div>
-                                <div className="mt-1 line-clamp-1 text-xs text-white/40">{m.summary}</div>
+                                <div className="mt-1 line-clamp-1 text-xs text-terminal-dim">{m.summary}</div>
                             </TrailLink>
                         </li>
                     ))}
                 </ul>
                 <TrailLink
                     to="/methodology"
-                    className="mt-4 inline-block text-xs font-bold uppercase tracking-uppercase text-blue-400/80 no-underline hover:text-blue-300"
+                    className="mt-4 inline-block text-xs font-semibold uppercase tracking-wider text-blue-400/80 no-underline hover:text-blue-300"
                 >
                     Methodology hub →
                 </TrailLink>
             </section>
 
             <section className="rounded-xl border border-red-500/15 bg-red-500/[0.04] p-6">
-                <h2 className="mb-2 text-sm font-black uppercase tracking-uppercase text-red-300/90">
+                <h2 className="mb-2 text-sm font-semibold uppercase tracking-wider text-red-300/90">
                     中国宏观 · China Intelligence Hub
                 </h2>
                 <p className="mb-4 text-sm leading-relaxed text-white/55">
@@ -192,7 +192,7 @@ export const ForResearchersPage: React.FC = () => {
                 </p>
                 <TrailLink
                     to="/intel/china"
-                    className="inline-flex items-center gap-2 rounded-lg border border-red-500/25 bg-red-500/10 px-4 py-2 text-[11px] font-black uppercase tracking-uppercase text-red-300 no-underline hover:bg-red-500/15"
+                    className="inline-flex items-center gap-2 rounded-lg border border-red-500/25 bg-red-500/10 px-4 py-2 text-[11px] font-semibold uppercase tracking-wider text-red-300 no-underline hover:bg-red-500/15"
                 >
                     Open China Macro Hub
                 </TrailLink>

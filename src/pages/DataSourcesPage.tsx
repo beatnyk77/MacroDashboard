@@ -395,7 +395,7 @@ const FREQ_COLORS: Record<Frequency, string> = {
 const SourceCard: React.FC<{ source: DataSourceEntry }> = ({ source }) => (
     <article
         id={source.id}
-        className="border border-border/60 rounded-2xl bg-card/30 p-6 flex flex-col gap-5 hover:border-border transition-colors duration-200"
+        className="border border-border rounded-xl bg-card/30 p-6 flex flex-col gap-5 hover:border-border transition-colors duration-200"
         aria-label={source.name}
     >
         {/* Header */}
@@ -403,12 +403,12 @@ const SourceCard: React.FC<{ source: DataSourceEntry }> = ({ source }) => (
             <div className="flex-1 min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-2">
                     <span className={cn(
-                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-uppercase border',
+                        'inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border',
                         TIER_COLORS[source.tier]
                     )}>
                         {source.tier}
                     </span>
-                    <span className="text-[10px] font-black uppercase tracking-uppercase text-muted-foreground">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                         {source.category}
                     </span>
                 </div>
@@ -421,7 +421,7 @@ const SourceCard: React.FC<{ source: DataSourceEntry }> = ({ source }) => (
                 href={source.url}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border/50 text-xs font-bold text-muted-foreground hover:text-foreground hover:border-border transition-colors"
+                className="flex-shrink-0 inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-border text-xs font-bold text-muted-foreground hover:text-foreground hover:border-border transition-colors"
                 aria-label={`Visit ${source.name} website`}
             >
                 <ExternalLink size={11} />
@@ -436,7 +436,7 @@ const SourceCard: React.FC<{ source: DataSourceEntry }> = ({ source }) => (
 
         {/* Key Metrics */}
         <div>
-            <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mb-3">
+            <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mb-3">
                 Key Metrics / Series Used
             </h4>
             <ul className="space-y-1.5">
@@ -451,14 +451,14 @@ const SourceCard: React.FC<{ source: DataSourceEntry }> = ({ source }) => (
 
         {/* How We Use It */}
         <div className="p-4 rounded-xl border border-terminal-blue/20 bg-terminal-blue/[0.03]">
-            <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-blue mb-2">
+            <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-blue mb-2">
                 How We Use This Source
             </h4>
             <p className="text-xs text-muted-foreground leading-relaxed">{source.howWeUseIt}</p>
         </div>
 
         {/* Footer: Coverage + Frequency */}
-        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border/30 text-xs">
+        <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-border text-xs">
             <div className="flex items-center gap-1.5 text-terminal-muted">
                 <Globe size={12} />
                 <span>{source.coverage}</span>
@@ -528,13 +528,13 @@ export const DataSourcesPage: React.FC = () => {
             />
 
             {/* Hero */}
-            <header className="w-full border-b border-border/40 bg-card/20 backdrop-blur-sm">
+            <header className="w-full border-b border-border bg-card/20 backdrop-blur-sm">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[10px] font-black uppercase tracking-uppercase mb-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terminal-emerald/10 border border-terminal-emerald/20 text-terminal-emerald text-[11px] font-semibold uppercase tracking-wider mb-6">
                         <Database size={12} />
                         Source Transparency
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-heading text-foreground mb-4 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-heading text-foreground mb-4 leading-tight">
                         Data Sources &amp;<br />
                         <span className="text-terminal-emerald">Institutional Inputs</span>
                     </h1>
@@ -555,13 +555,13 @@ export const DataSourcesPage: React.FC = () => {
             </header>
 
             {/* Summary Stats */}
-            <div className="border-b border-border/40 bg-card/10">
+            <div className="border-b border-border bg-card/10">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                         {SUMMARY_STATS.map(stat => (
                             <div key={stat.label} className="text-center">
-                                <div className="text-3xl font-black text-foreground mb-1">{stat.value}</div>
-                                <div className="text-xs font-bold uppercase tracking-uppercase text-muted-foreground">{stat.label}</div>
+                                <div className="text-3xl font-bold text-foreground mb-1">{stat.value}</div>
+                                <div className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">{stat.label}</div>
                             </div>
                         ))}
                     </div>
@@ -599,7 +599,7 @@ export const DataSourcesPage: React.FC = () => {
                         ].map(t => (
                             <div key={t.tier} className={cn('p-5 rounded-xl border', t.color)}>
                                 <span className={cn(
-                                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-uppercase border mb-3',
+                                    'inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border mb-3',
                                     t.badge
                                 )}>
                                     {t.tier}
@@ -633,10 +633,10 @@ export const DataSourcesPage: React.FC = () => {
                             key={id}
                             onClick={() => setActiveCategory(id)}
                             className={cn(
-                                'px-4 py-2 rounded-full text-xs font-bold uppercase tracking-uppercase border transition-all duration-200',
+                                'px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border transition-all duration-200',
                                 activeCategory === id
                                     ? 'bg-terminal-emerald/20 border-terminal-emerald/40 text-terminal-emerald'
-                                    : 'bg-transparent border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+                                    : 'bg-transparent border-border text-muted-foreground hover:border-border hover:text-foreground'
                             )}
                         >
                             {label}
@@ -649,10 +649,10 @@ export const DataSourcesPage: React.FC = () => {
                             key={id}
                             onClick={() => setActiveCategory(id)}
                             className={cn(
-                                'px-4 py-2 rounded-full text-xs font-bold uppercase tracking-uppercase border transition-all duration-200',
+                                'px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border transition-all duration-200',
                                 activeCategory === id
                                     ? 'bg-terminal-emerald/20 border-terminal-emerald/40 text-terminal-emerald'
-                                    : 'bg-transparent border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+                                    : 'bg-transparent border-border text-muted-foreground hover:border-border hover:text-foreground'
                             )}
                         >
                             {label}
@@ -704,7 +704,7 @@ export const DataSourcesPage: React.FC = () => {
                                             <td className="py-3 px-4 text-muted-foreground">{source.category}</td>
                                             <td className="py-3 px-4">
                                                 <span className={cn(
-                                                    'inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold border',
+                                                    'inline-flex items-center px-2 py-0.5 rounded text-[11px] font-bold border',
                                                     TIER_COLORS[source.tier]
                                                 )}>
                                                     {source.tier}
@@ -762,7 +762,7 @@ export const DataSourcesPage: React.FC = () => {
                                 desc: 'Critical metrics are cross-validated against at least two independent sources before being surfaced in the terminal. Discrepancies > 3% trigger a manual data quality review.',
                             },
                         ].map(p => (
-                            <div key={p.title} className="flex items-start gap-4 p-5 rounded-xl border border-border/60 bg-card/20">
+                            <div key={p.title} className="flex items-start gap-4 p-5 rounded-xl border border-border bg-card/20">
                                 <div className="w-10 h-10 rounded-xl bg-terminal-blue/10 flex items-center justify-center flex-shrink-0">
                                     <p.icon size={18} className="text-terminal-blue" />
                                 </div>
@@ -776,7 +776,7 @@ export const DataSourcesPage: React.FC = () => {
                 </section>
 
                 {/* Cross-link to Methodology */}
-                <aside className="mt-16 p-8 rounded-2xl border border-terminal-gold/20 bg-terminal-gold/[0.03]">
+                <aside className="mt-16 p-8 rounded-xl border border-terminal-gold/20 bg-terminal-gold/[0.03]">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <h3 className="text-lg font-bold text-foreground mb-1">Want to Understand the Formulas?</h3>

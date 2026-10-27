@@ -13,7 +13,7 @@ const GoldReturnsSection: React.FC = () => {
             />
 
             <div className="grid grid-cols-1 gap-6">
-                <div className="bg-gray-900/40 border border-gray-800 rounded-2xl p-6 backdrop-blur-xl relative overflow-hidden group">
+                <div className="bg-card/40 border border-border rounded-xl p-6 backdrop-blur-xl relative overflow-hidden group">
                     <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
                         <Map className="w-24 h-24 text-yellow-500" />
                     </div>
@@ -22,20 +22,20 @@ const GoldReturnsSection: React.FC = () => {
                         <div className="flex items-center justify-between mb-6">
                             <div>
                                 <h3 className="text-xl font-bold text-white tracking-heading">Institutional Memory</h3>
-                                <p className="text-gray-400 text-sm mt-1">Highlighted bars indicate major systemic events or policy shocks.</p>
+                                <p className="text-muted-foreground text-sm mt-1">Highlighted bars indicate major systemic events or policy shocks.</p>
                             </div>
                             <div className="flex gap-4">
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-sm bg-emerald-500/80"></div>
-                                    <span className="text-xs text-gray-400 font-mono">Positive</span>
+                                    <span className="text-xs text-muted-foreground font-mono">Positive</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-sm bg-red-500/80"></div>
-                                    <span className="text-xs text-gray-400 font-mono">Negative</span>
+                                    <span className="text-xs text-muted-foreground font-mono">Negative</span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                     <div className="w-3 h-3 rounded-sm bg-yellow-500"></div>
-                                    <span className="text-xs text-gray-400 font-mono">Event</span>
+                                    <span className="text-xs text-muted-foreground font-mono">Event</span>
                                 </div>
                             </div>
                         </div>

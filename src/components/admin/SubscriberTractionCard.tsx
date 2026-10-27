@@ -2,9 +2,10 @@ import React from 'react';
 import { Box, Typography, Chip, CircularProgress } from '@mui/material';
 import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
-const CARD_BG = 'rgba(7, 15, 32, 0.8)';
-const GLASS_BORDER = '1px solid rgba(255, 255, 255, 0.08)';
+const CARD_BG = alpha(CHART_COLORS.panel, 0.8);
+const GLASS_BORDER = `1px solid ${WHITE_ALPHA.line}`;
 const THRESHOLD = 100; // 90-day traction threshold (north-star metric, plan D5)
 
 interface SubscriberStats {
@@ -50,32 +51,32 @@ export const SubscriberTractionCard: React.FC = () => {
     return (
         <Box sx={{ p: 3, bgcolor: CARD_BG, border: GLASS_BORDER, borderRadius: '18px', maxWidth: 560 }}>
             <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-                <Typography sx={{ fontSize: 10, fontWeight: 900, letterSpacing: '0.18em', textTransform: 'uppercase', color: 'rgba(255,255,255,0.5)' }}>
+                <Typography sx={{ fontSize: 11, fontWeight: 700, letterSpacing: '0.18em', textTransform: 'uppercase', color: WHITE_ALPHA.mid }}>
                     Confirmed Subscribers
                 </Typography>
                 <Chip
                     label="north-star metric"
                     size="small"
-                    sx={{ bgcolor: 'rgba(16, 185, 129, 0.12)', color: '#34d399', fontSize: '0.6rem', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.08em' }}
+                    sx={{ bgcolor: alpha(CHART_COLORS.expansion, 0.12), color: CHART_COLORS.expansion, fontSize: '0.6875rem', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em' }}
                 />
             </Box>
 
             {isLoading ? (
                 <CircularProgress size={28} sx={{ my: 3 }} />
             ) : !data || isError ? (
-                <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: 12, lineHeight: 1.5 }}>
+                <Typography sx={{ color: WHITE_ALPHA.dim, fontSize: 12, lineHeight: 1.5 }}>
                     Subscriber stats require a service-role path (RPC revoked from public anon). Query Supabase SQL or rewire via an authenticated edge proxy.
                 </Typography>
             ) : (
                 <>
-                    <Typography sx={{ fontSize: 46, fontWeight: 900, fontFamily: 'monospace', lineHeight: 1, color: '#fff' }}>
+                    <Typography sx={{ fontSize: 46, fontWeight: 700, fontFamily: 'Fira Code, monospace', lineHeight: 1, color: '#fff' }}>
                         {confirmed}
                     </Typography>
 
                     <Box sx={{ display: 'flex', gap: 3, my: 2 }}>
                         <Delta label="7-day" value={`+${data?.confirmed_7d ?? 0}`} />
                         <Delta label="30-day" value={`+${data?.confirmed_30d ?? 0}`} />
-                        <Delta label="pending opt-in" value={`+${data?.pending_total ?? 0}`} color="#fbbf24" />
+                        <Delta label="pending opt-in" value={`+${data?.pending_total ?? 0}`} color={CHART_COLORS.gold} />
                     </Box>
 
                     {/* Sparkline */}
@@ -87,7 +88,7 @@ export const SubscriberTractionCard: React.FC = () => {
                                     flex: 1,
                                     height: `${Math.max(6, (v / max) * 100)}%`,
                                     borderRadius: '3px 3px 0 0',
-                                    background: 'linear-gradient(180deg,#60a5fa,#2563eb)',
+                                    background: `linear-gradient(180deg,${CHART_COLORS.westSoft},${CHART_COLORS.westDeep})`,
                                     opacity: 0.85,
                                 }}
                             />
@@ -95,13 +96,13 @@ export const SubscriberTractionCard: React.FC = () => {
                     </Box>
 
                     {/* Progress toward threshold */}
-                    <Box sx={{ mt: 2.25, pt: 2, borderTop: '1px solid rgba(255,255,255,0.04)' }}>
-                        <Box sx={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'monospace', fontSize: 11, color: 'rgba(255,255,255,0.5)' }}>
+                    <Box sx={{ mt: 2.25, pt: 2, borderTop: `1px solid ${WHITE_ALPHA.ghost}` }}>
+                        <Box sx={{ display: 'flex', justifyContent: 'space-between', fontFamily: 'Fira Code, monospace', fontSize: 11, color: WHITE_ALPHA.mid }}>
                             <span>90-day threshold</span>
                             <span>{confirmed} / {THRESHOLD}</span>
                         </Box>
-                        <Box sx={{ height: 8, borderRadius: 999, bgcolor: 'rgba(255,255,255,0.04)', overflow: 'hidden', mt: 1 }}>
-                            <Box sx={{ height: '100%', width: `${pct}%`, background: 'linear-gradient(90deg,#2563eb,#60a5fa)' }} />
+                        <Box sx={{ height: 8, borderRadius: 999, bgcolor: WHITE_ALPHA.ghost, overflow: 'hidden', mt: 1 }}>
+                            <Box sx={{ height: '100%', width: `${pct}%`, background: `linear-gradient(90deg,${CHART_COLORS.westDeep},${CHART_COLORS.westSoft})` }} />
                         </Box>
                     </Box>
 
@@ -112,7 +113,7 @@ export const SubscriberTractionCard: React.FC = () => {
                                     key={s.source}
                                     label={`${s.source} · ${s.count}`}
                                     size="small"
-                                    sx={{ bgcolor: 'rgba(255,255,255,0.04)', color: 'rgba(255,255,255,0.6)', fontSize: '0.65rem', fontFamily: 'monospace' }}
+                                    sx={{ bgcolor: WHITE_ALPHA.ghost, color: WHITE_ALPHA.mid, fontSize: '0.6875rem', fontFamily: 'Fira Code, monospace' }}
                                 />
                             ))}
                         </Box>
@@ -123,12 +124,12 @@ export const SubscriberTractionCard: React.FC = () => {
     );
 };
 
-const Delta: React.FC<{ label: string; value: string; color?: string }> = ({ label, value, color = '#34d399' }) => (
+const Delta: React.FC<{ label: string; value: string; color?: string }> = ({ label, value, color = CHART_COLORS.expansion }) => (
     <Box>
-        <Typography sx={{ display: 'block', color: 'rgba(255,255,255,0.5)', fontSize: 9, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 800, mb: 0.5 }}>
+        <Typography sx={{ display: 'block', color: WHITE_ALPHA.mid, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', fontWeight: 700, mb: 0.5 }}>
             {label}
         </Typography>
-        <Typography sx={{ fontSize: 14, fontFamily: 'monospace', color }}>{value}</Typography>
+        <Typography sx={{ fontSize: 14, fontFamily: 'Fira Code, monospace', color }}>{value}</Typography>
     </Box>
 );
 

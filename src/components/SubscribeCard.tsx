@@ -48,7 +48,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                     aria-live="polite"
                 >
                     <Check size={16} className="flex-shrink-0" aria-hidden />
-                    <span className="text-xs font-black uppercase tracking-uppercase">
+                    <span className="text-xs font-semibold uppercase tracking-wider">
                         You&apos;re on the list — check your inbox to confirm.
                     </span>
                 </div>
@@ -69,7 +69,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@fund.com"
                         disabled={submitting}
-                        className="min-h-[44px] w-full rounded-[10px] border border-border bg-card px-3.5 py-2.5 text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 shadow-sm"
+                        className="min-h-[44px] w-full rounded-lg border border-border bg-card px-3.5 py-2.5 text-sm text-foreground placeholder:text-terminal-dim focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 shadow-sm"
                     />
                 </div>
                 <input
@@ -85,7 +85,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[10px] border border-primary/30 bg-primary/10 px-5 py-2.5 text-[11px] font-black uppercase tracking-uppercase text-primary transition-colors duration-200 hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
+                    className="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-lg border border-primary/30 bg-primary/10 px-5 py-2.5 text-[11px] font-semibold uppercase tracking-wider text-primary transition-colors duration-200 hover:bg-primary/20 focus:outline-none focus:ring-2 focus:ring-primary/40 disabled:cursor-not-allowed disabled:opacity-50"
                 >
                     {submitting ? <Loader2 size={14} className="animate-spin" aria-hidden /> : null}
                     {submitting ? 'Joining…' : 'Join'}
@@ -103,7 +103,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
     if (done) {
         return (
             <div
-                className={`max-w-[560px] rounded-[18px] border border-emerald-500/25 bg-emerald-500/[0.06] p-6 shadow-sm ${className ?? ''}`}
+                className={`max-w-[560px] rounded-xl border border-emerald-500/25 bg-emerald-500/[0.06] p-6 shadow-sm ${className ?? ''}`}
                 role="status"
                 aria-live="polite"
             >
@@ -112,8 +112,8 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                         <Check size={20} aria-hidden />
                     </div>
                     <div>
-                        <div className="mb-0.5 text-[15px] font-extrabold text-foreground">You&apos;re on the list.</div>
-                        <div className="text-[13px] text-muted-foreground">
+                        <div className="mb-0.5 text-base font-bold text-foreground">You&apos;re on the list.</div>
+                        <div className="text-sm text-muted-foreground">
                             {confirmationCopy[cadence]}
                         </div>
                     </div>
@@ -125,21 +125,21 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
     return (
         <form
             onSubmit={handleSubmit}
-            className={`max-w-[560px] rounded-[18px] border border-primary/20 bg-card p-6 shadow-sm ${className ?? ''}`}
+            className={`max-w-[560px] rounded-xl border border-primary/20 bg-card p-6 shadow-sm ${className ?? ''}`}
             noValidate
         >
-            <div className="mb-2 text-[10px] font-black uppercase tracking-[0.18em] text-primary">
+            <div className="mb-2 text-[11px] font-semibold uppercase tracking-wider text-primary">
                 Macro Strategy Division
             </div>
-            <h4 className="mb-1.5 text-[18px] font-extrabold text-foreground">Get the Weekly Regime Digest</h4>
-            <p className="mb-4 text-[13px] leading-relaxed text-muted-foreground">
+            <h4 className="mb-1.5 text-lg font-bold text-foreground">Get the Weekly Regime Digest</h4>
+            <p className="mb-4 text-sm leading-relaxed text-muted-foreground">
                 De-dollarization, liquidity &amp; energy signals — synthesized from official sources. Free terminal. Choose weekly, daily, or both.
             </p>
             <div className="flex flex-col gap-2 sm:flex-row sm:items-end">
                 <div className="min-w-0 flex-1">
                     <label
                         htmlFor={`sub-email-${source}`}
-                        className="mb-1.5 block text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground"
+                        className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-muted-foreground"
                     >
                         Work email
                     </label>
@@ -152,13 +152,13 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                         onChange={(e) => setEmail(e.target.value)}
                         placeholder="you@fund.com"
                         disabled={submitting}
-                        className="min-h-[44px] w-full rounded-[10px] border border-border bg-card px-3.5 py-[11px] text-[13px] text-foreground placeholder:text-muted-foreground/50 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 shadow-sm"
+                        className="min-h-[44px] w-full rounded-lg border border-border bg-card px-3.5 py-[11px] text-sm text-foreground placeholder:text-terminal-dim focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 disabled:opacity-50 shadow-sm"
                     />
                 </div>
                 <button
                     type="submit"
                     disabled={submitting}
-                    className="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-[10px] bg-primary px-5 py-[11px] text-[11px] font-black uppercase tracking-uppercase text-primary-foreground transition-colors duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
+                    className="inline-flex min-h-[44px] cursor-pointer items-center justify-center gap-2 rounded-lg bg-primary px-5 py-[11px] text-[11px] font-semibold uppercase tracking-wider text-primary-foreground transition-colors duration-200 hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary/50 disabled:cursor-not-allowed disabled:opacity-50 shadow-sm"
                 >
                     {submitting ? <Loader2 size={14} className="animate-spin" aria-hidden /> : null}
                     {submitting ? 'Joining…' : 'Subscribe'}
@@ -170,7 +170,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                 </p>
             ) : null}
             <fieldset className="mt-4 space-y-2">
-                <legend className="text-[10px] font-black uppercase tracking-[0.14em] text-muted-foreground">
+                <legend className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     Email cadence
                 </legend>
                 {([
@@ -180,7 +180,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                 ]).map((opt) => (
                     <label
                         key={opt.value}
-                        className="flex min-h-[44px] cursor-pointer items-start gap-2.5 rounded-[10px] border border-border bg-muted/30 px-3 py-2.5 text-[12px] text-foreground transition-colors duration-200 hover:border-primary/40"
+                        className="flex min-h-[44px] cursor-pointer items-start gap-2.5 rounded-lg border border-border bg-muted/30 px-3 py-2.5 text-[12px] text-foreground transition-colors duration-200 hover:border-primary/40"
                     >
                         <input
                             type="radio"
@@ -206,7 +206,7 @@ export const SubscribeCard: React.FC<SubscribeCardProps> = ({ source, variant = 
                 onChange={(e) => setHoneypot(e.target.value)}
                 className="absolute -left-[9999px] h-px w-px opacity-0"
             />
-            <div className="mt-2.5 text-[10px] tracking-[0.04em] text-muted-foreground/70">
+            <div className="mt-2.5 text-[11px] tracking-[0.04em] text-muted-foreground">
                 Stored in Supabase · insert-only RLS · double opt-in · free forever terminal
             </div>
         </form>

@@ -1,6 +1,8 @@
 import React from 'react';
-import { Box, Typography } from '@mui/material';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Legend } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ReferenceLine, Legend } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const fdmData = [
     { year: '2000', us: 12.1, japan: 21.3, india: 30.2 },
@@ -19,32 +21,33 @@ const fdmData = [
 function FdmTooltip({ active, payload, label }: { active?: boolean; payload?: { name: string; value: number; color: string }[]; label?: string }) {
     if (active && payload && payload.length) {
         return (
-            <Box sx={{ p: 2, bgcolor: '#0f172a', border: '1px solid rgba(239,68,68,0.3)', borderRadius: 1 }}>
-                <Typography variant="caption" color="text.secondary" display="block" mb={1}>{label}</Typography>
-                {payload.map(p => (
-                    <Typography key={p.name} variant="caption" display="block" sx={{ color: p.color }}>
-                        {p.name}: {p.value.toFixed(1)}%
-                        {p.value > 20 ? ' ⚠️' : ''}
-                    </Typography>
-                ))}
-            </Box>
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <div className="space-y-1">
+                    {payload.map(p => (
+                        <TerminalTooltipRow key={p.name} label={p.name} swatch={p.color}>
+                            {p.value.toFixed(1)}%{p.value > 20 ? ' (elevated)' : ''}
+                        </TerminalTooltipRow>
+                    ))}
+                </div>
+            </TerminalTooltipShell>
         );
     }
     return null;
 }
 
 export const FiscalDominanceMeterChart: React.FC = () => (
-    <ResponsiveContainer width="100%" height={280}>
+    <MacroChartContainer height={CHART_HEIGHTS.standard}>
         <LineChart data={fdmData} margin={{ top: 5, right: 20, left: -5, bottom: 0 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-            <XAxis dataKey="year" tick={{ fontSize: 11, fill: '#64748b' }} />
-            <YAxis tick={{ fontSize: 11, fill: '#64748b' }} domain={[5, 40]} unit="%" />
+            <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} />
+            <XAxis {...DEFAULT_XAXIS_PROPS} dataKey="year" />
+            <YAxis {...DEFAULT_YAXIS_PROPS} width={60} domain={[5, 40]} unit="%" />
             <Tooltip content={<FdmTooltip />} />
-            <Legend wrapperStyle={{ fontSize: '0.75rem', color: '#94a3b8' }} />
-            <ReferenceLine y={20} stroke="#ef4444" strokeDasharray="5 5" strokeOpacity={0.6} label={{ value: 'Fiscal Dominance Zone', fill: '#ef4444', fontSize: 10, position: 'insideTopRight' }} />
-            <Line type="monotone" dataKey="us" name="United States" stroke="#ef4444" strokeWidth={2.5} dot={false} />
-            <Line type="monotone" dataKey="japan" name="Japan" stroke="#f59e0b" strokeWidth={2} dot={false} strokeDasharray="6 3" />
-            <Line type="monotone" dataKey="india" name="India" stroke="#818cf8" strokeWidth={2} dot={false} strokeDasharray="3 3" />
+            <Legend wrapperStyle={{ fontSize: '0.75rem', color: CHART_COLORS.label }} />
+            <ReferenceLine y={20} stroke={CHART_COLORS.stress} strokeDasharray="5 5" strokeOpacity={0.6} label={{ value: 'Fiscal Dominance Zone', fill: CHART_COLORS.stress, fontSize: 11, position: 'insideTopRight' }} />
+            <Line type="monotone" dataKey="us" name="United States" stroke={CHART_COLORS.stress} strokeWidth={2.5} dot={false} />
+            <Line type="monotone" dataKey="japan" name="Japan" stroke={CHART_COLORS.gold} strokeWidth={2} dot={false} strokeDasharray="6 3" />
+            <Line type="monotone" dataKey="india" name="India" stroke={CHART_COLORS.indigo} strokeWidth={2} dot={false} strokeDasharray="3 3" />
         </LineChart>
-    </ResponsiveContainer>
+    </MacroChartContainer>
 );

@@ -4,7 +4,7 @@ import { Database, TrendingDown, TrendingUp } from 'lucide-react';
 import { Area, AreaChart, Tooltip, YAxis } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE } from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, CHART_COLORS } from '@/constants/chartDefaults';
 
 interface SPRTrackerCardProps {
     data: { date: string; value: number }[];
@@ -46,10 +46,10 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
     }
 
     return (
-        <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
+        <Card className="bg-background/40 border-border backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
-                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                         <Database className="h-4 w-4 text-orange-400" />
                         Storage Inventory & Strategic Buffers
                     </CardTitle>
@@ -59,11 +59,11 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                     </div>
                 </div>
                 <div className="flex flex-col items-end gap-1">
-                    <span className="text-xs text-muted-foreground font-black uppercase tracking-uppercase bg-white/5 px-2 py-1 rounded border border-white/5 flex items-center gap-1.5">
+                    <span className="text-xs text-muted-foreground font-semibold uppercase tracking-wider bg-white/5 px-2 py-1 rounded border border-border flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
                         DATA CURRENT AS OF: {latest?.date}
                     </span>
-                    <span className="text-xs text-muted-foreground/40 font-bold uppercase tracking-heading">Updated Weekly via EIA/FRED</span>
+                    <span className="text-xs text-terminal-dim font-semibold uppercase tracking-heading">Updated Weekly via EIA/FRED</span>
                 </div>
             </CardHeader>
             <CardContent className="px-0 pb-0">
@@ -94,8 +94,8 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                         <AreaChart data={data}>
                             <defs>
                                 <linearGradient id="sprGradient" x1="0" y1="0" x2="0" y2="1">
-                                    <stop offset="5%" stopColor="#fb923c" stopOpacity={0.3} />
-                                    <stop offset="95%" stopColor="#fb923c" stopOpacity={0} />
+                                    <stop offset="5%" stopColor={CHART_COLORS.orange} stopOpacity={0.3} />
+                                    <stop offset="95%" stopColor={CHART_COLORS.orange} stopOpacity={0} />
                                 </linearGradient>
                             </defs>
                             <YAxis
@@ -103,20 +103,21 @@ export const SPRTrackerCard: React.FC<SPRTrackerCardProps> = ({ data, isLoading 
                                 hide
                             />
                             <Tooltip
+                                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 contentStyle={DEFAULT_TOOLTIP_STYLE}
-                                itemStyle={{ color: '#fb923c' }}
                                 formatter={(value: number) => [`${value.toFixed(1)} M bbl`, 'SPR Level']}
                                 labelFormatter={(label) => `Date: ${label}`}
                             />
                             <Area
                                 type="monotone"
                                 dataKey="value"
-                                stroke="#fb923c"
+                                stroke={CHART_COLORS.orange}
                                 strokeWidth={3}
                                 fill="url(#sprGradient)"
                                 animationDuration={1500}
                                 dot={false}
-                                activeDot={{ r: 4, fill: '#fb923c', stroke: '#fff', strokeWidth: 2 }}
+                                activeDot={{ r: 4, fill: CHART_COLORS.orange, stroke: '#fff', strokeWidth: 2 }}
                             />
                         </AreaChart>
                     </MacroChartContainer>

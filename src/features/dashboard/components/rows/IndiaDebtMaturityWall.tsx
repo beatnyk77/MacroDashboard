@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import {
-    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
-    Legend, Cell
+    BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Cell
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, CHART_RAMPS } from '@/constants/chartDefaults';
 import {
     Calendar, AlertTriangle, TrendingUp, Info, Scale,
     ArrowRightLeft, Building2, Globe
@@ -10,6 +10,8 @@ import {
 // No motion needed for now, can add back later if animations are required.
 import { useIndiaDebtMaturities } from '@/hooks/useIndiaDebtMaturities';
 import { supabase } from '@/lib/supabase';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 // Define the shape of US data from the existing implementation for comparison
 interface USData {
@@ -20,9 +22,9 @@ interface USData {
 const BUCKET_ORDER = ['<1Y', '1-3Y', '3-5Y', '5-10Y', '10-20Y', '20Y+'];
 
 const COLORS = {
-    central: '#3b82f6', // blue-500
-    state: '#8b5cf6',   // violet-500
-    us: '#ef4444',      // red-500 (matching US wall theme)
+    central: CHART_COLORS.west, // blue-500
+    state: CHART_COLORS.violet,   // violet-500
+    us: CHART_COLORS.stress,      // red-500 (matching US wall theme)
     grid: 'hsl(var(--border))',
     text: 'hsl(var(--muted-foreground))'
 };
@@ -109,11 +111,11 @@ export const IndiaDebtMaturityWall: React.FC = () => {
     }, [indiaData, view]);
 
     if (indiaLoading) {
-        return <div className="h-96 w-full bg-card animate-pulse rounded-2xl border border-border" />;
+        return <div className="h-96 w-full bg-card animate-pulse rounded-xl border border-border" />;
     }
 
     return (
-        <section className="w-full bg-card dark:bg-gradient-to-br dark:from-slate-900 dark:via-slate-900 dark:to-black rounded-3xl border border-border shadow-sm dark:shadow-2xl overflow-hidden relative">
+        <section className="w-full bg-card bg-gradient-to-br from-slate-900 via-slate-900 to-black rounded-xl border border-border shadow-sm shadow-2xl overflow-hidden relative">
             <div className="absolute top-0 right-0 w-96 h-96 bg-blue-500/5 blur-[100px] -z-10" />
 
             {/* Header Area */}
@@ -124,7 +126,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                             <div className="p-2 bg-blue-500/20 rounded-lg">
                                 <Scale className="w-6 h-6 text-primary" />
                             </div>
-                            <h2 className="text-3xl md:text-5xl font-black text-foreground tracking-heading">
+                            <h2 className="text-3xl md:text-5xl font-bold text-foreground tracking-heading">
                                 INDIA DEBT <span className="text-primary">MATURITY WALL</span>
                             </h2>
                         </div>
@@ -133,7 +135,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                         </p>
                     </div>
 
-                    <div className="flex flex-wrap items-center gap-2 p-1 bg-muted/40 dark:bg-white/5 rounded-2xl backdrop-blur-md border border-border">
+                    <div className="flex flex-wrap items-center gap-2 p-1 bg-white/5 rounded-xl backdrop-blur-md border border-border">
                         {[
                             { id: 'central', label: 'Central G-Sec', icon: <Building2 className="w-4 h-4" /> },
                             { id: 'combined', label: 'Central + States', icon: <Scale className="w-4 h-4" /> },
@@ -159,24 +161,24 @@ export const IndiaDebtMaturityWall: React.FC = () => {
 
             {/* Quick Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 p-8 md:p-10 bg-muted/10">
-                <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <Calendar className="w-5 h-5 text-primary" />
-                        <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Total Outstanding</span>
+                        <span className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">Total Outstanding</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-foreground">₹{stats?.total}</span>
+                        <span className="text-4xl font-bold text-foreground">₹{stats?.total}</span>
                         <span className="text-muted-foreground text-lg font-bold">Lakh Cr</span>
                     </div>
                 </div>
 
-                <div className="bg-card border border-border rounded-2xl p-6 shadow-sm">
+                <div className="bg-card border border-border rounded-xl p-6 shadow-sm">
                     <div className="flex items-center gap-3 mb-2">
                         <AlertTriangle className="w-5 h-5 text-amber-500" />
-                        <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Next 12M Maturing</span>
+                        <span className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">Next 12M Maturing</span>
                     </div>
                     <div className="flex items-baseline gap-2">
-                        <span className="text-4xl font-black text-foreground">₹{stats?.next1Y}</span>
+                        <span className="text-4xl font-bold text-foreground">₹{stats?.next1Y}</span>
                         <span className="text-muted-foreground text-lg font-bold">Lakh Cr</span>
                     </div>
                     <div className="mt-2 text-amber-500 text-xs font-bold flex items-center gap-1">
@@ -185,11 +187,11 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-primary/10 border border-primary/20 rounded-2xl p-6 relative overflow-hidden">
+                <div className="bg-primary/10 border border-primary/20 rounded-xl p-6 relative overflow-hidden">
                     <div className="relative z-10">
                         <div className="flex items-center gap-3 mb-2">
                             <Info className="w-5 h-5 text-primary" />
-                            <span className="text-muted-foreground text-sm font-bold uppercase tracking-uppercase">Rollover Status</span>
+                            <span className="text-muted-foreground text-sm font-semibold uppercase tracking-wider">Rollover Status</span>
                         </div>
                         <p className="text-sm text-foreground font-medium leading-relaxed">
                             {Number(stats?.next1YPercent) > 15
@@ -204,21 +206,23 @@ export const IndiaDebtMaturityWall: React.FC = () => {
             </div>
 
             {/* Main Visual Section */}
-            <div className="p-8 md:p-10 h-[500px] w-full">
-                <ResponsiveContainer width="100%" height="100%">
+            <MacroChartContainer height={CHART_HEIGHTS.hero} className="p-8 md:p-10">
                     <BarChart
                         data={chartData}
                         layout="vertical"
                         margin={{ left: 40, right: 40 }}
                     >
-                        <CartesianGrid strokeDasharray="3 3" stroke={COLORS.grid} opacity={0.6} horizontal={false} />
+                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} opacity={0.6} horizontal={false} />
                         <XAxis
+                            {...DEFAULT_XAXIS_PROPS}
                             type="number"
                             stroke={COLORS.text}
                             fontSize={12}
                             tickFormatter={(v) => view === 'comparison' ? `${v}T/$T` : `₹${v}L Cr`}
                         />
                         <YAxis
+                            {...DEFAULT_YAXIS_PROPS}
+                            width={60}
                             dataKey="bucket"
                             type="category"
                             stroke={COLORS.text}
@@ -229,39 +233,39 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                             content={({ active, payload }) => {
                                 if (active && payload && payload.length) {
                                     return (
-                                        <div className="bg-popover text-popover-foreground border border-border p-5 rounded-2xl shadow-xl space-y-3 z-50">
-                                            <p className="text-foreground font-black border-b border-border pb-2">{payload[0].payload.bucket} Maturity</p>
+                                        <div className={`${TOOLTIP_SHELL_CLASS} z-50`}>
+                                            <p className="text-slate-100 font-semibold border-b border-border pb-2">{payload[0].payload.bucket} Maturity</p>
                                             <div className="space-y-1">
                                                 {view === 'comparison' ? (
                                                     <>
                                                         <div className="flex justify-between gap-8">
                                                             <span className="text-blue-500 text-xs font-bold">India (Lakh Cr)</span>
-                                                            <span className="text-foreground font-mono">₹{payload[0].payload.combined.toFixed(2)}</span>
+                                                            <span className="text-slate-100 font-mono">₹{payload[0].payload.combined.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-8">
                                                             <span className="text-rose-500 text-xs font-bold">US ($ Trillion)</span>
-                                                            <span className="text-foreground font-mono">${payload[0].payload.us.toFixed(2)}</span>
+                                                            <span className="text-slate-100 font-mono">${payload[0].payload.us.toFixed(2)}</span>
                                                         </div>
                                                     </>
                                                 ) : view === 'combined' ? (
                                                     <>
                                                         <div className="flex justify-between gap-8">
                                                             <span className="text-blue-500 text-xs font-bold">Central G-Sec</span>
-                                                            <span className="text-foreground font-mono">₹{payload[0].payload.central.toFixed(2)}</span>
+                                                            <span className="text-slate-100 font-mono">₹{payload[0].payload.central.toFixed(2)}</span>
                                                         </div>
                                                         <div className="flex justify-between gap-8">
                                                             <span className="text-violet-500 text-xs font-bold">States (SDL)</span>
-                                                            <span className="text-foreground font-mono">₹{payload[0].payload.state.toFixed(2)}</span>
+                                                            <span className="text-slate-100 font-mono">₹{payload[0].payload.state.toFixed(2)}</span>
                                                         </div>
                                                         <div className="border-t border-border pt-2 flex justify-between gap-8">
-                                                            <span className="text-foreground text-xs font-black">Total</span>
-                                                            <span className="text-foreground font-mono font-black">₹{payload[0].payload.combined.toFixed(2)}</span>
+                                                            <span className="text-slate-100 text-xs font-semibold">Total</span>
+                                                            <span className="text-slate-100 font-mono font-semibold">₹{payload[0].payload.combined.toFixed(2)}</span>
                                                         </div>
                                                     </>
                                                 ) : (
                                                     <div className="flex justify-between gap-8">
                                                         <span className="text-blue-500 text-xs font-bold">Central G-Sec</span>
-                                                        <span className="text-foreground font-mono">₹{payload[0].payload.central.toFixed(2)}L Cr</span>
+                                                        <span className="text-slate-100 font-mono">₹{payload[0].payload.central.toFixed(2)}L Cr</span>
                                                     </div>
                                                 )}
                                             </div>
@@ -280,7 +284,7 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                         {view === 'central' && (
                             <Bar dataKey="central" name="Central G-Sec" fill={COLORS.central} radius={[0, 8, 8, 0]}>
                                 {chartData.map((entry, index) => (
-                                    <Cell key={`cell-${index}`} fill={entry.bucket === '<1Y' ? '#3b82f6' : '#1e40af'} />
+                                    <Cell key={`cell-${index}`} fill={entry.bucket === '<1Y' ? CHART_COLORS.west : CHART_RAMPS.blue[1]} />
                                 ))}
                             </Bar>
                         )}
@@ -294,23 +298,22 @@ export const IndiaDebtMaturityWall: React.FC = () => {
                             verticalAlign="bottom"
                             align="center"
                             wrapperStyle={{ paddingTop: '20px' }}
-                            formatter={(value) => <span className="text-slate-400 text-xs font-bold uppercase">{value}</span>}
+                            formatter={(value) => <span className="text-slate-400 text-xs font-semibold uppercase">{value}</span>}
                         />
                     </BarChart>
-                </ResponsiveContainer>
-            </div>
+            </MacroChartContainer>
 
             {/* Educational Footnote */}
             <div className="px-8 md:px-10 pb-8 flex flex-col md:flex-row justify-between items-center gap-4">
-                <div className="flex items-center gap-2 text-slate-500 text-xs font-bold uppercase tracking-uppercase">
+                <div className="flex items-center gap-2 text-terminal-dim text-xs font-semibold uppercase tracking-wider">
                     <span>Source: RBI DBIE / Handbook of Statistics</span>
-                    <div className="w-1 h-1 rounded-full bg-slate-700" />
+                    <div className="w-1 h-1 rounded-full bg-secondary" />
                     <span>Updated Monthly</span>
                 </div>
                 {view === 'comparison' && (
                     <div className="flex items-center gap-2 px-4 py-1.5 bg-red-500/10 border border-red-500/20 rounded-full">
                         <ArrowRightLeft className="w-3 h-3 text-red-400" />
-                        <span className="text-red-400 text-xs font-black uppercase tracking-heading">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
+                        <span className="text-red-400 text-xs font-semibold uppercase tracking-heading">Dual Scale View: Indian ₹ Lakh Cr vs US $ Trillion</span>
                     </div>
                 )}
             </div>

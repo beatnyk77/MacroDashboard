@@ -1,3 +1,4 @@
+import { CHART_COLORS } from '@/constants/chartDefaults';
 export const SemanticColors = {
   regime: {
     expansion:   { text: 'text-emerald-400', bg: 'bg-emerald-500/10',
@@ -31,7 +32,7 @@ export const SemanticColors = {
                    label: 'Lagged'      },
     very_lagged: { text: 'text-rose-400',    bg: 'bg-rose-500/10',
                    label: 'Stale'       },
-    offline:     { text: 'text-slate-500',   bg: 'bg-slate-500/10',
+    offline:     { text: 'text-terminal-dim',   bg: 'bg-slate-500/10',
                    label: 'Unavailable' },
   },
   gqSignal: {
@@ -48,15 +49,15 @@ export const SemanticColors = {
     'sovereign_stress_score': { low: 30,  mid: 60,  high: 80  },
   },
   chart: {
-    primary:   '#3b82f6',
-    secondary: '#10b981',
-    tertiary:  '#f59e0b',
-    gridLine:  '#1e293b',
-    axisText:  '#64748b',
-    tooltip:   '#0f172a',
+    primary:   CHART_COLORS.west,
+    secondary: CHART_COLORS.expansion,
+    tertiary:  CHART_COLORS.gold,
+    gridLine:  CHART_COLORS.line,
+    axisText:  CHART_COLORS.tick,
+    tooltip:   CHART_COLORS.panel,
     series: [
-      '#3b82f6','#10b981','#f59e0b',
-      '#8b5cf6','#f43f5e','#06b6d4'
+      CHART_COLORS.west,CHART_COLORS.expansion,CHART_COLORS.gold,
+      CHART_COLORS.violet,CHART_COLORS.east,CHART_COLORS.westDeep
     ],
   },
 } as const;

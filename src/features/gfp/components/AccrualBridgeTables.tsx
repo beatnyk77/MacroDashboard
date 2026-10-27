@@ -36,17 +36,17 @@ export const AccrualBridgeTables: React.FC = () => {
     <section className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Accrual Bridge Tables
             {tables.fy != null ? ` · FY${tables.fy}` : ''}
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             Net position · Budget-to-accrual recon · Cash balance
           </p>
         </div>
         <GfpBasisBadge basis="accrual" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.accrual}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.accrual}</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         <BridgeTable
@@ -87,21 +87,21 @@ const BridgeTable: React.FC<{
   rows: string[][];
   empty: boolean;
 }> = ({ title, headers, rows, empty }) => (
-  <div className="rounded-xl border border-white/5 bg-white/[0.02] overflow-hidden flex flex-col max-h-80">
-    <div className="px-3 py-2 border-b border-white/5 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+  <div className="rounded-xl border border-border bg-white/[0.02] overflow-hidden flex flex-col max-h-80">
+    <div className="px-3 py-2 border-b border-border text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
       {title}
     </div>
     {empty ? (
-      <div className="p-4 text-[10px] text-muted-foreground/50">No rows for latest FY.</div>
+      <div className="p-4 text-[11px] text-terminal-dim">No rows for latest FY.</div>
     ) : (
       <div className="overflow-auto">
         <table className="w-full text-left text-[11px]">
-          <thead className="sticky top-0 bg-black/80 backdrop-blur">
+          <thead className="sticky top-0 bg-background/80 backdrop-blur">
             <tr>
               {headers.map((h) => (
                 <th
                   key={h}
-                  className="px-3 py-2 font-black uppercase tracking-widest text-muted-foreground/50 text-[9px]"
+                  className="px-3 py-2 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]"
                 >
                   {h}
                 </th>

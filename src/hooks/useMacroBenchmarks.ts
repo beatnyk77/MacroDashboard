@@ -53,7 +53,6 @@ export function useMacroBenchmarks(activeCohort: CohortGroup = 'G20') {
                 return {
                     code: pt.code,
                     name: pt.name,
-                    flag: pt.flag,
                     value: val,
                     percentile: calculatePercentile(val, values, benchmarkMetric.lowerIsBetter)
                 };

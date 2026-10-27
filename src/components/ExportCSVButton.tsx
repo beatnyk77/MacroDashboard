@@ -29,7 +29,7 @@ export const ExportCSVButton: React.FC<ExportCSVButtonProps> = ({
             onClick={handleExport}
             disabled={!data || data.length === 0}
             className={cn(
-                "flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-xs font-black text-muted-foreground transition-all",
+                "flex items-center gap-2 px-4 py-2 rounded-xl bg-white/5 border border-border text-xs font-bold text-muted-foreground transition-all",
                 (!data || data.length === 0) 
                     ? "opacity-50 cursor-not-allowed" 
                     : "hover:text-primary hover:bg-white/10 active:scale-95 cursor-pointer",

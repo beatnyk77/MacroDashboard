@@ -7,6 +7,7 @@ import { scaleQuantile } from 'd3-scale';
 import { StateMacroInsights } from '../StateMacroInsights';
 import React, { Suspense } from 'react';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import { CHART_COLORS, CHART_RAMPS } from '@/constants/chartDefaults';
 
 const IndiaLeafletMap = React.lazy(() => import('../maps/IndiaLeafletMap').then(m => ({ default: m.IndiaLeafletMap })));
 
@@ -25,19 +26,19 @@ export const ASISection: React.FC = () => {
         if (!data || data.length === 0) return fallback;
 
         let domain: number[] = [0, 1];
-        let range: string[] = ['#064e3b', '#065f46', '#059669', '#10b981', '#34d399'];
+        let range: string[] = [...CHART_RAMPS.green];
 
         if (isInfrared) {
             domain = [0, 0.2, 0.4, 0.6, 0.8, 1];
-            range = ['#2563eb', '#60a5fa', '#94a3b8', '#fb7185', '#e11d48'];
+            range = [CHART_COLORS.westDeep, CHART_COLORS.westSoft, CHART_COLORS.label, CHART_COLORS.east, CHART_COLORS.eastDeep];
         } else {
             const values = data.map(d => Number(d[selectedMetric]) || 0);
             domain = values;
             range = selectedMetric === 'employment_growth_yoy'
-                ? ['#450a0a', '#7f1d1d', '#b91c1c', '#dc2626', '#ef4444']
+                ? [...CHART_RAMPS.red]
                 : selectedMetric === 'total_employment'
-                    ? ['#1e1b4b', '#312e81', '#3730a3', '#4338ca', '#4f46e5']
-                    : ['#064e3b', '#065f46', '#059669', '#10b981', '#34d399'];
+                    ? [...CHART_RAMPS.indigo]
+                    : [...CHART_RAMPS.green];
         }
 
         return scaleQuantile<string>()
@@ -51,7 +52,7 @@ export const ASISection: React.FC = () => {
     }, [data, rankingMetric]);
 
     if (isLoading) return <div className="flex justify-center p-12"><Activity className="animate-spin text-blue-500" /></div>;
-    if (error) return <div className="p-8 text-rose-400 font-bold bg-rose-500/10 rounded-2xl border border-rose-500/20">Error loading ASI telemetry</div>;
+    if (error) return <div className="p-8 text-rose-400 font-bold bg-rose-500/10 rounded-xl border border-rose-500/20">Error loading ASI telemetry</div>;
     if (!data || data.length === 0) {
         return (
             <DataStatePanel
@@ -112,7 +113,7 @@ export const ASISection: React.FC = () => {
                     <div className="p-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20">
                         <Factory className="text-emerald-500 w-5 h-5" />
                     </div>
-                    <h3 className="text-xl font-black text-white italic tracking-heading uppercase">ASI Industrial Matrix</h3>
+                    <h3 className="text-xl font-bold text-white italic tracking-heading uppercase">ASI Industrial Matrix</h3>
                 </div>
                 <p className="text-muted-foreground text-sm max-w-2xl leading-relaxed">
                     Sub-national industrial resolution tracking Manufacturing and Mining output with high-fidelity labor benchmarks.
@@ -121,16 +122,16 @@ export const ASISection: React.FC = () => {
 
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-10">
                 {/* Map Interface */}
-                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-white/[0.01] border border-white/5 relative group overflow-hidden z-10">
+                <div className="lg:col-span-8 p-8 rounded-xl bg-white/[0.01] border border-border relative group overflow-hidden z-10">
                     <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/[0.02] to-transparent pointer-events-none" />
 
                     <div className="flex items-center justify-between mb-8 relative z-10">
                         <div className="space-y-1">
-                            <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Geospatial Intensity</span>
-                            <h4 className="text-md font-black text-white/90">Regional Industrial Map</h4>
+                            <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Geospatial Intensity</span>
+                            <h4 className="text-md font-bold text-white/90">Regional Industrial Map</h4>
                         </div>
 
-                        <div className="flex p-1 rounded-xl bg-white/5 border border-white/5 gap-1">
+                        <div className="flex p-1 rounded-xl bg-white/5 border border-border gap-1">
                             <button
                                 onClick={() => setIsInfrared(!isInfrared)}
                                 className={cn(
@@ -141,7 +142,7 @@ export const ASISection: React.FC = () => {
                                 )}
                             >
                                 <Globe className="w-3.5 h-3.5" />
-                                <span className="text-xs font-black uppercase tracking-uppercase">Geopolitical Alignment</span>
+                                <span className="text-xs font-semibold uppercase tracking-wider">Geopolitical Alignment</span>
                             </button>
                             <div className="w-[1px] h-4 bg-white/10 self-center mx-1" />
                             {metricTabs.map((tab) => (
@@ -159,7 +160,7 @@ export const ASISection: React.FC = () => {
                                     )}
                                 >
                                     <tab.icon className="w-3.5 h-3.5" />
-                                    <span className="text-xs font-black uppercase tracking-uppercase">{tab.label.split(' ')[0]}</span>
+                                    <span className="text-xs font-semibold uppercase tracking-wider">{tab.label.split(' ')[0]}</span>
                                 </button>
                             ))}
                         </div>
@@ -167,9 +168,9 @@ export const ASISection: React.FC = () => {
 
                     <div className="relative h-[550px] w-full z-10">
                         <Suspense fallback={
-                            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-white/5 rounded-3xl gap-4">
+                            <div className="w-full h-full flex flex-col items-center justify-center bg-white/[0.02] border border-border rounded-xl gap-4">
                                 <Activity className="w-6 h-6 text-emerald-500 animate-spin" />
-                                <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">Calibrating Industrial Sensors...</span>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Calibrating Industrial Sensors...</span>
                             </div>
                         }>
                             <IndiaLeafletMap
@@ -195,7 +196,7 @@ export const ASISection: React.FC = () => {
                                             <div style="display: flex; flex-direction: column; gap: 4px; font-size: 10px;">
                                                 <div style="display: flex; justify-content: space-between;">
                                                     <span>Dominant Sphere:</span>
-                                                    <span style="color: ${dominant === 'EAST' ? '#e11d48' : dominant === 'WEST' ? '#2563eb' : '#94a3b8'}; font-weight: 900;">${dominant}</span>
+                                                    <span style="color: ${dominant === 'EAST' ? CHART_COLORS.eastDeep : dominant === 'WEST' ? CHART_COLORS.westDeep : CHART_COLORS.label}; font-weight: 900;">${dominant}</span>
                                                 </div>
                                                 <div style="display: flex; justify-content: space-between;">
                                                     <span>East Capital Share:</span>
@@ -208,7 +209,7 @@ export const ASISection: React.FC = () => {
                                         <div style="font-weight: 900; color: #fff; margin-bottom: 4px;">${s.state_name}</div>
                                         <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 10px;">
                                             <span>${metricTabs.find(t => t.id === selectedMetric)?.label}:</span>
-                                            <span style="color: #10b981;">${formatValue(s, selectedMetric)}</span>
+                                            <span style="color: ${CHART_COLORS.expansion};">${formatValue(s, selectedMetric)}</span>
                                         </div>
                                     `;
                                 }}
@@ -221,22 +222,22 @@ export const ASISection: React.FC = () => {
                 <div className="lg:col-span-4 space-y-8">
                     {/* Focus Card */}
                     <div className={cn(
-                        "p-8 rounded-[2rem] border transition-all duration-500 group relative overflow-hidden",
+                        "p-8 rounded-xl border transition-all duration-500 group relative overflow-hidden",
                         selectedState
                             ? "bg-blue-500/10 border-blue-500/20"
-                            : "bg-white/[0.02] border-white/5"
+                            : "bg-white/[0.02] border-border"
                     )}>
                         <div className="flex justify-between items-start mb-6">
                             <div className="space-y-1">
-                                <span className="text-xs font-black text-muted-foreground/50 uppercase tracking-uppercase">
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                                     {selectedState ? 'Selected Node' : 'National Buffer'}
                                 </span>
-                                <h4 className="text-xl font-black text-white/90 truncate">{activeStats.title}</h4>
+                                <h4 className="text-xl font-bold text-white/90 truncate">{activeStats.title}</h4>
                             </div>
                             {selectedState && (
                                 <button
                                     onClick={() => setSelectedState(null)}
-                                    className="text-xs font-black text-blue-400 hover:text-blue-300 underline underline-offset-4"
+                                    className="text-xs font-bold text-blue-400 hover:text-blue-300 underline underline-offset-4"
                                 >
                                     RESET
                                 </button>
@@ -247,40 +248,40 @@ export const ASISection: React.FC = () => {
                             <div className="space-y-1.5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Globe className="w-3 h-3" />
-                                    <span className="text-xs font-black uppercase">GVA Total</span>
+                                    <span className="text-xs font-semibold uppercase">GVA Total</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-white font-mono tracking-heading">₹{(activeStats.gva / 100000).toFixed(1)}</span>
-                                    <span className="text-xs font-bold text-white/30 uppercase">T</span>
+                                    <span className="text-xl font-bold text-white font-mono tracking-heading">₹{(activeStats.gva / 100000).toFixed(1)}</span>
+                                    <span className="text-xs font-semibold text-terminal-dim uppercase">T</span>
                                 </div>
                             </div>
                             <div className="space-y-1.5">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Users className="w-3 h-3" />
-                                    <span className="text-xs font-black uppercase">Employment</span>
+                                    <span className="text-xs font-semibold uppercase">Employment</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-white font-mono tracking-heading">{(activeStats.employment / 1000).toFixed(1)}</span>
-                                    <span className="text-xs font-bold text-white/30 uppercase">M</span>
+                                    <span className="text-xl font-bold text-white font-mono tracking-heading">{(activeStats.employment / 1000).toFixed(1)}</span>
+                                    <span className="text-xs font-semibold text-terminal-dim uppercase">M</span>
                                 </div>
                             </div>
-                            <div className="space-y-1.5 pt-4 border-t border-white/5">
+                            <div className="space-y-1.5 pt-4 border-t border-border">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <TrendingUp className="w-3 h-3" />
-                                    <span className="text-xs font-black uppercase">Cap Util</span>
+                                    <span className="text-xs font-semibold uppercase">Cap Util</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
-                                    <span className="text-xl font-black text-emerald-500 font-mono tracking-heading">{activeStats.capacity.toFixed(1)}%</span>
+                                    <span className="text-xl font-bold text-emerald-500 font-mono tracking-heading">{activeStats.capacity.toFixed(1)}%</span>
                                 </div>
                             </div>
-                            <div className="space-y-1.5 pt-4 border-t border-white/5">
+                            <div className="space-y-1.5 pt-4 border-t border-border">
                                 <div className="flex items-center gap-2 opacity-40">
                                     <Briefcase className="w-3 h-3" />
-                                    <span className="text-xs font-black uppercase">YoY Growth</span>
+                                    <span className="text-xs font-semibold uppercase">YoY Growth</span>
                                 </div>
                                 <div className="flex items-baseline gap-1">
                                     <span className={cn(
-                                        "text-xl font-black font-mono tracking-heading",
+                                        "text-xl font-bold font-mono tracking-heading",
                                         activeStats.growth >= 0 ? "text-emerald-400" : "text-rose-400"
                                     )}>
                                         {activeStats.growth > 0 ? '+' : ''}{activeStats.growth.toFixed(1)}%
@@ -289,16 +290,16 @@ export const ASISection: React.FC = () => {
                             </div>
 
                             {activeStats.efficiency > 0 && (
-                                <div className="col-span-2 space-y-1.5 pt-4 border-t border-white/5">
+                                <div className="col-span-2 space-y-1.5 pt-4 border-t border-border">
                                     <div className="flex items-center gap-2 opacity-40">
                                         <DollarSign className="w-3 h-3 text-emerald-500" />
-                                        <span className="text-xs font-black uppercase tracking-uppercase">Loan-to-Job Efficiency</span>
+                                        <span className="text-xs font-semibold uppercase tracking-wider">Loan-to-Job Efficiency</span>
                                     </div>
                                     <div className="flex items-baseline gap-1">
-                                        <span className="text-2xl font-black text-emerald-400 font-mono tracking-heading">
+                                        <span className="text-2xl font-bold text-emerald-400 font-mono tracking-heading">
                                             ${Math.round(activeStats.efficiency).toLocaleString()}
                                         </span>
-                                        <span className="text-xs font-bold text-emerald-400/40 uppercase tracking-uppercase pl-1">CAPEX / NEW JOB</span>
+                                        <span className="text-xs font-semibold text-emerald-400/40 uppercase tracking-wider pl-1">CAPEX / NEW JOB</span>
                                     </div>
                                 </div>
                             )}
@@ -314,11 +315,11 @@ export const ASISection: React.FC = () => {
                     {/* Rankings */}
                     <div className="space-y-6">
                         <div className="flex justify-between items-center">
-                            <h4 className="text-xs font-black text-white/90 uppercase tracking-uppercase">Tier-1 States</h4>
+                            <h4 className="text-xs font-semibold text-white/90 uppercase tracking-wider">Tier-1 States</h4>
                             <select
                                 value={rankingMetric}
                                 onChange={(e) => setRankingMetric(e.target.value as any)}
-                                className="bg-white/5 border-none text-xs font-black text-muted-foreground uppercase py-1 rounded-lg cursor-pointer hover:text-white transition-colors"
+                                className="bg-white/5 border-none text-xs font-semibold text-muted-foreground uppercase py-1 rounded-lg cursor-pointer hover:text-white transition-colors"
                             >
                                 <option value="total_gva">GVA</option>
                                 <option value="total_employment">Labor</option>
@@ -333,15 +334,15 @@ export const ASISection: React.FC = () => {
                                     key={state.state_code}
                                     onClick={() => setSelectedState(state)}
                                     className={cn(
-                                        "w-full flex justify-between items-center p-4 rounded-2xl border transition-all group",
+                                        "w-full flex justify-between items-center p-4 rounded-xl border transition-all group",
                                         selectedState?.state_code === state.state_code
                                             ? "bg-emerald-500/10 border-emerald-500/20"
-                                            : "bg-white/[0.01] border-white/5 hover:border-white/12"
+                                            : "bg-white/[0.01] border-border hover:border-white/12"
                                     )}
                                 >
-                                    <span className="text-xs font-black text-white/80 uppercase tracking-heading">{state.state_name}</span>
+                                    <span className="text-xs font-semibold text-white/80 uppercase tracking-heading">{state.state_name}</span>
                                     <div className="flex items-center gap-3">
-                                        <span className="text-sm font-black text-emerald-400 font-mono">
+                                        <span className="text-sm font-bold text-emerald-400 font-mono">
                                             {formatValue(state, rankingMetric)}
                                         </span>
                                         <ChevronRight className="w-3 h-3 text-white/10 group-hover:text-emerald-500 transition-colors" />

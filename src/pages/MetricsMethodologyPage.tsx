@@ -47,7 +47,7 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
     return (
         <article
             id={metric.id}
-            className="group border border-border/60 rounded-2xl bg-card/30 overflow-hidden transition-all duration-300 hover:border-border"
+            className="group border border-border rounded-xl bg-card/30 overflow-hidden transition-all duration-300 hover:border-border"
             aria-label={metric.name}
         >
             {/* Header */}
@@ -60,7 +60,7 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
                 <div className="flex-1 min-w-0">
                     <div className="flex flex-wrap items-center gap-2 mb-2">
                         <span className={cn(
-                            'inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-black uppercase tracking-uppercase border',
+                            'inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold uppercase tracking-wider border',
                             colorClass
                         )}>
                             {metric.category}
@@ -82,7 +82,7 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
             <div className="px-6 pb-4 -mt-2">
                 <Link
                     to={`/metrics/${metric.id}`}
-                    className="inline-flex items-center gap-1 text-[11px] font-black uppercase tracking-uppercase text-terminal-blue hover:underline"
+                    className="inline-flex items-center gap-1 text-[11px] font-semibold uppercase tracking-wider text-terminal-blue hover:underline"
                 >
                     Full metric page <ExternalLink size={11} />
                 </Link>
@@ -92,11 +92,11 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
             {expanded && (
                 <div
                     id={`metric-body-${metric.id}`}
-                    className="px-6 pb-6 space-y-6 border-t border-border/40"
+                    className="px-6 pb-6 space-y-6 border-t border-border"
                 >
                     {/* Formula Components */}
                     <section aria-label="Formula components">
-                        <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mb-3 pt-5">
+                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mb-3 pt-5">
                             Formula Components
                         </h4>
                         <ul className="space-y-2">
@@ -111,7 +111,7 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
 
                     {/* Intuition */}
                     <section aria-label="Economic intuition">
-                        <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mb-3">
+                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mb-3">
                             Economic Intuition
                         </h4>
                         <p className="text-sm text-foreground/70 leading-relaxed">
@@ -121,7 +121,7 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
 
                     {/* Institutional Use */}
                     <section aria-label="Institutional use cases">
-                        <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mb-3">
+                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mb-3">
                             Institutional Use Cases
                         </h4>
                         <div className="p-4 rounded-xl border border-terminal-blue/20 bg-terminal-blue/[0.04]">
@@ -133,12 +133,12 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
 
                     {/* Signal Interpretation */}
                     <section aria-label="Signal interpretation table">
-                        <h4 className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mb-3">
+                        <h4 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mb-3">
                             Signal Interpretation
                         </h4>
-                        <div className="rounded-xl border border-border/50 overflow-hidden">
+                        <div className="rounded-xl border border-border overflow-hidden">
                             <table className="w-full text-xs">
-                                <thead className="bg-muted/20 border-b border-border/50">
+                                <thead className="bg-muted/20 border-b border-border">
                                     <tr>
                                         <th className="py-2 px-4 text-left font-bold text-terminal-muted">Signal</th>
                                         <th className="py-2 px-4 text-left font-bold text-terminal-muted">Condition</th>
@@ -157,9 +157,9 @@ const MetricCard: React.FC<{ metric: MetricEntry }> = ({ metric }) => {
                     </section>
 
                     {/* Footer: Sources + Link */}
-                    <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-border/30">
+                    <div className="flex flex-wrap items-center justify-between gap-4 pt-2 border-t border-border">
                         <div>
-                            <span className="text-[10px] font-black uppercase tracking-uppercase text-terminal-muted mr-2">Sources:</span>
+                            <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-muted mr-2">Sources:</span>
                             {metric.sources.map((src, i) => (
                                 <span key={i} className="text-xs text-terminal-muted">
                                     {src}{i < metric.sources.length - 1 ? ', ' : ''}
@@ -281,13 +281,13 @@ export const MetricsMethodologyPage: React.FC = () => {
             />
 
             {/* Hero */}
-            <header className="w-full border-b border-border/40 bg-card/20 backdrop-blur-sm">
+            <header className="w-full border-b border-border bg-card/20 backdrop-blur-sm">
                 <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terminal-blue/10 border border-terminal-blue/20 text-terminal-blue text-[10px] font-black uppercase tracking-uppercase mb-6">
+                    <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-terminal-blue/10 border border-terminal-blue/20 text-terminal-blue text-[11px] font-semibold uppercase tracking-wider mb-6">
                         <BookOpen size={12} />
                         Methodology Disclosure
                     </div>
-                    <h1 className="text-4xl md:text-5xl font-black tracking-heading text-foreground mb-4 leading-tight">
+                    <h1 className="text-4xl md:text-5xl font-bold tracking-heading text-foreground mb-4 leading-tight">
                         Metric Methodology &amp;<br />
                         <span className="text-terminal-blue">Calculation Framework</span>
                     </h1>
@@ -311,13 +311,13 @@ export const MetricsMethodologyPage: React.FC = () => {
                 <InstitutionalAccessStrip />
                 <section className="rounded-xl border border-violet-500/15 bg-violet-500/[0.04] p-5 backdrop-blur-sm">
                     <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-                        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-violet-400">
+                        <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-violet-400">
                             <Bot size={14} />
                             For AI Assistants &amp; Researchers
                         </div>
                         <Link
                             to="/for-researchers"
-                            className="text-[10px] font-bold uppercase tracking-uppercase text-violet-400/80 hover:text-violet-300"
+                            className="text-[11px] font-semibold uppercase tracking-wider text-violet-400/80 hover:text-violet-300"
                         >
                             Full research hub →
                         </Link>
@@ -375,10 +375,10 @@ export const MetricsMethodologyPage: React.FC = () => {
                             key={id}
                             onClick={() => setActiveCategory(id)}
                             className={cn(
-                                'px-4 py-2 rounded-full text-xs font-bold uppercase tracking-uppercase border transition-all duration-200',
+                                'px-4 py-2 rounded-full text-xs font-semibold uppercase tracking-wider border transition-all duration-200',
                                 activeCategory === id
                                     ? 'bg-terminal-blue/20 border-terminal-blue/40 text-terminal-blue'
-                                    : 'bg-transparent border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+                                    : 'bg-transparent border-border text-muted-foreground hover:border-border hover:text-foreground'
                             )}
                         >
                             {label}
@@ -425,7 +425,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                             {
                                 title: 'Neutral / Structural',
                                 rule: '−1.5 ≤ Net Liquidity Z ≤ 1.5',
-                                color: 'border-border/40',
+                                color: 'border-border',
                                 textColor: 'text-muted-foreground',
                                 desc: 'Signals within ±1.5σ of the 25-year mean. Market is in a trend-following structural phase. Factor and momentum strategies historically outperform.',
                             },
@@ -440,7 +440,7 @@ export const MetricsMethodologyPage: React.FC = () => {
                 </section>
 
                 {/* Cross-link to Data Sources */}
-                <aside className="mt-16 p-8 rounded-2xl border border-terminal-blue/20 bg-terminal-blue/[0.03]">
+                <aside className="mt-16 p-8 rounded-xl border border-terminal-blue/20 bg-terminal-blue/[0.03]">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                         <div>
                             <h3 className="text-lg font-bold text-foreground mb-1">Reviewing Our Data Sources?</h3>

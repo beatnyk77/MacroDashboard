@@ -1,20 +1,18 @@
 import React from 'react';
 import { FinancialConditionsModule } from '@/features/financial-conditions/components/FinancialConditionsModule';
 import { SEOManager } from '@/components/SEOManager';
-import { TrailLink as Link } from '@/components/TrailLink';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { RelatedContent } from '@/components/RelatedContent';
 import {
-  Flame,
-  ArrowLeft,
   BookOpen,
   CheckCircle2,
   ShieldAlert,
 } from 'lucide-react';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 export const FinancialConditionsLab: React.FC = () => {
   return (
-    <div className="w-full min-h-screen py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+    <div className="page-shell space-y-8">
       <SEOManager
         title="Financial Conditions & Commodity Cycle Observatory — Barclays Model"
         description="Institutional telemetry analyzing the mechanical transmission between the global commodity supercycle and global financial conditions (FCI) across credit spreads, real rates, and dollar liquidity."
@@ -46,41 +44,14 @@ export const FinancialConditionsLab: React.FC = () => {
         ]}
       />
 
-      {/* Breadcrumb Navigation */}
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-          <Link to="/labs/" className="hover:text-foreground transition-colors flex items-center gap-1">
-            <ArrowLeft size={12} />
-            Thematic Labs
-          </Link>
-          <span>/</span>
-          <span className="text-foreground font-bold">Financial Conditions &amp; Commodities</span>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary/10 text-primary border border-primary/20 uppercase">
-            <CheckCircle2 size={11} />
-            INSTITUTIONAL TELEMETRY
-          </span>
-        </div>
-      </div>
-
-      {/* Page Header */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-3">
-          <span className="p-2.5 rounded-xl bg-orange-500/10 text-orange-400 border border-orange-500/20">
-            <Flame size={24} />
-          </span>
-          <div>
-            <h1 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-foreground">
-              Financial Conditions &amp; Commodity Impulse Observatory
-            </h1>
-            <p className="text-xs sm:text-sm text-muted-foreground">
-              Mapping how structural raw material cycles mechanically tighten sovereign rates, credit spreads, and global dollar plumbing.
-            </p>
-          </div>
-        </div>
-      </div>
+      <LabPageHeader
+          trail={[{ label: 'Home', to: '/' }, { label: 'Thematic Labs', to: '/labs/' }]}
+          current="Financial Conditions &amp; Commodities"
+          badge="Institutional Telemetry"
+          badgeIcon={<CheckCircle2 size={12} />}
+          title="Financial Conditions &amp; Commodity Impulse Observatory"
+          thesis="Mapping how structural raw material cycles mechanically tighten sovereign rates, credit spreads, and global dollar plumbing."
+      />
 
       {/* Core Interactive Module */}
       <FinancialConditionsModule />
@@ -88,7 +59,7 @@ export const FinancialConditionsLab: React.FC = () => {
       {/* Methodology & Analytical Architecture */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pt-2">
         <div className="p-5 rounded-xl border border-border bg-card/90 space-y-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground flex items-center gap-2">
             <BookOpen size={16} className="text-primary" />
             The Barclays FCI Formulation
           </h3>
@@ -96,7 +67,7 @@ export const FinancialConditionsLab: React.FC = () => {
             Unlike black-box principal component analysis (PCA), the <strong className="text-foreground">Barclays Financial Conditions Index</strong> uses
             an equal-weighted standardized formulation over 1-year changes (YoY delta) across five canonical macro transmission pillars:
           </p>
-          <code className="block p-3 bg-muted/80 rounded-lg font-mono text-[11px] text-primary leading-relaxed border border-border/50 overflow-x-auto">
+          <code className="block p-3 bg-muted/80 rounded-lg font-mono text-[11px] text-primary leading-relaxed border border-border overflow-x-auto">
             FCI = ⅕ [ Z(Δ CS) + Z(Δ r10Y) − Z(Δ YC_Slope) + Z(Δ Broad_USD) − Z(Δ S&amp;P500) ]
           </code>
           <ul className="text-xs text-muted-foreground space-y-1.5 list-disc list-inside">
@@ -109,7 +80,7 @@ export const FinancialConditionsLab: React.FC = () => {
         </div>
 
         <div className="p-5 rounded-xl border border-border bg-card/90 space-y-3">
-          <h3 className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground flex items-center gap-2">
             <ShieldAlert size={16} className="text-amber-400" />
             The Mechanical Commodity Feedback Loop
           </h3>
@@ -128,7 +99,7 @@ export const FinancialConditionsLab: React.FC = () => {
       </div>
 
       {/* Related Lab Navigation */}
-      <div className="pt-6 border-t border-border/40 space-y-4">
+      <div className="pt-6 border-t border-border space-y-4">
         <RelatedMetrics />
         <RelatedContent />
       </div>

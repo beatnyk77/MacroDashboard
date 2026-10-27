@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { TrailLink as Link } from '@/components/TrailLink';
+import { TrailLink, TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { InstitutionalFooter } from '@/components/InstitutionalFooter';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
@@ -13,6 +13,7 @@ import { RelatedContent } from '@/components/RelatedContent';
 import { LazyRender } from '@/components/LazyRender';
 import { ChinaLocaleHint } from '@/components/growth/ChinaLocaleHint';
 import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAccessStrip';
+import { CountryCode } from '@/components/CountryCode';
 
 // Lazy-load all sections
 const ChinaMacroPulseSection = lazy(() =>
@@ -71,7 +72,7 @@ const ChinaCrossBorderExposurePanel = lazy(() =>
 );
 
 const SectionSkeleton = () => (
-    <div className="h-[300px] w-full rounded-3xl bg-white/[0.02] animate-pulse" />
+    <div className="h-[300px] w-full rounded-xl bg-white/[0.02] animate-pulse" />
 );
 
 const SIGNAL_CARDS = [
@@ -179,10 +180,10 @@ export const IntelChinaPage: React.FC = () => {
 
                 <div className="relative max-w-7xl mx-auto px-4 sm:px-8">
                     {/* Breadcrumb */}
-                    <nav className="flex items-center gap-2 text-xs font-black uppercase tracking-uppercase text-muted-foreground mb-12">
+                    <nav className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-12">
                         <Link to="/" className="hover:text-foreground transition-colors">Home</Link>
                         <span>/</span>
-                        <span className="text-red-600 dark:text-red-400 font-bold">China Intelligence</span>
+                        <span className=" text-red-400 font-bold">China Intelligence</span>
                     </nav>
 
                     {/* Flag + Title */}
@@ -192,11 +193,11 @@ export const IntelChinaPage: React.FC = () => {
                         transition={{ duration: 0.7 }}
                         className="flex items-start gap-6 mb-10"
                     >
-                        <span className="text-6xl md:text-8xl select-none">🇨🇳</span>
+                        <CountryCode code="CN" size="lg" className="mt-2 select-none" />
                         <div className="flex-1">
-                            <p className="text-xs font-black text-red-600 dark:text-red-400 uppercase tracking-uppercase mb-2">GraphiQuestor Intelligence Series</p>
+                            <p className="text-xs font-semibold text-red-400 uppercase tracking-wider mb-2">GraphiQuestor Intelligence Series</p>
                             <div className="flex items-center gap-3 mb-4">
-                                <h1 className="text-4xl md:text-6xl font-black tracking-heading text-foreground leading-none">
+                                <h1 className="text-4xl md:text-6xl font-bold tracking-heading text-foreground leading-none">
                                     China<br />
                                     <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-red-400 to-amber-500">
                                         Macro Hub
@@ -224,9 +225,9 @@ export const IntelChinaPage: React.FC = () => {
                                     <a
                                         key={href}
                                         href={href}
-                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-black uppercase tracking-uppercase transition-colors ${
+                                        className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-semibold uppercase tracking-wider transition-colors ${
                                             active
-                                                ? 'bg-red-500/10 border border-red-500/20 text-red-600 dark:text-red-400 hover:bg-red-500/20'
+                                                ? 'bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500/20'
                                                 : 'bg-card border border-border text-foreground hover:bg-muted/40 shadow-sm'
                                         }`}
                                     >
@@ -248,18 +249,18 @@ export const IntelChinaPage: React.FC = () => {
                             <a
                                 key={label}
                                 href={anchor}
-                                className={`p-4 rounded-2xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}
+                                className={`p-4 rounded-xl border ${colorMap[color]} group cursor-pointer hover:scale-[1.02] transition-all duration-200`}
                             >
                                 <Icon size={18} className="mb-3 opacity-80" />
-                                <p className="text-xs font-black uppercase tracking-uppercase mb-1">{label}</p>
-                                <p className="text-xs text-muted-foreground/60 leading-relaxed">{desc}</p>
+                                <p className="text-xs font-semibold uppercase tracking-wider mb-1">{label}</p>
+                                <p className="text-xs text-muted-foreground leading-relaxed">{desc}</p>
                             </a>
                         ))}
                     </m.div>
                     {/* Debt Iceberg Hero */}
                     <div className="mt-10">
                         <SectionErrorBoundary name="China Debt Iceberg">
-                            <Suspense fallback={<div className="h-[420px] rounded-[2rem] bg-white/[0.02] animate-pulse" />}>
+                            <Suspense fallback={<div className="h-[420px] rounded-xl bg-white/[0.02] animate-pulse" />}>
                                 <ChinaDebtIcebergHero />
                             </Suspense>
                         </SectionErrorBoundary>
@@ -268,7 +269,7 @@ export const IntelChinaPage: React.FC = () => {
                     {/* FYP Teaser Row */}
                     <div className="mt-12">
                         <SectionErrorBoundary name="China 15th FYP Teaser">
-                            <Suspense fallback={<div className="h-24 rounded-2xl bg-white/[0.02] animate-pulse" />}>
+                            <Suspense fallback={<div className="h-24 rounded-xl bg-white/[0.02] animate-pulse" />}>
                                 <China15thFYPTeaserRow />
                             </Suspense>
                         </SectionErrorBoundary>
@@ -393,23 +394,23 @@ export const IntelChinaPage: React.FC = () => {
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-amber-500" />
-                            <h2 className="text-xs font-black text-foreground uppercase tracking-uppercase">Credit Impulse Deep Dive</h2>
+                            <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">Credit Impulse Deep Dive</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div className="p-6 rounded-[2rem] bg-card border border-border space-y-4 shadow-sm">
-                                <p className="text-xs font-black text-amber-600 dark:text-amber-400 uppercase tracking-uppercase">What is China's Credit Impulse?</p>
+                            <div className="p-6 rounded-xl bg-card border border-border space-y-4 shadow-sm">
+                                <p className="text-xs font-semibold text-amber-400 uppercase tracking-wider">What is China's Credit Impulse?</p>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
                                     China's credit impulse measures the change in new credit issued as a percentage of GDP. It is one of the most powerful leading indicators for global economic activity, with a 9-12 month lead on commodity demand and EM asset prices.
                                 </p>
                                 <p className="text-xs text-muted-foreground leading-relaxed">
                                     A rising impulse signals accelerating credit growth, typically bullish for oil, copper, and EM equities. A falling impulse warns of demand contraction ahead.
                                 </p>
-                                <Link to="/glossary/de-dollarization" className="inline-flex items-center gap-1.5 text-xs font-black uppercase tracking-uppercase text-amber-600 dark:text-amber-400 hover:underline transition-colors mt-2">
+                                <Link to="/glossary/de-dollarization" className="inline-flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400 hover:underline transition-colors mt-2">
                                     Read: De-Dollarization →
                                 </Link>
                             </div>
-                            <div className="p-6 rounded-[2rem] bg-card border border-border space-y-4 shadow-sm">
-                                <p className="text-xs font-black text-red-600 dark:text-red-400 uppercase tracking-uppercase">Deflation Risk Monitor</p>
+                            <div className="p-6 rounded-xl bg-card border border-border space-y-4 shadow-sm">
+                                <p className="text-xs font-semibold text-red-400 uppercase tracking-wider">Deflation Risk Monitor</p>
                                 <p className="text-sm text-muted-foreground leading-relaxed">
                                     China has been experiencing persistent PPI deflation since mid-2022, driven by a domestic demand shortfall and over-supply in industrial capacity. When PPI is deeply negative, it exports disinflationary pressure globally through cheaper manufactured goods.
                                 </p>
@@ -428,7 +429,7 @@ export const IntelChinaPage: React.FC = () => {
                     <div className="space-y-8">
                         <div className="flex items-center gap-4">
                             <div className="h-[2px] w-8 bg-red-500" />
-                            <h2 className="text-xs font-black text-foreground uppercase tracking-uppercase">China De-Dollarization Strategy</h2>
+                            <h2 className="text-xs font-semibold text-foreground uppercase tracking-wider">China De-Dollarization Strategy</h2>
                         </div>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                             {[
@@ -436,8 +437,8 @@ export const IntelChinaPage: React.FC = () => {
                                 { title: 'Bilateral CNY Trade', body: 'China has accelerated local-currency trade deals with Russia, Saudi Arabia, and ASEAN nations — denominating commodity purchases in CNY rather than USD.', color: 'red' },
                                 { title: 'CIPS Infrastructure', body: 'China\'s Cross-Border Interbank Payment System (CIPS) now processes $400B+ yearly, providing a parallel settlement rail to SWIFT for CNY transactions.', color: 'orange' },
                             ].map(({ title, body, color }) => (
-                                <div key={title} className={`p-5 rounded-2xl border ${colorMap[color]} space-y-3`}>
-                                    <p className="text-xs font-black uppercase tracking-uppercase">{title}</p>
+                                <div key={title} className={`p-5 rounded-xl border ${colorMap[color]} space-y-3`}>
+                                    <p className="text-xs font-semibold uppercase tracking-wider">{title}</p>
                                     <p className="text-xs text-muted-foreground leading-relaxed">{body}</p>
                                 </div>
                             ))}
@@ -446,7 +447,7 @@ export const IntelChinaPage: React.FC = () => {
                         {/* Added from Labs: Institutional Influence Section */}
                         <div className="mt-16">
                             <div className="flex items-center gap-3 mb-10">
-                                <h2 className="text-xl font-black uppercase tracking-heading text-foreground">Spheres of Institutional Influence</h2>
+                                <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Spheres of Institutional Influence</h2>
                             </div>
                             <LazyRender minHeight="300px" fallback={<SectionSkeleton />}>
                                 <SectionErrorBoundary name="Institutional Influence">
@@ -462,14 +463,14 @@ export const IntelChinaPage: React.FC = () => {
                 <div className="border-t border-border" />
 
                 {/* Added from Labs: Structural Analysis Article */}
-                <article className="p-12 bg-card border border-border rounded-[2.5rem] shadow-sm" aria-label="Structural Analysis of China's Systemic Pivot">
-                    <h3 className="text-xl font-black text-foreground uppercase tracking-uppercase mb-6">Structural Analysis: China's Economic Pivot & Global Influence</h3>
+                <article className="p-12 bg-card border border-border rounded-xl shadow-sm" aria-label="Structural Analysis of China's Systemic Pivot">
+                    <h3 className="text-xl font-bold text-foreground uppercase tracking-wider mb-6">Structural Analysis: China's Economic Pivot & Global Influence</h3>
                     <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                         <p>
                             The <strong>China Macro Hub</strong> tracks the deliberate structural deceleration of China's property sector alongside the corresponding acceleration in high-quality manufacturing, green technology, and sovereign influence architecture. Analyzing the People's Bank of China (PBoC) monetary plumbing and credit impulse cycles provides leading indicators for global commodity demand and emerging market liquidity.
                         </p>
                         <p>
-                            A key focus of this hub is the tracking of <a href="/glossary/de-dollarization/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors font-semibold">De-Dollarization</a> vectors and the expansion of parallel settlement infrastructure like the <a href="/glossary/mbridge/" className="text-blue-600 dark:text-blue-400 hover:underline transition-colors font-semibold">mBridge</a> network. By monitoring the spheres of institutional influence, including BRICS+ trade alignments and bilateral swap lines, the timeline for multi-polar reserve optionality becomes quantifiable.
+                            A key focus of this hub is the tracking of <TrailLink to="/glossary/de-dollarization/" className=" text-blue-400 hover:underline transition-colors font-semibold">De-Dollarization</TrailLink> vectors and the expansion of parallel settlement infrastructure like the <TrailLink to="/glossary/mbridge/" className=" text-blue-400 hover:underline transition-colors font-semibold">mBridge</TrailLink> network. By monitoring the spheres of institutional influence, including BRICS+ trade alignments and bilateral swap lines, the timeline for multi-polar reserve optionality becomes quantifiable.
                         </p>
                         <p>
                             The shift from export-led accumulation to domestic consumption and strategic industrial autonomy is modeled through our proprietary alpha signals, visualizing the long-term relative growth rate of the Chinese economy against developed market peers.

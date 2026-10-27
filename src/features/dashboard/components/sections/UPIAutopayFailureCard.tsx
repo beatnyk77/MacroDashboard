@@ -3,7 +3,9 @@ import { Card } from '@/components/ui/card';
 import { Tooltip, Chip } from '@mui/material';
 import { Info, TrendingUp, TrendingDown } from 'lucide-react';
 import { useUPIAutopay, useUPIAutopayHistory } from '@/hooks/useUPIAutopay';
-import { AreaChart, Area, ResponsiveContainer, YAxis, XAxis, Tooltip as RechartsTooltip } from 'recharts';
+import { AreaChart, Area, YAxis, XAxis, Tooltip as RechartsTooltip } from 'recharts';
+import { DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const UPIAutopayFailureCard: React.FC = () => {
     const { data: latestData, isLoading: isLatestLoading } = useUPIAutopay();
@@ -23,7 +25,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
     const isRising = (failure_rate_delta_mom || 0) > 0;
     const isHighStress = (failure_rate_pct || 0) > 1.0;
 
-    const trendColor = isRising ? '#ff5252' : '#4caf50';
+    const trendColor = isRising ? CHART_COLORS.stress : CHART_COLORS.expansion;
 
     return (
         <Card
@@ -33,10 +35,10 @@ export const UPIAutopayFailureCard: React.FC = () => {
             <div className="p-5">
                 <div className="flex justify-between items-start mb-1">
                     <div>
-                        <p className="text-xs font-semibold tracking-uppercase text-muted-foreground/70">
+                        <p className="text-xs font-semibold tracking-wider text-muted-foreground">
                             UPI AUTOPAY FAILURE RATE
                         </p>
-                        <p className="text-xs text-muted-foreground/60 mt-0.5 font-medium">
+                        <p className="text-xs text-muted-foreground mt-0.5 font-medium">
                             Consumer Credit Stress Proxy
                         </p>
                     </div>
@@ -46,7 +48,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                             <p className="text-xs my-1">
                                 Represents the "Business Decline" rate of UPI Autopay mandates (insufficient funds).
                             </p>
-                            <p className="text-xs italic" style={{ color: '#ffb74d' }}>
+                            <p className="text-xs italic" style={{ color: CHART_COLORS.orangeSoft }}>
                                 Note: Rising failures often precede broader credit stress events.
                             </p>
                             <p className="text-xs mt-1">
@@ -54,7 +56,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                             </p>
                         </React.Fragment>
                     } arrow placement="top">
-                        <Info className="text-muted-foreground/50 w-4 h-4 cursor-help" />
+                        <Info className="text-terminal-dim w-4 h-4 cursor-help" />
                     </Tooltip>
                 </div>
 
@@ -83,8 +85,7 @@ export const UPIAutopayFailureCard: React.FC = () => {
                     </div>
                 )}
 
-                <div className="h-[60px] mt-2 -ml-2 -mr-2 -mb-1.5">
-                    <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height={CHART_HEIGHTS.sparkline} className="mt-2 -ml-2 -mr-2 -mb-1.5">
                         <AreaChart data={history}>
                             <defs>
                                 <linearGradient id="colorFailure" x1="0" y1="0" x2="0" y2="1">
@@ -105,26 +106,20 @@ export const UPIAutopayFailureCard: React.FC = () => {
                             <XAxis dataKey="as_of_date" hide />
                             <YAxis domain={['auto', 'auto']} hide />
                             <RechartsTooltip
-                                contentStyle={{
-                                    backgroundColor: '#1a1a1a',
-                                    border: '1px solid #333',
-                                    fontSize: '0.7rem',
-                                    padding: '4px 8px'
-                                }}
-                                itemStyle={{ color: trendColor }}
-                                labelStyle={{ display: 'none' }}
+                                contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                 formatter={(value: number) => [`${value.toFixed(2)}%`, 'Failure Rate']}
                             />
                         </AreaChart>
-                    </ResponsiveContainer>
-                </div>
+                </MacroChartContainer>
 
                 <div className="flex justify-between items-center mt-1">
-                    <p className="text-xs text-muted-foreground/50 opacity-80">
+                    <p className="text-xs text-terminal-dim opacity-80">
                         History: 12m trend
                     </p>
                     <div className="flex items-center gap-1">
-                        <p className="text-xs text-muted-foreground/50 opacity-80">
+                        <p className="text-xs text-terminal-dim opacity-80">
                             Updated: {as_of_date}
                         </p>
                         <span className={`w-1.5 h-1.5 rounded-full ${staleness_flag === 'fresh' ? 'bg-primary' : 'bg-muted-foreground/30'}`} style={{ opacity: staleness_flag === 'fresh' ? 0.8 : 0.3 }} />

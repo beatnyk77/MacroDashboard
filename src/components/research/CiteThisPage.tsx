@@ -52,7 +52,7 @@ export const CiteThisPage: React.FC<CiteThisPageProps> = ({ input, className, co
             data-llm-citable="true"
             data-page-type={input.pageType}
             className={cn(
-                'rounded-xl border border-white/[0.08] bg-slate-900/50 p-5 backdrop-blur-xl',
+                'rounded-xl border border-white/[0.08] bg-card/60 p-5 backdrop-blur-xl',
                 className
             )}
             aria-label="Citation and structured summary for researchers and AI assistants"
@@ -60,13 +60,13 @@ export const CiteThisPage: React.FC<CiteThisPageProps> = ({ input, className, co
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
                 <div className="flex items-center gap-2">
                     <BookMarked size={16} className="text-violet-400" />
-                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-violet-400/80">
+                    <span className="text-[11px] font-semibold uppercase tracking-wider text-violet-400/80">
                         Cite This Page
                     </span>
                 </div>
                 <TrailLink
                     to="/for-researchers"
-                    className="inline-flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-uppercase text-white/40 no-underline transition-colors hover:text-violet-400"
+                    className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-terminal-dim no-underline transition-colors hover:text-violet-400"
                 >
                     <Bot size={12} />
                     For AI Assistants
@@ -77,9 +77,9 @@ export const CiteThisPage: React.FC<CiteThisPageProps> = ({ input, className, co
             <section
                 id="llm-summary"
                 data-llm-summary="true"
-                className="mb-4 rounded-lg border border-white/[0.05] bg-black/20 p-4"
+                className="mb-4 rounded-lg border border-white/[0.05] bg-background/20 p-4"
             >
-                <h2 className="mb-2 text-xs font-black uppercase tracking-uppercase text-white/70">
+                <h2 className="mb-2 text-xs font-semibold uppercase tracking-wider text-white/70">
                     Structured Summary
                 </h2>
                 <p className="mb-3 text-sm leading-relaxed text-white/60">{input.summary}</p>
@@ -94,13 +94,13 @@ export const CiteThisPage: React.FC<CiteThisPageProps> = ({ input, className, co
                     </ul>
                 )}
                 {input.formula && (
-                    <pre className="mt-3 overflow-x-auto rounded border border-white/[0.06] bg-black/30 px-3 py-2 font-mono text-xs text-emerald-400/90">
+                    <pre className="mt-3 overflow-x-auto rounded border border-white/[0.06] bg-background/30 px-3 py-2 font-mono text-xs text-emerald-400/90">
                         {input.formula}
                     </pre>
                 )}
                 {input.source && (
-                    <p className="mt-3 text-[11px] text-white/35">
-                        <span className="font-bold uppercase tracking-wider">Provenance:</span>{' '}
+                    <p className="mt-3 text-[11px] text-terminal-dim">
+                        <span className="font-semibold uppercase tracking-wider">Provenance:</span>{' '}
                         {input.source}
                     </p>
                 )}
@@ -119,7 +119,7 @@ export const CiteThisPage: React.FC<CiteThisPageProps> = ({ input, className, co
                         key={format}
                         type="button"
                         onClick={() => copy(format)}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-[10px] font-bold uppercase tracking-uppercase text-white/60 transition-colors hover:border-violet-500/30 hover:text-violet-300"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-border bg-white/[0.03] px-3 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/60 transition-colors hover:border-violet-500/30 hover:text-violet-300"
                     >
                         {copied === format ? <Check size={12} /> : <Copy size={12} />}
                         {copied === format ? 'Copied' : label}

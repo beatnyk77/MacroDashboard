@@ -93,13 +93,13 @@ export const MetricsExplorerPage: React.FC = () => {
                 canonical="/metrics/"
             />
 
-            <header className="mb-8 border-b border-white/10 pb-6">
-                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[10px] font-black uppercase tracking-widest text-blue-300">
+            <header className="mb-8 border-b border-border pb-6">
+                <div className="mb-3 inline-flex items-center gap-2 rounded-full border border-blue-400/20 bg-blue-400/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-wider text-blue-300">
                     <Database size={12} /> Live metric catalog
                 </div>
                 <div className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
                     <div>
-                        <h1 className="text-3xl font-black uppercase tracking-tight text-white md:text-4xl">Metrics Explorer</h1>
+                        <h1 className="text-3xl font-bold uppercase tracking-tight text-white md:text-4xl">Metrics Explorer</h1>
                         <p className="mt-3 max-w-3xl text-sm leading-6 text-muted-foreground">
                             Direct index of `vw_latest_metrics`. Each row links to a live detail page with history, observation date, ingestion timestamp, source, and freshness state.
                         </p>
@@ -113,16 +113,16 @@ export const MetricsExplorerPage: React.FC = () => {
             </header>
 
             <div className="mb-5 flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div className="flex min-h-11 flex-1 items-center gap-2 rounded-lg border border-white/10 bg-black/20 px-3">
-                    <Search size={16} className="text-white/40" />
+                <div className="flex min-h-11 flex-1 items-center gap-2 rounded-lg border border-border bg-background/20 px-3">
+                    <Search size={16} className="text-terminal-dim" />
                     <input
                         value={query}
                         onChange={(event) => setQuery(event.target.value)}
                         placeholder="Search metric ID, label, source, cadence..."
-                        className="w-full bg-transparent text-sm text-white outline-none placeholder:text-white/30"
+                        className="w-full bg-transparent text-sm text-white outline-none placeholder:text-terminal-dim"
                     />
                 </div>
-                <div className="flex rounded-lg border border-white/10 bg-white/[0.02] p-1">
+                <div className="flex rounded-lg border border-border bg-white/[0.02] p-1">
                     {[
                         ['all', 'All'],
                         ['fresh', 'Current'],
@@ -132,8 +132,8 @@ export const MetricsExplorerPage: React.FC = () => {
                             key={value}
                             type="button"
                             onClick={() => setStatusFilter(value as typeof statusFilter)}
-                            className={`min-h-9 px-3 text-[10px] font-black uppercase tracking-widest transition ${
-                                statusFilter === value ? 'rounded-md bg-blue-500/20 text-blue-200' : 'text-white/45 hover:text-white'
+                            className={`min-h-9 px-3 text-[11px] font-semibold uppercase tracking-wider transition ${
+                                statusFilter === value ? 'rounded-md bg-blue-500/20 text-blue-200' : 'text-terminal-dim hover:text-white'
                             }`}
                         >
                             {label}
@@ -142,9 +142,9 @@ export const MetricsExplorerPage: React.FC = () => {
                 </div>
             </div>
 
-            <div className="overflow-x-auto rounded-xl border border-white/10 bg-slate-950/40">
+            <div className="overflow-x-auto rounded-xl border border-border bg-card/40">
                 <table className="w-full min-w-[1100px] text-left">
-                    <thead className="border-b border-white/10 bg-white/[0.025] text-[10px] font-black uppercase tracking-widest text-white/35">
+                    <thead className="border-b border-border bg-white/[0.025] text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                         <tr>
                             <th className="px-4 py-3">Metric</th>
                             <th className="px-4 py-3">Latest</th>
@@ -166,14 +166,14 @@ export const MetricsExplorerPage: React.FC = () => {
                             return (
                                 <tr key={row.metric_id} className="transition hover:bg-white/[0.03]">
                                     <td className="px-4 py-3">
-                                        <TrailLink to={`/metrics/${encodeURIComponent(row.metric_id)}`} className="font-mono text-sm font-black text-white hover:text-blue-300">
+                                        <TrailLink to={`/metrics/${encodeURIComponent(row.metric_id)}`} className="font-mono text-sm font-bold text-white hover:text-blue-300">
                                             {row.metric_id}
                                         </TrailLink>
                                         <div className="mt-1 max-w-[360px] truncate text-xs text-muted-foreground">{row.metric_name ?? row.category ?? 'Unnamed metric'}</div>
                                     </td>
                                     <td className="px-4 py-3 font-mono text-sm font-bold tabular-nums text-white">{formatValue(row.value, row.unit_label)}</td>
                                     <td className="px-4 py-3 text-xs text-white/60">{row.as_of_date ?? 'No observation'}</td>
-                                    <td className="px-4 py-3 text-xs uppercase tracking-widest text-white/50">{row.native_frequency ?? '—'}</td>
+                                    <td className="px-4 py-3 text-xs uppercase tracking-wider text-white/50">{row.native_frequency ?? '—'}</td>
                                     <td className="px-4 py-3 text-xs text-white/55">{row.source_name ?? row.source_ref ?? 'Internal Analytics'}</td>
                                     <td className="px-4 py-3">
                                         <FreshnessChip
@@ -190,12 +190,12 @@ export const MetricsExplorerPage: React.FC = () => {
                     </tbody>
                 </table>
                 {isLoading && (
-                    <div className="flex h-32 items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
+                    <div className="flex h-32 items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">
                         <Activity size={14} className="animate-pulse" /> Loading metrics
                     </div>
                 )}
                 {!isLoading && filtered.length === 0 && (
-                    <div className="flex h-32 items-center justify-center gap-2 text-xs font-black uppercase tracking-widest text-white/35">
+                    <div className="flex h-32 items-center justify-center gap-2 text-xs font-semibold uppercase tracking-wider text-terminal-dim">
                         <AlertTriangle size={14} /> No metrics match the current filter
                     </div>
                 )}
@@ -205,9 +205,9 @@ export const MetricsExplorerPage: React.FC = () => {
 };
 
 const Stat: React.FC<{ label: string; value: string | number; tone?: 'safe' | 'warn' }> = ({ label, value, tone }) => (
-    <div className="min-w-[88px] rounded-lg border border-white/10 bg-white/[0.03] px-3 py-2">
-        <div className="text-[9px] font-black uppercase tracking-widest text-white/35">{label}</div>
-        <div className={`mt-1 font-mono text-lg font-black ${tone === 'safe' ? 'text-emerald-300' : tone === 'warn' ? 'text-amber-300' : 'text-white'}`}>{value}</div>
+    <div className="min-w-[88px] rounded-lg border border-border bg-white/[0.03] px-3 py-2">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">{label}</div>
+        <div className={`mt-1 font-mono text-lg font-bold ${tone === 'safe' ? 'text-emerald-300' : tone === 'warn' ? 'text-amber-300' : 'text-white'}`}>{value}</div>
     </div>
 );
 

@@ -3,16 +3,15 @@ import { MarketTransmissionModule } from '@/features/market-transmission/compone
 import { SEOManager } from '@/components/SEOManager';
 import { TrailLink as Link } from '@/components/TrailLink';
 import {
-    Compass,
     ShieldAlert,
     BookOpen,
-    ArrowLeft,
     CheckCircle2,
 } from 'lucide-react';
+import { LabPageHeader } from '@/components/LabPageHeader';
 
 export const MarketTransmissionLab: React.FC = () => {
     return (
-        <div className="w-full min-h-screen py-6 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+        <div className="page-shell space-y-8">
             <SEOManager
                 title="Market Transmission & Breadth Lab — Equity Risk Premium & Sector Rotations"
                 description="Real-time macro transmission monitor tracking sector rotations, market breadth, Equity Risk Premium (ERP), and macro baskets via finvizfinance."
@@ -28,41 +27,14 @@ export const MarketTransmissionLab: React.FC = () => {
                 isApp={true}
             />
 
-            {/* Breadcrumb & Navigation */}
-            <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 text-xs font-mono text-muted-foreground">
-                    <Link to="/labs/" className="hover:text-foreground transition-colors flex items-center gap-1">
-                        <ArrowLeft size={12} />
-                        Thematic Labs
-                    </Link>
-                    <span>/</span>
-                    <span className="text-foreground font-bold">Market Transmission &amp; Breadth</span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-primary/10 text-primary border border-primary/20 uppercase">
-                        <CheckCircle2 size={11} />
-                        INSTITUTIONAL TELEMETRY
-                    </span>
-                </div>
-            </div>
-
-            {/* Page Title & Mission Statement */}
-            <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                    <span className="p-2 rounded-lg bg-primary/10 text-primary border border-primary/20">
-                        <Compass size={22} />
-                    </span>
-                    <div>
-                        <h1 className="text-xl sm:text-2xl font-black uppercase tracking-wider text-foreground">
-                            Market Transmission &amp; Breadth Observatory
-                        </h1>
-                        <p className="text-xs sm:text-sm text-muted-foreground">
-                            Bridging macroeconomic policy and sovereign rate shifts to micro equity pricing, sector rotations, and market internals.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }, { label: 'Thematic Labs', to: '/labs/' }]}
+                current="Market Transmission &amp; Breadth"
+                badge="Institutional Telemetry"
+                badgeIcon={<CheckCircle2 size={12} />}
+                title="Market Transmission &amp; Breadth Observatory"
+                thesis="Bridging macroeconomic policy and sovereign rate shifts to micro equity pricing, sector rotations, and market internals."
+            />
 
             {/* Core Interactive Module */}
             <MarketTransmissionModule />
@@ -70,7 +42,7 @@ export const MarketTransmissionLab: React.FC = () => {
             {/* Institutional Framework & Methodology Section */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="p-5 rounded-xl border border-border bg-card/90 space-y-3">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground flex items-center gap-2">
                         <BookOpen size={16} className="text-primary" />
                         The Transmission Mechanism
                     </h3>
@@ -88,7 +60,7 @@ export const MarketTransmissionLab: React.FC = () => {
                 </div>
 
                 <div className="p-5 rounded-xl border border-border bg-card/90 space-y-3">
-                    <h3 className="text-sm font-bold uppercase tracking-wider text-foreground flex items-center gap-2">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-foreground flex items-center gap-2">
                         <ShieldAlert size={16} className="text-amber-400" />
                         Equity Risk Premium &amp; Rate Vulnerability
                     </h3>
@@ -105,7 +77,7 @@ export const MarketTransmissionLab: React.FC = () => {
 
             {/* Related Labs & Content */}
             <div className="space-y-4 pt-4 border-t border-border">
-                <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-muted-foreground">
+                <h3 className="text-xs font-mono font-semibold uppercase tracking-wider text-muted-foreground">
                     Connected Observatories &amp; Rates Telemetry
                 </h3>
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">

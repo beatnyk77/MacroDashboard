@@ -48,19 +48,19 @@ export const AuthorityCitationBlock: React.FC<AuthorityCitationBlockProps> = ({
     return (
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4 text-[12px] space-y-3">
             <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2 font-black uppercase tracking-widest text-white/50 text-[10px]">
+                <div className="flex items-center gap-2 font-semibold uppercase tracking-wider text-white/50 text-[11px]">
                     <Quote size={12} className="text-blue-400" />
                     Cite this research object
                 </div>
-                <div className="flex items-center gap-1 bg-black/40 rounded-lg p-0.5 border border-white/10">
+                <div className="flex items-center gap-1 bg-background/40 rounded-lg p-0.5 border border-border">
                     {(['apa', 'chicago', 'bibtex'] as const).map((fmt) => (
                         <button
                             key={fmt}
                             onClick={() => setFormat(fmt)}
-                            className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase transition-colors ${
+                            className={`px-2 py-0.5 rounded text-[11px] font-bold uppercase transition-colors ${
                                 format === fmt
                                     ? 'bg-blue-500/20 text-blue-400 border border-blue-500/30'
-                                    : 'text-white/40 hover:text-white/70'
+                                    : 'text-terminal-dim hover:text-white/70'
                             }`}
                         >
                             {fmt}
@@ -70,12 +70,12 @@ export const AuthorityCitationBlock: React.FC<AuthorityCitationBlockProps> = ({
             </div>
 
             <div className="relative">
-                <pre className="overflow-x-auto rounded-lg bg-black/50 p-3 font-mono text-[11px] text-white/70 whitespace-pre-wrap">
+                <pre className="overflow-x-auto rounded-lg bg-background/50 p-3 font-mono text-[11px] text-white/70 whitespace-pre-wrap">
                     {getCitationText()}
                 </pre>
                 <button
                     onClick={handleCopy}
-                    className="absolute right-2 top-2 flex items-center gap-1 px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-white/10 text-[10px] font-bold text-white transition-all active:scale-95"
+                    className="absolute right-2 top-2 flex items-center gap-1 px-2 py-1 rounded bg-white/10 hover:bg-white/20 border border-border text-[11px] font-bold text-white transition-all active:scale-95"
                 >
                     {copied ? (
                         <>

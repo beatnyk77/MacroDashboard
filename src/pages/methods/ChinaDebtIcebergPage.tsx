@@ -12,6 +12,7 @@ import { MethodsSpokeBanner } from '@/components/seo/MethodsSpokeBanner';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { ChartSkeleton } from '@/components/charts/ChartSkeleton';
+import { CHART_COLORS, CHART_FONT_FAMILY, alpha } from '@/constants/chartDefaults';
 
 const ChinaDebtIcebergChart = lazy(() => import('./ChinaDebtIcebergChart').then(m => ({ default: m.ChinaDebtIcebergChart })));
 
@@ -84,9 +85,9 @@ export const ChinaDebtIcebergPage: React.FC = () => {
 
                 <Box mb={8}>
                     <Chip label="Methods Article · China Sovereign Debt" variant="outlined"
-                        sx={{ mb: 3, fontWeight: 700, letterSpacing: 1, textTransform: 'uppercase', fontSize: '0.7rem', borderColor: '#f59e0b', color: '#f59e0b' }} />
+                        sx={{ mb: 3, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', fontSize: '0.7rem', borderColor: CHART_COLORS.gold, color: CHART_COLORS.gold }} />
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-                        <Typography variant="h2" component="h1" fontWeight={900}>
+                        <Typography variant="h2" component="h1" fontWeight={700}>
                             China Debt Iceberg
                         </Typography>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
@@ -96,11 +97,11 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                     </Typography>
                 </Box>
 
-                <Paper elevation={0} sx={{ p: 4, mb: 5, bgcolor: 'rgba(245,158,11,0.05)', border: '1px solid rgba(245,158,11,0.2)', borderRadius: 3 }}>
+                <Paper elevation={0} sx={{ p: 4, mb: 5, bgcolor: alpha(CHART_COLORS.gold, 0.05), border: `1px solid ${alpha(CHART_COLORS.gold, 0.2)}`, borderRadius: 3 }}>
                     <Box display="flex" gap={2} alignItems="flex-start">
-                        <AlertTriangle size={20} style={{ color: '#f59e0b', flexShrink: 0, marginTop: 2 }} />
+                        <AlertTriangle size={20} style={{ color: CHART_COLORS.gold, flexShrink: 0, marginTop: 2 }} />
                         <Box>
-                            <Typography component="p" variant="subtitle2" fontWeight={800} sx={{ color: '#f59e0b' }} mb={1}>Why Ranges, Not Point Estimates</Typography>
+                            <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.gold }} mb={1}>Why Ranges, Not Point Estimates</Typography>
                             <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
                                 Layers 3–5 (LGFV, policy banks, SOE contingent) lack audited public disclosure. GraphiQuestor uses IMF Article IV staff estimates and BIS credit aggregates, published as low/base/high ranges with full provenance. We do not fabricate precision where the underlying data is structurally opaque.
                             </Typography>
@@ -109,44 +110,44 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Layers size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Layers size={20} style={{ color: CHART_COLORS.gold }} />
                         The Five Layers
                     </Typography>
                     <Typography color="text.secondary" sx={{ lineHeight: 1.85, mb: 3 }}>
-                        China's fiscal architecture distributes leverage across multiple balance sheets that are not consolidated in MoF headline statistics. The iceberg metaphor captures the divergence between <strong style={{ color: '#fcd34d' }}>visible central government debt</strong> (~25% GDP) and the <strong style={{ color: '#fcd34d' }}>consolidated public sector exposure</strong> (IMF estimates 250–300%+ GDP).
+                        China's fiscal architecture distributes leverage across multiple balance sheets that are not consolidated in MoF headline statistics. The iceberg metaphor captures the divergence between <strong style={{ color: CHART_COLORS.goldSoft }}>visible central government debt</strong> (~25% GDP) and the <strong style={{ color: CHART_COLORS.goldSoft }}>consolidated public sector exposure</strong> (IMF estimates 250–300%+ GDP).
                     </Typography>
                     <Box component="ol" sx={{ pl: 2.5, color: 'text.secondary', lineHeight: 2, '& li': { mb: 1 } }}>
-                        <li><strong style={{ color: '#93c5fd' }}>Central Government</strong> — MoF-reported on-budget debt (GGXWDG, World Bank)</li>
-                        <li><strong style={{ color: '#93c5fd' }}>Local Government (Explicit)</strong> — Municipal bonds on LG balance sheets</li>
-                        <li><strong style={{ color: '#fbbf24' }}>LGFV (Implicit LG)</strong> — Local government financing vehicles; primary rollover risk vector</li>
-                        <li><strong style={{ color: '#c084fc' }}>Policy Banks</strong> — CDB, EXIM, ADBC quasi-fiscal lending (BIS credit proxy)</li>
-                        <li><strong style={{ color: '#fca5a5' }}>SOE Contingent Liability</strong> — State-owned enterprise implicit guarantees (IMF scenario matrix)</li>
+                        <li><strong style={{ color: CHART_COLORS.westSoft }}>Central Government</strong> — MoF-reported on-budget debt (GGXWDG, World Bank)</li>
+                        <li><strong style={{ color: CHART_COLORS.westSoft }}>Local Government (Explicit)</strong> — Municipal bonds on LG balance sheets</li>
+                        <li><strong style={{ color: CHART_COLORS.goldSoft }}>LGFV (Implicit LG)</strong> — Local government financing vehicles; primary rollover risk vector</li>
+                        <li><strong style={{ color: CHART_COLORS.violet }}>Policy Banks</strong> — CDB, EXIM, ADBC quasi-fiscal lending (BIS credit proxy)</li>
+                        <li><strong style={{ color: CHART_COLORS.stressSoft }}>SOE Contingent Liability</strong> — State-owned enterprise implicit guarantees (IMF scenario matrix)</li>
                     </Box>
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>Live Layer Snapshot</Typography>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>Live Layer Snapshot</Typography>
                     <Suspense fallback={<ChartSkeleton height={280} />}>
                         <ChinaDebtIcebergChart />
                     </Suspense>
                 </Paper>
 
-                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid rgba(245,158,11,0.25)', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <FlaskConical size={20} style={{ color: '#f59e0b' }} />
+                <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: `1px solid ${alpha(CHART_COLORS.gold, 0.25)}`, borderRadius: 3 }}>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <FlaskConical size={20} style={{ color: CHART_COLORS.gold }} />
                         Proprietary Composite Formulas
                     </Typography>
-                    <Box sx={{ p: 3, mb: 3, bgcolor: 'rgba(30,41,59,0.8)', borderRadius: 2, fontFamily: 'monospace', fontSize: '0.85rem', color: '#fcd34d', lineHeight: 2.2, border: '1px solid rgba(245,158,11,0.15)' }}>
-                        <Box component="span" sx={{ color: '#64748b' }}># Iceberg Ratio{'\n'}</Box>
+                    <Box sx={{ p: 3, mb: 3, bgcolor: alpha(CHART_COLORS.line, 0.8), borderRadius: 2, fontFamily: CHART_FONT_FAMILY, fontSize: '0.85rem', color: CHART_COLORS.goldSoft, lineHeight: 2.2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.15)}` }}>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Iceberg Ratio{'\n'}</Box>
                         Iceberg = Consolidated_debt_high / Central_official{'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># LGFV Stress Index (0–100){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># LGFV Stress Index (0–100){'\n'}</Box>
                         LGFV_stress = clamp(0.6×LGFV_high + 3×ΔLGFV + fiscal_deficit_penalty, 0, 100){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Monetization Pressure (0–100){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Monetization Pressure (0–100){'\n'}</Box>
                         Monetization = clamp(8×(M2_growth − GDP_growth) + credit/GDP_component, 0, 100){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Debt Wall Proximity (0–100){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Debt Wall Proximity (0–100){'\n'}</Box>
                         Proximity = clamp(LGFV_high / (0.3 × credit/GDP) × 50, 0, 100){'\n\n'}
-                        <Box component="span" sx={{ color: '#64748b' }}># Land Fiscal Dependence (%){'\n'}</Box>
+                        <Box component="span" sx={{ color: CHART_COLORS.tick }}># Land Fiscal Dependence (%){'\n'}</Box>
                         Land_dep = Land_sale_revenue / Total_LG_revenue
                     </Box>
                     <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>
@@ -155,8 +156,8 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 4, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <BookOpen size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <BookOpen size={20} style={{ color: CHART_COLORS.gold }} />
                         Data Provenance Hierarchy
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr' }} gap={2}>
@@ -166,8 +167,8 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                             { tier: 'Tier 3 — Curated', sources: 'LGFV layer ranges, policy bank balance sheets, BRI exposure (AidData)' },
                             { tier: 'Tier 4 — Scenario', sources: 'SOE contingent liability matrix (conservative/base/stress)' },
                         ].map(s => (
-                            <Box key={s.tier} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{s.tier}</Typography>
+                            <Box key={s.tier} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.gold, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.gold }} mb={1}>{s.tier}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{s.sources}</Typography>
                             </Box>
                         ))}
@@ -175,8 +176,8 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                 </Paper>
 
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Database size={20} style={{ color: '#f59e0b' }} />
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Database size={20} style={{ color: CHART_COLORS.gold }} />
                         Institutional Use Cases
                     </Typography>
                     <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: '1fr 1fr' }} gap={3}>
@@ -186,8 +187,8 @@ export const ChinaDebtIcebergPage: React.FC = () => {
                             { role: 'Global Macro Funds', use: 'Monetization pressure composite as PBOC independence constraint — above 60 correlates with CNY depreciation pressure and gold accumulation.' },
                             { role: 'Multilateral Research', use: 'Layer decomposition aligns with IMF GFSM 2014 consolidated government definition; useful for Article IV surveillance calibration.' },
                         ].map(u => (
-                            <Box key={u.role} sx={{ p: 3, bgcolor: 'rgba(245,158,11,0.04)', borderRadius: 2, border: '1px solid rgba(245,158,11,0.12)' }}>
-                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: '#f59e0b' }} mb={1}>{u.role}</Typography>
+                            <Box key={u.role} sx={{ p: 3, bgcolor: alpha(CHART_COLORS.gold, 0.04), borderRadius: 2, border: `1px solid ${alpha(CHART_COLORS.gold, 0.12)}` }}>
+                                <Typography component="p" variant="subtitle2" fontWeight={700} sx={{ color: CHART_COLORS.gold }} mb={1}>{u.role}</Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.7 }}>{u.use}</Typography>
                             </Box>
                         ))}
@@ -196,13 +197,13 @@ export const ChinaDebtIcebergPage: React.FC = () => {
 
                 {/* FAQ */}
                 <Paper elevation={0} sx={{ p: 5, mb: 6, bgcolor: 'background.paper', border: '1px solid', borderColor: 'divider', borderRadius: 3 }}>
-                    <Typography component="h2" variant="h5" fontWeight={800} gutterBottom>
+                    <Typography component="h2" variant="h5" fontWeight={700} gutterBottom>
                         China Debt Iceberg FAQ
                     </Typography>
                     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3, mt: 3 }}>
                         {faqItems.map(({ question, answer }) => (
                             <Box key={question}>
-                                <Typography component="h3" variant="subtitle1" fontWeight={800} sx={{ color: '#f59e0b', mb: 1 }}>
+                                <Typography component="h3" variant="subtitle1" fontWeight={700} sx={{ color: CHART_COLORS.gold, mb: 1 }}>
                                     {question}
                                 </Typography>
                                 <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.8 }}>

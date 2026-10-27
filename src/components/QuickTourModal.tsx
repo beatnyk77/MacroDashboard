@@ -10,6 +10,7 @@ import {
 import { X, ChevronRight, Zap, FlaskConical, Globe, Shield } from 'lucide-react';
 import { m, AnimatePresence } from 'framer-motion';
 import { useScrollLock } from '@/lib/scroll-lock';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 const slides = [
     {
@@ -82,9 +83,9 @@ export const QuickTourModal: React.FC = () => {
             aria-modal="true"
             PaperProps={{
                 sx: {
-                    bgcolor: 'rgba(15, 23, 42, 0.9)',
+                    bgcolor: alpha(CHART_COLORS.panel, 0.9),
                     backdropFilter: 'blur(20px)',
-                    border: '1px solid rgba(255, 255, 255, 0.1)',
+                    border: `1px solid ${WHITE_ALPHA.line}`,
                     borderRadius: '32px',
                     maxWidth: '500px',
                     width: '100%',
@@ -101,9 +102,9 @@ export const QuickTourModal: React.FC = () => {
                     position: 'absolute',
                     right: 20,
                     top: 20,
-                    color: 'rgba(255, 255, 255, 0.5)',
-                    bgcolor: 'rgba(255, 255, 255, 0.03)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    color: WHITE_ALPHA.mid,
+                    bgcolor: WHITE_ALPHA.ghost,
+                    border: `1px solid ${WHITE_ALPHA.line}`,
                     borderRadius: '8px',
                     fontSize: '0.7rem',
                     fontWeight: 700,
@@ -116,8 +117,8 @@ export const QuickTourModal: React.FC = () => {
                     transition: 'all 0.2s',
                     '&:hover': {
                         color: 'white',
-                        bgcolor: 'rgba(255, 255, 255, 0.08)',
-                        borderColor: 'rgba(255, 255, 255, 0.15)'
+                        bgcolor: WHITE_ALPHA.line,
+                        borderColor: WHITE_ALPHA.soft
                     }
                 }}
             >
@@ -144,11 +145,11 @@ export const QuickTourModal: React.FC = () => {
                                 {slides[activeStep].icon}
                             </Box>
 
-                            <Typography variant="h4" sx={{ fontWeight: 900, textTransform: 'uppercase', mb: 2, tracking: '-0.02em', color: 'white' }}>
+                            <Typography variant="h4" sx={{ fontWeight: 700, textTransform: 'uppercase', mb: 2, tracking: '-0.02em', color: 'white' }}>
                                 {slides[activeStep].title}
                             </Typography>
 
-                            <Typography sx={{ color: 'rgba(255, 255, 255, 0.6)', lineHeight: 1.6, mb: 6, fontSize: '1rem', fontWeight: 500 }}>
+                            <Typography sx={{ color: WHITE_ALPHA.mid, lineHeight: 1.6, mb: 6, fontSize: '1rem', fontWeight: 500 }}>
                                 {slides[activeStep].description}
                             </Typography>
                         </Box>
@@ -164,8 +165,8 @@ export const QuickTourModal: React.FC = () => {
                         sx={{
                             bgcolor: 'transparent',
                             p: 0,
-                            '& .MuiMobileStepper-dot': { bgcolor: 'rgba(255, 255, 255, 0.1)' },
-                            '& .MuiMobileStepper-dotActive': { bgcolor: '#3b82f6' }
+                            '& .MuiMobileStepper-dot': { bgcolor: WHITE_ALPHA.line },
+                            '& .MuiMobileStepper-dotActive': { bgcolor: CHART_COLORS.west }
                         }}
                         backButton={null}
                         nextButton={null}
@@ -177,8 +178,8 @@ export const QuickTourModal: React.FC = () => {
                                 <Button
                                     onClick={handleBack}
                                     sx={{
-                                        color: 'rgba(255, 255, 255, 0.6)',
-                                        fontWeight: 900,
+                                        color: WHITE_ALPHA.mid,
+                                        fontWeight: 700,
                                         textTransform: 'uppercase',
                                         fontSize: '0.75rem',
                                         minWidth: 'auto',
@@ -191,12 +192,12 @@ export const QuickTourModal: React.FC = () => {
                                     <Button
                                         onClick={handleClose}
                                         sx={{
-                                            color: 'rgba(255, 255, 255, 0.4)',
-                                            fontWeight: 900,
+                                            color: WHITE_ALPHA.dim,
+                                            fontWeight: 700,
                                             textTransform: 'uppercase',
                                             fontSize: '0.75rem',
                                             minWidth: 'auto',
-                                            '&:hover': { color: 'rgba(255, 255, 255, 0.8)' }
+                                            '&:hover': { color: WHITE_ALPHA.strong }
                                         }}
                                     >
                                         Skip
@@ -207,12 +208,12 @@ export const QuickTourModal: React.FC = () => {
                             <Button
                                 onClick={handleClose}
                                 sx={{
-                                    color: 'rgba(255, 255, 255, 0.4)',
-                                    fontWeight: 900,
+                                    color: WHITE_ALPHA.dim,
+                                    fontWeight: 700,
                                     textTransform: 'uppercase',
                                     fontSize: '0.75rem',
                                     minWidth: 'auto',
-                                    '&:hover': { color: 'rgba(255, 255, 255, 0.8)' }
+                                    '&:hover': { color: WHITE_ALPHA.strong }
                                 }}
                             >
                                 Skip
@@ -223,13 +224,13 @@ export const QuickTourModal: React.FC = () => {
                             onClick={handleNext}
                             endIcon={activeStep === slides.length - 1 ? null : <ChevronRight size={16} />}
                             sx={{
-                                bgcolor: '#3b82f6',
-                                fontWeight: 900,
+                                bgcolor: CHART_COLORS.west,
+                                fontWeight: 700,
                                 borderRadius: '12px',
                                 px: 4,
                                 py: 1.5,
                                 fontSize: '0.75rem',
-                                '&:hover': { bgcolor: '#2563eb' }
+                                '&:hover': { bgcolor: CHART_COLORS.westDeep }
                             }}
                         >
                             {activeStep === slides.length - 1 ? "Start Exploring" : "Next"}

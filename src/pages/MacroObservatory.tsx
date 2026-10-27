@@ -38,7 +38,7 @@ const colorMap: Record<string, string> = {
     amber: 'text-amber-500 bg-amber-500/10 border-amber-500/20',
     orange: 'text-orange-500 bg-orange-500/10 border-orange-500/20',
     purple: 'text-purple-500 bg-purple-500/10 border-purple-500/20',
-    zinc: 'text-zinc-500 bg-zinc-500/10 border-zinc-500/20',
+    zinc: 'text-terminal-dim bg-zinc-500/10 border-zinc-500/20',
 };
 
 export const MacroObservatory: React.FC = () => {
@@ -62,25 +62,25 @@ export const MacroObservatory: React.FC = () => {
                 'isPartOf': { '@id': 'https://graphiquestor.com/#website' }
             }}
         />
-        <div className="min-h-screen pt-24 pb-32">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12">
-                <div className="mb-16 text-center">
+        <div className="min-h-screen">
+            <div className="page-shell">
+                <div className="mb-12 text-center">
                     <m.div
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8"
+                        className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-mono font-semibold uppercase tracking-wider mb-6"
                     >
-                        <Search size={14} /> Intelligence Network
+                        <Search size={12} /> Intelligence Network
                     </m.div>
                     
                     <div className="flex items-center justify-center gap-3 mb-3">
-                        <h1 className="text-4xl md:text-7xl font-black uppercase letter-spacing-tight tracking-heading leading-none text-white">
+                        <h1 className="text-2xl md:text-4xl font-bold tracking-heading text-white">
                             Macro <span className="text-blue-500">Observatory</span>
                         </h1>
                         <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
                     </div>
                     
-                    <p className="text-muted-foreground/60 text-lg md:text-xl font-medium max-w-2xl mx-auto uppercase tracking-wide leading-relaxed">
+                    <p className="text-slate-400 text-sm md:text-base font-normal max-w-3xl mx-auto leading-relaxed">
                         Access specialized research labs. Institutional-grade telemetry across global credit, currency, and commodity regimes.
                     </p>
                 </div>
@@ -95,17 +95,17 @@ export const MacroObservatory: React.FC = () => {
                         >
                             <Card 
                                 variant="elevated" 
-                                className="group cursor-pointer h-full border-white/5 bg-white/[0.02] flex flex-col transition-all duration-300 hover:bg-white/[0.04] p-2"
+                                className="group cursor-pointer h-full border-border bg-white/[0.02] flex flex-col transition-all duration-300 hover:bg-white/[0.04] p-2"
                                 onClick={() => navigate(lab.path)}
                             >
                                 <CardHeader>
-                                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${colorMap[lab.color]}`}>
+                                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 ${colorMap[lab.color]}`}>
                                         {lab.icon}
                                     </div>
                                     <CardTitle className="text-xl group-hover:text-blue-400 transition-colors uppercase">
                                         {lab.title}
                                     </CardTitle>
-                                    <CardDescription className="uppercase tracking-wide leading-relaxed flex-1">
+                                    <CardDescription className="uppercase tracking-wider leading-relaxed flex-1">
                                         {lab.desc}
                                     </CardDescription>
                                     {lab.title === 'De-Dollarization & Gold' && (
@@ -114,7 +114,7 @@ export const MacroObservatory: React.FC = () => {
                                                 e.stopPropagation();
                                                 navigate('/labs/de-dollarization-gold#gold-oil-revaluation');
                                             }}
-                                            className="mt-3 flex items-center gap-1.5 text-[9px] font-black tracking-uppercase text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full w-fit hover:bg-amber-500/25 transition-colors relative z-20 cursor-pointer"
+                                            className="mt-3 flex items-center gap-1.5 text-[11px] font-bold tracking-wider text-amber-500 bg-amber-500/10 border border-amber-500/20 px-2.5 py-1 rounded-full w-fit hover:bg-amber-500/25 transition-colors relative z-20 cursor-pointer"
                                         >
                                             <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
                                             Active Stress Scenario: Gold vs Oil Reset
@@ -122,8 +122,8 @@ export const MacroObservatory: React.FC = () => {
                                     )}
                                 </CardHeader>
                                 
-                                <CardFooter className="justify-between border-t border-white/5 py-4">
-                                    <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/40 group-hover:text-white transition-colors">Enter Lab</span>
+                                <CardFooter className="justify-between border-t border-border py-4">
+                                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground group-hover:text-white transition-colors">Enter Lab</span>
                                     <ChevronRight size={14} className="text-muted-foreground/20 group-hover:text-white group-hover:translate-x-1 transition-all" />
                                 </CardFooter>
 
@@ -136,11 +136,11 @@ export const MacroObservatory: React.FC = () => {
                     ))}
 
                     {/* Coming Soon Card */}
-                    <Card variant="default" className="p-8 border-dashed border-white/5 bg-white/[0.01] flex flex-col justify-center items-center text-center opacity-40">
-                        <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-4">
+                    <Card variant="default" className="p-8 border-dashed border-border bg-white/[0.01] flex flex-col justify-center items-center text-center opacity-40">
+                        <div className="w-12 h-12 rounded-xl bg-white/5 flex items-center justify-center mb-4">
                             <Activity size={24} className="text-white/20" />
                         </div>
-                        <p className="text-xs font-black uppercase tracking-uppercase text-white/40">New Module Pending</p>
+                        <p className="text-xs font-semibold uppercase tracking-wider text-terminal-dim">New Module Pending</p>
                     </Card>
                 </div>
             </div>

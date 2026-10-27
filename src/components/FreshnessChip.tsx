@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 import { Chip, Tooltip } from '@mui/material';
 import { CheckCircle, Clock, AlertTriangle, AlertCircle, HelpCircle } from 'lucide-react';
 import { formatProvenanceTag, formatSourceRef } from '@/lib/formatProvenance';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 export type FreshnessStatus =
     | 'fresh'
@@ -28,37 +29,37 @@ const STATUS_CONFIG = {
         text: 'FRESH',
         color: 'success',
         icon: <CheckCircle size={10} />,
-        bgcolor: 'rgba(16, 185, 129, 0.1)'
+        bgcolor: alpha(CHART_COLORS.expansion, 0.1)
     },
     lagged: {
         text: 'LAGGED',
         color: 'warning',
         icon: <Clock size={10} />,
-        bgcolor: 'rgba(245, 158, 11, 0.1)'
+        bgcolor: alpha(CHART_COLORS.gold, 0.1)
     },
     stale: {
         text: 'STALE',
         color: 'error',
         icon: <AlertTriangle size={10} />,
-        bgcolor: 'rgba(239, 68, 68, 0.1)'
+        bgcolor: alpha(CHART_COLORS.stress, 0.1)
     },
     overdue: {
         text: 'OVERDUE',
         color: 'error',
         icon: <AlertCircle size={10} />,
-        bgcolor: 'rgba(239, 68, 68, 0.2)'
+        bgcolor: alpha(CHART_COLORS.stress, 0.2)
     },
     weekend: {
         text: 'WEEKEND',
         color: 'default',
         icon: <Clock size={10} />,
-        bgcolor: 'rgba(148, 163, 184, 0.12)'
+        bgcolor: alpha(CHART_COLORS.label, 0.12)
     },
     no_data: {
         text: 'NO DATA',
         color: 'default',
         icon: <HelpCircle size={10} />,
-        bgcolor: 'rgba(148, 163, 184, 0.1)'
+        bgcolor: alpha(CHART_COLORS.label, 0.1)
     }
 } as const;
 
@@ -75,7 +76,7 @@ const FreshnessChipInner: React.FC<FreshnessChipProps> = ({
     const displayText = label || (provisional ? 'PROVISIONAL' : current.text);
 
     const chipColor = provisional ? 'warning' : current.color;
-    const chipBg = provisional ? 'rgba(245, 158, 11, 0.1)' : current.bgcolor;
+    const chipBg = provisional ? alpha(CHART_COLORS.gold, 0.1) : current.bgcolor;
 
     const formattedDate = useMemo(
         () => lastUpdated
@@ -112,8 +113,8 @@ const FreshnessChipInner: React.FC<FreshnessChipProps> = ({
 
     const chipSx = useMemo(() => ({
         height: 18,
-        fontSize: '0.6rem',
-        fontWeight: 900,
+        fontSize: '0.6875rem',
+        fontWeight: 700,
         letterSpacing: '0.05em',
         color: `${chipColor}.main`,
         borderColor: `${chipColor}.main`,

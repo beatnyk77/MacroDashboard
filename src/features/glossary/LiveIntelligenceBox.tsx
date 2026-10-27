@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Paper, Typography, Button, Divider } from '@mui/material';
 import { ShieldCheck, Info, ArrowRight, Activity } from 'lucide-react';
 import { TrailLink as RouterLink } from '@/components/TrailLink';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 export type LiveMetricColor = 'emerald' | 'amber' | 'rose' | 'blue';
 
@@ -16,10 +17,10 @@ export interface LiveMetricResult {
 }
 
 const COLORS: Record<LiveMetricColor, { bg: string; border: string; badge: string; text: string }> = {
-    emerald: { bg: 'rgba(16,185,129,0.08)',  border: 'rgba(16,185,129,0.2)',  badge: '#10b981', text: '#10b981' },
-    amber:   { bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.2)', badge: '#f59e0b', text: '#f59e0b' },
-    rose:    { bg: 'rgba(244,63,94,0.08)',   border: 'rgba(244,63,94,0.2)',   badge: '#f43f5e', text: '#f43f5e' },
-    blue:    { bg: 'rgba(59,130,246,0.08)',  border: 'rgba(59,130,246,0.2)',  badge: '#3b82f6', text: '#3b82f6' },
+    emerald: { bg: alpha(CHART_COLORS.expansion, 0.08),  border: alpha(CHART_COLORS.expansion, 0.2),  badge: CHART_COLORS.expansion, text: CHART_COLORS.expansion },
+    amber:   { bg: alpha(CHART_COLORS.gold, 0.08), border: alpha(CHART_COLORS.gold, 0.2), badge: CHART_COLORS.gold, text: CHART_COLORS.gold },
+    rose:    { bg: alpha(CHART_COLORS.east, 0.08),   border: alpha(CHART_COLORS.east, 0.2),   badge: CHART_COLORS.east, text: CHART_COLORS.east },
+    blue:    { bg: alpha(CHART_COLORS.west, 0.08),  border: alpha(CHART_COLORS.west, 0.2),  badge: CHART_COLORS.west, text: CHART_COLORS.west },
 };
 
 interface Props {
@@ -37,7 +38,7 @@ export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
         <Box sx={{ mb: 6 }}>
             <Paper elevation={0} sx={{
                 p: 4, borderRadius: 3,
-                background: `linear-gradient(135deg, ${c.bg} 0%, rgba(0,0,0,0) 100%)`,
+                background: `linear-gradient(135deg, ${c.bg} 0%, ${alpha(CHART_COLORS.black, 0)} 100%)`,
                 border: `1px solid ${c.border}`,
                 position: 'relative', overflow: 'hidden',
             }}>
@@ -49,7 +50,7 @@ export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
                     <Box sx={{ p: 1, borderRadius: 1, bgcolor: c.badge, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                         <ShieldCheck size={18} color="white" />
                     </Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1.5, color: c.badge, fontSize: '0.75rem' }}>
+                    <Typography variant="subtitle2" sx={{ fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1.5, color: c.badge, fontSize: '0.75rem' }}>
                         Live Intelligence Answer
                     </Typography>
                 </Box>
@@ -60,7 +61,7 @@ export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
                         <Typography variant="caption" sx={{ color: 'text.disabled', textTransform: 'uppercase', fontWeight: 700, letterSpacing: 1 }}>
                             Current Reading
                         </Typography>
-                        <Typography variant="h3" sx={{ fontWeight: 900, color: 'text.primary', mt: 0.5, lineHeight: 1.1 }}>
+                        <Typography variant="h3" sx={{ fontWeight: 700, color: 'text.primary', mt: 0.5, lineHeight: 1.1 }}>
                             {result.displayValue}
                             {result.unit && (
                                 <Typography component="span" variant="body1" sx={{ color: 'text.secondary', ml: 0.75, fontWeight: 600 }}>
@@ -69,14 +70,14 @@ export const LiveIntelligenceBox: React.FC<Props> = ({ result }) => {
                             )}
                         </Typography>
                         <Box sx={{ mt: 1.5, display: 'inline-flex', alignItems: 'center', px: 1.5, py: 0.5, borderRadius: 1, bgcolor: c.bg, border: `1px solid ${c.border}` }}>
-                            <Typography variant="caption" sx={{ color: c.text, fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.65rem' }}>
+                            <Typography variant="caption" sx={{ color: c.text, fontWeight: 700, textTransform: 'uppercase', letterSpacing: 1, fontSize: '0.6875rem' }}>
                                 {result.label}
                             </Typography>
                         </Box>
                         <Typography variant="caption" sx={{ color: 'text.disabled', display: 'flex', alignItems: 'center', gap: 0.5, mt: 1.5 }}>
                             <Info size={11} /> As of {dateStr}
                             {isStale && (
-                                <Box component="span" sx={{ ml: 1, color: 'amber.main', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.6rem', bgcolor: 'rgba(245,158,11,0.1)', px: 0.5, borderRadius: 0.5 }}>
+                                <Box component="span" sx={{ ml: 1, color: 'amber.main', fontWeight: 700, textTransform: 'uppercase', fontSize: '0.6875rem', bgcolor: alpha(CHART_COLORS.gold, 0.1), px: 0.5, borderRadius: 0.5 }}>
                                     Elevated Staleness
                                 </Box>
                             )}

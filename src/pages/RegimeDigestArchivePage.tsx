@@ -23,17 +23,17 @@ const REGIME_BADGE: Record<
     RISK_ON: {
         label: 'Risk On',
         icon: <Activity size={12} aria-hidden />,
-        className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+        className: ' text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
     },
     NEUTRAL: {
         label: 'Neutral',
         icon: <Gauge size={12} aria-hidden />,
-        className: 'text-slate-700 dark:text-slate-300 border-slate-500/30 bg-slate-500/10',
+        className: ' text-slate-300 border-slate-500/30 bg-slate-500/10',
     },
     RISK_OFF: {
         label: 'Risk Off',
         icon: <Shield size={12} aria-hidden />,
-        className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
+        className: ' text-rose-400 border-rose-500/30 bg-rose-500/10',
     },
 };
 
@@ -91,8 +91,8 @@ function RegimeBadgeChip({
     return (
         <span
             className={cn(
-                'inline-flex items-center gap-1.5 rounded-full border font-black uppercase tracking-widest',
-                size === 'md' ? 'px-3 py-1.5 text-xs' : 'px-2.5 py-1 text-[10px]',
+                'inline-flex items-center gap-1.5 rounded-full border font-semibold uppercase tracking-wider',
+                size === 'md' ? 'px-3 py-1.5 text-xs' : 'px-2.5 py-1 text-[11px]',
                 ui.className,
             )}
         >
@@ -160,20 +160,20 @@ export const RegimeDigestArchivePage: React.FC = () => {
             />
 
             <div className="mb-10 border-b border-border pb-10">
-                <nav className="mb-4 text-[10px] font-mono uppercase tracking-widest text-muted-foreground flex items-center gap-2">
+                <nav className="mb-4 text-[11px] font-mono uppercase tracking-wider text-muted-foreground flex items-center gap-2">
                     <Link to="/" className="hover:text-foreground transition-colors">
                         Home
                     </Link>
                     <span>/</span>
                     <span className="text-foreground font-semibold">Regime Digest Archive</span>
                 </nav>
-                <p className="text-[10px] font-black tracking-[0.3em] uppercase text-emerald-600 dark:text-emerald-400 mb-3">
+                <p className="text-[11px] font-semibold tracking-wider uppercase text-emerald-400 mb-3">
                     GraphiQuestor Desk Product
                 </p>
-                <h1 className="text-4xl sm:text-5xl font-black text-foreground tracking-tighter uppercase leading-none mb-4">
+                <h1 className="text-4xl sm:text-5xl font-bold text-foreground tracking-tighter uppercase leading-none mb-4">
                     Macro Regime
                     <br />
-                    <span className="text-emerald-600 dark:text-emerald-400">Digest Archive</span>
+                    <span className=" text-emerald-400">Digest Archive</span>
                 </h1>
                 <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
                     Monthly institutional notebook on Global Liquidity, Sovereign Stress, De-Dollarization,
@@ -182,10 +182,10 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 </p>
                 {gapMonths.length > 0 && (
                     <div className="mt-6 p-4 rounded-xl border border-amber-500/25 bg-amber-500/10">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-amber-700 dark:text-amber-400 mb-2">
+                        <p className="text-[11px] font-semibold uppercase tracking-wider text-amber-400 mb-2">
                             Coverage gaps ({gapMonths.length})
                         </p>
-                        <p className="text-xs font-mono text-amber-800 dark:text-amber-200/90 leading-relaxed font-semibold">
+                        <p className="text-xs font-mono text-amber-200/90 leading-relaxed font-semibold">
                             {gapMonths.slice(0, 12).join(' · ')}
                             {gapMonths.length > 12 ? ` · +${gapMonths.length - 12} more` : ''}
                         </p>
@@ -197,7 +197,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 <Card variant="elevated" className="overflow-hidden bg-card border-border shadow-sm">
                     <CardContent className="p-16 flex flex-col items-center gap-4">
                         <div className="w-5 h-5 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
-                        <p className="text-[10px] font-black tracking-[0.25em] uppercase text-muted-foreground animate-pulse">
+                        <p className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground animate-pulse">
                             Loading Intelligence Archive...
                         </p>
                     </CardContent>
@@ -215,7 +215,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                         </p>
                         <Link
                             to="/"
-                            className="mt-2 text-[10px] font-black tracking-widest uppercase text-blue-600 dark:text-blue-400 hover:text-blue-500 transition-colors"
+                            className="mt-2 text-[11px] font-semibold tracking-wider uppercase text-blue-400 hover:text-blue-500 transition-colors"
                         >
                             Go to Terminal →
                         </Link>
@@ -231,7 +231,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                         >
                             <CardContent className="p-6 sm:p-8 space-y-5">
                                 <div className="flex flex-wrap items-center gap-2">
-                                    <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/25 text-[10px] font-black text-blue-600 dark:text-blue-400 tracking-widest uppercase">
+                                    <span className="px-2 py-0.5 rounded bg-blue-500/15 border border-blue-500/25 text-[11px] font-semibold text-blue-400 tracking-wider uppercase">
                                         Latest edition
                                     </span>
                                     <RegimeBadgeChip payload={latest.notebook_payload} size="md" />
@@ -239,10 +239,10 @@ export const RegimeDigestArchivePage: React.FC = () => {
 
                                 <div className="space-y-2">
                                     <div className="flex items-center gap-1.5 text-xs font-bold text-muted-foreground">
-                                        <Calendar size={12} className="text-emerald-600 dark:text-emerald-400" />
+                                        <Calendar size={12} className=" text-emerald-400" />
                                         {formatDate(latest.year_month)}
                                     </div>
-                                    <h2 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight leading-tight">
+                                    <h2 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tight leading-tight">
                                         {latest.subject_line}
                                     </h2>
                                     {latestThesis && (
@@ -250,7 +250,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                                             {latestThesis}
                                         </p>
                                     )}
-                                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                                    <p className="text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                                         Published{' '}
                                         {latest.generated_at
                                             ? new Date(latest.generated_at).toLocaleDateString('en-US', {
@@ -264,7 +264,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
 
                                 <Link
                                     to={editionHref(latest.year_month)}
-                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-black uppercase tracking-widest transition-colors"
+                                    className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white text-xs font-semibold uppercase tracking-wider transition-colors"
                                 >
                                     Read edition
                                     <ArrowRight size={14} aria-hidden />
@@ -276,7 +276,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                     {/* Prior editions grid */}
                     {rest.length > 0 && (
                         <div className="space-y-4">
-                            <h2 className="text-[10px] font-black tracking-[0.3em] uppercase text-muted-foreground">
+                            <h2 className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
                                 Prior editions ({rest.length})
                             </h2>
                             <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -291,17 +291,17 @@ export const RegimeDigestArchivePage: React.FC = () => {
                                                 <div className="flex flex-col gap-3 h-full">
                                                     <div className="flex items-center justify-between gap-2 flex-wrap">
                                                         <div className="flex items-center gap-1.5 px-2 py-1 rounded bg-muted border border-border text-[11px] font-bold text-foreground">
-                                                            <Calendar size={11} className="text-blue-600 dark:text-blue-400" />
+                                                            <Calendar size={11} className=" text-blue-400" />
                                                             {formatDate(digest.year_month)}
                                                         </div>
-                                                        <span className="text-[9px] font-black tracking-widest uppercase text-muted-foreground">
+                                                        <span className="text-[11px] font-semibold tracking-wider uppercase text-muted-foreground">
                                                             #{digests.length - 1 - index}
                                                         </span>
                                                     </div>
 
                                                     <RegimeBadgeChip payload={digest.notebook_payload} />
 
-                                                    <h3 className="text-sm font-bold text-foreground group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
+                                                    <h3 className="text-sm font-bold text-foreground group-hover:text-blue-400 transition-colors leading-snug line-clamp-2">
                                                         {digest.subject_line}
                                                     </h3>
 
@@ -311,7 +311,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                                                         </p>
                                                     )}
 
-                                                    <span className="inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-widest text-blue-600 dark:text-blue-400 group-hover:text-blue-500 mt-auto">
+                                                    <span className="inline-flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-blue-400 group-hover:text-blue-500 mt-auto">
                                                         Read edition
                                                         <ArrowRight
                                                             size={12}
@@ -330,12 +330,12 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 </div>
             )}
 
-            <div className="mt-16 p-10 sm:p-14 rounded-2xl bg-card border border-border text-center relative overflow-hidden shadow-sm">
+            <div className="mt-16 p-10 sm:p-14 rounded-xl bg-card border border-border text-center relative overflow-hidden shadow-sm">
                 <div className="relative z-10 space-y-5">
-                    <p className="text-[10px] font-black tracking-[0.3em] uppercase text-blue-600 dark:text-blue-400">
+                    <p className="text-[11px] font-semibold tracking-wider uppercase text-blue-400">
                         Monthly Intelligence
                     </p>
-                    <h3 className="text-2xl sm:text-3xl font-black text-foreground tracking-tighter leading-tight">
+                    <h3 className="text-2xl sm:text-3xl font-bold text-foreground tracking-tighter leading-tight">
                         Delivered to Your Inbox
                         <br />
                         on the 1st of Every Month
@@ -348,7 +348,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                         <Button
                             asChild
                             size="lg"
-                            className="bg-blue-600 hover:bg-blue-500 text-white font-black px-10 rounded-xl h-12"
+                            className="bg-blue-600 hover:bg-blue-500 text-white font-bold px-10 rounded-xl h-12"
                         >
                             <a href="https://graphiquestor.com/#newsletter">Subscribe — Free</a>
                         </Button>
@@ -364,7 +364,7 @@ export const RegimeDigestArchivePage: React.FC = () => {
                 </div>
             </div>
 
-            <p className="mt-10 text-center text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+            <p className="mt-10 text-center text-[11px] font-semibold text-muted-foreground uppercase tracking-wider">
                 GraphiQuestor · Institutional Macro Intelligence · Rules-based notebook
             </p>
         </div>

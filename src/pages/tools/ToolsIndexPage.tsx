@@ -3,6 +3,7 @@ import { Box, Typography, Container, Paper } from '@mui/material';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { Gauge, Activity, Coins, Code, Factory } from 'lucide-react';
 import { SEOManager } from '@/components/SEOManager';
+import { CHART_COLORS, alpha } from '@/constants/chartDefaults';
 
 interface ToolEntry {
     path: string;
@@ -18,28 +19,28 @@ const TOOLS: ToolEntry[] = [
         title: 'Global & US Net Liquidity Engine',
         description: 'Big-5 Central Bank and Fed net liquidity z-score with regime classification and FX adjustments.',
         icon: <Gauge size={22} />,
-        accent: '#3b82f6',
+        accent: CHART_COLORS.west,
     },
     {
         path: '/tools/refinery-crack-spread',
         title: '3:2:1 Refinery Crack Spread',
         description: 'Gulf Coast/Cushing refiner margin gauge across WTI crude, RBOB gasoline, and heating oil / diesel.',
         icon: <Factory size={22} />,
-        accent: '#06b6d4',
+        accent: CHART_COLORS.westDeep,
     },
     {
         path: '/tools/daily-regime-signal',
         title: 'Daily Macro Regime Signal',
         description: 'Risk On / Neutral / Risk Off composite (0–100) across liquidity, rates, dollar, vol, and metals. Refreshed daily.',
         icon: <Activity size={22} />,
-        accent: '#10b981',
+        accent: CHART_COLORS.expansion,
     },
     {
         path: '/tools/gold-ratios',
         title: 'Gold Ratios Monitor',
         description: 'M2/Gold, Debt/Gold, SPX/Gold, and Gold/Silver with z-scores — monetary debasement at a glance.',
         icon: <Coins size={22} />,
-        accent: '#f59e0b',
+        accent: CHART_COLORS.gold,
     },
 ];
 
@@ -49,7 +50,7 @@ const TOOLS: ToolEntry[] = [
  * backlink.
  */
 export const ToolsIndexPage: React.FC = () => (
-    <Box sx={{ minHeight: '100vh', bgcolor: '#050810', color: 'white', pt: 12, pb: 8 }}>
+    <Box sx={{ minHeight: '100vh', bgcolor: CHART_COLORS.surface, color: 'white', pt: 12, pb: 8 }}>
         <SEOManager
             title="Free Embeddable Macro Widgets & Tools"
             description="Free embeddable macro widgets for blogs and newsletters: net liquidity gauge, daily risk-on/risk-off regime signal, and gold ratio monitors. Live"
@@ -59,13 +60,13 @@ export const ToolsIndexPage: React.FC = () => (
 
         <Container maxWidth="md">
             <Box sx={{ textAlign: 'center', mb: 8 }}>
-                <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: 3, color: '#3b82f6' }}>
+                <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: '0.1em', color: CHART_COLORS.west }}>
                     Embeddable Intelligence
                 </Typography>
-                <Typography variant="h3" component="h1" sx={{ fontWeight: 900, letterSpacing: '-0.02em', mb: 2 }}>
+                <Typography variant="h3" component="h1" sx={{ fontWeight: 700, letterSpacing: '-0.02em', mb: 2 }}>
                     Macro Widgets & Tools
                 </Typography>
-                <Typography sx={{ color: 'rgba(255,255,255,0.5)', maxWidth: 560, mx: 'auto', lineHeight: 1.7 }}>
+                <Typography sx={{ color: 'text.secondary', maxWidth: 560, mx: 'auto', lineHeight: 1.7 }}>
                     Live, institutional-grade macro gauges you can embed in any blog, newsletter, or
                     research note with a single iframe tag. Free, no key required — data refreshes
                     automatically from the GraphiQuestor pipeline.
@@ -78,24 +79,24 @@ export const ToolsIndexPage: React.FC = () => (
                         <Paper elevation={0} sx={{
                             p: 4,
                             height: '100%',
-                            bgcolor: 'rgba(15, 23, 42, 0.5)',
+                            bgcolor: alpha(CHART_COLORS.panel, 0.5),
                             borderRadius: 4,
-                            border: '1px solid rgba(255,255,255,0.05)',
+                            border: 1, borderColor: 'divider',
                             transition: 'all 0.2s ease',
                             '&:hover': { borderColor: `${tool.accent}50`, transform: 'translateY(-2px)' },
                         }}>
                             <Box sx={{ display: 'inline-flex', p: 1.5, borderRadius: 3, bgcolor: `${tool.accent}15`, color: tool.accent, mb: 2.5 }}>
                                 {tool.icon}
                             </Box>
-                            <Typography sx={{ fontWeight: 900, color: 'white', mb: 1, fontSize: '1rem' }}>
+                            <Typography sx={{ fontWeight: 700, color: 'white', mb: 1, fontSize: '1rem' }}>
                                 {tool.title}
                             </Typography>
-                            <Typography sx={{ color: 'rgba(255,255,255,0.45)', fontSize: '0.8rem', lineHeight: 1.6, mb: 2.5 }}>
+                            <Typography sx={{ color: 'text.disabled', fontSize: '0.8rem', lineHeight: 1.6, mb: 2.5 }}>
                                 {tool.description}
                             </Typography>
                             <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, color: tool.accent }}>
                                 <Code size={13} />
-                                <Typography sx={{ fontSize: '11px', fontWeight: 800, textTransform: 'uppercase', letterSpacing: 1 }}>
+                                <Typography sx={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
                                     Open & Embed
                                 </Typography>
                             </Box>
@@ -105,11 +106,11 @@ export const ToolsIndexPage: React.FC = () => (
             </Box>
 
             <Box sx={{ mt: 8, textAlign: 'center' }}>
-                <Typography sx={{ color: 'rgba(255,255,255,0.35)', fontSize: '0.75rem', lineHeight: 1.8, maxWidth: 620, mx: 'auto' }}>
+                <Typography sx={{ color: 'text.disabled', fontSize: '0.75rem', lineHeight: 1.8, maxWidth: 620, mx: 'auto' }}>
                     Each widget page includes a copy-paste iframe snippet. Embedded views render
                     without site chrome and link back to GraphiQuestor — attribution stays intact.
                     Need a custom widget or higher-frequency data? {' '}
-                    <Link to="/institutional" style={{ color: '#3b82f6', fontWeight: 700 }}>
+                    <Link to="/institutional" style={{ color: CHART_COLORS.west, fontWeight: 700 }}>
                         Institutional inquiries
                     </Link>.
                 </Typography>

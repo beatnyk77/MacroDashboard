@@ -11,15 +11,15 @@ export interface RegimeHistoryProps {
 const REGIME_UI: Record<RegimeLabel, { label: string; className: string }> = {
   RISK_ON: {
     label: 'Risk On',
-    className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    className: ' text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
   },
   NEUTRAL: {
     label: 'Neutral',
-    className: 'text-slate-700 dark:text-slate-300 border-slate-500/30 bg-slate-500/10',
+    className: ' text-slate-300 border-slate-500/30 bg-slate-500/10',
   },
   RISK_OFF: {
     label: 'Risk Off',
-    className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
+    className: ' text-rose-400 border-rose-500/30 bg-rose-500/10',
   },
 };
 
@@ -36,7 +36,7 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
       <section aria-label="Regime history">
         <Card variant="elevated" className="bg-card border-border shadow-sm">
           <CardContent className="p-5">
-            <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2 mb-3">
+            <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2 mb-3">
               <History size={14} aria-hidden />
               Regime history
             </h2>
@@ -54,7 +54,7 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
     <section aria-label="Regime history">
       <Card variant="elevated" className="bg-card border-border shadow-sm">
         <CardContent className="p-5 md:p-6 space-y-4">
-          <h2 className="text-[10px] font-black uppercase tracking-[0.25em] text-muted-foreground flex items-center gap-2">
+          <h2 className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
             <History size={14} aria-hidden />
             Regime history
           </h2>
@@ -72,7 +72,7 @@ export const RegimeHistory: React.FC<RegimeHistoryProps> = ({ history }) => {
                   </span>
                   <span
                     className={cn(
-                      'inline-flex items-center px-2 py-0.5 rounded border text-[9px] font-black uppercase tracking-wider',
+                      'inline-flex items-center px-2 py-0.5 rounded border text-[11px] font-semibold uppercase tracking-wider',
                       ui.className,
                     )}
                   >

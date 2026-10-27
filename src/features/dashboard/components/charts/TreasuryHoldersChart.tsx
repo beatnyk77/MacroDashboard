@@ -10,10 +10,13 @@ import {
 } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import { DEFAULT_CARTESIAN_GRID_PROPS } from '@/constants/chartDefaults';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, alpha } from '@/constants/chartDefaults';
 import { formatCurrency, formatPercentage } from '@/utils/formatNumber';
 import { cn } from '@/lib/utils';
 import { TreasuryHolder } from '@/hooks/useTreasuryHolders';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { CountryCode } from '@/components/CountryCode';
+import { TREASURY_HOLDER_CODES } from '@/constants/countryCodes';
 
 interface TreasuryHoldersChartProps {
     data: TreasuryHolder[];
@@ -23,57 +26,35 @@ interface TreasuryHoldersChartProps {
 
 const CHART_INNER_MIN = 200;
 
-const COUNTRY_FLAGS: Record<string, string> = {
-    'Japan': '🇯🇵',
-    'United Kingdom': '🇬🇧',
-    'China, Mainland': '🇨🇳',
-    'Belgium': '🇧🇪',
-    'Luxembourg': '🇱🇺',
-    'Canada': '🇨🇦',
-    'Cayman Islands': '🇰🇾',
-    'Switzerland': '🇨🇭',
-    'Ireland': '🇮🇪',
-    'Taiwan': '🇹🇼',
-    'India': '🇮🇳',
-    'Hong Kong': '🇭🇰',
-    'Singapore': '🇸🇬',
-    'Brazil': '🇧🇷',
-    'Norway': '🇳🇴',
-    'France': '🇫🇷',
-    'Germany': '🇩🇪',
-    'Israel': '🇮🇱',
-    'Others': '🌐'
-};
-
 const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
         const data = payload[0].payload;
         return (
-            <div className="bg-popover text-popover-foreground backdrop-blur-md border border-border p-3 rounded-xl shadow-2xl min-w-[200px]">
+            <div className={`${TOOLTIP_SHELL_CLASS} min-w-[200px]`}>
                 <div className="flex items-center gap-2 mb-2">
-                    <span className="text-lg">{COUNTRY_FLAGS[data.country_name] || '🌐'}</span>
-                    <div className="text-xs font-black text-muted-foreground uppercase tracking-uppercase">
+                    <CountryCode code={TREASURY_HOLDER_CODES[data.country_name]} size="md" />
+                    <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">
                         {data.country_name}
                     </div>
                 </div>
                 <div className="space-y-1">
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-xs font-bold text-muted-foreground uppercase">Holdings</span>
-                        <span className="text-lg font-black text-foreground tabular-nums">
+                        <span className="text-xs font-semibold text-slate-400 uppercase">Holdings</span>
+                        <span className="text-lg font-semibold text-slate-100 font-mono tabular-nums">
                             {formatCurrency(data.holdings_usd_bn, { decimals: 1 })}B
                         </span>
                     </div>
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-xs font-bold text-muted-foreground uppercase">Share</span>
-                        <span className="text-sm font-bold text-amber-600 dark:text-yellow-400 tabular-nums">
+                        <span className="text-xs font-semibold text-slate-400 uppercase">Share</span>
+                        <span className="text-xs font-bold text-yellow-400 font-mono tabular-nums">
                             {formatPercentage(data.pct_of_total_foreign, { decimals: 1 })}
                         </span>
                     </div>
                     <div className="flex justify-between items-end gap-4">
-                        <span className="text-xs font-bold text-muted-foreground uppercase">MoM Change</span>
+                        <span className="text-xs font-semibold text-slate-400 uppercase">MoM Change</span>
                         <span className={cn(
                             "text-xs font-bold tabular-nums",
-                            (data.mom_pct_change || 0) > 0 ? "text-emerald-600 dark:text-emerald-400" : "text-rose-600 dark:text-rose-400"
+                            (data.mom_pct_change || 0) > 0 ? "text-emerald-400" : "text-rose-400"
                         )}>
                             {formatPercentage(data.mom_pct_change, { showSign: true, decimals: 1 })}
                         </span>
@@ -116,22 +97,22 @@ export const TreasuryHoldersChart: React.FC<TreasuryHoldersChartProps> = ({ data
                         domain={[0, maxVal * 1.1]}
                     />
                     <YAxis
+                        {...DEFAULT_YAXIS_PROPS}
                         dataKey="country_name"
                         type="category"
                         width={100}
                         tick={({ x, y, payload }) => (
                             <g transform={`translate(${x},${y})`}>
-                                <text x={-10} y={0} dy={4} textAnchor="end" fill="hsl(var(--muted-foreground))" fontSize={10} fontWeight={600}>
+                                <text x={-10} y={0} dy={4} textAnchor="end" fill="hsl(var(--muted-foreground))" fontSize={11} fontWeight={600}>
                                     {payload.value.length > 15 ? `${payload.value.substring(0, 15)}...` : payload.value}
                                 </text>
                             </g>
                         )}
                         axisLine={false}
-                        tickLine={false}
                     />
                     <Tooltip
                         content={<CustomTooltip />}
-                        cursor={{ fill: 'rgba(148, 163, 184, 0.08)' }}
+                        cursor={{ fill: alpha(CHART_COLORS.label, 0.08) }}
                     />
                     <Bar
                         dataKey="holdings_usd_bn"
@@ -142,7 +123,7 @@ export const TreasuryHoldersChart: React.FC<TreasuryHoldersChartProps> = ({ data
                         {data.map((_, index) => (
                             <Cell
                                 key={`cell-${index}`}
-                                fill={index < 3 ? '#fbbf24' : 'rgba(251, 191, 36, 0.6)'} // Top 3 brighter gold
+                                fill={index < 3 ? CHART_COLORS.gold : alpha(CHART_COLORS.gold, 0.6)} // Top 3 brighter gold
                             />
                         ))}
                     </Bar>

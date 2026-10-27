@@ -4,7 +4,6 @@ import { TrailLink as Link } from '@/components/TrailLink';
 import { Flame, ArrowUpRight, Activity } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import {
-  ResponsiveContainer,
   LineChart,
   Line,
   XAxis,
@@ -12,13 +11,16 @@ import {
   Tooltip,
   ReferenceLine,
 } from 'recharts';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, CHART_COLORS } from '@/constants/chartDefaults';
 
 export const FinancialConditionsCard: React.FC<{ className?: string }> = ({ className }) => {
   const { data, isLoading } = useFinancialConditions();
 
   if (isLoading || !data) {
     return (
-      <div className="h-64 rounded-2xl border border-border/50 bg-card/40 flex items-center justify-center">
+      <div className="h-64 rounded-xl border border-border bg-card/40 flex items-center justify-center">
         <div className="flex items-center gap-2 text-muted-foreground font-mono text-xs">
           <Activity className="animate-spin text-primary" size={14} />
           Loading FCI Telemetry...
@@ -34,17 +36,17 @@ export const FinancialConditionsCard: React.FC<{ className?: string }> = ({ clas
   return (
     <div
       className={cn(
-        'group relative bg-[#0a0f1d]/90 backdrop-blur-xl border border-border/60 hover:border-border transition-all rounded-2xl p-5 shadow-xl flex flex-col justify-between space-y-4',
+        'group relative bg-card/90 backdrop-blur-xl border border-border hover:border-border transition-all rounded-xl p-5 shadow-xl flex flex-col justify-between space-y-4',
         className
       )}
     >
-      <div className="flex items-start justify-between gap-2 border-b border-border/40 pb-3">
+      <div className="flex items-start justify-between gap-2 border-b border-border pb-3">
         <div className="space-y-1">
           <div className="flex items-center gap-2">
             <span className="p-1 rounded bg-orange-500/10 text-orange-400 border border-orange-500/20">
               <Flame size={14} />
             </span>
-            <h3 className="text-xs font-black uppercase tracking-wider text-foreground">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-foreground">
               Financial Conditions vs. Commodity Impulse
             </h3>
           </div>
@@ -53,7 +55,7 @@ export const FinancialConditionsCard: React.FC<{ className?: string }> = ({ clas
           </p>
         </div>
 
-        <div className={cn('text-[10px] font-mono font-bold px-2 py-0.5 rounded border', regime.badgeColor)}>
+        <div className={cn('text-[11px] font-mono font-bold px-2 py-0.5 rounded border', regime.badgeColor)}>
           {regime.title}
         </div>
       </div>
@@ -61,76 +63,74 @@ export const FinancialConditionsCard: React.FC<{ className?: string }> = ({ clas
       {/* Primary KPI row */}
       <div className="grid grid-cols-3 gap-3 text-xs font-mono">
         <div className="p-2.5 rounded-lg bg-orange-500/5 border border-orange-500/20 space-y-0.5">
-          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-            <span className="w-2 h-0.5 bg-[#f97316] rounded" />
+          <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <span className="w-2 h-0.5 bg-orange-500 rounded" />
             Global FCI
           </div>
-          <div className="text-base font-black text-foreground tabular-nums">
+          <div className="text-base font-bold text-foreground tabular-nums">
             {current.fci > 0 ? `+${current.fci.toFixed(2)}` : current.fci.toFixed(2)}σ
           </div>
-          <div className="text-[9px] text-muted-foreground">
+          <div className="text-[11px] text-muted-foreground">
             {current.fci > 0 ? 'Tightening' : 'Easing'}
           </div>
         </div>
 
         <div className="p-2.5 rounded-lg bg-blue-500/5 border border-blue-500/20 space-y-0.5">
-          <div className="text-[10px] text-muted-foreground flex items-center gap-1">
-            <span className="w-2 h-0.5 bg-[#0284c7] rounded" />
+          <div className="text-[11px] text-muted-foreground flex items-center gap-1">
+            <span className="w-2 h-0.5 bg-sky-600 rounded" />
             Commodity Cycle
           </div>
-          <div className="text-base font-black text-foreground tabular-nums">
+          <div className="text-base font-bold text-foreground tabular-nums">
             {current.commodityCycle > 0 ? `+${current.commodityCycle.toFixed(2)}` : current.commodityCycle.toFixed(2)}σ
           </div>
-          <div className="text-[9px] text-muted-foreground">
+          <div className="text-[11px] text-muted-foreground">
             {current.commodityCycle > 0 ? 'Cost Impulse' : 'Disinflation'}
           </div>
         </div>
 
-        <div className="p-2.5 rounded-lg bg-muted/40 border border-border/40 space-y-0.5">
-          <div className="text-[10px] text-muted-foreground">Lead / Lag</div>
-          <div className="text-base font-black text-foreground tabular-nums">
+        <div className="p-2.5 rounded-lg bg-muted/40 border border-border space-y-0.5">
+          <div className="text-[11px] text-muted-foreground">Lead / Lag</div>
+          <div className="text-base font-bold text-foreground tabular-nums">
             {(current.fci - current.commodityCycle).toFixed(2)}Δσ
           </div>
-          <div className="text-[9px] text-muted-foreground">
+          <div className="text-[11px] text-muted-foreground">
             {current.fci > current.commodityCycle ? 'FCI Premium' : 'Commodity Push'}
           </div>
         </div>
       </div>
 
       {/* Mini Sparkline Chart */}
-      <div className="h-28 w-full">
-        <ResponsiveContainer width="100%" height="100%">
+      <MacroChartContainer height={CHART_HEIGHTS.compact}>
           <LineChart data={recentHistory} margin={{ top: 5, right: 5, left: -20, bottom: 0 }}>
             <XAxis dataKey="date" hide />
             <YAxis domain={[-1.2, 1.2]} hide />
-            <ReferenceLine y={0} stroke="#475569" strokeDasharray="3 3" />
+            <ReferenceLine y={0} stroke={CHART_COLORS.slate} strokeDasharray="3 3" />
             <Tooltip
               content={({ active, payload }) => {
                 if (!active || !payload || !payload.length) return null;
                 const pt = payload[0].payload;
                 return (
-                  <div className="bg-slate-900 border border-border p-2 rounded text-[10px] font-mono shadow-xl">
-                    <div className="text-muted-foreground">{pt.date}</div>
+                  <div className={TOOLTIP_SHELL_CLASS}>
+                    <div className="text-slate-400">{pt.date}</div>
                     <div className="text-orange-400 font-bold">FCI: {pt.fci}σ</div>
                     <div className="text-blue-400 font-bold">Comm: {pt.commodityCycle}σ</div>
                   </div>
                 );
               }}
             />
-            <Line type="monotone" dataKey="fci" stroke="#f97316" strokeWidth={2} dot={false} />
-            <Line type="monotone" dataKey="commodityCycle" stroke="#0284c7" strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="fci" stroke={CHART_COLORS.orange} strokeWidth={2} dot={false} />
+            <Line type="monotone" dataKey="commodityCycle" stroke={CHART_COLORS.westDeep} strokeWidth={2} dot={false} />
           </LineChart>
-        </ResponsiveContainer>
-      </div>
+      </MacroChartContainer>
 
       {/* Card Footer */}
-      <div className="flex items-center justify-between pt-2 border-t border-border/40 text-xs">
-        <div className="flex items-center gap-3 text-[10px] font-mono text-muted-foreground">
+      <div className="flex items-center justify-between pt-2 border-t border-border text-xs">
+        <div className="flex items-center gap-3 text-[11px] font-mono text-muted-foreground">
           <span className="flex items-center gap-1">
-            <span className="w-2 h-0.5 bg-[#f97316] rounded" /> FCI
+            <span className="w-2 h-0.5 bg-orange-500 rounded" /> FCI
           </span>
           <span className="flex items-center gap-1">
-            <span className="w-2 h-0.5 bg-[#0284c7] rounded" /> Commodities
+            <span className="w-2 h-0.5 bg-sky-600 rounded" /> Commodities
           </span>
         </div>
 

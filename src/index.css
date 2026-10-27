@@ -3,151 +3,111 @@
 @tailwind utilities;
 
 @layer base {
-    :root {
-        /* Default / Light Mode Tokens (Ivory Cream, Gunmetal, Mineral Teal, Orange) */
-        --background: 44 87% 94%;
-        /* Ivory Cream #FDF6E3 */
-        --foreground: 203 23% 18%;
-        /* Gunmetal #233038 (11.8:1 WCAG AAA contrast against Ivory Cream) */
+    /* Terminal contract: pure dark institutional canvas. Light mode is retired;
+       `.dark` stays on <html> so legacy `dark:` utilities resolve to these tokens. */
+    :root,
+    .dark {
+        color-scheme: dark;
 
-        --card: 0 0% 100%;
-        /* Pure crisp card #FFFFFF */
-        --card-foreground: 203 23% 18%;
-        /* Gunmetal #233038 */
+        --background: 213 39% 5%;
+        /* Obsidian Deep #070B10 */
+        --foreground: 202 30% 93%;
+        /* #E7EEF2 high-contrast primary text */
 
-        --popover: 0 0% 100%;
-        --popover-foreground: 203 23% 18%;
+        --card: 214 33% 8%;
+        /* #0E141C panel elevation */
+        --card-foreground: 202 30% 93%;
 
-        --primary: 21 100% 51%;
-        /* Orange (Pantone) #FF5B04 */
-        --primary-foreground: 0 0% 100%;
+        --popover: 215 35% 7%;
+        /* #0B1017 terminal header / popover */
+        --popover-foreground: 202 30% 93%;
 
-        --secondary: 185 85% 18%;
-        /* Midnight Green #075056 */
-        --secondary-foreground: 0 0% 100%;
+        --primary: 217 91% 68%;
+        /* Electric Blue #60A5FA */
+        --primary-foreground: 213 39% 5%;
 
-        --muted: 195 20% 91%;
-        /* Light Silver Tint */
-        --muted-foreground: 202 22% 28%;
-        /* Deep readable Gunmetal #3B4E59 */
+        --secondary: 213 33% 11%;
+        --secondary-foreground: 202 30% 93%;
 
-        --accent: 44 85% 72%;
-        /* Sand Yellow #F4D47C */
-        --accent-foreground: 203 23% 18%;
+        --muted: 213 33% 11%;
+        --muted-foreground: 215 20% 65%;
+        /* Slate 400 #94A3B8, 7.7:1 on #070B10 (WCAG AAA) */
 
-        --destructive: 0 84.2% 60.2%;
-        /* Coral Crimson #EF4444 */
-        --destructive-foreground: 0 0% 100%;
+        --accent: 213 33% 14%;
+        --accent-foreground: 202 30% 93%;
 
-        --border: 193 16% 78%;
-        /* Light Silver #CBD5D7 */
-        --input: 193 16% 78%;
-        --ring: 21 100% 51%;
-        /* Orange (Pantone) #FF5B04 */
+        --destructive: 0 84% 60%;
+        /* Sovereign Crimson #EF4444 */
+        --destructive-foreground: 210 40% 98%;
+
+        --border: 213 17% 14%;
+        /* Solid equivalent of rgba(255,255,255,0.08) over the canvas */
+        --input: 213 17% 14%;
+        --ring: 217 91% 68%;
 
         --radius: 0.5rem;
 
-        --chart-1: 21 100% 51%;
-        /* Orange #FF5B04 */
-        --chart-2: 185 85% 18%;
-        /* Midnight Green #075056 */
-        --chart-3: 44 85% 50%;
-        /* Sand Amber #DCA524 */
-        --chart-4: 203 23% 25%;
-        /* Gunmetal #303F49 */
-        --chart-5: 192 25% 45%;
+        /* Multipolar series palette: West, East, Bullion, Expansion, Stress */
+        --chart-1: 199 92% 60%;
+        /* Cyan #38BDF8 */
+        --chart-2: 351 94% 71%;
+        /* Coral #FB7185 */
+        --chart-3: 38 92% 50%;
+        /* Amber #F59E0B */
+        --chart-4: 160 84% 39%;
+        /* Emerald #10B981 */
+        --chart-5: 0 84% 60%;
+        /* Crimson #EF4444 */
 
         /* Design System Tokens for Contrast & Spacing */
         --text-primary-weight: 1;
-        --text-secondary-weight: 0.85;
-        --text-tertiary-weight: 0.7;
+        --text-secondary-weight: 0.8;
+        --text-tertiary-weight: 0.6;
 
         --section-gap-major: 2rem;
         --section-gap-minor: 1rem;
         --card-gap: 1rem;
     }
-
-    .lively {
-        --background: 44 87% 94%;
-        --foreground: 203 23% 18%;
-        --card: 0 0% 100%;
-        --card-foreground: 203 23% 18%;
-        --popover: 0 0% 100%;
-        --popover-foreground: 203 23% 18%;
-        --primary: 21 100% 51%;
-        --primary-foreground: 0 0% 100%;
-        --secondary: 185 85% 18%;
-        --secondary-foreground: 0 0% 100%;
-        --muted: 195 20% 91%;
-        --muted-foreground: 202 22% 28%;
-        --accent: 44 85% 72%;
-        --accent-foreground: 203 23% 18%;
-        --destructive: 0 84.2% 60.2%;
-        --destructive-foreground: 0 0% 100%;
-        --border: 193 16% 78%;
-        --input: 193 16% 78%;
-        --ring: 21 100% 51%;
-    }
-
-    /* .dark class redundancy for compatibility if toggle somehow exists */
-    .dark {
-        --background: 222 47% 11%;
-        /* Slate 950 #0f172a - slight blue tint for richness */
-        --foreground: 210 40% 98%;
-        /* Slate 50 */
-
-        --card: 222 47% 11%;
-        --card-foreground: 210 40% 98%;
-
-        --popover: 222 47% 11%;
-        --popover-foreground: 210 40% 98%;
-
-        --primary: 210 40% 98%;
-        --primary-foreground: 222 47.4% 11.2%;
-
-        --secondary: 217.2 32.6% 17.5%;
-        --secondary-foreground: 210 40% 98%;
-
-        --muted: 217.2 32.6% 17.5%;
-        --muted-foreground: 215 28.4% 51.2%; /* Updated from slate-400 to slate-500 for better contrast */
-        /* Slate 500 - meets WCAG AA */
-
-        --accent: 217.2 32.6% 17.5%;
-        --accent-foreground: 210 40% 98%;
-
-        --destructive: 0 62.8% 30.6%;
-        --destructive-foreground: 210 40% 98%;
-
-        --border: 217.2 32.6% 17.5%;
-        --input: 217.2 32.6% 17.5%;
-        --ring: 212.7 26.8% 83.9%;
-
-        --chart-1: 220 70% 50%;
-        --chart-2: 160 60% 45%;
-        --chart-3: 30 80% 55%;
-        --chart-4: 280 65% 60%;
-        --chart-5: 340 75% 55%;
-
-        /* Contrast overrides for dark mode */
-        --text-primary-weight: 1;
-        --text-secondary-weight: 0.8;
-        --text-tertiary-weight: 0.6;
-    }
 }
 
 @layer base {
     * {
-        border-color: hsl(var(--border) / 0.7);
-    }
-
-    .dark * {
-        border-color: hsl(var(--border) / 0.12);
+        border-color: rgba(255, 255, 255, 0.08);
     }
 
     *:focus-visible {
-        outline: 2px solid #3b82f6;
+        outline: 2px solid #60A5FA;
         outline-offset: 2px;
         border-radius: 4px;
+    }
+
+    ::selection {
+        background: rgba(96, 165, 250, 0.3);
+        color: #F8FAFC;
+    }
+
+    /* Obsidian scrollbars */
+    * {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
+    }
+
+    *::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+
+    *::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    *::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.16);
+        border-radius: 8px;
+    }
+
+    *::-webkit-scrollbar-thumb:hover {
+        background: rgba(255, 255, 255, 0.28);
     }
 
     /* Skip to content link for keyboard navigation */
@@ -168,11 +128,17 @@
         top: 0;
     }
 
-    /* Ensure all interactive elements have proper cursor and touch targets */
+    /* Interactive elements get a pointer cursor. The 44px touch target is applied
+       on coarse pointers only (see below) so desktop controls stay dense. */
     button, a[role="button"], [role="button"] {
         cursor: pointer;
-        min-width: 44px;
-        min-height: 44px;
+    }
+
+    @media (pointer: coarse) {
+        button, a[role="button"], [role="button"] {
+            min-width: 44px;
+            min-height: 44px;
+        }
     }
 
     /* Clean base scrolling */
@@ -213,6 +179,11 @@
         @apply w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8;
     }
 
+    /* Terminal contract page wrapper for every thematic lab page */
+    .page-shell {
+        @apply w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-10;
+    }
+
     .spa-card {
         @apply bg-card/40 border border-border/50 rounded-lg p-6 lg:p-10;
         @apply shadow-xl transition-colors duration-300;
@@ -221,15 +192,15 @@
     }
 
     .label-mono {
-        @apply font-mono text-[10px] font-medium tracking-[0.15em] uppercase text-muted-foreground/60;
+        @apply font-mono text-[11px] font-semibold tracking-wider uppercase text-muted-foreground;
     }
 
     .section-label {
-        @apply text-xs font-semibold tracking-uppercase text-muted-foreground/70;
+        @apply text-[11px] font-semibold tracking-wider uppercase text-muted-foreground;
     }
 
     .caption-muted {
-        @apply text-xs font-medium text-muted-foreground/55;
+        @apply text-xs font-medium text-muted-foreground;
     }
 
     /* Labeled web approximation of Apple's platform-only Liquid Glass material. */
@@ -272,11 +243,11 @@
     }
 
     .spa-hero-value {
-        @apply text-4xl lg:text-5xl xl:text-6xl font-black tracking-tight;
+        @apply text-4xl lg:text-5xl xl:text-6xl font-bold tracking-tight;
     }
 
     .spa-section-title {
-        @apply text-2xl lg:text-3xl font-black tracking-tight;
+        @apply text-2xl lg:text-3xl font-bold tracking-tight;
     }
 
     /* Reduced motion preference */
@@ -319,7 +290,7 @@
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
         scrollbar-width: thin;
-        scrollbar-color: rgba(255, 255, 255, 0.08) transparent;
+        scrollbar-color: rgba(255, 255, 255, 0.16) transparent;
     }
 
     .chart-scroll-container::-webkit-scrollbar {
@@ -353,7 +324,7 @@
     }
 
     .grit-badge {
-        @apply inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-widest leading-none;
+        @apply inline-flex items-center gap-2 px-3 py-1 rounded-md bg-blue-500/10 border border-blue-500/20 text-blue-400 text-[11px] font-semibold uppercase tracking-wider leading-none;
     }
 
     .email-capture-glass {
@@ -366,208 +337,6 @@
 
     .stat-block {
         @apply flex flex-col items-center text-center p-6 rounded-lg bg-white/[0.01] border border-white/5;
-    }
-
-    /* ── High-Contrast Readability & Visibility for Light Palette ── */
-    .lively {
-        color-scheme: light;
-    }
-
-    .lively body,
-    .lively #root {
-        background: #FDF6E3;
-        color: #233038;
-    }
-
-    .lively header,
-    .lively aside {
-        background-color: rgba(253, 246, 227, 0.96) !important;
-        border-color: #C8D2D5 !important;
-        box-shadow: 0 8px 24px rgba(35, 48, 56, 0.06);
-    }
-
-    /* All legacy text-white classes adapt to Gunmetal #233038 */
-    .lively .text-white,
-    .lively .text-slate-100,
-    .lively .text-slate-200 {
-        color: #233038 !important;
-    }
-
-    /* Subdued texts adapt to readable deep Gunmetal #354854 */
-    .lively .text-white\/90,
-    .lively .text-white\/80 {
-        color: #233038 !important;
-    }
-
-    .lively .text-white\/70,
-    .lively .text-white\/60,
-    .lively .text-slate-400,
-    .lively .text-slate-500 {
-        color: #354854 !important;
-    }
-
-    .lively .text-white\/50,
-    .lively .text-white\/40,
-    .lively .text-white\/30 {
-        color: #3B4E59 !important;
-    }
-
-    .lively .text-white\/25,
-    .lively .text-white\/20,
-    .lively .text-white\/10 {
-        color: #61727C !important;
-    }
-
-    /* Keep text white when inside explicit primary/dark containers */
-    .lively .bg-primary,
-    .lively .bg-primary *,
-    .lively [class*="bg-[#FF5B04]"] *,
-    .lively [class*="bg-[#075056]"] * {
-        color: #FFFFFF !important;
-    }
-
-    /* Card & Container backgrounds adapt from dark slate to crisp White */
-    .lively .bg-slate-900,
-    .lively .bg-slate-950,
-    .lively [class*="bg-slate-900\/"],
-    .lively [class*="bg-slate-950\/"],
-    .lively [class*="from-slate-900"],
-    .lively [class*="from-slate-950"],
-    .lively [class*="via-slate-800"],
-    .lively [class*="via-slate-900"],
-    .lively [class*="to-slate-900"],
-    .lively [class*="to-slate-950"],
-    .lively [class*="to-black"],
-    .lively [class*="bg-[#0d0f14]"],
-    .lively [class*="bg-[#070b14]"],
-    .lively .bg-slate-800,
-    .lively [class*="bg-slate-800\/"],
-    .lively [class*="bg-black\/40"],
-    .lively [class*="bg-black\/30"],
-    .lively [class*="bg-black\/10"] {
-        background-image: none !important;
-        background-color: #FFFFFF !important;
-        box-shadow: 0 1px 2px rgba(35, 48, 56, 0.05), 0 8px 20px rgba(35, 48, 56, 0.06);
-    }
-
-    /* Hairline borders adapt from transparent white / dark slate to crisp Light Silver */
-    .lively [class*="border-white\/"],
-    .lively [class*="border-slate-700"],
-    .lively [class*="border-slate-800"],
-    .lively [class*="border-black\/"] {
-        border-color: #CBD5D7 !important;
-    }
-
-    /* Semi-transparent white badges adapt to subtle tinted silver/sand */
-    .lively [class*="bg-white\/"] {
-        background-color: rgba(244, 247, 247, 0.88) !important;
-        box-shadow: inset 0 0 0 1px rgba(203, 213, 215, 0.55);
-    }
-
-    .lively [class*="bg-black\/"] {
-        background-color: rgba(255, 255, 255, 0.94) !important;
-        box-shadow: inset 0 0 0 1px rgba(203, 213, 215, 0.6);
-    }
-
-    .lively [class*="hover:bg-white\/"]:hover {
-        background-color: rgba(244, 212, 124, 0.28) !important;
-    }
-
-    .lively [class*="hover:text-white"]:hover {
-        color: #075056 !important;
-    }
-
-    .lively [class*="shadow-2xl"],
-    .lively [class*="shadow-xl"],
-    .lively [class*="shadow-lg"] {
-        box-shadow: 0 10px 28px rgba(35, 48, 56, 0.08) !important;
-    }
-
-    .lively .bg-card,
-    .lively [class*="bg-card\/"] {
-        background-color: rgba(255, 255, 255, 0.94) !important;
-    }
-
-    .lively .border-border,
-    .lively [class*="border-border"] {
-        border-color: #C8D2D5 !important;
-    }
-
-    .lively [class*="divide-border"] > :not([hidden]) ~ :not([hidden]) {
-        border-color: #C8D2D5 !important;
-    }
-
-    .lively .text-muted-foreground,
-    .lively [class*="text-muted-foreground"] {
-        color: #3B4E59 !important;
-    }
-
-    .lively .text-blue-400,
-    .lively .text-blue-500,
-    .lively .text-cyan-400 {
-        color: #0B5A68 !important;
-    }
-
-    .lively .text-amber-400,
-    .lively .text-amber-500 {
-        color: #9A5B00 !important;
-    }
-
-    .lively .text-emerald-400,
-    .lively .text-emerald-500 {
-        color: #075056 !important;
-    }
-
-    .lively .text-rose-400,
-    .lively .text-rose-500 {
-        color: #B4232F !important;
-    }
-
-    /* Recharts elements in lively mode */
-    .lively .recharts-cartesian-grid-horizontal line,
-    .lively .recharts-cartesian-grid-vertical line {
-        stroke: #CBD5D7 !important;
-        opacity: 0.7 !important;
-    }
-    .lively .recharts-text {
-        fill: #233038 !important;
-    }
-
-    .lively .recharts-tooltip-wrapper [class*="bg-slate"],
-    .lively .recharts-tooltip-wrapper [class*="bg-black"] {
-        background-color: #FFFFFF !important;
-        border-color: #C8D2D5 !important;
-        color: #233038 !important;
-    }
-
-    /* High contrast labels */
-    .lively .label-mono {
-        color: #075056 !important;
-        opacity: 1 !important;
-        font-weight: 700 !important;
-    }
-
-    .lively .section-label {
-        color: #233038 !important;
-        opacity: 1 !important;
-        font-weight: 700 !important;
-    }
-
-    .lively .caption-muted {
-        color: #4A606D !important;
-        opacity: 1 !important;
-        font-weight: 500 !important;
-    }
-
-    .lively .liquid-glass-web-approx {
-        background: #FFFFFF !important;
-        border: 1px solid #CBD5D7 !important;
-        box-shadow: 0 4px 20px -2px rgba(35, 48, 56, 0.08) !important;
-    }
-
-    .lively .liquid-glass-web-approx::before,
-    .lively .liquid-glass-web-approx::after {
-        display: none;
     }
 }
 
@@ -593,11 +362,6 @@
     /* Ensure charts don't clip — set minimum scrollable width */
     .recharts-responsive-container {
         min-width: 320px;
-    }
-
-    /* Improve compact mobile touch targets without shrinking primary controls */
-    button, a, [role="button"] {
-        min-height: 44px;
     }
 }
 

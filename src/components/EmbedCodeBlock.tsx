@@ -2,6 +2,7 @@ import React from 'react';
 import { Box, Typography, Button } from '@mui/material';
 import { Code, Check, Copy } from 'lucide-react';
 import { BrandConfig } from '@/config/brandConfig';
+import { CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface EmbedCodeBlockProps {
     /** Tool path, e.g. "/tools/net-liquidity-gauge" */
@@ -38,27 +39,27 @@ export const EmbedCodeBlock: React.FC<EmbedCodeBlockProps> = ({ path, height = 5
                 size="small"
                 startIcon={<Code size={14} />}
                 onClick={() => setShowEmbed(!showEmbed)}
-                sx={{ color: 'rgba(255,255,255,0.4)', borderColor: 'rgba(255,255,255,0.1)', textTransform: 'none', borderRadius: 2 }}
+                sx={{ color: WHITE_ALPHA.dim, borderColor: WHITE_ALPHA.line, textTransform: 'none', borderRadius: 2 }}
             >
                 {showEmbed ? 'Hide Embed Code' : 'Get Embed Code'}
             </Button>
 
             {showEmbed && (
-                <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'black', border: '1px solid rgba(255,255,255,0.1)', width: '100%', maxWidth: '440px' }}>
+                <Box sx={{ p: 2, borderRadius: 2, bgcolor: 'black', border: `1px solid ${WHITE_ALPHA.line}`, width: '100%', maxWidth: '440px' }}>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 1 }}>
-                        <Typography variant="caption" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 'bold' }}>
+                        <Typography variant="caption" sx={{ color: WHITE_ALPHA.dim, fontWeight: 'bold' }}>
                             IFRAME EMBED SNIPPET
                         </Typography>
                         <Button
                             size="small"
                             onClick={handleCopy}
                             startIcon={copied ? <Check size={12} /> : <Copy size={12} />}
-                            sx={{ color: copied ? '#10b981' : 'rgba(255,255,255,0.5)', textTransform: 'none', fontSize: '11px', minWidth: 0 }}
+                            sx={{ color: copied ? CHART_COLORS.expansion : WHITE_ALPHA.mid, textTransform: 'none', fontSize: '11px', minWidth: 0 }}
                         >
                             {copied ? 'Copied' : 'Copy'}
                         </Button>
                     </Box>
-                    <Box component="pre" sx={{ m: 0, p: 1, fontSize: '10px', color: '#10b981', overflowX: 'auto', textAlign: 'left', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
+                    <Box component="pre" sx={{ m: 0, p: 1, fontSize: '11px', color: CHART_COLORS.expansion, overflowX: 'auto', textAlign: 'left', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>
                         {snippet}
                     </Box>
                 </Box>

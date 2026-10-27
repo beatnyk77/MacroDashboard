@@ -8,6 +8,7 @@ import { BrandConfig, AuthorPersonSchema, PublisherOrganizationSchema } from '@/
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { ArrowLeft, Calendar, User, Clock, Twitter, Linkedin, LinkIcon, BookOpen, ChevronRight } from 'lucide-react';
+import { CHART_COLORS, alpha, WHITE_ALPHA, BRAND_COLORS } from '@/constants/chartDefaults';
 
 function estimateReadingTime(content: string): number {
     const words = content.trim().split(/\s+/).length;
@@ -104,8 +105,8 @@ export const ArticlePage: React.FC = () => {
             <Box sx={{
                 py: { xs: 6, md: 10 },
                 px: 2,
-                background: 'linear-gradient(180deg, rgba(59,130,246,0.06) 0%, transparent 100%)',
-                borderBottom: '1px solid rgba(255,255,255,0.04)',
+                background: `linear-gradient(180deg, ${alpha(CHART_COLORS.west, 0.06)} 0%, transparent 100%)`,
+                borderBottom: `1px solid ${WHITE_ALPHA.ghost}`,
             }}>
                 <Container maxWidth="md">
                     <Button
@@ -122,10 +123,10 @@ export const ArticlePage: React.FC = () => {
                             label={article.category}
                             size="small"
                             sx={{
-                                bgcolor: 'rgba(59, 130, 246, 0.12)',
-                                color: '#60a5fa',
-                                fontWeight: 800,
-                                fontSize: '0.65rem',
+                                bgcolor: alpha(CHART_COLORS.west, 0.12),
+                                color: CHART_COLORS.west,
+                                fontWeight: 700,
+                                fontSize: '0.6875rem',
                                 borderRadius: '6px',
                                 letterSpacing: '0.05em',
                                 textTransform: 'uppercase',
@@ -135,7 +136,7 @@ export const ArticlePage: React.FC = () => {
 
                     {/* H1 — proper for SEO (previously h2) */}
                     <Typography variant="h3" component="h1" sx={{
-                        fontWeight: 900,
+                        fontWeight: 700,
                         mb: 3,
                         letterSpacing: '-0.025em',
                         lineHeight: 1.15,
@@ -179,7 +180,7 @@ export const ArticlePage: React.FC = () => {
                                 <IconButton
                                     size="small"
                                     onClick={handleShareTwitter}
-                                    sx={{ color: 'text.secondary', '&:hover': { color: '#1da1f2' } }}
+                                    sx={{ color: 'text.secondary', '&:hover': { color: BRAND_COLORS.x } }}
                                     aria-label="Share on X/Twitter"
                                 >
                                     <Twitter size={16} aria-hidden="true" />
@@ -189,7 +190,7 @@ export const ArticlePage: React.FC = () => {
                                 <IconButton
                                     size="small"
                                     onClick={handleShareLinkedIn}
-                                    sx={{ color: 'text.secondary', '&:hover': { color: '#0077b5' } }}
+                                    sx={{ color: 'text.secondary', '&:hover': { color: BRAND_COLORS.linkedin } }}
                                     aria-label="Share on LinkedIn"
                                 >
                                     <Linkedin size={16} aria-hidden="true" />
@@ -215,8 +216,8 @@ export const ArticlePage: React.FC = () => {
                 <Box className="prose prose-invert max-w-none" sx={{
                     '& h1': { display: 'none' },
                     '& h2': {
-                        fontWeight: 800, mt: 8, mb: 3, color: 'text.primary',
-                        borderBottom: '1px solid rgba(255,255,255,0.06)', pb: 2,
+                        fontWeight: 700, mt: 8, mb: 3, color: 'text.primary',
+                        borderBottom: `1px solid ${WHITE_ALPHA.faint}`, pb: 2,
                         fontSize: { xs: '1.3rem', md: '1.6rem' },
                         letterSpacing: '-0.01em',
                     },
@@ -228,24 +229,24 @@ export const ArticlePage: React.FC = () => {
                     '& ul, & ol': { mb: 3, pl: 4, color: 'text.secondary' },
                     '& li': { mb: 1.5, lineHeight: 1.8 },
                     '& blockquote': {
-                        borderLeft: '4px solid #3b82f6', pl: 3, py: 2, m: 0, mb: 4,
-                        bgcolor: 'rgba(59, 130, 246, 0.04)',
+                        borderLeft: `4px solid ${CHART_COLORS.west}`, pl: 3, py: 2, m: 0, mb: 4,
+                        bgcolor: alpha(CHART_COLORS.west, 0.04),
                         borderRadius: '0 8px 8px 0',
                         fontStyle: 'italic',
                     },
-                    '& strong': { color: 'text.primary', fontWeight: 800 },
+                    '& strong': { color: 'text.primary', fontWeight: 700 },
                     '& code': {
-                        bgcolor: 'rgba(255,255,255,0.06)', px: 1, py: 0.3, borderRadius: '4px',
-                        fontSize: '0.85em', fontFamily: 'monospace',
+                        bgcolor: WHITE_ALPHA.faint, px: 1, py: 0.3, borderRadius: '4px',
+                        fontSize: '0.85em', fontFamily: 'Fira Code, monospace',
                     },
                     '& a': {
-                        color: '#60a5fa', textDecoration: 'underline',
-                        textUnderlineOffset: '3px', '&:hover': { color: '#93bbfd' },
+                        color: CHART_COLORS.west, textDecoration: 'underline',
+                        textUnderlineOffset: '3px', '&:hover': { color: CHART_COLORS.westSoft },
                     },
                     '& table': {
                         width: '100%', borderCollapse: 'collapse', mb: 4,
-                        '& th': { bgcolor: 'rgba(255,255,255,0.05)', fontWeight: 700, p: 1.5, textAlign: 'left', borderBottom: '1px solid rgba(255,255,255,0.1)', fontSize: '0.85rem' },
-                        '& td': { p: 1.5, borderBottom: '1px solid rgba(255,255,255,0.04)', fontSize: '0.85rem' },
+                        '& th': { bgcolor: WHITE_ALPHA.faint, fontWeight: 700, p: 1.5, textAlign: 'left', borderBottom: `1px solid ${WHITE_ALPHA.line}`, fontSize: '0.85rem' },
+                        '& td': { p: 1.5, borderBottom: `1px solid ${WHITE_ALPHA.ghost}`, fontSize: '0.85rem' },
                     },
                 }}>
                     <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -259,18 +260,18 @@ export const ArticlePage: React.FC = () => {
                 <Box sx={{
                     p: { xs: 3, md: 4 },
                     borderRadius: '16px',
-                    bgcolor: 'rgba(255,255,255,0.02)',
-                    border: '1px solid rgba(255,255,255,0.06)',
+                    bgcolor: WHITE_ALPHA.ghost,
+                    border: `1px solid ${WHITE_ALPHA.faint}`,
                     display: 'flex',
                     flexDirection: { xs: 'column', sm: 'row' },
                     alignItems: { xs: 'flex-start', sm: 'center' },
                     gap: 3,
                 }}>
-                    <Avatar sx={{ width: 56, height: 56, bgcolor: 'rgba(59,130,246,0.15)', color: '#60a5fa', fontWeight: 800, fontSize: '1.2rem' }}>
+                    <Avatar sx={{ width: 56, height: 56, bgcolor: alpha(CHART_COLORS.west, 0.15), color: CHART_COLORS.west, fontWeight: 700, fontSize: '1.2rem' }}>
                         {article.author.split(' ').map(n => n[0]).join('')}
                     </Avatar>
                     <Box sx={{ flex: 1 }}>
-                        <Typography variant="subtitle1" component="p" sx={{ fontWeight: 800, mb: 0.5 }}>
+                        <Typography variant="subtitle1" component="p" sx={{ fontWeight: 700, mb: 0.5 }}>
                             {article.author}
                         </Typography>
                         <Typography variant="body2" color="text.secondary" sx={{ lineHeight: 1.6 }}>
@@ -285,7 +286,7 @@ export const ArticlePage: React.FC = () => {
                         to="/about"
                         variant="outlined"
                         size="small"
-                        sx={{ borderColor: 'rgba(255,255,255,0.1)', fontWeight: 700, textTransform: 'none', whiteSpace: 'nowrap' }}
+                        sx={{ borderColor: WHITE_ALPHA.line, fontWeight: 700, textTransform: 'none', whiteSpace: 'nowrap' }}
                     >
                         About Team
                     </Button>
@@ -300,13 +301,13 @@ export const ArticlePage: React.FC = () => {
                                 to={`/blog/${prevArticle.slug}`}
                                 sx={{
                                     flex: 1, justifyContent: 'flex-start', textAlign: 'left', p: 2,
-                                    border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px',
-                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
+                                    border: `1px solid ${WHITE_ALPHA.faint}`, borderRadius: '12px',
+                                    '&:hover': { bgcolor: WHITE_ALPHA.ghost },
                                 }}
                                 startIcon={<ArrowLeft size={14} />}
                             >
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.6rem' }}>Previous</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.6875rem' }}>Previous</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.3, textTransform: 'none' }}>{prevArticle.title.length > 50 ? prevArticle.title.slice(0, 50) + '…' : prevArticle.title}</Typography>
                                 </Box>
                             </Button>
@@ -317,13 +318,13 @@ export const ArticlePage: React.FC = () => {
                                 to={`/blog/${nextArticle.slug}`}
                                 sx={{
                                     flex: 1, justifyContent: 'flex-end', textAlign: 'right', p: 2,
-                                    border: '1px solid rgba(255,255,255,0.06)', borderRadius: '12px',
-                                    '&:hover': { bgcolor: 'rgba(255,255,255,0.03)' },
+                                    border: `1px solid ${WHITE_ALPHA.faint}`, borderRadius: '12px',
+                                    '&:hover': { bgcolor: WHITE_ALPHA.ghost },
                                 }}
                                 endIcon={<ChevronRight size={14} />}
                             >
                                 <Box>
-                                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.6rem' }}>Next</Typography>
+                                    <Typography variant="caption" sx={{ color: 'text.secondary', display: 'block', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.08em', fontSize: '0.6875rem' }}>Next</Typography>
                                     <Typography variant="body2" sx={{ fontWeight: 600, mt: 0.3, textTransform: 'none' }}>{nextArticle.title.length > 50 ? nextArticle.title.slice(0, 50) + '…' : nextArticle.title}</Typography>
                                 </Box>
                             </Button>
@@ -334,7 +335,7 @@ export const ArticlePage: React.FC = () => {
                 {/* ── Related Articles ── */}
                 {relatedArticles.length > 0 && (
                     <Box sx={{ mt: 8 }}>
-                        <Typography variant="h6" component="h2" sx={{ fontWeight: 800, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
+                        <Typography variant="h6" component="h2" sx={{ fontWeight: 700, mb: 4, display: 'flex', alignItems: 'center', gap: 1.5 }}>
                             <BookOpen size={18} />
                             Continue Reading
                         </Typography>
@@ -349,7 +350,7 @@ export const ArticlePage: React.FC = () => {
                                         label={related.category}
                                         size="small"
                                         sx={{
-                                            mb: 1.5, bgcolor: 'rgba(59,130,246,0.08)', color: '#60a5fa',
+                                            mb: 1.5, bgcolor: alpha(CHART_COLORS.west, 0.08), color: CHART_COLORS.west,
                                             fontWeight: 700, fontSize: '0.55rem', borderRadius: '4px',
                                             textTransform: 'uppercase', letterSpacing: '0.05em',
                                         }}

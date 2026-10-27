@@ -24,7 +24,7 @@ export const SnapshotBanner: React.FC<SnapshotBannerProps> = ({ snapshot, classN
             isRevised ? "bg-blue-500/10 border-blue-500/20 text-blue-200" :
             isCorrected ? "bg-purple-500/10 border-purple-500/20 text-purple-200" :
             isUnavailable ? "bg-red-500/10 border-red-500/20 text-red-200" :
-            "bg-white/5 border-white/10 text-white/70",
+            "bg-white/5 border-border text-white/70",
             className
         )}>
             <div className="mt-0.5">

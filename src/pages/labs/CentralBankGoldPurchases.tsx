@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { ChevronRight, ArrowLeft } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -9,13 +9,15 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { LabPageHeader } from '@/components/LabPageHeader';
+import { TrailLink } from '@/components/TrailLink';
 
 const CentralBankGoldNet = lazy(() => import('@/features/dashboard/components/rows/CentralBankGoldNet').then(m => ({ default: m.CentralBankGoldNet })));
 const USDebtGoldBackingCard = lazy(() => import('@/features/dashboard/components/cards/USDebtGoldBackingCard').then(m => ({ default: m.USDebtGoldBackingCard })));
 
 const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-widest">Loading Telemetry...</span>
+    <div className="w-full min-h-[300px] bg-white/[0.02] border border-border rounded-xl animate-pulse flex items-center justify-center">
+        <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Loading Telemetry...</span>
     </div>
 );
 
@@ -73,33 +75,20 @@ export const CentralBankGoldPurchases: React.FC = () => {
                     faqJsonLd
                 ]}
             />
-            <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-                <div className="mb-8">
-                    <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                        <a href="/" className="hover:text-white transition-colors">Home</a>
-                        <ChevronRight size={10} />
-                        <a href="/labs/de-dollarization-gold/" className="hover:text-white transition-colors">De-Dollarization Lab</a>
-                        <ChevronRight size={10} />
-                        <span className="text-amber-500">Gold Purchases Tracker</span>
-                    </nav>
-                </div>
+            <div className="page-shell">
+                <LabPageHeader
+                    trail={[{ label: 'Home', to: '/' }, { label: 'De-Dollarization Lab', to: '/labs/de-dollarization-gold/' }]}
+                    current="Gold Purchases Tracker"
+                    badge="Sovereign Gold Telemetry"
+                    title={<>Global Central Bank <span className="text-blue-400">Gold Purchases</span></>}
+                    status={<FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />}
+                    thesis="Real-time tracking of sovereign gold accumulation and the strategic pivot from Western ETFs to Eastern Central Banks."
+                />
 
-                <div className="mb-12">
-                    <div className="flex items-center gap-3 mb-4">
-                        <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white">
-                            Global Central Bank <span className="text-amber-500">Gold Purchases</span>
-                        </h1>
-                        <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                    </div>
-                    <p className="text-muted-foreground max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                        Real-time tracking of sovereign gold accumulation and the strategic pivot from Western ETFs to Eastern Central Banks.
-                    </p>
-                </div>
-
-                <div className="space-y-24">
+                <div className="space-y-16">
                     <section>
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-6">Net Purchases by Sovereign Entities</h2>
-                        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl mb-6">
+                        <h2 className="text-2xl font-bold uppercase tracking-tight text-white mb-6">Net Purchases by Sovereign Entities</h2>
+                        <div className="p-6 bg-white/[0.02] border border-border rounded-xl mb-6">
                             <SectionErrorBoundary name="Gold Net Purchases">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <CentralBankGoldNet />
@@ -112,8 +101,8 @@ export const CentralBankGoldPurchases: React.FC = () => {
                     </section>
 
                     <section>
-                        <h2 className="text-2xl font-black uppercase tracking-tight text-white mb-6">The Debt/Gold Z-Score Framework</h2>
-                        <div className="p-6 bg-white/[0.02] border border-white/5 rounded-2xl mb-6 max-w-3xl">
+                        <h2 className="text-2xl font-bold uppercase tracking-tight text-white mb-6">The Debt/Gold Z-Score Framework</h2>
+                        <div className="p-6 bg-white/[0.02] border border-border rounded-xl mb-6 max-w-3xl">
                             <SectionErrorBoundary name="Debt/Gold Backing">
                                 <Suspense fallback={<LoadingFallback />}>
                                     <USDebtGoldBackingCard />
@@ -126,8 +115,8 @@ export const CentralBankGoldPurchases: React.FC = () => {
                     </section>
                     
                     {/* FAQ Section */}
-                    <section className="p-8 bg-white/[0.02] border border-white/5 rounded-2xl">
-                        <h2 className="text-xl font-black uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
+                    <section className="p-8 bg-white/[0.02] border border-border rounded-xl">
+                        <h2 className="text-xl font-bold uppercase tracking-tight text-white mb-6">Frequently Asked Questions</h2>
                         <div className="space-y-6">
                             {faqItems.map(({ question, answer }) => (
                                 <div key={question} className="space-y-1">
@@ -139,11 +128,11 @@ export const CentralBankGoldPurchases: React.FC = () => {
                     </section>
                 </div>
 
-                <div className="mt-24 pt-12 border-t border-white/5 text-center">
-                    <Button variant="ghost" className="text-muted-foreground/40 font-black uppercase tracking-widest hover:text-white" asChild>
-                        <a href="/labs/de-dollarization-gold/" className="flex items-center gap-2">
+                <div className="mt-24 pt-12 border-t border-border text-center">
+                    <Button variant="ghost" className="text-terminal-dim font-semibold uppercase tracking-wider hover:text-white" asChild>
+                        <TrailLink to="/labs/de-dollarization-gold/" className="flex items-center gap-2">
                             <ArrowLeft size={18} /> Back to Lab
-                        </a>
+                        </TrailLink>
                     </Button>
                 </div>
                 <RelatedContent />

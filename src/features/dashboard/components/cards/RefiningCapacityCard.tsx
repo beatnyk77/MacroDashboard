@@ -5,7 +5,7 @@ import { Factory, TrendingDown, TrendingUp } from 'lucide-react';
 import { Area, AreaChart, Tooltip } from 'recharts';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
-import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE } from '@/constants/chartDefaults';
+import { CHART_HEIGHTS, DEFAULT_TOOLTIP_STYLE, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, CHART_COLORS } from '@/constants/chartDefaults';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 interface RefiningCapacityCardProps {
@@ -118,10 +118,10 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
     }[region as 'US' | 'EU' | 'Asia'];
 
     return (
-        <Card className="bg-black/40 border-white/12 backdrop-blur-md h-[450px] p-6">
+        <Card className="bg-background/40 border-border backdrop-blur-md h-[450px] p-6">
             <CardHeader className="flex flex-row items-center justify-between pb-4 pt-0 px-0">
                 <div className="flex flex-col">
-                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-uppercase flex items-center gap-2">
+                    <CardTitle className="text-sm font-medium text-muted-foreground uppercase tracking-wider flex items-center gap-2">
                         <Factory className="h-4 w-4 text-emerald-400" />
                         Atmospheric Crude Distillation Capacity
                     </CardTitle>
@@ -152,7 +152,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                 {currentStats?.isPositive ? <TrendingUp className="h-3 w-3 mr-1" /> : <TrendingDown className="h-3 w-3 mr-1" />}
                                 {Math.abs(currentStats?.change || 0).toFixed(2)} mbpd vs prev
                             </div>
-                            <span className="text-xs text-muted-foreground/60">{currentStats?.label}</span>
+                            <span className="text-xs text-muted-foreground">{currentStats?.label}</span>
                         </div>
                         <div className="text-right">
                             <span className="text-xs uppercase text-muted-foreground block font-mono">Strategic Utilization</span>
@@ -165,17 +165,18 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                             <AreaChart data={combinedData} margin={{ top: 10, right: 30, left: 0, bottom: 0 }}>
                                 <defs>
                                     <linearGradient id="capGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#10b981" stopOpacity={0.3} />
-                                        <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
+                                        <stop offset="5%" stopColor={CHART_COLORS.expansion} stopOpacity={0.3} />
+                                        <stop offset="95%" stopColor={CHART_COLORS.expansion} stopOpacity={0} />
                                     </linearGradient>
                                     <linearGradient id="utilGradient" x1="0" y1="0" x2="0" y2="1">
-                                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.2} />
-                                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
+                                        <stop offset="5%" stopColor={CHART_COLORS.west} stopOpacity={0.2} />
+                                        <stop offset="95%" stopColor={CHART_COLORS.west} stopOpacity={0} />
                                     </linearGradient>
                                 </defs>
                                 <Tooltip
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                                     contentStyle={DEFAULT_TOOLTIP_STYLE}
-                                    itemStyle={{ padding: '2px 0' }}
                                     formatter={(value: number, name: string) => [
                                         name === 'utilization' ? `${value.toFixed(1)}%` : `${value.toFixed(2)} mbpd`,
                                         name === 'utilization' ? 'Utilization' : 'Capacity'
@@ -186,7 +187,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                     type="monotone"
                                     dataKey="capacity_mbpd"
                                     name="capacity"
-                                    stroke="#10b981"
+                                    stroke={CHART_COLORS.expansion}
                                     strokeWidth={2}
                                     fill="url(#capGradient)"
                                     animationDuration={1000}
@@ -195,7 +196,7 @@ export const RefiningCapacityCard: React.FC<RefiningCapacityCardProps> = ({ data
                                     type="monotone"
                                     dataKey="utilization"
                                     name="utilization"
-                                    stroke="#3b82f6"
+                                    stroke={CHART_COLORS.west}
                                     strokeWidth={1}
                                     strokeDasharray="5 5"
                                     fill="url(#utilGradient)"

@@ -102,11 +102,11 @@ export const StateMacroInsights: React.FC<StateMacroInsightsProps> = ({ type, da
                 <div
                     key={idx}
                     className={cn(
-                        "flex gap-3 p-4 rounded-2xl border transition-all duration-300 animate-in fade-in slide-in-from-right-2",
+                        "flex gap-3 p-4 rounded-xl border transition-all duration-300 animate-in fade-in slide-in-from-right-2",
                         insight.type === 'success' ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-300/90" :
                             insight.type === 'warning' ? "bg-rose-500/5 border-rose-500/10 text-rose-300/90" :
                                 insight.type === 'info' ? "bg-blue-500/5 border-blue-500/10 text-blue-300/90" :
-                                    "bg-white/[0.02] border-white/5 text-muted-foreground"
+                                    "bg-white/[0.02] border-border text-muted-foreground"
                     )}
                 >
                     <insight.icon className={cn(
@@ -116,7 +116,7 @@ export const StateMacroInsights: React.FC<StateMacroInsightsProps> = ({ type, da
                                 insight.type === 'info' ? "text-blue-500" :
                                     "text-muted-foreground"
                     )} />
-                    <p className="text-xs font-bold leading-relaxed uppercase tracking-heading italic">
+                    <p className="text-xs font-semibold leading-relaxed uppercase tracking-heading italic">
                         {insight.text}
                     </p>
                 </div>

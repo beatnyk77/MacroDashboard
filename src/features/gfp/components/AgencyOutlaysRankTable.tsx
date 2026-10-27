@@ -48,26 +48,26 @@ export const AgencyOutlaysRankTable: React.FC = () => {
   if (error || !rows.length) return <GfpUnavailableState />;
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Agency Outlays Rank
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             MTS Table 5 · latest month{asOf ? ` · ${asOf}` : ''}
           </p>
         </div>
         <GfpBasisBadge basis="cash" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.cash}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.cash}</p>
 
       <div className="overflow-auto max-h-96">
         <table className="w-full text-left text-[11px]">
-          <thead className="sticky top-0 bg-black/80 backdrop-blur">
+          <thead className="sticky top-0 bg-background/80 backdrop-blur">
             <tr>
               <SortTh label="#" k="rnk" sortKey={sortKey} asc={asc} onSort={onSort} />
-              <th className="px-3 py-2 font-black uppercase tracking-widest text-muted-foreground/50 text-[9px]">
+              <th className="px-3 py-2 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]">
                 Agency / Classification
               </th>
               <SortTh label="Size" k="current_month_net_outly" sortKey={sortKey} asc={asc} onSort={onSort} align="right" />
@@ -116,9 +116,9 @@ const SortTh: React.FC<{
   align?: 'left' | 'right';
 }> = ({ label, k, sortKey, asc, onSort, align = 'left' }) => (
   <th
-    className={`px-3 py-2 font-black uppercase tracking-widest text-[9px] cursor-pointer select-none ${
+    className={`px-3 py-2 font-semibold uppercase tracking-wider text-[11px] cursor-pointer select-none ${
       align === 'right' ? 'text-right' : 'text-left'
-    } ${sortKey === k ? 'text-cyan-400/80' : 'text-muted-foreground/50'}`}
+    } ${sortKey === k ? 'text-cyan-400/80' : 'text-terminal-dim'}`}
     onClick={() => onSort(k)}
   >
     {label}

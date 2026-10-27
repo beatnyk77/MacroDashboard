@@ -4,6 +4,7 @@ import { useBoJBalanceSheet } from '@/hooks/useBoJBalanceSheet';
 import { Sparkline } from '@/components/Sparkline';
 import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+import { WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const BoJBalanceSheetCard: React.FC = () => {
     const { data, isLoading } = useBoJBalanceSheet();
@@ -48,15 +49,15 @@ export const BoJBalanceSheetCard: React.FC = () => {
                     display: 'flex',
                     alignItems: 'center',
                     justifyContent: 'space-between',
-                    bgcolor: 'rgba(255,255,255,0.01)'
+                    bgcolor: WHITE_ALPHA.ghost
                 }}>
                     <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-                        <Typography variant="overline" sx={{ fontWeight: 900, letterSpacing: '0.15em', color: 'primary.main' }}>
+                        <Typography variant="overline" sx={{ fontWeight: 700, letterSpacing: '0.15em', color: 'primary.main' }}>
                             BANK OF JAPAN SURVEILLANCE
                         </Typography>
-                        <Chip label="WEEKLY" size="small" sx={{ height: 16, fontSize: '0.55rem', fontWeight: 900, bgcolor: 'rgba(255,255,255,0.05)' }} />
+                        <Chip label="WEEKLY" size="small" sx={{ height: 16, fontSize: '0.55rem', fontWeight: 700, bgcolor: WHITE_ALPHA.faint }} />
                     </Box>
-                    <Typography variant="caption" sx={{ color: 'text.disabled', fontFamily: 'monospace' }}>
+                    <Typography variant="caption" sx={{ color: 'text.disabled', fontFamily: 'Fira Code, monospace' }}>
                         BASIS: 150 ¥/$ | UNITS: TRILLIONS
                     </Typography>
                 </Box>
@@ -65,19 +66,19 @@ export const BoJBalanceSheetCard: React.FC = () => {
                     {items.map((item, idx) => (
                         <Grid item xs={12} sm={6} md={3} key={idx} sx={{
                             p: 3,
-                            borderRight: idx < 3 ? { md: '1px solid rgba(255,255,255,0.05)' } : 'none',
-                            borderBottom: { xs: '1px solid rgba(255,255,255,0.05)', md: 'none' },
+                            borderRight: idx < 3 ? { md: `1px solid ${WHITE_ALPHA.faint}` } : 'none',
+                            borderBottom: { xs: `1px solid ${WHITE_ALPHA.faint}`, md: 'none' },
                             position: 'relative',
                             transition: 'all 0.2s',
-                            '&:hover': { bgcolor: 'rgba(255,255,255,0.02)' }
+                            '&:hover': { bgcolor: WHITE_ALPHA.ghost }
                         }}>
                             <Typography variant="caption" sx={{
                                 color: 'text.disabled',
-                                fontWeight: 800,
+                                fontWeight: 700,
                                 letterSpacing: '0.05em',
                                 display: 'block',
                                 mb: 1,
-                                fontSize: '0.6rem'
+                                fontSize: '0.6875rem'
                             }}>
                                 {item.label}
                             </Typography>
@@ -85,15 +86,15 @@ export const BoJBalanceSheetCard: React.FC = () => {
                             <Box sx={{ display: 'flex', alignItems: 'baseline', gap: 1 }}>
                                 <Typography sx={{
                                     fontSize: item.primary ? '1.8rem' : '1.4rem',
-                                    fontWeight: 900,
-                                    fontFamily: 'monospace',
+                                    fontWeight: 700,
+                                    fontFamily: 'Fira Code, monospace',
                                     color: item.primary ? 'text.primary' : 'text.secondary'
                                 }}>
                                     ¥{formatValue(item.value)}T
                                 </Typography>
                             </Box>
 
-                            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', mb: 2, fontFamily: 'monospace' }}>
+                            <Typography variant="caption" sx={{ color: 'text.disabled', display: 'block', mb: 2, fontFamily: 'Fira Code, monospace' }}>
                                 {getUsdValue(item.value)}
                             </Typography>
 

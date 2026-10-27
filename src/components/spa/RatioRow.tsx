@@ -31,7 +31,7 @@ export const RatioRow: React.FC<RatioRowProps> = ({
         )}>
             <div className="space-y-2 max-w-xl">
                 <div className="flex items-center gap-2">
-                    <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/60">
+                    <span className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">
                         {label || 'Signal'}
                     </span>
                     {trend && (
@@ -51,7 +51,7 @@ export const RatioRow: React.FC<RatioRowProps> = ({
                         {value}
                     </span>
                     {subtitle && (
-                        <span className="text-sm font-medium text-muted-foreground/50">
+                        <span className="text-sm font-medium text-terminal-dim">
                             {subtitle}
                         </span>
                     )}

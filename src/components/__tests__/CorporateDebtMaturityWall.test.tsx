@@ -2,6 +2,7 @@ import React from 'react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
+import { MemoryRouter } from 'react-router-dom';
 import { CorporateDebtMaturityWall } from '../CorporateDebtMaturityWall';
 import { supabase } from '../../lib/supabase';
 
@@ -45,7 +46,7 @@ describe('CorporateDebtMaturityWall', () => {
         });
         (supabase.from as any).mockReturnValue({ select: mockSelect });
 
-        render(<CorporateDebtMaturityWall />);
+        render(<MemoryRouter><CorporateDebtMaturityWall /></MemoryRouter>);
         expect(screen.getByText('Loading corporate maturity telemetry...')).toBeInTheDocument();
     });
 
@@ -86,7 +87,7 @@ describe('CorporateDebtMaturityWall', () => {
             }
         });
 
-        render(<CorporateDebtMaturityWall />);
+        render(<MemoryRouter><CorporateDebtMaturityWall /></MemoryRouter>);
 
         // Wait for loading to finish and component to render data
         await waitFor(() => {
@@ -127,7 +128,7 @@ describe('CorporateDebtMaturityWall', () => {
             return { select: maturityQueryCount === 1 ? mockSelectDate : mockSelectData };
         });
 
-        render(<CorporateDebtMaturityWall />);
+        render(<MemoryRouter><CorporateDebtMaturityWall /></MemoryRouter>);
         await waitFor(() => {
             expect(screen.queryByText('Loading corporate maturity telemetry...')).not.toBeInTheDocument();
         });

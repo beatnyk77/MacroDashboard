@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-09-20T21:04:54.679Z",
+  "generatedAt": "2026-10-27T17:12:04.402Z",
   "source": "vw_latest_metrics",
   "available": true,
   "reason": null,
@@ -7,92 +7,74 @@
     {
       "metricId": "FED_BALANCE_SHEET",
       "label": "Fed Balance Sheet",
-      "value": 6746548,
+      "value": 6753604,
       "display": "6.75T",
-      "asOf": "2026-09-16",
-      "staleness": "fresh",
+      "asOf": "2026-10-21",
+      "staleness": null,
       "unit": null
     },
     {
       "metricId": "RRP_BALANCE_BN",
       "label": "ON RRP",
-      "value": 0.576,
-      "display": "0.58B",
-      "asOf": "2026-09-18",
-      "staleness": "fresh",
-      "unit": "USD bn"
+      "value": 0.2,
+      "display": "0.20B",
+      "asOf": "2026-10-26",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "TGA_BALANCE_BN",
       "label": "TGA",
-      "value": 877028,
-      "display": "877.03B",
-      "asOf": "2026-09-16",
-      "staleness": "fresh",
-      "unit": "USD bn"
+      "value": 952002,
+      "display": "952.00B",
+      "asOf": "2026-10-21",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "GOLD_PRICE_USD",
       "label": "Gold",
-      "value": 4478.100098,
-      "display": "$4,478",
-      "asOf": "2026-08-28",
-      "staleness": "very_lagged",
-      "unit": "USD/oz"
+      "value": 4026.300049,
+      "display": "$4,026",
+      "asOf": "2026-10-26",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "DXY_INDEX",
       "label": "DXY",
-      "value": 99.160004,
-      "display": "99.16",
-      "asOf": "2026-08-27",
-      "staleness": "very_lagged",
-      "unit": "index"
+      "value": 102.021004,
+      "display": "102.02",
+      "asOf": "2026-10-26",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "UST_10Y_YIELD",
       "label": "UST 10Y",
-      "value": 4.94,
-      "display": "4.94",
-      "asOf": "2026-09-17",
-      "staleness": "fresh",
-      "unit": "%"
+      "value": 4.986,
+      "display": "4.99",
+      "asOf": "2026-10-26",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "VIX_INDEX",
       "label": "VIX",
-      "value": 14.51,
-      "display": "14.51",
-      "asOf": "2026-08-27",
-      "staleness": "very_lagged",
-      "unit": "index"
+      "value": 18.389999,
+      "display": "18.39",
+      "asOf": "2026-10-26",
+      "staleness": null,
+      "unit": null
     },
     {
       "metricId": "BRENT_CRUDE_PRICE",
       "label": "Brent",
-      "value": 103.87,
-      "display": "$103.9",
-      "asOf": "2026-09-18",
-      "staleness": "fresh",
+      "value": 110.92,
+      "display": "$110.9",
+      "asOf": "2026-10-26",
+      "staleness": null,
       "unit": null
-    },
-    {
-      "metricId": "RATIO_M2_GOLD",
-      "label": "M2/Gold",
-      "value": 5.707052016900045,
-      "display": "5.71",
-      "asOf": "2026-07-01",
-      "staleness": "fresh",
-      "unit": "ratio"
-    },
-    {
-      "metricId": "RATIO_DEBT_GOLD",
-      "label": "Debt/Gold",
-      "value": 31.250200872777338,
-      "display": "31.25",
-      "asOf": "2026-01-30",
-      "staleness": "fresh",
-      "unit": "ratio"
     }
   ]
 }

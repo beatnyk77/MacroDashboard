@@ -21,17 +21,17 @@ const OVERALL_UI: Record<
   ok: {
     label: 'OK',
     icon: <CheckCircle2 size={12} aria-hidden />,
-    className: 'text-emerald-700 dark:text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
+    className: ' text-emerald-400 border-emerald-500/30 bg-emerald-500/10',
   },
   partial: {
     label: 'Partial',
     icon: <AlertTriangle size={12} aria-hidden />,
-    className: 'text-amber-700 dark:text-amber-400 border-amber-500/30 bg-amber-500/10',
+    className: ' text-amber-400 border-amber-500/30 bg-amber-500/10',
   },
   blocked: {
     label: 'Blocked',
     icon: <ShieldOff size={12} aria-hidden />,
-    className: 'text-rose-700 dark:text-rose-400 border-rose-500/30 bg-rose-500/10',
+    className: ' text-rose-400 border-rose-500/30 bg-rose-500/10',
   },
 };
 
@@ -49,7 +49,7 @@ function CountPill({
   return (
     <span
       className={cn(
-        'inline-flex items-center gap-1.5 px-2 py-1 rounded border text-[10px] font-bold',
+        'inline-flex items-center gap-1.5 px-2 py-1 rounded border text-[11px] font-bold',
         className,
       )}
     >
@@ -70,13 +70,13 @@ export const QualityFooter: React.FC<QualityFooterProps> = ({ quality, asOf }) =
     >
       <div className="flex flex-wrap items-center gap-3 justify-between">
         <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.25em] text-muted-foreground">
+          <p className="text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
             Data quality
           </p>
           <div className="flex flex-wrap items-center gap-2">
             <span
               className={cn(
-                'inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-[10px] font-black uppercase tracking-wider',
+                'inline-flex items-center gap-1.5 px-2.5 py-1 rounded border text-[11px] font-semibold uppercase tracking-wider',
                 overall.className,
               )}
             >
@@ -98,25 +98,25 @@ export const QualityFooter: React.FC<QualityFooterProps> = ({ quality, asOf }) =
           icon={<CheckCircle2 size={11} aria-hidden />}
           label="OK"
           count={quality.okCount}
-          className="text-emerald-700 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/10"
+          className=" text-emerald-400 border-emerald-500/20 bg-emerald-500/10"
         />
         <CountPill
           icon={<Clock size={11} aria-hidden />}
           label="Stale"
           count={quality.staleCount}
-          className="text-amber-700 dark:text-amber-400 border-amber-500/20 bg-amber-500/10"
+          className=" text-amber-400 border-amber-500/20 bg-amber-500/10"
         />
         <CountPill
           icon={<HelpCircle size={11} aria-hidden />}
           label="Missing"
           count={quality.missingCount}
-          className="text-slate-700 dark:text-slate-300 border-slate-500/20 bg-slate-500/10"
+          className=" text-slate-300 border-slate-500/20 bg-slate-500/10"
         />
         <CountPill
           icon={<ShieldOff size={11} aria-hidden />}
           label="Withheld"
           count={quality.withheldCount}
-          className="text-rose-700 dark:text-rose-400 border-rose-500/20 bg-rose-500/10"
+          className=" text-rose-400 border-rose-500/20 bg-rose-500/10"
         />
       </div>
 

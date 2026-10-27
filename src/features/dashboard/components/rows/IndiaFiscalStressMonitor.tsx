@@ -3,7 +3,6 @@ import { useIndiaFiscalStress } from '@/hooks/useIndiaFiscalStress';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
 import {
-    ResponsiveContainer,
     ComposedChart,
     Line,
     XAxis,
@@ -13,10 +12,13 @@ import {
     ReferenceLine,
     Area
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { AlertTriangle, TrendingUp, TrendingDown, DollarSign, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
 import { DataStatePanel } from '@/components/DataStatePanel';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const IndiaFiscalStressMonitor: React.FC = () => {
     const { data, isLoading, isError, refetch } = useIndiaFiscalStress();
@@ -40,8 +42,8 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Analyzing India Fiscal Stress...</span>
+            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Analyzing India Fiscal Stress...</span>
             </div>
         );
     }
@@ -84,27 +86,27 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
 
                 <div className="space-y-12">
                     {/* Narrative Insight */}
-                    <div className="p-8 rounded-[2rem] bg-blue-500/[0.03] border border-blue-500/10 max-w-6xl mx-auto">
+                    <div className="p-8 rounded-xl bg-blue-500/[0.03] border border-blue-500/10 max-w-6xl mx-auto">
                         <p className="text-lg text-muted-foreground/80 leading-relaxed font-medium">
-                            <span className="text-blue-400 font-black uppercase mr-3 tracking-uppercase text-xs">Fiscal Thesis:</span>
+                            <span className="text-blue-400 font-semibold uppercase mr-3 tracking-wider text-xs">Fiscal Thesis:</span>
                             India's interest-to-revenue ratio is shown from the latest published fiscal-stress observation. The current ratio is {interestRevenuePercent}%, with source date and methodology carried by the module.
                         </p>
                     </div>
 
                     {/* Main Chart Section - Full Width */}
-                    <div className="bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-10 relative overflow-hidden group max-w-7xl mx-auto shadow-2xl">
+                    <div className="bg-white/[0.02] border border-border rounded-xl p-10 relative overflow-hidden group max-w-7xl mx-auto shadow-2xl">
                         <div className="absolute top-10 left-10 z-10">
-                            <h3 className="text-sm font-black text-white/40 uppercase tracking-uppercase">Interest Payments % of Revenue Receipts</h3>
-                            <p className="text-xs text-muted-foreground/60 mt-2 font-medium">Union Government Fiscal Sustainability Gauge</p>
+                            <h3 className="text-sm font-semibold text-terminal-dim uppercase tracking-wider">Interest Payments % of Revenue Receipts</h3>
+                            <p className="text-xs text-muted-foreground mt-2 font-medium">Union Government Fiscal Sustainability Gauge</p>
                         </div>
 
                         <div className="absolute top-10 right-10 z-10 flex items-center gap-6">
-                            <div className="flex gap-2 bg-black/40 p-1.5 rounded-xl border border-white/5">
+                            <div className="flex gap-2 bg-background/40 p-1.5 rounded-xl border border-border">
                                 <button
                                     onClick={() => setTimeRange('5Y')}
                                     className={cn(
-                                        "px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-uppercase transition-all",
-                                        timeRange === '5Y' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
+                                        "px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all",
+                                        timeRange === '5Y' ? "bg-white/10 text-white shadow-xl" : "text-terminal-dim hover:text-white"
                                     )}
                                 >
                                     5Y
@@ -112,39 +114,38 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                 <button
                                     onClick={() => setTimeRange('ALL')}
                                     className={cn(
-                                        "px-4 py-1.5 rounded-lg text-xs font-black uppercase tracking-uppercase transition-all",
-                                        timeRange === 'ALL' ? "bg-white/10 text-white shadow-xl" : "text-white/30 hover:text-white"
+                                        "px-4 py-1.5 rounded-lg text-xs font-semibold uppercase tracking-wider transition-all",
+                                        timeRange === 'ALL' ? "bg-white/10 text-white shadow-xl" : "text-terminal-dim hover:text-white"
                                     )}
                                 >
                                     ALL
                                 </button>
                             </div>
                             <div className="flex items-center gap-3">
-                                <span className={cn("text-4xl font-black tabular-nums tracking-heading", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
+                                <span className={cn("text-4xl font-bold tabular-nums tracking-heading", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
                                     {interestRevenuePercent}%
                                 </span>
                                 <div className="flex flex-col">
-                                    <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Current</span>
-                                    <span className="text-xs font-black text-rose-500/50 uppercase tracking-heading whitespace-nowrap">Crisis: &gt;35%</span>
+                                    <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Current</span>
+                                    <span className="text-xs font-semibold text-rose-500/50 uppercase tracking-heading whitespace-nowrap">Crisis: &gt;35%</span>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="h-[500px] w-full mt-24">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.hero} className="mt-24">
                                 <ComposedChart data={filteredData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="indiaInterestGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#f59e0b" stopOpacity={0.2} />
-                                            <stop offset="95%" stopColor="#f59e0b" stopOpacity={0} />
+                                            <stop offset="5%" stopColor={CHART_COLORS.gold} stopOpacity={0.2} />
+                                            <stop offset="95%" stopColor={CHART_COLORS.gold} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
+                                        {...DEFAULT_XAXIS_PROPS}
                                         dataKey="date"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim, fontWeight: 600 }}
                                         minTickGap={60}
                                         tickFormatter={(str) => {
                                             const date = new Date(str);
@@ -152,19 +153,20 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                         }}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 10, fill: 'rgba(255,255,255,0.3)', fontWeight: 600 }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.dim, fontWeight: 600 }}
                                         tickFormatter={(val) => `${val.toFixed(0)}%`}
                                     />
-                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: 'rgba(255,255,255,0.1)', strokeWidth: 1 }} />
+                                    <Tooltip content={<CustomTooltip />} cursor={{ stroke: WHITE_ALPHA.line, strokeWidth: 1 }} />
 
                                     <ReferenceLine
                                         y={35}
-                                        stroke="#ef4444"
+                                        stroke={CHART_COLORS.stress}
                                         strokeDasharray="10 10"
                                         strokeOpacity={0.4}
-                                        label={{ value: 'CRITICAL STRESS THRESHOLD', position: 'insideTopRight', fill: '#ef4444', fontSize: 10, fontWeight: 900 }}
+                                        label={{ value: 'CRITICAL STRESS THRESHOLD', position: 'insideTopRight', fill: CHART_COLORS.stress, fontSize: 11, fontWeight: 700 }}
                                     />
 
                                     <Area
@@ -177,14 +179,13 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                                         type="monotone"
                                         dataKey="interest_revenue_pct"
                                         name="Interest/Revenue %"
-                                        stroke={isCrisisZone ? "#ef4444" : "#f59e0b"}
+                                        stroke={isCrisisZone ? CHART_COLORS.stress : CHART_COLORS.gold}
                                         strokeWidth={4}
                                         dot={false}
                                         activeDot={{ r: 6, strokeWidth: 0, fill: '#fff' }}
                                     />
                                 </ComposedChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </div>
 
                     {/* Supporting Metrics - Horizontal Grid */}
@@ -229,9 +230,9 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
                 </div>
 
                 <div className="mt-12 flex justify-center">
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-border">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">
                             Source: Union Budget / PRS India / RBI DBIE – updated monthly
                         </span>
                     </div>
@@ -242,10 +243,10 @@ export const IndiaFiscalStressMonitor: React.FC = () => {
 };
 
 const StatusChip = ({ label, status, color }: { label: string; status: string; color: 'rose' | 'amber' | 'emerald' }) => (
-    <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
+    <div className="px-5 py-3 rounded-xl bg-white/[0.03] border border-border flex flex-col items-start gap-1">
+        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{label}</span>
         <span className={cn(
-            "text-xs font-black uppercase tracking-heading",
+            "text-xs font-semibold uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : color === 'amber' ? "text-amber-500" : "text-emerald-500"
         )}>{status}</span>
     </div>
@@ -260,25 +261,25 @@ const MetricCard = ({ title, value, unit, sub, icon, description, trend }: {
     description: string;
     trend: 'up' | 'down' | 'stable';
 }) => (
-    <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] transition-all group">
+    <div className="p-6 rounded-xl bg-white/[0.02] border border-border flex flex-col justify-between hover:bg-white/[0.04] transition-all group">
         <div className="flex items-start justify-between mb-4">
             <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-transform">
                 {icon}
             </div>
             <div className="text-right">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1">{title}</div>
+                <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">{title}</div>
                 <div className="flex items-baseline justify-end gap-1">
-                    <span className="text-3xl font-black text-white/90 tabular-nums">{value}</span>
-                    <span className="text-xs font-bold text-muted-foreground/40">{unit}</span>
+                    <span className="text-3xl font-bold text-white/90 tabular-nums">{value}</span>
+                    <span className="text-xs font-bold text-terminal-dim">{unit}</span>
                 </div>
             </div>
         </div>
         <div>
-            <div className="text-xs font-bold text-muted-foreground/60 leading-relaxed mb-4">{description}</div>
-            <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                <span className="text-xs font-black uppercase tracking-uppercase text-white/20">{sub}</span>
+            <div className="text-xs font-bold text-muted-foreground leading-relaxed mb-4">{description}</div>
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+                <span className="text-xs font-semibold uppercase tracking-wider text-white/20">{sub}</span>
                 <span className={cn(
-                    "text-xs font-black px-2 py-0.5 rounded-full uppercase",
+                    "text-xs font-semibold px-2 py-0.5 rounded-full uppercase",
                     trend === 'up' ? "bg-rose-500/10 text-rose-500" : trend === 'down' ? "bg-emerald-500/10 text-emerald-500" : "bg-amber-500/10 text-amber-500"
                 )}>{trend}</span>
             </div>
@@ -293,26 +294,26 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         const fy = `FY ${date.getFullYear()}`;
 
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 border-b border-white/5 pb-2">
+            <div className={TOOLTIP_SHELL_CLASS}>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 border-b border-border pb-2">
                     {fy} Fiscal Snapshot
                 </div>
                 <div className="space-y-3">
                     <div className="flex items-center justify-between gap-12">
-                        <span className="text-xs font-bold text-muted-foreground/80">Interest/Revenue</span>
-                        <span className={cn("text-sm font-black tabular-nums", data.interest_revenue_pct >= 35 ? "text-rose-500" : "text-amber-500")}>
+                        <span className="text-xs font-bold text-slate-400">Interest/Revenue</span>
+                        <span className={cn("text-xs font-semibold tabular-nums", data.interest_revenue_pct >= 35 ? "text-rose-500" : "text-amber-500")}>
                             {data.interest_revenue_pct?.toFixed(2)}%
                         </span>
                     </div>
                     <div className="flex items-center justify-between gap-12">
-                        <span className="text-xs font-bold text-muted-foreground/80">Fiscal Deficit/GDP</span>
-                        <span className="text-sm font-black tabular-nums text-rose-500">
+                        <span className="text-xs font-bold text-slate-400">Fiscal Deficit/GDP</span>
+                        <span className="text-xs font-semibold font-mono tabular-nums text-rose-500">
                             {data.fiscal_deficit_gdp_pct?.toFixed(2)}%
                         </span>
                     </div>
                     <div className="flex items-center justify-between gap-12">
-                        <span className="text-xs font-bold text-muted-foreground/80">Debt/GDP</span>
-                        <span className="text-sm font-black tabular-nums text-amber-500">
+                        <span className="text-xs font-bold text-slate-400">Debt/GDP</span>
+                        <span className="text-xs font-semibold font-mono tabular-nums text-amber-500">
                             {data.debt_gdp_pct?.toFixed(1)}%
                         </span>
                     </div>

@@ -28,27 +28,27 @@ export const MacroBriefArchivePage: React.FC = () => {
 
       {/* Breadcrumbs & Header */}
       <div className="mb-10 space-y-2">
-        <nav className="text-[10px] font-mono uppercase tracking-widest text-white/25 flex items-center gap-2">
+        <nav className="text-[11px] font-mono uppercase tracking-wider text-terminal-dim flex items-center gap-2">
           <Link to="/" className="hover:text-white/50 transition-colors">Home</Link>
           <span>/</span>
           <Link to="/macro-brief" className="hover:text-white/50 transition-colors">Brief</Link>
           <span>/</span>
           <span className="text-white/50">Archive</span>
         </nav>
-        <h1 className="text-3xl font-black text-white uppercase tracking-tight">
+        <h1 className="text-3xl font-bold text-white uppercase tracking-tight">
           Morning Brief Archive
         </h1>
-        <p className="text-sm font-medium text-white/40 max-w-lg">
+        <p className="text-sm font-medium text-terminal-dim max-w-lg">
           Weekday deep notes (Mon–Fri America/New_York). Target ≥350 words of institutional regime
           synthesis. Weekends are not generated — quality over thin daily stubs.
         </p>
-        <p className="text-[11px] font-mono uppercase tracking-widest text-emerald-500/70">
+        <p className="text-[11px] font-mono uppercase tracking-wider text-emerald-500/70">
           Quality bar · deep ≥350w · acceptable ≥180w
         </p>
       </div>
 
       {/* Table Card */}
-      <Card className="overflow-hidden bg-slate-950/50 border border-white/10 rounded-2xl shadow-2xl">
+      <Card className="overflow-hidden bg-card/60 border border-border rounded-xl shadow-2xl">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-8 space-y-3">
@@ -57,33 +57,33 @@ export const MacroBriefArchivePage: React.FC = () => {
               ))}
             </div>
           ) : error ? (
-            <div className="p-12 text-center text-sm font-bold text-rose-400 uppercase tracking-widest">
+            <div className="p-12 text-center text-sm font-semibold text-rose-400 uppercase tracking-wider">
               Error loading archive data.
             </div>
           ) : !briefs || briefs.length === 0 ? (
-            <div className="p-12 text-center text-sm font-bold text-white/30 uppercase tracking-widest">
+            <div className="p-12 text-center text-sm font-semibold text-terminal-dim uppercase tracking-wider">
               No briefs published yet.
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left font-mono text-xs text-white/70">
                 <thead>
-                  <tr className="border-b border-white/10 bg-white/[0.01]">
-                    <th className="px-6 py-4 font-black uppercase tracking-widest text-white/40 text-[10px]">
+                  <tr className="border-b border-border bg-white/[0.01]">
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]">
                       Date
                     </th>
-                    <th className="px-6 py-4 font-black uppercase tracking-widest text-white/40 text-[10px]">
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]">
                       Regime
                     </th>
-                    <th className="px-6 py-4 font-black uppercase tracking-widest text-white/40 text-[10px] text-center">
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-terminal-dim text-[11px] text-center">
                       Score
                     </th>
-                    <th className="px-6 py-4 font-black uppercase tracking-widest text-white/40 text-[10px] text-right">
+                    <th className="px-6 py-4 font-semibold uppercase tracking-wider text-terminal-dim text-[11px] text-right">
                       Link
                     </th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-white/5">
+                <tbody className="divide-y divide-border">
                   {briefs.map((brief) => {
                     const parsedDate = isValid(parseISO(brief.brief_date))
                       ? parseISO(brief.brief_date)
@@ -102,7 +102,7 @@ export const MacroBriefArchivePage: React.FC = () => {
                         <td className="px-6 py-4">
                           {brief.regime_label ? (
                             <span className={cn(
-                              "px-2 py-0.5 rounded text-[10px] font-black uppercase tracking-wider",
+                              "px-2 py-0.5 rounded text-[11px] font-semibold uppercase tracking-wider",
                               regimeColors.bg,
                               regimeColors.text
                             )}>
@@ -118,7 +118,7 @@ export const MacroBriefArchivePage: React.FC = () => {
                         <td className="px-6 py-4 text-right">
                           <Link
                             to={`/macro-brief/${brief.brief_date}`}
-                            className="inline-flex items-center gap-1.5 text-blue-400 group-hover:text-blue-300 font-black uppercase tracking-wider hover:underline transition-colors"
+                            className="inline-flex items-center gap-1.5 text-blue-400 group-hover:text-blue-300 font-semibold uppercase tracking-wider hover:underline transition-colors"
                           >
                             <span>View</span>
                             <ArrowRight size={12} className="group-hover:translate-x-0.5 transition-transform" />
@@ -140,7 +140,7 @@ export const MacroBriefArchivePage: React.FC = () => {
           onClick={() => setPage((p) => Math.max(0, p - 1))}
           disabled={!hasPrevPage}
           className={cn(
-            "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-xs font-mono text-white/60 hover:bg-white/10 hover:text-white transition-all",
+            "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-border text-xs font-mono text-white/60 hover:bg-white/10 hover:text-white transition-all",
             !hasPrevPage && "opacity-30 cursor-not-allowed select-none"
           )}
         >
@@ -148,7 +148,7 @@ export const MacroBriefArchivePage: React.FC = () => {
           <span>Previous</span>
         </button>
 
-        <span className="text-xs font-mono text-white/30 uppercase tracking-widest">
+        <span className="text-xs font-mono text-terminal-dim uppercase tracking-wider">
           Page {page + 1}
         </span>
 
@@ -156,7 +156,7 @@ export const MacroBriefArchivePage: React.FC = () => {
           onClick={() => setPage((p) => p + 1)}
           disabled={!hasNextPage}
           className={cn(
-            "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-white/12 text-xs font-mono text-white/60 hover:bg-white/10 hover:text-white transition-all",
+            "flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/5 border border-border text-xs font-mono text-white/60 hover:bg-white/10 hover:text-white transition-all",
             !hasNextPage && "opacity-30 cursor-not-allowed select-none"
           )}
         >

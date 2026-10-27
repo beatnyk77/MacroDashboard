@@ -5,14 +5,13 @@ import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
     Paper, Tooltip as MuiTooltip, Typography, Box
 } from '@mui/material';
-import {
-    ResponsiveContainer, BarChart, Bar, XAxis, YAxis,
-    Tooltip as RechartsTooltip, CartesianGrid, Cell
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip as RechartsTooltip, CartesianGrid, Cell } from 'recharts';
+import { CHART_FONT_FAMILY, DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { Scale, Info, TrendingUp } from 'lucide-react';
 // import { SPASection } from '@/components/spa/SPASection'; // Removed to avoid nesting
 import { SectionHeader } from '@/components/SectionHeader';
 import { useCentralBankGoldNet, TopCountry } from '@/hooks/useCentralBankGoldNet';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -76,24 +75,24 @@ export const CentralBankGoldNet: React.FC = () => {
             >
                 {/* Main Data Table */}
                 <m.div variants={itemVariants} className="lg:col-span-2">
-                    <TableContainer component={Paper} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl overflow-hidden shadow-2xl">
+                    <TableContainer component={Paper} className="bg-neutral-900/50 backdrop-blur-sm border border-border rounded-xl overflow-hidden shadow-2xl">
                         <Table aria-label="central bank gold net purchases table">
                             <TableHead className="bg-white/5">
                                 <TableRow>
-                                    <TableCell className="text-neutral-400 font-medium border-b border-white/12">Period</TableCell>
-                                    <TableCell align="right" className="text-emerald-400 font-medium border-b border-white/12">Gross Buyers (t)</TableCell>
-                                    <TableCell align="right" className="text-rose-400 font-medium border-b border-white/12">Gross Sellers (t)</TableCell>
-                                    <TableCell align="right" className="text-yellow-400 font-bold border-b border-white/12">Net Change (t)</TableCell>
-                                    <TableCell align="right" className="text-neutral-400 font-medium border-b border-white/12">% Global Stock</TableCell>
+                                    <TableCell className="text-neutral-400 font-medium border-b border-border">Period</TableCell>
+                                    <TableCell align="right" className="text-emerald-400 font-medium border-b border-border">Gross Buyers (t)</TableCell>
+                                    <TableCell align="right" className="text-rose-400 font-medium border-b border-border">Gross Sellers (t)</TableCell>
+                                    <TableCell align="right" className="text-yellow-400 font-bold border-b border-border">Net Change (t)</TableCell>
+                                    <TableCell align="right" className="text-neutral-400 font-medium border-b border-border">% Global Stock</TableCell>
                                 </TableRow>
                             </TableHead>
                             <TableBody>
                                 {periods.map((row) => (
                                     <TableRow key={row.period_start_year} className="hover:bg-white/5 transition-colors group">
-                                        <TableCell component="th" scope="row" className="text-white font-medium border-b border-white/5">
+                                        <TableCell component="th" scope="row" className="text-white font-medium border-b border-border">
                                             {row.period_label}
                                         </TableCell>
-                                        <TableCell align="right" className="text-emerald-300 font-mono border-b border-white/5 cursor-help">
+                                        <TableCell align="right" className="text-emerald-300 font-mono border-b border-border cursor-help">
                                             <MuiTooltip
                                                 title={
                                                     <Box sx={{ p: 1 }}>
@@ -114,7 +113,7 @@ export const CentralBankGoldNet: React.FC = () => {
                                                 </span>
                                             </MuiTooltip>
                                         </TableCell>
-                                        <TableCell align="right" className="text-rose-300 font-mono border-b border-white/5 cursor-help">
+                                        <TableCell align="right" className="text-rose-300 font-mono border-b border-border cursor-help">
                                             <MuiTooltip
                                                 title={
                                                     <Box sx={{ p: 1 }}>
@@ -135,12 +134,12 @@ export const CentralBankGoldNet: React.FC = () => {
                                                 </span>
                                             </MuiTooltip>
                                         </TableCell>
-                                        <TableCell align="right" className="font-bold border-b border-white/5 text-lg">
+                                        <TableCell align="right" className="font-bold border-b border-border text-lg">
                                             <span className={(row.net_tonnes || 0) >= 0 ? "text-yellow-400" : "text-neutral-400"}>
                                                 {(row.net_tonnes || 0) > 0 ? '+' : ''}{row.net_tonnes?.toLocaleString()}
                                             </span>
                                         </TableCell>
-                                        <TableCell align="right" className="text-neutral-300 font-mono border-b border-white/5">
+                                        <TableCell align="right" className="text-neutral-300 font-mono border-b border-border">
                                             {row.net_pct_global_stock}%
                                         </TableCell>
                                     </TableRow>
@@ -148,14 +147,14 @@ export const CentralBankGoldNet: React.FC = () => {
                             </TableBody>
                         </Table>
                     </TableContainer>
-                    <div className="mt-4 text-xs text-neutral-500 flex items-center gap-2">
+                    <div className="mt-4 text-xs text-terminal-dim flex items-center gap-2">
                         <Info className="w-4 h-4" />
                         <span>Hover over values to see top contributing central banks. % Global Stock based on ~212k tonnes above-ground estimate.</span>
                     </div>
                 </m.div>
 
                 {/* Inset Chart: Since 2020 Breakdown */}
-                <m.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-white/12 rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
+                <m.div variants={itemVariants} className="bg-neutral-900/50 backdrop-blur-sm border border-border rounded-xl p-6 shadow-2xl flex flex-col h-[400px]">
                     <h3 className="text-lg font-medium text-white mb-2 flex items-center gap-2">
                         <TrendingUp className="w-4 h-4 text-emerald-400" />
                         Since 2020 Breakdown
@@ -163,33 +162,36 @@ export const CentralBankGoldNet: React.FC = () => {
                     <p className="text-sm text-neutral-400 mb-6">Top 5 Buyers vs Sellers (Tonnes)</p>
 
                     <div className="flex-1 w-full min-h-0">
-                        <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height="fill">
                             <BarChart
                                 data={chartData}
                                 layout="vertical"
                                 margin={{ top: 5, right: 30, left: 40, bottom: 5 }}
                             >
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.1)" horizontal={false} />
-                                <XAxis type="number" stroke="#525252" tick={{ fill: '#a3a3a3', fontSize: 10 }} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
+                                <XAxis {...DEFAULT_XAXIS_PROPS} type="number" stroke={CHART_COLORS.tick} tick={{ fontFamily: CHART_FONT_FAMILY, fill: CHART_COLORS.label, fontSize: 11 }} />
                                 <YAxis
+                                    {...DEFAULT_YAXIS_PROPS}
                                     type="category"
                                     dataKey="name"
-                                    stroke="#525252"
-                                    tick={{ fill: '#a3a3a3', fontSize: 11 }}
+                                    stroke={CHART_COLORS.tick}
+                                    tick={{ fontFamily: CHART_FONT_FAMILY, fill: CHART_COLORS.label, fontSize: 11 }}
                                     width={100}
                                 />
                                 <RechartsTooltip
-                                    contentStyle={{ backgroundColor: '#171717', borderColor: '#404040', color: '#fff' }}
-                                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                                    contentStyle={DEFAULT_TOOLTIP_STYLE}
+                                    labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                                    itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
+                                    cursor={{ fill: WHITE_ALPHA.faint }}
                                     formatter={(value: number) => [`${Math.abs(value).toLocaleString()} t`, value > 0 ? 'Buy' : 'Sell']}
                                 />
                                 <Bar dataKey="value" name="Net Change" radius={[0, 4, 4, 0]}>
                                     {chartData.map((entry, index) => (
-                                        <Cell key={`cell-${index}`} fill={entry.type === 'Buy' ? '#34d399' : '#f43f5e'} />
+                                        <Cell key={`cell-${index}`} fill={entry.type === 'Buy' ? CHART_COLORS.expansion : CHART_COLORS.east} />
                                     ))}
                                 </Bar>
                             </BarChart>
-                        </ResponsiveContainer>
+                        </MacroChartContainer>
                     </div>
                 </m.div>
             </m.div>

@@ -1,13 +1,5 @@
 import React, { useMemo } from 'react';
-import {
-  ResponsiveContainer,
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip } from 'recharts';
 import { useGfpReceipts } from '@/hooks/useGfpReceipts';
 import { formatBillions } from '@/features/gfp/lib/format';
 import { GFP_BASIS } from '@/features/gfp/lib/types';
@@ -17,8 +9,12 @@ import {
   DEFAULT_YAXIS_PROPS,
   DEFAULT_TOOLTIP_STYLE,
   CHART_HEIGHTS,
+  DEFAULT_TOOLTIP_ITEM_STYLE,
+  DEFAULT_TOOLTIP_LABEL_STYLE,
+    CHART_COLORS,
 } from '@/constants/chartDefaults';
 import { GfpBasisBadge, GfpLoadingState, GfpUnavailableState } from './GfpEmptyState';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 /** Fiscal Data receipt_amt is raw dollars → display billions. */
 function toDisplayBillions(amt: number | null | undefined): number | null {
@@ -61,33 +57,33 @@ export const ReceiptsByAgencyPanel: React.FC = () => {
   }));
 
   return (
-    <section className="space-y-3 p-4 rounded-xl border border-white/5 bg-white/[0.02]">
+    <section className="space-y-3 p-4 rounded-xl border border-border bg-white/[0.02]">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <h3 className="text-sm font-black uppercase tracking-widest text-white">
+          <h3 className="text-sm font-semibold uppercase tracking-wider text-white">
             Receipts by Agency
             {fy != null ? ` · FY${fy}` : ''}
           </h3>
-          <p className="text-[10px] text-muted-foreground/50 uppercase tracking-widest mt-1">
+          <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
             Top agencies{asOf ? ` · as of ${asOf}` : ''}
           </p>
         </div>
         <GfpBasisBadge basis="cash" />
       </div>
-      <p className="text-[10px] text-muted-foreground/40">{GFP_BASIS.cash}</p>
+      <p className="text-[11px] text-terminal-dim">{GFP_BASIS.cash}</p>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="overflow-auto max-h-72">
           <table className="w-full text-left text-[11px]">
-            <thead className="sticky top-0 bg-black/80 backdrop-blur">
+            <thead className="sticky top-0 bg-background/80 backdrop-blur">
               <tr>
-                <th className="px-3 py-2 font-black uppercase tracking-widest text-muted-foreground/50 text-[9px]">
+                <th className="px-3 py-2 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]">
                   #
                 </th>
-                <th className="px-3 py-2 font-black uppercase tracking-widest text-muted-foreground/50 text-[9px]">
+                <th className="px-3 py-2 font-semibold uppercase tracking-wider text-terminal-dim text-[11px]">
                   Agency
                 </th>
-                <th className="px-3 py-2 font-black uppercase tracking-widest text-muted-foreground/50 text-[9px] text-right">
+                <th className="px-3 py-2 font-semibold uppercase tracking-wider text-terminal-dim text-[11px] text-right">
                   Receipts
                 </th>
               </tr>
@@ -109,7 +105,7 @@ export const ReceiptsByAgencyPanel: React.FC = () => {
         </div>
 
         <div style={{ width: '100%', height: CHART_HEIGHTS.standard }}>
-          <ResponsiveContainer>
+          <MacroChartContainer height="fill">
             <BarChart data={chartRows} layout="vertical" margin={{ top: 4, right: 12, left: 4, bottom: 4 }}>
               <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} horizontal={false} />
               <XAxis
@@ -122,18 +118,20 @@ export const ReceiptsByAgencyPanel: React.FC = () => {
                 dataKey="name"
                 {...DEFAULT_YAXIS_PROPS}
                 width={100}
-                tick={{ fill: '#64748b', fontSize: 9 }}
+                tick={{ fill: CHART_COLORS.tick, fontSize: 11 }}
               />
               <Tooltip
+                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                 contentStyle={DEFAULT_TOOLTIP_STYLE}
                 formatter={(value: number, _n, item) => [
                   formatBillions(value),
                   (item?.payload as { fullName?: string })?.fullName ?? 'Receipts',
                 ]}
               />
-              <Bar dataKey="bil" fill="#22d3ee" radius={[0, 2, 2, 0]} />
+              <Bar dataKey="bil" fill={CHART_COLORS.west} radius={[0, 2, 2, 0]} />
             </BarChart>
-          </ResponsiveContainer>
+          </MacroChartContainer>
         </div>
       </div>
     </section>

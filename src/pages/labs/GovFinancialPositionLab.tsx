@@ -1,6 +1,6 @@
 import React from 'react';
 import { PublisherOrganizationSchema } from '@/config/brandConfig';
-import { ChevronRight, ArrowLeft, ShieldAlert } from 'lucide-react';
+import { ArrowLeft, ShieldAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
@@ -20,6 +20,8 @@ import {
   GfpExportButton,
   GfpProvenanceFooter,
 } from '@/features/gfp/components';
+import { LabPageHeader } from '@/components/LabPageHeader';
+import { TrailLink } from '@/components/TrailLink';
 
 export const GovFinancialPositionLab: React.FC = () => {
   return (
@@ -64,42 +66,25 @@ export const GovFinancialPositionLab: React.FC = () => {
           },
         ]}
       />
-      <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12 space-y-16">
-        <div>
-          <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-8">
-            <a href="/" className="hover:text-white transition-colors">
-              Home
-            </a>
-            <ChevronRight size={10} />
-            <a href="/labs/us-macro-fiscal/" className="hover:text-white transition-colors">
-              US Macro & Fiscal
-            </a>
-            <ChevronRight size={10} />
-            <span className="text-cyan-500">Government Financial Position</span>
-          </nav>
-
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-cyan-500/10 border border-cyan-500/20 text-cyan-400 text-[10px] font-black uppercase tracking-widest mb-6">
-            <ShieldAlert size={12} /> Dual-Basis Fiscal Board
-          </div>
-
-          <h1 className="text-3xl md:text-5xl font-black uppercase tracking-tight text-white mb-4">
-            Government Financial <span className="text-cyan-500">Position</span>
-          </h1>
-          <p className="text-muted-foreground/60 max-w-3xl text-base md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-            FRUSG accrual net cost & consolidated balance sheet · MTS agency outlays (cash) — structural
-            telemetry, not forecasts.
-          </p>
-
+      <div className="page-shell space-y-16">
+        <LabPageHeader
+          trail={[{ label: 'Home', to: '/' }, { label: 'US Macro & Fiscal', to: '/labs/us-macro-fiscal/' }]}
+          current="Government Financial Position"
+          badge="Dual-Basis Fiscal Board"
+          badgeIcon={<ShieldAlert size={12} />}
+          title={<>Government Financial <span className="text-blue-400">Position</span></>}
+          thesis="FRUSG accrual net cost & consolidated balance sheet · MTS agency outlays (cash) — structural telemetry, not forecasts."
+        >
           {/* Dual-basis callout */}
-          <div className="mt-8 p-5 rounded-2xl border border-white/5 bg-white/[0.02] max-w-4xl space-y-3">
+          <div className="mt-8 p-5 rounded-xl border border-border bg-white/[0.02] max-w-4xl space-y-3">
             <div className="flex flex-wrap items-center gap-2">
               <GfpBasisBadge basis="accrual" />
               <GfpBasisBadge basis="cash" />
-              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
+              <span className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                 Do not mix bases without explicit labeling
               </span>
             </div>
-            <p className="text-[11px] text-muted-foreground/60 leading-relaxed">
+            <p className="text-[11px] text-muted-foreground leading-relaxed">
               <span className="text-cyan-400/80 font-semibold">Accrual panels:</span> Financial Report of the
               U.S. Government (GAAP).{' '}
               <span className="text-amber-400/80 font-semibold">Cash panels:</span> MTS Table 5 / Receipts by
@@ -107,7 +92,7 @@ export const GovFinancialPositionLab: React.FC = () => {
               comparable 1:1 to outlays (cash).
             </p>
           </div>
-        </div>
+        </LabPageHeader>
 
         <SectionErrorBoundary name="GFP KPI Strip">
           <GfpKpiStrip />
@@ -151,15 +136,15 @@ export const GovFinancialPositionLab: React.FC = () => {
 
         <GfpProvenanceFooter />
 
-        <div className="pt-12 border-t border-white/5 text-center">
+        <div className="pt-12 border-t border-border text-center">
           <Button
             variant="ghost"
-            className="text-muted-foreground/40 font-black uppercase tracking-widest hover:text-white"
+            className="text-terminal-dim font-semibold uppercase tracking-wider hover:text-white"
             asChild
           >
-            <a href="/labs/us-macro-fiscal/" className="flex items-center gap-2">
+            <TrailLink to="/labs/us-macro-fiscal/" className="flex items-center gap-2">
               <ArrowLeft size={18} /> Back to US Macro & Fiscal Lab
-            </a>
+            </TrailLink>
           </Button>
         </div>
         <RelatedContent />

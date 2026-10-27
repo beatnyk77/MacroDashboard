@@ -44,22 +44,22 @@ export const BOPPressureTable: React.FC = () => {
 
     return (
         <TooltipProvider>
-            <div className="p-8 rounded-[2rem] bg-white/[0.01] border border-white/5 relative group overflow-hidden">
+            <div className="p-8 rounded-xl bg-white/[0.01] border border-border relative group overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.02] to-transparent pointer-events-none" />
 
                 <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-10 gap-6 relative z-10">
                     <div className="space-y-1">
                         <div className="flex items-center gap-2">
                             <Activity className="w-4 h-4 text-blue-500 animate-pulse" />
-                            <h3 className="text-xl font-black text-white italic tracking-heading uppercase">BOP Pressure Terminal</h3>
+                            <h3 className="text-xl font-bold text-white italic tracking-heading uppercase">BOP Pressure Terminal</h3>
                         </div>
-                        <p className="text-xs font-black tracking-uppercase text-muted-foreground/40 uppercase">External Sector Stability Matrix</p>
+                        <p className="text-xs font-semibold tracking-wider text-terminal-dim uppercase">External Sector Stability Matrix</p>
                     </div>
 
                     <div className="flex items-center gap-4">
                         <div className="px-4 py-1.5 bg-emerald-500/10 border border-emerald-500/20 rounded-full flex items-center gap-2">
                             <ShieldCheck className="w-3.5 h-3.5 text-emerald-500" />
-                            <span className="text-xs font-black text-emerald-500 uppercase tracking-uppercase">Protocol: Stable</span>
+                            <span className="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Protocol: Stable</span>
                         </div>
                     </div>
                 </div>
@@ -67,37 +67,37 @@ export const BOPPressureTable: React.FC = () => {
                 <div className="overflow-x-auto relative z-10 -mx-8 px-8">
                     <table className="w-full text-left min-w-[600px]">
                         <thead>
-                            <tr className="text-xs font-black text-muted-foreground/30 uppercase tracking-[0.25em] border-b border-white/5">
-                                <th className="pb-4 font-black">Stability Indicator</th>
-                                <th className="pb-4 font-black">Live Value</th>
-                                <th className="pb-4 font-black">Risk Analysis</th>
-                                <th className="pb-4 hidden sm:table-cell font-black">Regime Delta</th>
+                            <tr className="text-xs font-semibold text-terminal-dim uppercase tracking-wider border-b border-border">
+                                <th className="pb-4 font-bold">Stability Indicator</th>
+                                <th className="pb-4 font-bold">Live Value</th>
+                                <th className="pb-4 font-bold">Risk Analysis</th>
+                                <th className="pb-4 hidden sm:table-cell font-bold">Regime Delta</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-white/5">
+                        <tbody className="divide-y divide-border">
                             {indicators.map((item, i) => (
                                 <tr key={i} className="group/row hover:bg-white/[0.02] transition-colors">
                                     <td className="py-5 pr-4">
                                         <div className="flex items-center gap-2">
-                                            <span className="text-xs font-black text-white/80 uppercase tracking-heading group-hover/row:text-blue-400 transition-colors">
+                                            <span className="text-xs font-semibold text-white/80 uppercase tracking-heading group-hover/row:text-blue-400 transition-colors">
                                                 {item.name}
                                             </span>
                                             <Tooltip>
                                                 <TooltipTrigger className="cursor-help opacity-20 hover:opacity-100 transition-opacity">
                                                     <Info className="w-3 h-3 text-white" />
                                                 </TooltipTrigger>
-                                                <TooltipContent className="bg-slate-950 border-white/12 p-3 text-xs max-w-[200px] leading-relaxed">
+                                                <TooltipContent className="bg-card border-border p-3 text-xs max-w-[200px] leading-relaxed">
                                                     {item.definition}
                                                 </TooltipContent>
                                             </Tooltip>
                                         </div>
                                     </td>
                                     <td className="py-5 font-mono">
-                                        <span className="text-sm font-black text-white/90 tracking-heading">{item.value}</span>
+                                        <span className="text-sm font-bold text-white/90 tracking-heading">{item.value}</span>
                                     </td>
                                     <td className="py-5">
                                         <div className={cn(
-                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-black uppercase tracking-uppercase border",
+                                            "inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-semibold uppercase tracking-wider border",
                                             item.status === 'Safe'
                                                 ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-400"
                                                 : "bg-amber-400/10 border-amber-400/20 text-amber-400"
@@ -106,7 +106,7 @@ export const BOPPressureTable: React.FC = () => {
                                         </div>
                                     </td>
                                     <td className="py-5 hidden sm:table-cell">
-                                        <span className="text-xs font-black uppercase tracking-uppercase text-muted-foreground/30">
+                                        <span className="text-xs font-semibold uppercase tracking-wider text-terminal-dim">
                                             {item.trend}
                                         </span>
                                     </td>
@@ -116,9 +116,9 @@ export const BOPPressureTable: React.FC = () => {
                     </table>
                 </div>
 
-                <div className="mt-8 pt-6 border-t border-white/5 flex justify-between items-center relative z-10">
-                    <span className="text-xs font-medium text-muted-foreground/40 italic">Aggregated via Reserve Bank telemetry & Custom Flows</span>
-                    <button className="text-xs font-black text-blue-500/60 hover:text-blue-400 tracking-[0.1em] uppercase">Export Stability Data</button>
+                <div className="mt-8 pt-6 border-t border-border flex justify-between items-center relative z-10">
+                    <span className="text-xs font-medium text-terminal-dim italic">Aggregated via Reserve Bank telemetry & Custom Flows</span>
+                    <button className="text-xs font-semibold text-blue-500/60 hover:text-blue-400 tracking-wider uppercase">Export Stability Data</button>
                 </div>
             </div>
         </TooltipProvider>

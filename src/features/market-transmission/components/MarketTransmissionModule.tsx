@@ -71,11 +71,11 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                             <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                         </span>
-                        <h2 className="text-xs sm:text-sm font-black tracking-wider uppercase text-foreground">
+                        <h2 className="text-xs sm:text-sm font-semibold tracking-wider uppercase text-foreground">
                             Market Transmission & Breadth Monitor
                         </h2>
                     </div>
-                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[10px] font-mono font-bold tracking-wider bg-primary/10 text-primary border border-primary/20 uppercase">
+                    <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded text-[11px] font-mono font-semibold tracking-wider bg-primary/10 text-primary border border-primary/20 uppercase">
                         <ShieldCheck size={11} />
                         FINVIZFINANCE CACHED LAYER (15M TTL)
                     </span>
@@ -89,7 +89,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                         </span>
                         <span
                             className={cn(
-                                "px-2 py-0.5 rounded text-xs font-mono font-black tracking-wide border uppercase",
+                                "px-2 py-0.5 rounded text-xs font-mono font-semibold tracking-wider border uppercase",
                                 sectorData.regime_signal.regime.includes('Expansionary')
                                     ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/30"
                                     : "bg-amber-500/10 text-amber-400 border-amber-500/30"
@@ -106,7 +106,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                 <div>
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                         <div>
-                            <h3 className="text-sm font-bold tracking-wide uppercase text-foreground flex items-center gap-1.5">
+                            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground flex items-center gap-1.5">
                                 <Layers size={15} className="text-primary" />
                                 Sector Rotation & Cyclical/Defensive Spread
                             </h3>
@@ -137,46 +137,46 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                     {/* Cycle Spread Metric Strip */}
                     {currentSpread && (
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-4">
-                            <div className="p-3 rounded-lg border border-border/80 bg-background/50">
+                            <div className="p-3 rounded-lg border border-border bg-background/50">
                                 <div className="text-[11px] font-mono text-muted-foreground uppercase">
                                     Cyclical Basket ({selectedHorizon})
                                 </div>
-                                <div className="text-lg font-black font-mono mt-0.5 text-cyan-400">
+                                <div className="text-lg font-bold font-mono mt-0.5 text-cyan-400">
                                     {currentSpread.cyclical_avg >= 0 ? '+' : ''}
                                     {currentSpread.cyclical_avg.toFixed(2)}%
                                 </div>
-                                <div className="text-[10px] text-muted-foreground mt-0.5">
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
                                     XLK, XLY, XLI, XLB Equal-Weight
                                 </div>
                             </div>
 
-                            <div className="p-3 rounded-lg border border-border/80 bg-background/50">
+                            <div className="p-3 rounded-lg border border-border bg-background/50">
                                 <div className="text-[11px] font-mono text-muted-foreground uppercase">
                                     Defensive Basket ({selectedHorizon})
                                 </div>
-                                <div className="text-lg font-black font-mono mt-0.5 text-purple-400">
+                                <div className="text-lg font-bold font-mono mt-0.5 text-purple-400">
                                     {currentSpread.defensive_avg >= 0 ? '+' : ''}
                                     {currentSpread.defensive_avg.toFixed(2)}%
                                 </div>
-                                <div className="text-[10px] text-muted-foreground mt-0.5">
+                                <div className="text-[11px] text-muted-foreground mt-0.5">
                                     XLU, XLP, XLV Equal-Weight
                                 </div>
                             </div>
 
-                            <div className="p-3 rounded-lg border border-border/80 bg-background/50">
+                            <div className="p-3 rounded-lg border border-border bg-background/50">
                                 <div className="text-[11px] font-mono text-muted-foreground uppercase">
                                     Cyclical vs. Defensive Spread
                                 </div>
                                 <div
                                     className={cn(
-                                        "text-lg font-black font-mono mt-0.5",
+                                        "text-lg font-bold font-mono mt-0.5",
                                         currentSpread.spread >= 0 ? "text-emerald-400" : "text-rose-400"
                                     )}
                                 >
                                     {currentSpread.spread >= 0 ? '+' : ''}
                                     {currentSpread.spread.toFixed(2)}%
                                 </div>
-                                <div className="text-[10px] font-mono uppercase text-muted-foreground mt-0.5">
+                                <div className="text-[11px] font-mono uppercase text-muted-foreground mt-0.5">
                                     Pricing: {currentSpread.regime}
                                 </div>
                             </div>
@@ -194,7 +194,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                             return (
                                 <div
                                     key={sector.name}
-                                    className="flex items-center justify-between p-2 rounded-lg border border-border/60 bg-muted/20 hover:bg-muted/40 transition-colors"
+                                    className="flex items-center justify-between p-2 rounded-lg border border-border bg-muted/20 hover:bg-muted/40 transition-colors"
                                 >
                                     <div className="flex items-center gap-2 w-44 min-w-[170px]">
                                         <span
@@ -209,7 +209,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                             <div className="text-xs font-bold text-foreground leading-tight">
                                                 {sector.name}
                                             </div>
-                                            <div className="text-[10px] font-mono text-muted-foreground">
+                                            <div className="text-[11px] font-mono text-muted-foreground">
                                                 {sector.symbol} • {sector.type.toUpperCase()}
                                             </div>
                                         </div>
@@ -229,14 +229,14 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                     <div className="text-right shrink-0">
                                         <div
                                             className={cn(
-                                                "text-xs font-mono font-black",
+                                                "text-xs font-mono font-bold",
                                                 isPositive ? "text-emerald-400" : "text-rose-400"
                                             )}
                                         >
                                             {isPositive ? '+' : ''}
                                             {val.toFixed(2)}%
                                         </div>
-                                        <div className="text-[10px] font-mono text-muted-foreground">
+                                        <div className="text-[11px] font-mono text-muted-foreground">
                                             Fwd P/E: {sector.fwd_pe ? sector.fwd_pe.toFixed(1) : '—'}
                                         </div>
                                     </div>
@@ -251,7 +251,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                 {/* ── PILLAR 2: MARKET BREADTH & INTERNAL STRESS MONITOR ─── */}
                 <div>
                     <div className="mb-3">
-                        <h3 className="text-sm font-bold tracking-wide uppercase text-foreground flex items-center gap-1.5">
+                        <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground flex items-center gap-1.5">
                             <Activity size={15} className="text-primary" />
                             Market Breadth & Technical Health Monitor
                         </h3>
@@ -265,7 +265,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                         <div className="mb-4 p-3.5 rounded-lg border border-amber-500/40 bg-amber-500/10 flex items-start gap-3">
                             <AlertTriangle className="text-amber-400 shrink-0 mt-0.5" size={18} />
                             <div>
-                                <h4 className="text-xs font-black uppercase tracking-wider text-amber-400">
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-amber-400">
                                     {breadthData.divergence_alert.title}
                                 </h4>
                                 <p className="text-xs text-foreground/90 mt-0.5 leading-relaxed">
@@ -280,7 +280,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                         <div className="p-3.5 rounded-lg border border-border bg-background/50">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">Above 50-Day SMA</span>
-                                <span className="text-xs font-mono font-black text-primary">
+                                <span className="text-xs font-mono font-bold text-primary">
                                     {breadthData?.pct_above_50_sma ?? 37.3}%
                                 </span>
                             </div>
@@ -290,7 +290,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                     style={{ width: `${breadthData?.pct_above_50_sma ?? 37.3}%` }}
                                 />
                             </div>
-                            <div className="flex justify-between text-[10px] font-mono text-muted-foreground mt-1.5">
+                            <div className="flex justify-between text-[11px] font-mono text-muted-foreground mt-1.5">
                                 <span>{breadthData?.above_50_sma?.toLocaleString() ?? '4,341'} Stocks</span>
                                 <span>Threshold: 50%</span>
                             </div>
@@ -300,7 +300,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                         <div className="p-3.5 rounded-lg border border-border bg-background/50">
                             <div className="flex items-center justify-between">
                                 <span className="text-xs font-bold text-foreground">Above 200-Day SMA</span>
-                                <span className="text-xs font-mono font-black text-cyan-400">
+                                <span className="text-xs font-mono font-bold text-cyan-400">
                                     {breadthData?.pct_above_200_sma ?? 50.1}%
                                 </span>
                             </div>
@@ -310,7 +310,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                     style={{ width: `${breadthData?.pct_above_200_sma ?? 50.1}%` }}
                                 />
                             </div>
-                            <div className="flex justify-between text-[10px] font-mono text-muted-foreground mt-1.5">
+                            <div className="flex justify-between text-[11px] font-mono text-muted-foreground mt-1.5">
                                 <span>{breadthData?.above_200_sma?.toLocaleString() ?? '5,831'} Stocks</span>
                                 <span>Long-term Regime Divider</span>
                             </div>
@@ -322,7 +322,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                 <span className="text-xs font-bold text-foreground">52W High / Low Ratio</span>
                                 <span
                                     className={cn(
-                                        "text-xs font-mono font-black",
+                                        "text-xs font-mono font-bold",
                                         (breadthData?.high_low_ratio ?? 0.34) >= 1.0
                                             ? "text-emerald-400"
                                             : "text-rose-400"
@@ -333,16 +333,16 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                             </div>
                             <div className="flex items-center gap-2 mt-2">
                                 <div className="flex-1 text-center py-1 bg-emerald-500/10 rounded border border-emerald-500/20">
-                                    <div className="text-[10px] font-mono text-emerald-400 font-bold">
+                                    <div className="text-[11px] font-mono text-emerald-400 font-bold">
                                         +{breadthData?.new_52w_highs ?? 195}
                                     </div>
-                                    <div className="text-[9px] text-muted-foreground">New Highs</div>
+                                    <div className="text-[11px] text-muted-foreground">New Highs</div>
                                 </div>
                                 <div className="flex-1 text-center py-1 bg-rose-500/10 rounded border border-rose-500/20">
-                                    <div className="text-[10px] font-mono text-rose-400 font-bold">
+                                    <div className="text-[11px] font-mono text-rose-400 font-bold">
                                         -{breadthData?.new_52w_lows ?? 570}
                                     </div>
-                                    <div className="text-[9px] text-muted-foreground">New Lows</div>
+                                    <div className="text-[11px] text-muted-foreground">New Lows</div>
                                 </div>
                             </div>
                         </div>
@@ -355,7 +355,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                 <div>
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                         <div>
-                            <h3 className="text-sm font-bold tracking-wide uppercase text-foreground flex items-center gap-1.5">
+                            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground flex items-center gap-1.5">
                                 <Percent size={15} className="text-primary" />
                                 Equity Risk Premium (ERP) Valuation Calculator
                             </h3>
@@ -384,7 +384,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                         <div className="mb-4 p-3 rounded-lg border border-primary/30 bg-primary/5 space-y-2">
                             <div className="flex items-center justify-between text-xs font-mono">
                                 <span className="text-foreground font-bold">Simulate 10Y Yield Shock:</span>
-                                <span className="text-primary font-black text-sm">{simulatedYield.toFixed(2)}%</span>
+                                <span className="text-primary font-bold text-sm">{simulatedYield.toFixed(2)}%</span>
                             </div>
                             <input
                                 type="range"
@@ -400,7 +400,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                                     <button
                                         key={preset}
                                         onClick={() => setSimulatedYield(preset)}
-                                        className="px-2 py-0.5 text-[10px] font-mono rounded bg-muted hover:bg-muted/80 text-foreground"
+                                        className="px-2 py-0.5 text-[11px] font-mono rounded bg-muted hover:bg-muted/80 text-foreground"
                                     >
                                         {preset}%
                                     </button>
@@ -413,43 +413,43 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                     <div className="grid grid-cols-1 sm:grid-cols-4 gap-3">
                         <div className="p-3 rounded-lg border border-border bg-background/50">
                             <div className="text-[11px] font-mono text-muted-foreground uppercase">S&P 500 Forward P/E</div>
-                            <div className="text-lg font-black font-mono text-foreground mt-0.5">
+                            <div className="text-lg font-bold font-mono text-foreground mt-0.5">
                                 {(erpData?.fwd_pe ?? 19.78).toFixed(1)}x
                             </div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                            <div className="text-[11px] text-muted-foreground mt-0.5">
                                 Trailing P/E: {(erpData?.pe_ttm ?? 26.04).toFixed(1)}x
                             </div>
                         </div>
 
                         <div className="p-3 rounded-lg border border-border bg-background/50">
                             <div className="text-[11px] font-mono text-muted-foreground uppercase">Forward Earnings Yield</div>
-                            <div className="text-lg font-black font-mono text-cyan-400 mt-0.5">
+                            <div className="text-lg font-bold font-mono text-cyan-400 mt-0.5">
                                 {forwardEarningsYield.toFixed(2)}%
                             </div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">Formula: 1 / Forward P/E</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">Formula: 1 / Forward P/E</div>
                         </div>
 
                         <div className="p-3 rounded-lg border border-border bg-background/50">
                             <div className="text-[11px] font-mono text-muted-foreground uppercase">
                                 10-Year Benchmark Yield {isSimulatingYield && "(Shocked)"}
                             </div>
-                            <div className="text-lg font-black font-mono text-amber-400 mt-0.5">
+                            <div className="text-lg font-bold font-mono text-amber-400 mt-0.5">
                                 {activeYield.toFixed(2)}%
                             </div>
-                            <div className="text-[10px] text-muted-foreground mt-0.5">Risk-Free Benchmark</div>
+                            <div className="text-[11px] text-muted-foreground mt-0.5">Risk-Free Benchmark</div>
                         </div>
 
                         <div className="p-3 rounded-lg border border-border bg-background/50">
                             <div className="text-[11px] font-mono text-muted-foreground uppercase">Equity Risk Premium</div>
                             <div
                                 className={cn(
-                                    "text-lg font-black font-mono mt-0.5",
+                                    "text-lg font-bold font-mono mt-0.5",
                                     computedErp >= 1.5 ? "text-emerald-400" : computedErp >= 0 ? "text-amber-400" : "text-rose-400"
                                 )}
                             >
                                 {computedErp >= 0 ? '+' : ''}{computedErp.toFixed(2)}% ({computedErpBps >= 0 ? '+' : ''}{computedErpBps} bps)
                             </div>
-                            <div className={cn("inline-block px-1.5 py-0.5 text-[10px] font-mono font-bold rounded border uppercase mt-1", currentPosture.color)}>
+                            <div className={cn("inline-block px-1.5 py-0.5 text-[11px] font-mono font-semibold rounded border uppercase mt-1", currentPosture.color)}>
                                 {currentPosture.label}
                             </div>
                         </div>
@@ -462,7 +462,7 @@ export const MarketTransmissionModule: React.FC<MarketTransmissionModuleProps> =
                 <div>
                     <div className="flex flex-wrap items-center justify-between gap-3 mb-3">
                         <div>
-                            <h3 className="text-sm font-bold tracking-wide uppercase text-foreground flex items-center gap-1.5">
+                            <h3 className="text-sm font-semibold tracking-wider uppercase text-foreground flex items-center gap-1.5">
                                 <Compass size={15} className="text-primary" />
                                 Macro-Sensitive Equity Screeners
                             </h3>

@@ -66,8 +66,8 @@ export const GfpProvenanceFooter: React.FC = () => {
   }, [netCost.data, bs.data, outlays.data, receipts.data]);
 
   return (
-    <footer className="space-y-3 p-4 rounded-xl border border-white/5 bg-black/20 text-[10px] text-muted-foreground/60">
-      <div className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
+    <footer className="space-y-3 p-4 rounded-xl border border-border bg-background/20 text-[11px] text-muted-foreground">
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
         Data Provenance · U.S. Treasury Fiscal Data API
       </div>
       <p className="leading-relaxed">
@@ -85,16 +85,16 @@ export const GfpProvenanceFooter: React.FC = () => {
               [{ep.basis}]
             </span>
             <span className="text-white/50">{ep.label}</span>
-            <span className="font-mono text-muted-foreground/40 truncate">{ep.path}</span>
+            <span className="font-mono text-terminal-dim truncate">{ep.path}</span>
           </li>
         ))}
       </ul>
-      <div className="flex flex-wrap gap-4 pt-1 border-t border-white/5 font-mono">
+      <div className="flex flex-wrap gap-4 pt-1 border-t border-border font-mono">
         <span>FRUSG last record_date: {asOf.frusg ?? '—'}</span>
         <span>MTS last record_date: {asOf.mts ?? '—'}</span>
         <span>Receipts last record_date: {asOf.rec ?? '—'}</span>
       </div>
-      <p className="text-muted-foreground/40">
+      <p className="text-terminal-dim">
         Ingest: <span className="font-mono">ingest-gov-financial-position</span>. No forecasts —
         structural telemetry only.
       </p>

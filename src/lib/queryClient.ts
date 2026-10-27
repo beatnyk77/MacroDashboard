@@ -13,5 +13,5 @@ export const queryClient = new QueryClient({
 
 // Per-use-case overrides (apply in individual queries as needed):
 // - Real-time data (market pulse): staleTime: 60_000 (1 min)
-// - Daily metrics: default 30 min ✅
+// - Daily metrics: default 30 min
 // - Static reference (glossary): staleTime: 3_600_000 (1 hour)

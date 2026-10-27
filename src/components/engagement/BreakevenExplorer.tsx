@@ -48,14 +48,14 @@ export const BreakevenExplorer: React.FC<BreakevenExplorerProps> = ({
         >
             <div className="mb-4 flex items-center gap-2">
                 <Percent size={16} className="text-blue-400" />
-                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">
+                <h3 className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                     Breakeven Inflation Calculator
                 </h3>
             </div>
 
             <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-2">
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-white/40">
+                    <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                         10Y Nominal Yield (%)
                     </span>
                     <input
@@ -64,11 +64,11 @@ export const BreakevenExplorer: React.FC<BreakevenExplorerProps> = ({
                         value={nominal}
                         onChange={(e) => setNominal(e.target.value)}
                         onBlur={handleCalc}
-                        className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-blue-500/40 focus:outline-none"
+                        className="w-full rounded-lg border border-border bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-blue-500/40 focus:outline-none"
                     />
                 </label>
                 <label className="block">
-                    <span className="mb-1.5 block text-[10px] font-bold uppercase tracking-uppercase text-white/40">
+                    <span className="mb-1.5 block text-[11px] font-semibold uppercase tracking-wider text-terminal-dim">
                         10Y TIPS Yield (%)
                     </span>
                     <input
@@ -77,20 +77,20 @@ export const BreakevenExplorer: React.FC<BreakevenExplorerProps> = ({
                         value={tips}
                         onChange={(e) => setTips(e.target.value)}
                         onBlur={handleCalc}
-                        className="w-full rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-blue-500/40 focus:outline-none"
+                        className="w-full rounded-lg border border-border bg-white/[0.04] px-3 py-2.5 font-mono text-sm text-white focus:border-blue-500/40 focus:outline-none"
                     />
                 </label>
             </div>
 
             {result && (
-                <div className="rounded-lg border border-white/[0.08] bg-black/20 p-4">
+                <div className="rounded-lg border border-white/[0.08] bg-background/20 p-4">
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <div className="text-[10px] font-bold uppercase text-white/40">Breakeven</div>
+                            <div className="text-[11px] font-semibold uppercase text-terminal-dim">Breakeven</div>
                             <div className="font-mono text-xl font-bold text-white">{result.breakeven.toFixed(2)}%</div>
                         </div>
                         <div>
-                            <div className="text-[10px] font-bold uppercase text-white/40">Real Rate (TIPS)</div>
+                            <div className="text-[11px] font-semibold uppercase text-terminal-dim">Real Rate (TIPS)</div>
                             <div className="font-mono text-xl font-bold text-white">{result.realRate.toFixed(2)}%</div>
                         </div>
                     </div>

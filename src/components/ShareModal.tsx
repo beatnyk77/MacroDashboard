@@ -44,12 +44,12 @@ export const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, dataUrl, 
 
     return (
         <Dialog open={open} onOpenChange={v => !v && onClose()}>
-            <DialogContent className="max-w-lg bg-slate-950 border-white/12 text-white">
+            <DialogContent className="max-w-lg bg-card border-border text-white">
                 <DialogHeader>
-                    <DialogTitle className="text-sm font-black uppercase tracking-widest">Share Chart</DialogTitle>
+                    <DialogTitle className="text-sm font-semibold uppercase tracking-wider">Share Chart</DialogTitle>
                 </DialogHeader>
 
-                <div className="rounded-lg overflow-hidden border border-white/10 bg-black/40" style={{ aspectRatio: '2/1' }}>
+                <div className="rounded-lg overflow-hidden border border-border bg-background/40" style={{ aspectRatio: '2/1' }}>
                     <img
                         src={dataUrl}
                         alt={title}
@@ -66,7 +66,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, dataUrl, 
                             href={p.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
+                            className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-border text-sm font-bold hover:bg-white/10 transition-colors"
                         >
                             {p.icon}
                             {p.label}
@@ -76,7 +76,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, dataUrl, 
                     <button
                         onClick={handleCopy}
                         aria-label="Copy Link"
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-border text-sm font-bold hover:bg-white/10 transition-colors"
                     >
                         <Link2 size={16} aria-hidden="true" />
                         {copied ? 'Copied!' : 'Copy Link'}
@@ -85,7 +85,7 @@ export const ShareModal: React.FC<ShareModalProps> = ({ open, onClose, dataUrl, 
                     <a
                         href={dataUrl}
                         download={`gq-${slug}.png`}
-                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-white/10 text-sm font-bold hover:bg-white/10 transition-colors"
+                        className="flex items-center gap-2 px-3 py-2 rounded-lg bg-white/5 border border-border text-sm font-bold hover:bg-white/10 transition-colors"
                     >
                         <Download size={16} aria-hidden="true" />
                         Download PNG

@@ -1,5 +1,6 @@
 import React from 'react';
 import { BarChart, Bar, XAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import { DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 interface HoverDetailBarChartProps {
     data: { date: string; value: number }[];
@@ -10,11 +11,12 @@ export const HoverDetailBarChart: React.FC<HoverDetailBarChartProps> = ({ data }
         <BarChart data={data}>
             <XAxis dataKey="date" hide />
             <Tooltip
-                contentStyle={{ backgroundColor: '#0f172a', border: '1px solid #334155', borderRadius: '4px', fontSize: '12px' }}
-                itemStyle={{ color: '#3b82f6', fontWeight: 700 }}
-                cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                contentStyle={DEFAULT_TOOLTIP_STYLE}
+                labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
+                cursor={{ fill: WHITE_ALPHA.faint }}
             />
-            <Bar dataKey="value" fill="#3b82f6" radius={[2, 2, 0, 0]} />
+            <Bar dataKey="value" fill={CHART_COLORS.west} radius={[2, 2, 0, 0]} />
         </BarChart>
     </ResponsiveContainer>
 );

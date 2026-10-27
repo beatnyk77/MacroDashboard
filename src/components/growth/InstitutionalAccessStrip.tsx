@@ -16,14 +16,14 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
     return (
         <section
             className={cn(
-                'rounded-2xl border border-white/10 bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-blue-950/30 p-5 backdrop-blur-xl sm:p-6',
+                'rounded-xl border border-border bg-gradient-to-br from-slate-900/80 via-slate-900/60 to-blue-950/30 p-5 backdrop-blur-xl sm:p-6',
                 className
             )}
             aria-label="Institutional access and regime digest"
         >
             <div className="mb-4 flex flex-wrap items-center gap-2">
                 <Shield size={14} className="text-blue-400" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-blue-400/80">
+                <span className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/80">
                     Institutional Access
                 </span>
             </div>
@@ -46,18 +46,18 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
                             <Code2 size={18} className="text-blue-400" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.15em] text-blue-400/70">
+                            <div className="text-[11px] font-semibold uppercase tracking-wider text-blue-400/70">
                                 Programmatic Access
                             </div>
-                            <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                            <div className="text-sm font-bold text-white/90 group-hover:text-white">
                                 Institutional API
                             </div>
                             {variant === 'full' && (
-                                <div className="text-[11px] text-white/40">Live metrics · provenance · REST</div>
+                                <div className="text-[11px] text-terminal-dim">Live metrics · provenance · REST</div>
                             )}
                         </div>
                     </div>
-                    <ArrowRight size={16} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-blue-400" />
+                    <ArrowRight size={16} className="text-terminal-dim transition-transform group-hover:translate-x-0.5 group-hover:text-blue-400" />
                 </TrailLink>
 
                 <TrailLink
@@ -70,18 +70,18 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
                             <Mail size={18} className="text-amber-400" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.15em] text-amber-400/70">
+                            <div className="text-[11px] font-semibold uppercase tracking-wider text-amber-400/70">
                                 Weekly Synthesis
                             </div>
-                            <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                            <div className="text-sm font-bold text-white/90 group-hover:text-white">
                                 Regime Digest
                             </div>
                             {variant === 'full' && (
-                                <div className="text-[11px] text-white/40">15+ official sources · Sunday publish</div>
+                                <div className="text-[11px] text-terminal-dim">15+ official sources · Sunday publish</div>
                             )}
                         </div>
                     </div>
-                    <ArrowRight size={16} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-amber-400" />
+                    <ArrowRight size={16} className="text-terminal-dim transition-transform group-hover:translate-x-0.5 group-hover:text-amber-400" />
                 </TrailLink>
 
                 <TrailLink
@@ -94,18 +94,18 @@ export const InstitutionalAccessStrip: React.FC<InstitutionalAccessStripProps> =
                             <Bot size={18} className="text-cyan-400" />
                         </div>
                         <div>
-                            <div className="text-[10px] font-black uppercase tracking-[0.15em] text-cyan-400/70">
+                            <div className="text-[11px] font-semibold uppercase tracking-wider text-cyan-400/70">
                                 Agent Integration
                             </div>
-                            <div className="text-sm font-extrabold text-white/90 group-hover:text-white">
+                            <div className="text-sm font-bold text-white/90 group-hover:text-white">
                                 MCP Server
                             </div>
                             {variant === 'full' && (
-                                <div className="text-[11px] text-white/40">8 tools · Smithery · Cursor</div>
+                                <div className="text-[11px] text-terminal-dim">8 tools · Smithery · Cursor</div>
                             )}
                         </div>
                     </div>
-                    <ArrowRight size={16} className="text-white/30 transition-transform group-hover:translate-x-0.5 group-hover:text-cyan-400" />
+                    <ArrowRight size={16} className="text-terminal-dim transition-transform group-hover:translate-x-0.5 group-hover:text-cyan-400" />
                 </TrailLink>
             </div>
         </section>

@@ -12,6 +12,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { CHART_COLORS } from '@/constants/chartDefaults';
 
 export const GoldValuationStrip: React.FC = () => {
     const { data: ratios } = useGoldRatios();
@@ -34,32 +35,32 @@ export const GoldValuationStrip: React.FC = () => {
     };
 
     const getZColorClass = (z?: number) => {
-        if (!z) return 'text-muted-foreground/50';
+        if (!z) return 'text-terminal-dim';
         if (z > 1.5) return 'text-rose-500 bg-rose-500/15';
         if (z < -1.5) return 'text-emerald-500 bg-emerald-500/15';
         return 'text-muted-foreground';
     };
 
     const getZSeriesColor = (z?: number) => {
-        if (!z) return '#9ca3af';
-        if (z > 1.5) return '#ef4444';
-        if (z < -1.5) return '#10b981';
-        return '#9ca3af';
+        if (!z) return CHART_COLORS.label;
+        if (z > 1.5) return CHART_COLORS.stress;
+        if (z < -1.5) return CHART_COLORS.expansion;
+        return CHART_COLORS.label;
     };
 
     return (
-        <div className="sticky bottom-0 left-0 z-[1100] w-full bg-slate-950/95 backdrop-blur-md border-t-2 border-amber-400/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] py-2 px-6 flex items-center justify-between">
+        <div className="sticky bottom-0 left-0 z-[1100] w-full bg-card/90 backdrop-blur-md border-t-2 border-amber-400/10 shadow-[0_-10px_40px_rgba(0,0,0,0.5)] py-2 px-6 flex items-center justify-between">
             <div className="flex items-center gap-6 md:gap-12 overflow-x-auto no-scrollbar">
                 <div className="shrink-0 flex flex-col justify-center">
                     <div className="flex items-baseline gap-1.5 mb-0.5">
-                        <span className="text-xs font-black text-primary tracking-[0.15em] uppercase">
+                        <span className="text-xs font-semibold text-primary tracking-wider uppercase">
                             LIVE ANCHOR
                         </span>
                         <div className="bg-blue-500/10 px-1 rounded-[2px] border border-blue-500/20">
-                            <span className="text-xs font-black text-primary block leading-tight">25Y CYCLE</span>
+                            <span className="text-xs font-bold text-primary block leading-tight">25Y CYCLE</span>
                         </div>
                     </div>
-                    <span className="text-base md:text-lg font-black text-foreground tracking-heading">
+                    <span className="text-base md:text-lg font-bold text-foreground tracking-heading">
                         GOLD ${gold?.value.toLocaleString() || '-'}
                     </span>
                 </div>
@@ -75,14 +76,14 @@ export const GoldValuationStrip: React.FC = () => {
                     <div key={idx} className="flex items-center gap-4 shrink-0">
                         <div className="flex flex-col">
                             <div className="flex items-center gap-1 mb-0.5">
-                                <span className="text-xs font-bold text-muted-foreground tracking-[0.08em] uppercase">
+                                <span className="text-xs font-semibold text-muted-foreground tracking-[0.08em] uppercase">
                                     {item.label}
                                 </span>
                                 {item.name === 'Gold/Silver' && (
                                     <TooltipProvider>
                                         <Tooltip>
                                             <TooltipTrigger>
-                                                <Info size={10} className="text-muted-foreground/50 cursor-help" />
+                                                <Info size={10} className="text-terminal-dim cursor-help" />
                                             </TooltipTrigger>
                                             <TooltipContent>
                                                 <p className="text-xs">Historical context: 50y average around 60. Current relative to 25y window.</p>
@@ -92,12 +93,12 @@ export const GoldValuationStrip: React.FC = () => {
                                 )}
                             </div>
                             <div className="flex items-center gap-2">
-                                <span className="text-sm md:text-base font-extrabold text-foreground">
+                                <span className="text-sm md:text-base font-bold text-foreground">
                                     {item.data?.current_value.toFixed(2) || '-'}
                                 </span>
                                 {item.data?.z_score !== undefined && (
                                     <span className={cn(
-                                        "text-xs font-black px-1 rounded-[2px]",
+                                        "text-xs font-bold px-1 rounded-[2px]",
                                         getZColorClass(item.data.z_score)
                                     )}>
                                         Z: {item.data.z_score > 0 ? '+' : ''}{item.data.z_score.toFixed(1)}
@@ -112,9 +113,9 @@ export const GoldValuationStrip: React.FC = () => {
                 ))}
             </div>
 
-            <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-white/5 pl-6">
+            <div className="hidden md:flex items-center gap-4 shrink-0 border-l border-border pl-6">
                 <div className="text-right">
-                    <span className="block text-xs font-bold text-muted-foreground/50 tracking-[0.05em] uppercase mb-0.5">
+                    <span className="block text-xs font-semibold text-terminal-dim tracking-[0.05em] uppercase mb-0.5">
                         TERMINAL PULSE (UTC)
                     </span>
                     <div className="flex items-center gap-2 justify-end">

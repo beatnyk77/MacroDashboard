@@ -5,6 +5,7 @@ import { m } from 'framer-motion';
 import { TrailLink as Link } from '@/components/TrailLink';
 import { SEOManager } from '@/components/SEOManager';
 import { apiAccessMeta } from '@/lib/seoTemplates';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 declare global {
     interface Window {
@@ -77,13 +78,13 @@ export const APIAccessPage: React.FC = () => {
                     canonical="/api-access/"
                 />
                 <Box sx={{ mb: 10, textAlign: 'center', position: 'relative' }}>
-                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-black uppercase tracking-uppercase mb-8">
+                    <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-blue-500/10 border border-blue-500/20 text-blue-400 text-xs font-semibold uppercase tracking-wider mb-8">
                         <Lock size={14} /> Secure API Terminal
                     </div>
-                    <Typography variant="h1" component="h1" sx={{ fontWeight: 900, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
+                    <Typography variant="h1" component="h1" sx={{ fontWeight: 700, textTransform: 'uppercase', fontSize: { xs: '2.5rem', md: '5rem' }, letterSpacing: '-0.04em', lineHeight: 0.9, mb: 4 }}>
                         Quantum <span className="text-blue-500">Access</span>
                     </Typography>
-                    <Typography component="p" variant="h5" sx={{ color: 'rgba(255,255,255,0.6)', maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase' }}>
+                    <Typography component="p" variant="h5" sx={{ color: WHITE_ALPHA.mid, maxWidth: '700px', mx: 'auto', fontWeight: 500, lineHeight: 1.5, fontSize: '1.2rem', textTransform: 'uppercase' }}>
                         Professional-grade macro telemetry delivered via high-frequency REST API.
                     </Typography>
                 </Box>
@@ -107,8 +108,8 @@ export const APIAccessPage: React.FC = () => {
                                         <feature.icon size={20} />
                                     </div>
                                     <div>
-                                        <h4 className="text-sm font-black text-white uppercase tracking-heading mb-1">{feature.title}</h4>
-                                        <p className="text-xs text-muted-foreground/60 leading-relaxed font-medium uppercase">{feature.desc}</p>
+                                        <h4 className="text-sm font-semibold text-white uppercase tracking-heading mb-1">{feature.title}</h4>
+                                        <p className="text-xs text-muted-foreground leading-relaxed font-medium uppercase">{feature.desc}</p>
                                     </div>
                                 </m.div>
                             ))}
@@ -119,15 +120,15 @@ export const APIAccessPage: React.FC = () => {
                         <m.div
                             initial={{ opacity: 0, scale: 0.95 }}
                             animate={{ opacity: 1, scale: 1 }}
-                            className="p-10 rounded-[3rem] border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] relative overflow-hidden"
+                            className="p-10 rounded-xl border-2 border-blue-500/30 bg-blue-500/[0.03] shadow-[0_0_50px_rgba(59,130,246,0.1)] relative overflow-hidden"
                         >
                             <div className="relative z-10">
-                                <h4 className="text-xs font-black uppercase tracking-uppercase text-blue-400 mb-8">Quantum Intelligence API</h4>
+                                <h4 className="text-xs font-semibold uppercase tracking-wider text-blue-400 mb-8">Quantum Intelligence API</h4>
                                 <div className="flex items-baseline gap-1 mb-2">
-                                    <span className="text-6xl font-black text-white">$28</span>
-                                    <span className="text-blue-500 text-sm font-black uppercase">/Mo</span>
+                                    <span className="text-6xl font-bold text-white">$28</span>
+                                    <span className="text-blue-500 text-sm font-semibold uppercase">/Mo</span>
                                 </div>
-                                <p className="text-xs font-black text-blue-400/60 uppercase tracking-uppercase mb-10">Standard Professional License</p>
+                                <p className="text-xs font-semibold text-blue-400/60 uppercase tracking-wider mb-10">Standard Professional License</p>
 
                                 <ul className="space-y-4 mb-12">
                                     {[
@@ -136,7 +137,7 @@ export const APIAccessPage: React.FC = () => {
                                         'Institutional Research Archive',
                                         'Priority support desk'
                                     ].map(f => (
-                                        <li key={f} className="flex items-center gap-3 text-xs font-black text-white uppercase">
+                                        <li key={f} className="flex items-center gap-3 text-xs font-semibold text-white uppercase">
                                             <Zap size={14} className="text-blue-500" /> {f}
                                         </li>
                                     ))}
@@ -147,19 +148,19 @@ export const APIAccessPage: React.FC = () => {
                                     fullWidth
                                     onClick={handleCheckout}
                                     sx={{
-                                        bgcolor: '#3b82f6',
-                                        fontWeight: 900,
+                                        bgcolor: CHART_COLORS.west,
+                                        fontWeight: 700,
                                         py: 2.5,
                                         borderRadius: '1.5rem',
                                         fontSize: '1rem',
-                                        boxShadow: '0 20px 40px -10px rgba(59,130,246,0.3)',
-                                        '&:hover': { bgcolor: '#2563eb' }
+                                        boxShadow: `0 20px 40px -10px ${alpha(CHART_COLORS.west, 0.3)}`,
+                                        '&:hover': { bgcolor: CHART_COLORS.westDeep }
                                     }}
                                 >
                                     Get Quantum Access <ArrowRight size={18} className="ml-2" />
                                 </Button>
 
-                                <p className="mt-6 text-xs text-center text-muted-foreground/40 font-black uppercase tracking-uppercase">
+                                <p className="mt-6 text-xs text-center text-terminal-dim font-semibold uppercase tracking-wider">
                                     30-Day Money Back Guarantee • Secure Checkout by Paddle
                                 </p>
                             </div>
@@ -170,14 +171,14 @@ export const APIAccessPage: React.FC = () => {
                 <Box sx={{ mt: 12, textAlign: 'center' }}>
                     <Link
                         to="/api-docs"
-                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 12, background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', color: '#93c5fd', textDecoration: 'none', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}
+                        style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 24px', borderRadius: 12, background: alpha(CHART_COLORS.west, 0.08), border: `1px solid ${alpha(CHART_COLORS.west, 0.2)}`, color: CHART_COLORS.westSoft, textDecoration: 'none', fontWeight: 700, fontSize: 12, textTransform: 'uppercase', letterSpacing: '0.08em', marginBottom: 16 }}
                     >
                         <BookOpen size={14} /> View Full API Documentation
                     </Link>
                 </Box>
                 <Box sx={{ mt: 4, textAlign: 'center' }}>
-                    <Typography variant="body2" sx={{ color: 'rgba(255,255,255,0.4)', fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
-                        Need higher throughput? <Button sx={{ fontWeight: 900, color: 'white', textDecoration: 'underline' }}>Request Enterprise keys</Button>
+                    <Typography variant="body2" sx={{ color: WHITE_ALPHA.dim, fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em' }}>
+                        Need higher throughput? <Button sx={{ fontWeight: 700, color: 'white', textDecoration: 'underline' }}>Request Enterprise keys</Button>
                     </Typography>
                 </Box>
             </Container>

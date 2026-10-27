@@ -49,10 +49,10 @@ function SnapshotCell({ m }: { m: SnapshotMetric }) {
     const asOf = live?.lastUpdated ?? m.asOf;
 
     return (
-        <div className="min-w-[7.5rem] flex-1 rounded-lg border border-border bg-card dark:bg-black/30 px-3 py-2.5 shadow-sm">
-            <div className="mb-1 text-[9px] font-black uppercase tracking-[0.15em] text-muted-foreground">{m.label}</div>
-            <div className="font-mono text-sm font-black tabular-nums text-foreground">{display}</div>
-            <div className="mt-1 flex items-center gap-1.5 text-[9px] text-muted-foreground">
+        <div className="min-w-[7.5rem] flex-1 rounded-lg border border-border bg-background/30 px-3 py-2.5 shadow-sm">
+            <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">{m.label}</div>
+            <div className="font-mono text-sm font-bold tabular-nums text-foreground">{display}</div>
+            <div className="mt-1 flex items-center gap-1.5 text-[11px] text-muted-foreground">
                 {asOf && <span className="truncate">{String(asOf).slice(0, 10)}</span>}
                 {freshness && (
                     <FreshnessChip
@@ -92,7 +92,7 @@ export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ cl
     return (
         <section
             className={cn(
-                'mb-8 rounded-2xl border border-border bg-card dark:bg-slate-900/40 p-4 sm:p-5 shadow-sm dark:shadow-2xl backdrop-blur-xl',
+                'mb-8 rounded-xl border border-border bg-slate-900/40 p-4 sm:p-5 shadow-2xl backdrop-blur-xl',
                 className
             )}
             id="key-telemetry"
@@ -101,12 +101,12 @@ export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ cl
         >
             <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
                 <div className="flex items-center gap-2">
-                    <Activity size={14} className="text-emerald-500 dark:text-emerald-400" />
-                    <h2 className="text-[11px] font-black uppercase tracking-[0.2em] text-foreground">
+                    <Activity size={14} className=" text-emerald-400" />
+                    <h2 className="text-[11px] font-semibold uppercase tracking-wider text-foreground">
                         Key telemetry
                     </h2>
                 </div>
-                <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wider text-muted-foreground">
                     <Clock size={12} />
                     {snapshot.available ? (
                         <span>
@@ -129,7 +129,7 @@ export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ cl
                     ))}
                 </div>
             ) : (
-                <p className="text-[12px] text-white/40">
+                <p className="text-[12px] text-terminal-dim">
                     Key series load client-side. Build snapshot empty
                     {snapshot.reason ? ` (${snapshot.reason})` : ''}. Open a metric page or API for
                     values.
@@ -138,7 +138,7 @@ export const TerminalSnapshotStrip: React.FC<TerminalSnapshotStripProps> = ({ cl
 
             {/* Always emit a crawlable text summary for AEO when numbers exist */}
             {metrics.length > 0 && (
-                <p className="mt-3 text-[11px] leading-relaxed text-white/35">
+                <p className="mt-3 text-[11px] leading-relaxed text-terminal-dim">
                     As of build {buildAsOf}:{' '}
                     {metrics
                         .slice(0, 6)

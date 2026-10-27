@@ -55,7 +55,7 @@ export const EnergyLabNav: React.FC = () => {
                 transition: 'opacity 200ms ease, transform 200ms ease',
             }}
         >
-            <div className="pointer-events-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-black/80 backdrop-blur-xl border border-white/10 shadow-2xl">
+            <div className="pointer-events-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-background/80 backdrop-blur-xl border border-border shadow-2xl">
                 {SECTIONS.map(({ label, id }) => {
                     const isActive = activeId === id;
                     return (
@@ -63,10 +63,10 @@ export const EnergyLabNav: React.FC = () => {
                             key={id}
                             onClick={() => scrollTo(id)}
                             className={[
-                                'px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-[0.15em] cursor-pointer transition-colors',
+                                'px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-wider cursor-pointer transition-colors',
                                 isActive
                                     ? 'bg-amber-500/15 text-amber-400 border border-amber-500/20'
-                                    : 'text-white/30 hover:text-white/60 border border-transparent',
+                                    : 'text-terminal-dim hover:text-white/60 border border-transparent',
                             ].join(' ')}
                         >
                             {label}

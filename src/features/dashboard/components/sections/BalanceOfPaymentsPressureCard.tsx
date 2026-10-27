@@ -1,14 +1,16 @@
 import React from 'react';
 import { Box, Typography, Paper, Tooltip, Chip, Stack } from '@mui/material';
-import { ResponsiveContainer, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Cell, ReferenceLine } from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip as RechartsTooltip, Cell, ReferenceLine } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_TOOLTIP_ITEM_STYLE, DEFAULT_TOOLTIP_LABEL_STYLE, DEFAULT_TOOLTIP_STYLE, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { useBalanceOfPaymentsPressure } from '@/hooks/useBalanceOfPaymentsPressure';
 import { Info } from 'lucide-react';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const BalanceOfPaymentsPressureCard: React.FC = () => {
     const { data, isLoading } = useBalanceOfPaymentsPressure();
 
     if (isLoading) {
-        return <Paper sx={{ p: 3, height: 320, bgcolor: 'rgba(255,255,255,0.02)', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        return <Paper sx={{ p: 3, height: 320, bgcolor: WHITE_ALPHA.ghost, borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
             <Typography variant="body2" color="text.secondary">Loading BoP Pressure...</Typography>
         </Paper>;
     }
@@ -23,16 +25,16 @@ export const BalanceOfPaymentsPressureCard: React.FC = () => {
     }));
 
     const getStatusColor = (status: string) => {
-        if (status === 'danger') return '#f44336';
-        if (status === 'warning') return '#ff9800';
-        return '#4caf50';
+        if (status === 'danger') return CHART_COLORS.stress;
+        if (status === 'warning') return CHART_COLORS.orange;
+        return CHART_COLORS.expansion;
     };
 
     return (
         <Paper sx={{
             p: 3,
             height: '100%',
-            bgcolor: 'rgba(255,255,255,0.02)',
+            bgcolor: WHITE_ALPHA.ghost,
             border: '1px solid',
             borderColor: 'divider',
             borderRadius: 2,
@@ -41,7 +43,7 @@ export const BalanceOfPaymentsPressureCard: React.FC = () => {
         }}>
             <Stack direction="row" justifyContent="space-between" alignItems="flex-start" sx={{ mb: 3 }}>
                 <Box>
-                    <Typography variant="overline" sx={{ fontWeight: 800, color: 'text.disabled', letterSpacing: '0.1em' }}>
+                    <Typography variant="overline" sx={{ fontWeight: 700, color: 'text.disabled', letterSpacing: '0.1em' }}>
                         BoP Pressure Monitor (REER + CA)
                     </Typography>
                     <Typography variant="h6" sx={{ fontWeight: 700, mt: 0.5 }}>
@@ -54,38 +56,40 @@ export const BalanceOfPaymentsPressureCard: React.FC = () => {
             </Stack>
 
             <Box sx={{ height: 200, mt: 2 }}>
-                <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height="fill">
                     <BarChart data={chartData} margin={{ top: 5, right: 30, left: 0, bottom: 5 }}>
-                        <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="rgba(255,255,255,0.05)" />
+                        <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                         <XAxis
+                            {...DEFAULT_XAXIS_PROPS}
                             dataKey="name"
                             axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 12 }}
+                            tick={{ fill: WHITE_ALPHA.mid, fontSize: 12 }}
                         />
                         <YAxis
+                            {...DEFAULT_YAXIS_PROPS}
+                            width={60}
                             axisLine={false}
-                            tickLine={false}
-                            tick={{ fill: 'rgba(255,255,255,0.5)', fontSize: 10 }}
-                            label={{ value: 'Z-Score / % GDP', angle: -90, position: 'insideLeft', fill: 'rgba(255,255,255,0.3)', fontSize: 10 }}
+                            tick={{ fill: WHITE_ALPHA.mid, fontSize: 11 }}
+                            label={{ value: 'Z-Score / % GDP', angle: -90, position: 'insideLeft', fill: WHITE_ALPHA.dim, fontSize: 11 }}
                         />
                         <RechartsTooltip
-                            contentStyle={{ backgroundColor: '#121212', border: '1px solid #333', borderRadius: '4px' }}
-                            itemStyle={{ fontSize: '12px' }}
+                            contentStyle={DEFAULT_TOOLTIP_STYLE}
+                            labelStyle={DEFAULT_TOOLTIP_LABEL_STYLE}
+                            itemStyle={DEFAULT_TOOLTIP_ITEM_STYLE}
                         />
-                        <ReferenceLine y={0} stroke="rgba(255,255,255,0.2)" />
-                        <Bar dataKey="reerZ" name="REER Z-Score" fill="#3f51b5" radius={[4, 4, 0, 0]}>
+                        <ReferenceLine y={0} stroke={WHITE_ALPHA.soft} />
+                        <Bar dataKey="reerZ" name="REER Z-Score" fill={CHART_COLORS.indigo} radius={[4, 4, 0, 0]}>
                             {chartData?.map((entry, index) => (
-                                <Cell key={`cell-${index}`} fill={entry.reerZ > 1.5 ? '#f44336' : '#3f51b5'} />
+                                <Cell key={`cell-${index}`} fill={entry.reerZ > 1.5 ? CHART_COLORS.stress : CHART_COLORS.indigo} />
                             ))}
                         </Bar>
-                        <Bar dataKey="caGdp" name="Current Account % GDP" fill="#009688" radius={[4, 4, 0, 0]}>
+                        <Bar dataKey="caGdp" name="Current Account % GDP" fill={CHART_COLORS.westDeep} radius={[4, 4, 0, 0]}>
                             {chartData?.map((entry, index) => (
-                                <Cell key={`cell-ca-${index}`} fill={entry.caGdp < -3 ? '#f44336' : '#009688'} />
+                                <Cell key={`cell-ca-${index}`} fill={entry.caGdp < -3 ? CHART_COLORS.stress : CHART_COLORS.westDeep} />
                             ))}
                         </Bar>
                     </BarChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
             </Box>
 
             <Stack direction="row" spacing={1} sx={{ mt: 2, flexWrap: 'wrap', gap: 1 }}>

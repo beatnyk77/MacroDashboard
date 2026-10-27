@@ -1,11 +1,7 @@
 import React, { useMemo } from 'react';
 import { Card } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-    ResponsiveContainer,
-    AreaChart,
-    Area
-} from 'recharts';
+import { AreaChart, Area } from 'recharts';
 import { useUSMacroPulse, USMacroPulseData } from '@/hooks/useUSMacroPulse';
 import { cn } from '@/lib/utils';
 import {
@@ -18,48 +14,50 @@ import {
     TrendingDown,
     Activity as ActivityIcon
 } from 'lucide-react';
+import { CHART_COLORS } from '@/constants/chartDefaults';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 const CATEGORIES = [
     {
         id: 'capital_flows',
         label: 'Capital Flows',
         icon: DollarSign,
-        color: '#3b82f6',
+        color: CHART_COLORS.west,
         metrics: ['CAPITAL_FROM_EM_DEBT_BN', 'CAPITAL_FROM_GOLD_ETF_BN']
     },
     {
         id: 'inflation_regime',
         label: 'Inflation & Rates',
         icon: Wind,
-        color: '#f97316',
+        color: CHART_COLORS.orange,
         metrics: ['INFLATION_HEADLINE_YOY', 'INFLATION_CORE_YOY', 'US_10Y_YIELD']
     },
     {
         id: 'balance_of_payments',
         label: 'Balance of Payments',
         icon: Scale,
-        color: '#8b5cf6',
+        color: CHART_COLORS.violet,
         metrics: ['BOP_CURRENT_ACCOUNT_GDP', 'BOP_RESERVES_MONTHS', 'BOP_SHORT_TERM_DEBT_GDP']
     },
     {
         id: 'housing_cycles',
         label: 'Housing Cycles',
         icon: Home,
-        color: '#ef4444',
+        color: CHART_COLORS.stress,
         metrics: ['HOUSING_PRICE_INDEX', 'HOUSING_MORTGAGE_RATE_30Y']
     },
     {
         id: 'activity_regime',
         label: 'Activity Regime',
         icon: ActivityIcon,
-        color: '#10b981',
+        color: CHART_COLORS.expansion,
         metrics: ['PMI_US_MFG']
     },
     {
         id: 'labor_market',
         label: 'Labor Market',
         icon: Briefcase,
-        color: '#f59e0b',
+        color: CHART_COLORS.gold,
         metrics: ['LABOR_VACANCIES_JOLTS', 'LABOR_UNEMPLOYMENT_RATE', 'LABOR_WAGE_GROWTH_YOY']
     }
 ];
@@ -94,13 +92,13 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
         <div className="group/row flex flex-col md:flex-row items-center gap-6 py-6 px-4 hover:bg-white/[0.02] transition-all duration-300">
             {/* Label Block */}
             <div className="w-full md:w-56 space-y-1 shrink-0">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{config.label}</div>
-                <div className="text-xs font-bold text-white/30 uppercase tracking-heading">{config.unit}</div>
+                <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{config.label}</div>
+                <div className="text-xs font-semibold text-terminal-dim uppercase tracking-heading">{config.unit}</div>
             </div>
 
             {/* Sparkline Block */}
             <div className="w-full h-16 relative">
-                <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height="fill">
                     <AreaChart data={data.history}>
                         <defs>
                             <linearGradient id={`grad-${data.metric_id}`} x1="0" y1="0" x2="0" y2="1">
@@ -118,19 +116,19 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                             animationDuration={1500}
                         />
                     </AreaChart>
-                </ResponsiveContainer>
+                </MacroChartContainer>
                 {/* 25Y context label floating inside sparkline */}
-                <div className="absolute top-0 right-0 text-xs font-black text-white/10 uppercase tracking-uppercase pointer-events-none">25-YEAR CONTEXT</div>
+                <div className="absolute top-0 right-0 text-xs font-semibold text-white/10 uppercase tracking-wider pointer-events-none">25-YEAR CONTEXT</div>
             </div>
 
             {/* Value Block */}
             <div className="w-full md:w-48 flex items-center justify-between md:justify-end gap-6 shrink-0">
                 <div className="text-right">
-                    <div className="text-2xl font-black text-white tracking-heading tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
+                    <div className="text-2xl font-bold text-white tracking-heading tabular-nums drop-shadow-[0_0_15px_rgba(255,255,255,0.1)]">
                         {data.current_value.toLocaleString(undefined, { maximumFractionDigits: 1 })}
                     </div>
                     <div className={cn(
-                        "text-xs font-black tabular-nums tracking-heading flex items-center justify-end gap-1",
+                        "text-xs font-bold tabular-nums tracking-heading flex items-center justify-end gap-1",
                         isPositive ? "text-emerald-500" : "text-rose-500"
                     )}>
                         {isPositive ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
@@ -148,7 +146,7 @@ const MetricRow: React.FC<MetricRowProps> = ({ data, color }) => {
                                     "text-emerald-500 bg-emerald-500"
                     )} />
                     {data.isStale && (
-                        <span className="text-xs font-black text-amber-500/60 uppercase tracking-heading">Delay</span>
+                        <span className="text-xs font-semibold text-amber-500/60 uppercase tracking-heading">Delay</span>
                     )}
                 </div>
             </div>
@@ -171,7 +169,7 @@ export const USMacroPulseSection: React.FC = () => {
         return (
             <div className="space-y-8">
                 {[1, 2, 3].map(i => (
-                    <Skeleton key={i} className="h-64 w-full rounded-[2.5rem] bg-white/5" />
+                    <Skeleton key={i} className="h-64 w-full rounded-xl bg-white/5" />
                 ))}
             </div>
         );
@@ -182,7 +180,7 @@ export const USMacroPulseSection: React.FC = () => {
             {CATEGORIES.map((cat) => (
                 <Card
                     key={cat.id}
-                    className="p-6 bg-black/40 backdrop-blur-3xl border-white/5 shadow-2xl overflow-hidden rounded-[2.5rem] relative group"
+                    className="p-6 bg-background/40 backdrop-blur-3xl border-border shadow-2xl overflow-hidden rounded-xl relative group"
                 >
                     {/* Background Glow */}
                     <div
@@ -208,10 +206,10 @@ export const USMacroPulseSection: React.FC = () => {
                                     <span className="w-8 h-px" style={{ backgroundColor: cat.color }} />
                                     {cat.label}
                                 </h3>
-                                <p className="text-xs text-muted-foreground/60 font-medium uppercase tracking-uppercase mt-0.5">
+                                <p className="text-xs text-muted-foreground font-medium uppercase tracking-wider mt-0.5">
                                     Institutional Regime Monitoring
                                     {cat.metrics.some(m => pulseData.find(pd => pd.metric_id === m)?.isStale) && (
-                                        <span className="ml-2 text-amber-500/80 font-black">• DATA DELAYED</span>
+                                        <span className="ml-2 text-amber-500/80 font-bold">• DATA DELAYED</span>
                                     )}
                                 </p>
                             </div>
@@ -236,13 +234,13 @@ export const USMacroPulseSection: React.FC = () => {
             ))}
 
             {/* Methodology Note */}
-            <div className="px-8 py-6 rounded-3xl bg-blue-500/[0.02] border border-blue-500/10 flex items-start gap-4">
+            <div className="px-8 py-6 rounded-xl bg-blue-500/[0.02] border border-blue-500/10 flex items-start gap-4">
                 <div className="p-2 rounded-lg bg-blue-500/10">
-                    <ActivityIcon color="#3b82f6" size={16} />
+                    <ActivityIcon color={CHART_COLORS.west} size={16} />
                 </div>
                 <div>
-                    <span className="text-xs font-bold text-blue-400 uppercase tracking-uppercase">Institutional Note:</span>
-                    <p className="text-xs text-muted-foreground/50 leading-relaxed mt-1">
+                    <span className="text-xs font-semibold text-blue-400 uppercase tracking-wider">Institutional Note:</span>
+                    <p className="text-xs text-terminal-dim leading-relaxed mt-1">
                         All sparklines represent 25-year indexed historical distribution. Current levels are benchmarked against 3-year rolling standard deviations (Z-Scores) to identify regime instability. Sources include FRED, US Treasury, and BLS.
                     </p>
                 </div>

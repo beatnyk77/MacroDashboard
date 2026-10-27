@@ -5,7 +5,6 @@ import { getStaleness } from '@/hooks/useStaleness';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-    ChevronRight,
     ArrowLeft,
     EyeOff,
     Globe
@@ -16,14 +15,16 @@ import { Button } from '@/components/ui/button';
 import { SEOManager } from '@/components/SEOManager';
 import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
+import { LabPageHeader } from '@/components/LabPageHeader';
+import { TrailLink } from '@/components/TrailLink';
 
 // Lazy loaded components
 const ShadowTradeCard = lazy(() => import('@/features/dashboard/components/rows/ShadowTradeCard').then(m => ({ default: m.ShadowTradeCard })));
 
 
 const LoadingFallback = () => (
-    <div className="w-full min-h-[300px] bg-white/[0.02] border border-white/5 rounded-2xl animate-pulse flex items-center justify-center">
-        <span className="text-[10px] font-black text-muted-foreground/30 uppercase tracking-uppercase">Loading Shadow Signal...</span>
+    <div className="w-full min-h-[300px] bg-white/[0.02] border border-border rounded-xl animate-pulse flex items-center justify-center">
+        <span className="text-[11px] font-semibold text-terminal-dim uppercase tracking-wider">Loading Shadow Signal...</span>
     </div>
 );
 
@@ -94,39 +95,23 @@ export const ShadowSystemLab: React.FC = () => {
                 }
             ]}
         />
-        <div className="w-full max-w-[1700px] mx-auto px-4 sm:px-6 lg:px-12 py-12">
-            {/* Breadcrumbs */}
-            <div className="mb-8">
-                <nav className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-                    <a href="/" className="hover:text-white transition-colors">Home</a>
-                    <ChevronRight size={10} />
-                    <a href="/macro-observatory/" className="hover:text-white transition-colors">Observatory</a>
-                    <ChevronRight size={10} />
-                    <span className="text-slate-400">Shadow System</span>
-                </nav>
-            </div>
+        <div className="page-shell">
+            <LabPageHeader
+                trail={[{ label: 'Home', to: '/' }, { label: 'Observatory', to: '/macro-observatory/' }]}
+                current="Shadow System"
+                badge="Off-Grid Telemetry"
+                badgeIcon={<EyeOff size={12} />}
+                title={<>Shadow <span className="text-blue-400">System</span> Lab</>}
+                status={<FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />}
+                thesis="Tracking the unobserved economy: Elite wealth flight, trade misinvoicing, and the gravitational shifts in non-G7 trade networks."
+            />
 
-            <div className="mb-16">
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-slate-500/10 border border-slate-500/20 text-slate-400 text-[10px] font-black uppercase tracking-uppercase mb-6">
-                    <EyeOff size={12} /> Off-Grid Telemetry
-                </div>
-                <div className="flex items-center gap-3 mb-4">
-                    <h1 className="text-3xl md:text-5xl font-black uppercase tracking-heading leading-tight text-white">
-                        Shadow <span className="text-slate-400">System</span> Lab
-                    </h1>
-                    <FreshnessChip status={dataFreshness.state} lastUpdated={primaryMetric?.lastUpdated} />
-                </div>
-                <p className="text-muted-foreground/60 max-w-3xl text-sm md:text-lg font-medium leading-relaxed uppercase tracking-wide">
-                    Tracking the unobserved economy: Elite wealth flight, trade misinvoicing, and the gravitational shifts in non-G7 trade networks.
-                </p>
-            </div>
-
-            <div className="space-y-32">
+            <div className="space-y-16">
                 {/* 3. Shadow Trade Card */}
                 <section>
                     <div className="flex items-center gap-3 mb-10">
                         <Globe className="text-slate-400" size={28} />
-                        <h2 className="text-2xl font-black uppercase tracking-heading text-white">Shadow Trade Terminal</h2>
+                        <h2 className="text-2xl font-bold uppercase tracking-heading text-white">Shadow Trade Terminal</h2>
                     </div>
                     <SectionErrorBoundary name="Shadow Trade">
                         <Suspense fallback={<LoadingFallback />}>
@@ -139,8 +124,8 @@ export const ShadowSystemLab: React.FC = () => {
             </div>
 
             {/* SEO Structural Analysis Text Block */}
-            <article className="mt-32 p-12 bg-white/[0.02] border border-white/5 rounded-3xl" aria-label="Structural Analysis of the Shadow Economy">
-                <h2 className="text-xl font-black text-white uppercase tracking-uppercase mb-6">Structural Analysis: The Shadow Economy & Off-Grid Capital Flows</h2>
+            <article className="mt-32 p-12 bg-white/[0.02] border border-border rounded-xl" aria-label="Structural Analysis of the Shadow Economy">
+                <h2 className="text-xl font-bold text-white uppercase tracking-wider mb-6">Structural Analysis: The Shadow Economy & Off-Grid Capital Flows</h2>
                 <div className="space-y-6 text-sm text-muted-foreground leading-relaxed font-medium">
                     <p>
                         The <strong>Shadow System Lab</strong> is dedicated to the unobserved telemetry of the global economy. As G7 sanctions and financial surveillance expand, an increasing volume of global trade and capital flow has moved "off-grid" into the shadow system. This lab tracks the divergence between official customs data and physical flow observations to identify <strong>Capital Flight</strong> and <strong>Trade Misinvoicing</strong> trends.
@@ -157,8 +142,8 @@ export const ShadowSystemLab: React.FC = () => {
                 </div>
 
                 {/* Visible FAQ block, mirrors the FAQPage JSON-LD above */}
-                <div className="mt-10 pt-8 border-t border-white/5 space-y-5">
-                    <h3 className="text-sm font-black text-white uppercase tracking-widest mb-2">Frequently Asked Questions</h3>
+                <div className="mt-10 pt-8 border-t border-border space-y-5">
+                    <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2">Frequently Asked Questions</h3>
                     <div>
                         <p className="text-sm font-bold text-white/90 mb-1">What is trade misinvoicing?</p>
                         <p className="text-sm text-muted-foreground leading-relaxed">The deliberate misreporting of the value, quantity, or origin of an import or export on customs declarations, typically to move capital across borders while evading taxes, tariffs, or capital controls — measured by comparing what one country reports exporting against what its partner reports importing.</p>
@@ -174,15 +159,15 @@ export const ShadowSystemLab: React.FC = () => {
                 </div>
             </article>
 
-            <div className="mt-24 pt-12 border-t border-white/5 text-center">
+            <div className="mt-24 pt-12 border-t border-border text-center">
                 <Button
                     variant="ghost"
-                    className="text-muted-foreground/40 font-black uppercase tracking-uppercase hover:text-white transition-colors"
+                    className="text-terminal-dim font-semibold uppercase tracking-wider hover:text-white transition-colors"
                     asChild
                 >
-                    <a href="/macro-observatory/" className="flex items-center gap-2">
+                    <TrailLink to="/macro-observatory/" className="flex items-center gap-2">
                         <ArrowLeft size={18} /> Back to Observatory
-                    </a>
+                    </TrailLink>
                 </Button>
             </div>
             <RelatedContent />

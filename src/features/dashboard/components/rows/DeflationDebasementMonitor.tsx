@@ -3,7 +3,6 @@ import { useUSFiscalStress } from '@/hooks/useUSFiscalStress';
 import { SPASection } from '@/components/spa/SPASection';
 import { SectionHeader } from '@/components/SectionHeader';
 import {
-    ResponsiveContainer,
     ComposedChart,
     Line,
     XAxis,
@@ -13,9 +12,12 @@ import {
     ReferenceLine,
     Area
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { AlertTriangle, TrendingDown, ShieldCheck, Info } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { m } from 'framer-motion';
+import { TOOLTIP_SHELL_CLASS } from '@/components/charts/chartTooltipFormat';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 export const DeflationDebasementMonitor: React.FC = () => {
     const { data, isLoading } = useUSFiscalStress();
@@ -34,8 +36,8 @@ export const DeflationDebasementMonitor: React.FC = () => {
 
     if (isLoading) {
         return (
-            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-3xl flex items-center justify-center">
-                <span className="text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">Analyzing Fiscal Vulnerability...</span>
+            <div className="h-[600px] w-full bg-white/[0.02] animate-pulse rounded-xl flex items-center justify-center">
+                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Analyzing Fiscal Vulnerability...</span>
             </div>
         );
     }
@@ -70,51 +72,51 @@ export const DeflationDebasementMonitor: React.FC = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
                     {/* Main Chart Section */}
-                    <div className="lg:col-span-3 bg-white/[0.02] border border-white/5 rounded-[2.5rem] p-8 relative overflow-hidden group">
+                    <div className="lg:col-span-3 bg-white/[0.02] border border-border rounded-xl p-8 relative overflow-hidden group">
                         <div className="absolute top-8 left-8 z-10">
-                            <h3 className="text-xs font-black text-white/40 uppercase tracking-uppercase">US Federal Insolvency Ratio</h3>
-                            <p className="text-xs text-muted-foreground/60 mt-1">Gross Interest Expense ÷ Total Federal Receipts</p>
+                            <h3 className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">US Federal Insolvency Ratio</h3>
+                            <p className="text-xs text-muted-foreground mt-1">Gross Interest Expense ÷ Total Federal Receipts</p>
                         </div>
 
                         <div className="absolute top-8 right-8 z-10 flex items-center gap-2">
-                            <span className={cn("text-3xl font-black tabular-nums", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
+                            <span className={cn("text-3xl font-bold tabular-nums", isCrisisZone ? "text-rose-500" : "text-amber-500")}>
                                 {insolvencyPercent}%
                             </span>
                             <div className="flex flex-col">
-                                <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-heading transition-all">Current</span>
-                                <span className="text-xs font-black text-rose-500/60 uppercase">Crisis Zone: &gt;25%</span>
+                                <span className="text-xs font-semibold text-terminal-dim uppercase tracking-heading transition-all">Current</span>
+                                <span className="text-xs font-semibold text-rose-500/60 uppercase">Crisis Zone: &gt;25%</span>
                             </div>
                         </div>
 
-                        <div className="h-[450px] w-full mt-12">
-                            <ResponsiveContainer width="100%" height="100%">
+                        <MacroChartContainer height={CHART_HEIGHTS.hero} className="mt-12">
                                 <ComposedChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
                                     <defs>
                                         <linearGradient id="insolvencyGradient" x1="0" y1="0" x2="0" y2="1">
-                                            <stop offset="5%" stopColor="#ef4444" stopOpacity={0.1} />
-                                            <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
+                                            <stop offset="5%" stopColor={CHART_COLORS.stress} stopOpacity={0.1} />
+                                            <stop offset="95%" stopColor={CHART_COLORS.stress} stopOpacity={0} />
                                         </linearGradient>
                                     </defs>
-                                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                    <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                     <XAxis
+                                        {...DEFAULT_XAXIS_PROPS}
                                         dataKey="date"
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.soft }}
                                         minTickGap={60}
                                         tickFormatter={(str) => new Date(str).getFullYear().toString()}
                                     />
                                     <YAxis
+                                        {...DEFAULT_YAXIS_PROPS}
+                                        width={60}
                                         axisLine={false}
-                                        tickLine={false}
-                                        tick={{ fontSize: 9, fill: 'rgba(255,255,255,0.2)' }}
+                                        tick={{ fontSize: 11, fill: WHITE_ALPHA.soft }}
                                         tickFormatter={(val) => `${(val * 100).toFixed(0)}%`}
                                     />
                                     <Tooltip content={<CustomTooltip />} />
 
                                     {/* Crisis Zone Reference Line */}
-                                    <ReferenceLine y={0.25} stroke="#ef4444" strokeDasharray="5 5" strokeOpacity={0.5} label={{ value: 'FISCAL CRUNCH', position: 'right', fill: '#ef4444', fontSize: 8, fontWeight: 'bold' }} />
-                                    <ReferenceLine y={0.30} stroke="#ef4444" strokeDasharray="3 3" strokeOpacity={0.8} label={{ value: 'DEFAULT POINT', position: 'right', fill: '#ef4444', fontSize: 8, fontWeight: 'bold' }} />
+                                    <ReferenceLine y={0.25} stroke={CHART_COLORS.stress} strokeDasharray="5 5" strokeOpacity={0.5} label={{ value: 'FISCAL CRUNCH', position: 'right', fill: CHART_COLORS.stress, fontSize: 11, fontWeight: 'bold' }} />
+                                    <ReferenceLine y={0.30} stroke={CHART_COLORS.stress} strokeDasharray="3 3" strokeOpacity={0.8} label={{ value: 'DEFAULT POINT', position: 'right', fill: CHART_COLORS.stress, fontSize: 11, fontWeight: 'bold' }} />
 
                                     <Area
                                         type="monotone"
@@ -126,14 +128,13 @@ export const DeflationDebasementMonitor: React.FC = () => {
                                         type="monotone"
                                         dataKey="insolvency_ratio"
                                         name="Insolvency Ratio"
-                                        stroke={isCrisisZone ? "#ef4444" : "#f59e0b"}
+                                        stroke={isCrisisZone ? CHART_COLORS.stress : CHART_COLORS.gold}
                                         strokeWidth={3}
                                         dot={false}
                                         activeDot={{ r: 4, strokeWidth: 0 }}
                                     />
                                 </ComposedChart>
-                            </ResponsiveContainer>
-                        </div>
+                        </MacroChartContainer>
                     </div>
 
                     {/* Supporting Metrics Column */}
@@ -169,9 +170,9 @@ export const DeflationDebasementMonitor: React.FC = () => {
                 </div>
 
                 <div className="mt-12 flex justify-center">
-                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-white/5">
+                    <div className="flex items-center gap-2 px-6 py-3 rounded-full bg-white/[0.03] border border-border">
                         <Info size={14} className="text-blue-400" />
-                        <span className="text-xs font-bold text-muted-foreground uppercase tracking-uppercase text-center">
+                        <span className="text-xs font-semibold text-muted-foreground uppercase tracking-wider text-center">
                             Source: FRED / U.S. Treasury Fiscal Data – updated quarterly
                             {latest?.date && (
                                 <span className="opacity-40 italic ml-2">• Latest: {new Date(latest.date).toLocaleDateString([], { month: 'short', year: 'numeric' })}</span>
@@ -185,35 +186,35 @@ export const DeflationDebasementMonitor: React.FC = () => {
 };
 
 const StatusChip = ({ label, status, color }: any) => (
-    <div className="px-5 py-3 rounded-2xl bg-white/[0.03] border border-white/5 flex flex-col items-start gap-1">
-        <span className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase">{label}</span>
+    <div className="px-5 py-3 rounded-xl bg-white/[0.03] border border-border flex flex-col items-start gap-1">
+        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{label}</span>
         <span className={cn(
-            "text-xs font-black uppercase tracking-heading",
+            "text-xs font-semibold uppercase tracking-heading",
             color === 'rose' ? "text-rose-500" : "text-amber-500"
         )}>{status}</span>
     </div>
 );
 
 const MetricCard = ({ title, value, unit, sub, icon, description, trend }: any) => (
-    <div className="p-6 rounded-[2rem] bg-white/[0.02] border border-white/5 flex flex-col justify-between hover:bg-white/[0.04] transition-all group">
+    <div className="p-6 rounded-xl bg-white/[0.02] border border-border flex flex-col justify-between hover:bg-white/[0.04] transition-all group">
         <div className="flex items-start justify-between mb-4">
             <div className="p-2 rounded-xl bg-white/[0.03] group-hover:scale-110 transition-transform">
                 {icon}
             </div>
             <div className="text-right">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-1">{title}</div>
+                <div className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mb-1">{title}</div>
                 <div className="flex items-baseline justify-end gap-1">
-                    <span className="text-3xl font-black text-white/90 tabular-nums">{value}</span>
-                    <span className="text-xs font-bold text-muted-foreground/40">{unit}</span>
+                    <span className="text-3xl font-bold text-white/90 tabular-nums">{value}</span>
+                    <span className="text-xs font-bold text-terminal-dim">{unit}</span>
                 </div>
             </div>
         </div>
         <div>
-            <div className="text-xs font-bold text-muted-foreground/60 leading-relaxed mb-4">{description}</div>
-            <div className="flex items-center justify-between pt-4 border-t border-white/5">
-                <span className="text-xs font-black uppercase tracking-uppercase text-white/20">{sub}</span>
+            <div className="text-xs font-bold text-muted-foreground leading-relaxed mb-4">{description}</div>
+            <div className="flex items-center justify-between pt-4 border-t border-border">
+                <span className="text-xs font-semibold uppercase tracking-wider text-white/20">{sub}</span>
                 <span className={cn(
-                    "text-xs font-black px-2 py-0.5 rounded-full uppercase",
+                    "text-xs font-semibold px-2 py-0.5 rounded-full uppercase",
                     trend === 'up' ? "bg-emerald-500/10 text-emerald-500" : "bg-rose-500/10 text-rose-500"
                 )}>{trend}</span>
             </div>
@@ -226,14 +227,14 @@ const CustomTooltip = ({ active, payload, label }: any) => {
         const val = payload[0].value;
         const date = new Date(label).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
         return (
-            <div className="bg-slate-950/90 backdrop-blur-xl border border-white/12 p-5 rounded-2xl shadow-3xl">
-                <div className="text-xs font-black text-muted-foreground/40 uppercase tracking-uppercase mb-4 border-b border-white/5 pb-2">
+            <div className={TOOLTIP_SHELL_CLASS}>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-4 border-b border-border pb-2">
                     {date} Fiscal Snapshot
                 </div>
                 <div className="space-y-3">
                     <div className="flex items-center justify-between gap-12">
-                        <span className="text-xs font-bold text-muted-foreground/80">Insolvency Ratio</span>
-                        <span className={cn("text-sm font-black tabular-nums", val > 0.25 ? "text-rose-500" : "text-amber-500")}>
+                        <span className="text-xs font-bold text-slate-400">Insolvency Ratio</span>
+                        <span className={cn("text-xs font-semibold tabular-nums", val > 0.25 ? "text-rose-500" : "text-amber-500")}>
                             {(val * 100).toFixed(2)}%
                         </span>
                     </div>

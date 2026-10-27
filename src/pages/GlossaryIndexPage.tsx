@@ -9,6 +9,7 @@ import { InstitutionalAccessStrip } from '@/components/growth/InstitutionalAcces
 import { glossaryData } from '@/features/glossary/glossaryData';
 import { SEOManager } from '@/components/SEOManager';
 import { toAbsoluteUrl } from '@/lib/urlPath';
+import { CHART_COLORS, alpha, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const GlossaryIndexPage: React.FC = () => {
     const [searchQuery, setSearchQuery] = useState('');
@@ -65,15 +66,15 @@ export const GlossaryIndexPage: React.FC = () => {
                     </Typography>
                     <Box display="flex" gap={4} justifyContent="center" mt={3}>
                         <Box textAlign="center">
-                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={700} color="primary.main">{glossaryData.length}</Typography>
                             <Typography variant="caption" color="text.disabled">Terms Defined</Typography>
                         </Box>
                         <Box textAlign="center">
-                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.formula).length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={700} color="primary.main">{glossaryData.filter(t => t.formula).length}</Typography>
                             <Typography variant="caption" color="text.disabled">With Formulas</Typography>
                         </Box>
                         <Box textAlign="center">
-                            <Typography component="h2" variant="h5" fontWeight={800} color="primary.main">{glossaryData.filter(t => t.methodsPage).length}</Typography>
+                            <Typography component="h2" variant="h5" fontWeight={700} color="primary.main">{glossaryData.filter(t => t.methodsPage).length}</Typography>
                             <Typography variant="caption" color="text.disabled">Deep Dives</Typography>
                         </Box>
                     </Box>
@@ -98,7 +99,7 @@ export const GlossaryIndexPage: React.FC = () => {
                                             <Search className="text-muted-foreground w-5 h-5" />
                                         </InputAdornment>
                                     ),
-                                    sx: { borderRadius: 2, bgcolor: 'rgba(255,255,255,0.03)' }
+                                    sx: { borderRadius: 2, bgcolor: WHITE_ALPHA.ghost }
                                 }}
                             />
                         </Grid>
@@ -145,7 +146,7 @@ export const GlossaryIndexPage: React.FC = () => {
                                     '&:hover': {
                                         borderColor: 'primary.main',
                                         transform: 'translateY(-4px)',
-                                        boxShadow: '0 10px 40px -10px rgba(59,130,246,0.2)'
+                                        boxShadow: `0 10px 40px -10px ${alpha(CHART_COLORS.west, 0.2)}`
                                     }
                                 }}
                             >
@@ -154,8 +155,8 @@ export const GlossaryIndexPage: React.FC = () => {
                                         {term.category}
                                     </Typography>
                                     <Box display="flex" gap={0.5}>
-                                        {term.formula && <Box component="span" title="Includes formula"><FlaskConical size={12} style={{ color: '#60a5fa', marginTop: 2 }} /></Box>}
-                                        {term.methodsPage && <Box component="span" title="Deep-dive article"><FileText size={12} style={{ color: '#34d399', marginTop: 2 }} /></Box>}
+                                        {term.formula && <Box component="span" title="Includes formula"><FlaskConical size={12} style={{ color: CHART_COLORS.west, marginTop: 2 }} /></Box>}
+                                        {term.methodsPage && <Box component="span" title="Deep-dive article"><FileText size={12} style={{ color: CHART_COLORS.expansion, marginTop: 2 }} /></Box>}
                                     </Box>
                                 </Box>
                                 <Typography variant="h6" component="h2" color="text.primary" fontWeight="bold" gutterBottom>

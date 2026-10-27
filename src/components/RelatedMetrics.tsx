@@ -179,7 +179,7 @@ export const RelatedMetrics: React.FC<RelatedMetricsProps> = ({
 
     return (
         <section className={cn('mt-10 pt-6 border-t border-white/[0.05]', className)}>
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 mb-4">
+            <h3 className="text-[11px] font-semibold uppercase tracking-wider text-terminal-dim mb-4">
                 Related Metrics &amp; Intelligence
             </h3>
             <div className="flex flex-wrap gap-2">
@@ -191,7 +191,7 @@ export const RelatedMetrics: React.FC<RelatedMetricsProps> = ({
                             to={link.to}
                             className="group flex items-center gap-2 px-3 py-2 rounded-lg border border-white/[0.06] bg-white/[0.02] hover:bg-white/[0.05] transition-colors no-underline"
                         >
-                            <span className={cn('text-[8px] font-black uppercase tracking-widest px-1.5 py-0.5 rounded border flex items-center gap-1', cfg.color)}>
+                            <span className={cn('text-[11px] font-semibold uppercase tracking-wider px-1.5 py-0.5 rounded border flex items-center gap-1', cfg.color)}>
                                 {cfg.icon}
                                 {cfg.badge}
                             </span>

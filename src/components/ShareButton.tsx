@@ -36,7 +36,7 @@ export const ShareButton: React.FC<ShareButtonProps> = ({ targetRef, title, data
                 onClick={handleClick}
                 disabled={isCapturing}
                 aria-label="Share this chart"
-                className="absolute top-3 right-3 z-10 p-1.5 rounded-md bg-white/5 border border-white/10 text-white/30 opacity-0 group-hover:opacity-100 sm:opacity-30 sm:group-hover:opacity-100 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
+                className="absolute top-3 right-3 z-10 p-1.5 rounded-md bg-white/5 border border-border text-terminal-dim opacity-0 group-hover:opacity-100 sm:opacity-30 sm:group-hover:opacity-100 hover:text-white hover:bg-white/10 hover:border-white/20 transition-all duration-200 disabled:opacity-20 disabled:cursor-not-allowed"
             >
                 <Share2 size={14} aria-hidden="true" />
             </button>

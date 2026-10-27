@@ -1,12 +1,15 @@
 import React, { useState, useMemo } from 'react';
+import { TerminalTooltipShell, TerminalTooltipLabel, TerminalTooltipRow } from '@/components/charts/TerminalChartTooltip';
 import {
-    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend
+    LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend
 } from 'recharts';
+import { DEFAULT_CARTESIAN_GRID_PROPS, DEFAULT_XAXIS_PROPS, DEFAULT_YAXIS_PROPS, CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 import { Globe, Anchor, ShieldAlert, Layers } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { CommodityImport } from '@/hooks/useCommodityImports';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { useStaleness } from '@/hooks/useStaleness';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
 
 interface MetalImportCardProps {
     metal: 'Gold' | 'Silver' | 'Rare Earth Metals';
@@ -25,22 +28,19 @@ interface ChartTooltipProps {
 const ChartTooltip: React.FC<ChartTooltipProps> = ({ active, payload, label, viewMode, formatVolume }) => {
     if (active && payload && payload.length) {
         return (
-            <div className="bg-black/90 backdrop-blur-xl border border-white/12 p-3 rounded-xl shadow-2xl">
-                <p className="text-xs font-black text-white/40 mb-1 uppercase tracking-uppercase">{label}</p>
-                {payload.map((entry: any, index: number) => (
-                    <div key={index} className="flex items-center justify-between gap-8 py-1">
-                        <span className="text-xs font-black uppercase tracking-uppercase" style={{ color: entry.color }}>
-                            {entry.name}
-                        </span>
-                        <span className="text-xs font-black text-white tabular-nums">
+            <TerminalTooltipShell>
+                <TerminalTooltipLabel>{label}</TerminalTooltipLabel>
+                <div className="space-y-1">
+                    {payload.map((entry: any, index: number) => (
+                        <TerminalTooltipRow key={index} label={entry.name} swatch={entry.color}>
                             {viewMode === 'value'
                                 ? `$${entry.value.toFixed(1)}B`
                                 : formatVolume(entry.value * 1)
                             }
-                        </span>
-                    </div>
-                ))}
-            </div>
+                        </TerminalTooltipRow>
+                    ))}
+                </div>
+            </TerminalTooltipShell>
         );
     }
     return null;
@@ -115,8 +115,8 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                 <div className="space-y-2">
                     <div className="flex items-center gap-3">
                         <div className={cn("w-1.5 h-10 rounded-full", `bg-${accentColor}-500`)} />
-                        <h2 className="text-4xl md:text-5xl font-black tracking-heading uppercase whitespace-pre-wrap">
-                            {metal} <span className="text-muted-foreground/30">Imports</span>
+                        <h2 className="text-4xl md:text-5xl font-bold tracking-heading uppercase whitespace-pre-wrap">
+                            {metal} <span className="text-terminal-dim">Imports</span>
                         </h2>
                     </div>
                     <p className="text-muted-foreground font-medium tracking-wide">
@@ -124,18 +124,18 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                     </p>
                     <div className="flex items-center gap-2 pt-1">
                         <FreshnessChip status={staleness.state} lastUpdated={stalenessDate} />
-                        <span className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/50">
+                        <span className="text-[11px] font-mono uppercase tracking-wider text-terminal-dim">
                             Source: UN Comtrade · DGCIS · GACC
                         </span>
                     </div>
                 </div>
 
-                <div className="flex gap-2 bg-black/40 p-1 rounded-xl border border-white/5 backdrop-blur-sm">
+                <div className="flex gap-2 bg-background/40 p-1 rounded-xl border border-border backdrop-blur-sm">
                     <button
                         onClick={() => setViewMode('value')}
                         className={cn(
-                            "px-6 py-2 rounded-lg text-xs font-black tracking-uppercase uppercase transition-all",
-                            viewMode === 'value' ? "bg-white/10 text-white shadow-lg" : "text-muted-foreground/40 hover:text-muted-foreground"
+                            "px-6 py-2 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all",
+                            viewMode === 'value' ? "bg-white/10 text-white shadow-lg" : "text-terminal-dim hover:text-muted-foreground"
                         )}
                     >
                         USD Value
@@ -143,8 +143,8 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                     <button
                         onClick={() => setViewMode('volume')}
                         className={cn(
-                            "px-6 py-2 rounded-lg text-xs font-black tracking-uppercase uppercase transition-all",
-                            viewMode === 'volume' ? "bg-white/10 text-white shadow-lg" : "text-muted-foreground/40 hover:text-muted-foreground"
+                            "px-6 py-2 rounded-lg text-xs font-semibold tracking-wider uppercase transition-all",
+                            viewMode === 'volume' ? "bg-white/10 text-white shadow-lg" : "text-terminal-dim hover:text-muted-foreground"
                         )}
                     >
                         Volume
@@ -154,76 +154,76 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
 
             {/* Main Stats Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
-                <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+                <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all group">
                     <div className="flex justify-between items-start mb-4">
                         <Globe className="w-5 h-5 text-blue-500" />
-                        <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">India Latest</span>
+                        <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">India Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-3xl sm:text-4xl font-black tracking-heading truncate">
+                        <span className="text-3xl sm:text-4xl font-bold tracking-heading truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestIndia?.value_usd || 0)
                                 : formatVolume(latestIndia?.volume || 0)
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
+                        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mt-1">
                             {latestYear} Run-rate / YTD Flow
                         </span>
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all group">
+                <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all group">
                     <div className="flex justify-between items-start mb-4">
                         <Globe className="w-5 h-5 text-rose-500" />
-                        <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">China Latest</span>
+                        <span className="text-xs font-semibold text-rose-500 uppercase tracking-wider">China Latest</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-3xl sm:text-4xl font-black tracking-heading truncate">
+                        <span className="text-3xl sm:text-4xl font-bold tracking-heading truncate">
                             {viewMode === 'value'
                                 ? formatValue(latestChina?.value_usd || 0)
                                 : formatVolume(latestChina?.volume || 0)
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
+                        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mt-1">
                             {latestYear} Run-rate / YTD Flow
                         </span>
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <Anchor className="w-5 h-5 text-amber-500" />
-                        <span className="text-xs font-black text-amber-500 uppercase tracking-uppercase">Risk Index (HHI)</span>
+                        <span className="text-xs font-semibold text-amber-500 uppercase tracking-wider">Risk Index (HHI)</span>
                     </div>
                     <div className="flex flex-col gap-4">
                         <div className="flex justify-between items-end">
-                            <span className={cn("text-3xl font-black tracking-heading", getHHILevel(indiaHHI).color)}>
+                            <span className={cn("text-3xl font-bold tracking-heading", getHHILevel(indiaHHI).color)}>
                                 {Math.round(indiaHHI)}
                             </span>
-                            <span className="text-xs font-bold text-blue-500/40 uppercase tracking-uppercase mb-1">India</span>
+                            <span className="text-xs font-semibold text-blue-500/40 uppercase tracking-wider mb-1">India</span>
                         </div>
-                        <div className="flex justify-between items-end border-t border-white/5 pt-2">
-                            <span className={cn("text-3xl font-black tracking-heading", getHHILevel(chinaHHI).color)}>
+                        <div className="flex justify-between items-end border-t border-border pt-2">
+                            <span className={cn("text-3xl font-bold tracking-heading", getHHILevel(chinaHHI).color)}>
                                 {Math.round(chinaHHI)}
                             </span>
-                            <span className="text-xs font-bold text-rose-500/40 uppercase tracking-uppercase mb-1">China</span>
+                            <span className="text-xs font-semibold text-rose-500/40 uppercase tracking-wider mb-1">China</span>
                         </div>
                     </div>
                 </div>
 
-                <div className="p-8 rounded-3xl bg-white/[0.02] border border-white/5 hover:bg-white/[0.04] transition-all">
+                <div className="p-8 rounded-xl bg-white/[0.02] border border-border hover:bg-white/[0.04] transition-all">
                     <div className="flex justify-between items-start mb-4">
                         <ShieldAlert className="w-5 h-5 text-emerald-500" />
-                        <span className="text-xs font-black text-emerald-500 uppercase tracking-uppercase">Dependency</span>
+                        <span className="text-xs font-semibold text-emerald-500 uppercase tracking-wider">Dependency</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-4xl font-black tracking-heading">
+                        <span className="text-4xl font-bold tracking-heading">
                             {metal === 'Rare Earth Metals'
                                 ? (latestIndia?.country === 'India' ? '98.2%' : 'High')
                                 : (latestIndia && latestIndia.value_usd > 1e9 ? 'Deep' : 'Neutral')
                             }
                         </span>
-                        <span className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase mt-1">
+                        <span className="text-xs font-semibold text-terminal-dim uppercase tracking-wider mt-1">
                             {metal === 'Rare Earth Metals' ? 'Import Dependency Ratio' : 'Strategic Importance'}
                         </span>
                     </div>
@@ -233,73 +233,72 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
             {/* Visualizations Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 px-4">
                 {/* Main Trend Chart */}
-                <div className="lg:col-span-8 p-8 rounded-[2.5rem] bg-black/40 border border-white/12 backdrop-blur-xl shadow-2xl">
+                <div className="lg:col-span-8 p-8 rounded-xl bg-background/40 border border-border backdrop-blur-xl shadow-2xl">
                     <div className="flex justify-between items-start mb-8">
                         <div className="space-y-1">
-                            <h3 className="text-xl font-black tracking-heading uppercase">Longitudinal Trend</h3>
-                            <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">Comparison of India vs China (2000–2025)</p>
+                            <h3 className="text-xl font-bold tracking-heading uppercase">Longitudinal Trend</h3>
+                            <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">Comparison of India vs China (2000–2025)</p>
                         </div>
                     </div>
-                    <div className="h-[400px] w-full">
-                        <ResponsiveContainer width="100%" height="100%">
+                    <MacroChartContainer height={CHART_HEIGHTS.tall}>
                             <LineChart data={chartData} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
-                                <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.03)" vertical={false} />
+                                <CartesianGrid {...DEFAULT_CARTESIAN_GRID_PROPS} vertical={false} />
                                 <XAxis
+                                    {...DEFAULT_XAXIS_PROPS}
                                     dataKey="year"
                                     axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
+                                    tick={{ fill: WHITE_ALPHA.dim, fontSize: 11, fontWeight: 700 }}
                                     dy={10}
                                 />
                                 <YAxis
+                                    {...DEFAULT_YAXIS_PROPS}
+                                    width={60}
                                     axisLine={false}
-                                    tickLine={false}
-                                    tick={{ fill: 'rgba(255,255,255,0.3)', fontSize: 10, fontWeight: 700 }}
+                                    tick={{ fill: WHITE_ALPHA.dim, fontSize: 11, fontWeight: 700 }}
                                 />
                                 <Tooltip content={(props) => <ChartTooltip {...props} viewMode={viewMode} formatVolume={formatVolume} />} />
                                 <Legend
                                     iconType="circle"
                                     verticalAlign="top"
                                     align="right"
-                                    wrapperStyle={{ fontSize: '10px', fontWeight: 900, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: '0px', paddingBottom: '20px' }}
+                                    wrapperStyle={{ fontSize: '11px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.1em', paddingTop: '0px', paddingBottom: '20px' }}
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey={viewMode === 'value' ? 'indiaValueUSD' : 'indiaVolume'}
                                     name="India"
-                                    stroke="#3b82f6"
+                                    stroke={CHART_COLORS.west}
                                     strokeWidth={3}
                                     dot={false}
-                                    activeDot={{ r: 6, stroke: '#3b82f6', strokeWidth: 4, fill: '#000' }}
+                                    activeDot={{ r: 6, stroke: CHART_COLORS.west, strokeWidth: 4, fill: '#000' }}
                                 />
                                 <Line
                                     type="monotone"
                                     dataKey={viewMode === 'value' ? 'chinaValueUSD' : 'chinaVolume'}
                                     name="China"
-                                    stroke="#f43f5e"
+                                    stroke={CHART_COLORS.east}
                                     strokeWidth={3}
                                     dot={false}
-                                    activeDot={{ r: 6, stroke: '#f43f5e', strokeWidth: 4, fill: '#000' }}
+                                    activeDot={{ r: 6, stroke: CHART_COLORS.east, strokeWidth: 4, fill: '#000' }}
                                 />
                             </LineChart>
-                        </ResponsiveContainer>
-                    </div>
+                    </MacroChartContainer>
                 </div>
 
                 {/* Partner Breakdown */}
-                <div className="lg:col-span-4 p-8 rounded-[2.5rem] bg-white/[0.02] border border-white/5 flex flex-col">
+                <div className="lg:col-span-4 p-8 rounded-xl bg-white/[0.02] border border-border flex flex-col">
                     <div className="mb-8">
-                        <h3 className="text-xl font-black tracking-heading uppercase">Supply Origins</h3>
-                        <p className="text-xs font-bold text-muted-foreground/40 uppercase tracking-uppercase">{latestYear} Partner Share (% Share)</p>
+                        <h3 className="text-xl font-bold tracking-heading uppercase">Supply Origins</h3>
+                        <p className="text-xs font-semibold text-terminal-dim uppercase tracking-wider">{latestYear} Partner Share (% Share)</p>
                     </div>
 
                     <div className="space-y-8 flex-grow">
                         <div className="space-y-4">
-                            <span className="text-xs font-black text-blue-500 uppercase tracking-uppercase">India Directives</span>
+                            <span className="text-xs font-semibold text-blue-500 uppercase tracking-wider">India Directives</span>
                             <div className="space-y-3">
                                 {latestIndia?.top_partners_json.map((p) => (
                                     <div key={p.partner} className="space-y-1">
-                                        <div className="flex justify-between text-xs font-black uppercase">
+                                        <div className="flex justify-between text-xs font-semibold uppercase">
                                             <span>{p.partner}</span>
                                             <span>{p.share.toFixed(1)}%</span>
                                         </div>
@@ -314,12 +313,12 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                             </div>
                         </div>
 
-                        <div className="space-y-4 pt-4 border-t border-white/5">
-                            <span className="text-xs font-black text-rose-500 uppercase tracking-uppercase">China Directives</span>
+                        <div className="space-y-4 pt-4 border-t border-border">
+                            <span className="text-xs font-semibold text-rose-500 uppercase tracking-wider">China Directives</span>
                             <div className="space-y-3">
                                 {latestChina?.top_partners_json.map((p) => (
                                     <div key={p.partner} className="space-y-1">
-                                        <div className="flex justify-between text-xs font-black uppercase">
+                                        <div className="flex justify-between text-xs font-semibold uppercase">
                                             <span>{p.partner}</span>
                                             <span>{p.share.toFixed(1)}%</span>
                                         </div>
@@ -335,8 +334,8 @@ export const MetalImportCard: React.FC<MetalImportCardProps> = ({ metal, data, a
                         </div>
                     </div>
 
-                    <div className="mt-8 pt-6 border-t border-white/5">
-                        <div className="flex items-center gap-2 text-xs font-black text-muted-foreground/30 uppercase tracking-uppercase">
+                    <div className="mt-8 pt-6 border-t border-border">
+                        <div className="flex items-center gap-2 text-xs font-semibold text-terminal-dim uppercase tracking-wider">
                             <Layers className="w-3 h-3" />
                             Source: UN Comtrade / WGC / OEC.world
                         </div>

@@ -1,11 +1,12 @@
 import React from 'react';
 import { 
-    Radar, RadarChart, PolarGrid, PolarAngleAxis, 
-    ResponsiveContainer 
+    Radar, RadarChart, PolarGrid, PolarAngleAxis 
 } from 'recharts';
 import { useChinaFYP } from '@/hooks/useChinaFYP';
 import { Card, CardContent } from "@/components/ui/card";
 import { Info, Target } from 'lucide-react';
+import { MacroChartContainer } from '@/components/charts/MacroChartContainer';
+import { CHART_HEIGHTS, CHART_COLORS, WHITE_ALPHA } from '@/constants/chartDefaults';
 
 export const FYP_MissionControlRadar: React.FC = () => {
     const { data } = useChinaFYP();
@@ -19,42 +20,40 @@ export const FYP_MissionControlRadar: React.FC = () => {
     }));
 
     return (
-        <Card className="bg-card/30 border-white/5 backdrop-blur-sm h-full">
+        <Card className="bg-card/30 border-border backdrop-blur-sm h-full">
             <CardContent className="p-6">
                 <div className="flex justify-between items-center mb-6">
                     <div className="flex items-center gap-2">
                         <Target className="text-red-500" size={18} />
-                        <h3 className="text-sm font-black uppercase tracking-uppercase text-white">Mission Control Radar</h3>
+                        <h3 className="text-sm font-semibold uppercase tracking-wider text-white">Mission Control Radar</h3>
                     </div>
-                    <Info size={14} className="text-muted-foreground/30 cursor-help" />
+                    <Info size={14} className="text-terminal-dim cursor-help" />
                 </div>
 
-                <div className="h-[300px] w-full mt-4">
-                    <ResponsiveContainer width="100%" height="100%">
+                <MacroChartContainer height={CHART_HEIGHTS.standard} className="mt-4">
                         <RadarChart cx="50%" cy="50%" outerRadius="80%" data={chartData}>
-                            <PolarGrid stroke="rgba(255,255,255,0.05)" />
+                            <PolarGrid stroke={WHITE_ALPHA.faint} />
                             <PolarAngleAxis 
                                 dataKey="subject" 
-                                tick={{ fill: 'rgba(255,255,255,0.4)', fontSize: 9, fontWeight: 700 }} 
+                                tick={{ fill: WHITE_ALPHA.dim, fontSize: 11, fontWeight: 700 }} 
                             />
                             <Radar
                                 name="FYP Priority"
                                 dataKey="A"
-                                stroke="#ef4444"
-                                fill="#ef4444"
+                                stroke={CHART_COLORS.stress}
+                                fill={CHART_COLORS.stress}
                                 fillOpacity={0.3}
                             />
                         </RadarChart>
-                    </ResponsiveContainer>
-                </div>
+                </MacroChartContainer>
 
                 <div className="mt-6 grid grid-cols-2 gap-2">
                     {pillars.slice(0, 4).map(p => (
-                        <div key={p.id} className="p-2 bg-white/5 rounded-lg border border-white/5">
-                            <div className="text-xs font-black text-muted-foreground/60 uppercase tracking-heading">{p.label}</div>
+                        <div key={p.id} className="p-2 bg-white/5 rounded-lg border border-border">
+                            <div className="text-xs font-semibold text-muted-foreground uppercase tracking-heading">{p.label}</div>
                             <div className="flex items-center justify-between">
-                                <div className="text-xs font-bold text-white uppercase">{p.value_target}</div>
-                                <div className="text-xs font-black text-red-400">Idx: {p.impact_score}</div>
+                                <div className="text-xs font-semibold text-white uppercase">{p.value_target}</div>
+                                <div className="text-xs font-bold text-red-400">Idx: {p.impact_score}</div>
                             </div>
                         </div>
                     ))}
