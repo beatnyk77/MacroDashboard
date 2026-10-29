@@ -171,17 +171,18 @@ export const EnergyCommoditiesLab: React.FC = () => {
     const { data: weekly } = useWeeklyBalance();
     const crudeStocks = useMemo(() => (weekly ? latestVsBand(weekly.crude) : null), [weekly]);
 
-    const brentFrontStatus: FreshnessStatus = regime.brentPrice === null
-        ? 'no_data'
-        : regime.isAnyStale ? 'lagged' : 'fresh';
-
     const feedHealth = useMemo(() => [
         { label: 'EIA Weekly', status: crudeStocks ? getStaleness(crudeStocks.date, 'weekly').state : 'no_data' as const, lastUpdated: crudeStocks?.date },
-        { label: 'WTI Spread', status: regime.wtiSpread === null ? 'no_data' as const : regime.isAnyStale ? 'lagged' as const : 'fresh' as const, lastUpdated: regime.lastUpdated ?? undefined },
-        { label: 'Brent Front', status: brentFrontStatus, lastUpdated: regime.lastUpdated ?? undefined },
+        { label: 'WTI Spread', status: regime.wtiSpread === null ? 'no_data' as const : regime.feeds.spread, lastUpdated: regime.lastUpdated ?? undefined },
+        { label: 'Brent Front', status: regime.brentPrice === null ? 'no_data' as const : regime.feeds.brent, lastUpdated: regime.lastUpdated ?? undefined },
         { label: 'Brent Spot', status: metricFreshnessStatus(brentSpotMetric), lastUpdated: brentSpotMetric?.lastUpdated },
         { label: 'India ₹/bbl', status: indiaCost ? getStaleness(indiaCost.asOfDate, 'daily').state : 'no_data' as const, lastUpdated: indiaCost?.asOfDate },
-    ], [brentFrontStatus, brentSpotMetric, crudeStocks, indiaCost, regime.isAnyStale, regime.lastUpdated, regime.wtiSpread]);
+    ], [brentSpotMetric, crudeStocks, indiaCost, regime.brentPrice, regime.feeds, regime.lastUpdated, regime.wtiSpread]);
+
+    // The header chip speaks for the five feeds shown in the strip above, not for inputs on other panels.
+    const headerStatus: FreshnessStatus = feedHealth.some(f => f.status === 'no_data')
+        ? 'no_data'
+        : feedHealth.every(f => f.status === 'fresh') ? 'fresh' : 'lagged';
 
     const stressTone = regime.wtiRegime === null
         ? 'neutral'
@@ -253,9 +254,9 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     badgeIcon={<Fuel size={12} />}
                     title={<>Energy & <span className=" text-blue-400">Commodities</span></>}
                     status={<FreshnessChip
-                            status={regime.lastUpdated === null ? 'no_data' : regime.isAnyStale ? 'lagged' : 'fresh'}
+                            status={headerStatus}
                             lastUpdated={regime.lastUpdated ?? undefined}
-                            label={regime.lastUpdated === null ? 'NO DATA' : regime.isAnyStale ? 'MIXED FEEDS' : 'FRESH'}
+                            label={headerStatus === 'no_data' ? 'FEED GAP' : headerStatus === 'fresh' ? 'FRESH' : 'MIXED FEEDS'}
                         />}
                     thesis="US weekly stocks against their 5-year range, oil curve structure, and the rupee cost of imported crude."
                 >
