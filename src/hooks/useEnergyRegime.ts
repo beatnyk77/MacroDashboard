@@ -2,7 +2,16 @@ import { useQuery } from '@tanstack/react-query';
 import { supabase } from '@/lib/supabase';
 import { useLatestOilSpread } from './useOilSpread';
 import { getStaleness } from './useStaleness';
+import type { FreshnessStatus } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
+
+/** Staleness of each input on its own cadence, so one slow feed (monthly gas) cannot flag the rest. */
+export interface EnergyFeedStatus {
+    spread: FreshnessStatus;
+    brent: FreshnessStatus;
+    utilization: FreshnessStatus;
+    gas: FreshnessStatus;
+}
 
 export interface EnergyRegime {
     /** CL1 − CL2 in USD. null when no spread row exists — never defaulted to 0. */
@@ -15,6 +24,7 @@ export interface EnergyRegime {
     refineryUtil: number | null;
     euGasStorage: number | null;
     isAnyStale: boolean;
+    feeds: EnergyFeedStatus;
     overallNarrative: string;
     lastUpdated: string | null;
 }
@@ -100,10 +110,15 @@ export const useEnergyRegime = (): EnergyRegime => {
     const utilLatest = utilRows[0]?.as_of_date;
     const gasLatest = gasRows[0]?.as_of_date;
 
-    const brentStale = brentLatest ? getStaleness(brentLatest, 'daily').state !== 'fresh' : false;
-    const utilStale = utilLatest ? getStaleness(utilLatest, 'weekly').state !== 'fresh' : false;
-    const gasStale = gasLatest ? getStaleness(gasLatest, 'monthly').state !== 'fresh' : false;
-    const obsIsStale = brentStale || utilStale || gasStale;
+    const feeds: EnergyFeedStatus = {
+        spread: spread ? (spread.is_stale ? 'lagged' : 'fresh') : 'no_data',
+        brent: getStaleness(brentLatest, 'daily').state,
+        utilization: getStaleness(utilLatest, 'weekly').state,
+        gas: getStaleness(gasLatest, 'monthly').state,
+    };
+    const obsIsStale = [feeds.brent, feeds.utilization, feeds.gas].some(
+        state => state !== 'fresh' && state !== 'no_data',
+    );
 
     const isAnyStale = (spread?.is_stale ?? false) || obsIsStale;
 
@@ -123,6 +138,7 @@ export const useEnergyRegime = (): EnergyRegime => {
         refineryUtil,
         euGasStorage: latest(gasRows),
         isAnyStale,
+        feeds,
         overallNarrative: buildNarrative(wtiRegime, refineryUtil),
         lastUpdated,
     };
