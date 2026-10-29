@@ -5,17 +5,12 @@ import { useLatestMetric } from '@/hooks/useLatestMetric';
 import { FreshnessChip } from '@/components/FreshnessChip';
 import { METRIC_IDS as MID } from '@/constants/metricIds';
 import {
-    ChevronRight,
     ArrowLeft,
     Fuel,
-    Activity,
-    Globe,
     Clock,
     BarChart2,
     Gauge,
-    ShieldAlert,
-    Factory,
-    Droplets,
+    Layers,
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { SectionErrorBoundary } from '@/components/SectionErrorBoundary';
@@ -27,29 +22,27 @@ import { RelatedContent } from '@/components/RelatedContent';
 import { RelatedMetrics } from '@/components/RelatedMetrics';
 import { CurrentEnergyRegimeCard } from '@/features/energy/components/CurrentEnergyRegimeCard';
 import { useEnergyRegime } from '@/hooks/useEnergyRegime';
-import { useFuelSecurityIndia } from '@/features/energy/hooks/useFuelSecurityIndia';
+import { useIndiaOilCost } from '@/features/energy/hooks/useIndiaOilCost';
+import { useWeeklyBalance } from '@/features/energy/hooks/useWeeklyBalance';
+import { latestVsBand } from '@/features/energy/lib/weeklyBalance';
 import { cn } from '@/lib/utils';
 import { TrailLink } from '@/components/TrailLink';
 import type { FreshnessStatus } from '@/components/FreshnessChip';
+import { getStaleness } from '@/hooks/useStaleness';
 import type { MetricData } from '@/hooks/useLatestMetric';
 import { LabPageHeader } from '@/components/LabPageHeader';
 
-const SovereignEnergySecuritySection = lazy(() => import('@/features/dashboard/components/sections/SovereignEnergySecuritySection').then(m => ({ default: m.SovereignEnergySecuritySection })));
-const AsiaCommodityFlowsSection = lazy(() => import('@/features/dashboard/components/sections/AsiaCommodityFlowsSection').then(m => ({ default: m.AsiaCommodityFlowsSection })));
-const GlobalRefiningMonitorSection = lazy(() => import('@/features/dashboard/components/refining/GlobalRefiningMonitorSection').then(m => ({ default: m.GlobalRefiningMonitorSection })));
-const CommodityTerminalRow = lazy(() => import('@/features/commodities/CommodityTerminalRow').then(m => ({ default: m.CommodityTerminalRow })));
-const FuelSecurityClockIndia = lazy(() => import('@/features/energy/components/FuelSecurityClockIndia'));
+const WeeklyBalanceDesk = lazy(() => import('@/features/energy/components/WeeklyBalanceDesk').then(m => ({ default: m.WeeklyBalanceDesk })));
+const IndiaOilCostPanel = lazy(() => import('@/features/energy/components/IndiaOilCostPanel').then(m => ({ default: m.IndiaOilCostPanel })));
 const WTICalendarSpread = lazy(() => import('@/features/energy/components/WTICalendarSpread').then(m => ({ default: m.WTICalendarSpread })));
 const PriceTerminalCard = lazy(() => import('@/features/commodities/components/PriceTerminalCard').then(m => ({ default: m.PriceTerminalCard })));
 
-type EnergyTab = 'oil' | 'refining' | 'buffers' | 'india' | 'metals';
+type EnergyTab = 'balance' | 'oil' | 'india';
 
 const TAB_CONFIG: Array<{ id: EnergyTab; label: string; icon: LucideIcon }> = [
+    { id: 'balance', label: 'Weekly Balance', icon: Layers },
     { id: 'oil', label: 'Oil Market', icon: BarChart2 },
-    { id: 'refining', label: 'Refining', icon: Factory },
-    { id: 'buffers', label: 'Sovereign Buffers', icon: ShieldAlert },
     { id: 'india', label: 'India', icon: Clock },
-    { id: 'metals', label: 'Metals', icon: Activity },
 ];
 
 const faqItems = [
@@ -58,8 +51,12 @@ const faqItems = [
         answer: "The WTI Calendar Spread (prompt month vs. second month futures) measures the slope of the crude oil term structure. Backwardation (positive spread) signals immediate physical inventory depletion and supply tightness, while contango (negative spread) signals surplus supply and commercial storage buildup."
     },
     {
-        question: "How is India's Fuel Security Clock measured?",
-        answer: "India's Fuel Security Clock computes coverage days by aggregating strategic petroleum reserves (ISPRL) and commercial refinery stockpiles divided by average daily national consumption (~5.4M bpd). Readings below 30 days flag acute sovereign vulnerability to supply interruptions through maritime chokepoints."
+        question: "How is the 5-year range for US crude stocks calculated?",
+        answer: "For each weekly EIA print, the range is the lowest and highest value, and the average, of the print for the same week in each of the five prior calendar years; the current year is excluded and at least three of those years must have a print. Weeks are matched within three days to allow for holiday-shifted reporting."
+    },
+    {
+        question: "How is India's oil import cost per barrel calculated?",
+        answer: "The rupee cost of a barrel is the Brent front-month futures price (ICE BZ=F) multiplied by the USD/INR rate, both from Yahoo Finance and each shown with its own observation date. It is a proxy for the Indian crude basket that PPAC publishes, and it is replaced by the basket price once that source is integrated."
     },
     {
         question: "Why do refining crack spreads matter for macroeconomic surveillance?",
@@ -91,11 +88,6 @@ const metricFreshnessStatus = (metric?: MetricData | null): FreshnessStatus => {
 const formatCurrency = (value?: number | null, digits = 2) => {
     if (value == null || !Number.isFinite(value)) return '—';
     return `$${value.toLocaleString(undefined, { minimumFractionDigits: digits, maximumFractionDigits: digits })}`;
-};
-
-const formatPercent = (value?: number | null, digits = 1) => {
-    if (value == null || !Number.isFinite(value)) return '—';
-    return `${value.toFixed(digits)}%`;
 };
 
 function SignalTile({
@@ -171,50 +163,54 @@ function TabButton({
 }
 
 export const EnergyCommoditiesLab: React.FC = () => {
-    const [activeTab, setActiveTab] = useState<EnergyTab>('oil');
+    const [activeTab, setActiveTab] = useState<EnergyTab>('balance');
     const regime = useEnergyRegime();
-    const { data: brentMetric } = useLatestMetric(MID.BRENT_CRUDE_PRICE);
+    const { data: brentSpotMetric } = useLatestMetric(MID.BRENT_SPOT_USD);
     const { data: sprMetric } = useLatestMetric(MID.OIL_SPR_LEVEL_US);
-    const { data: copperMetric } = useLatestMetric(MID.COPPER_PRICE_USD);
-    const { data: nickelMetric } = useLatestMetric(MID.NICKEL_PRICE_USD);
-    const { data: fuelSecurity } = useFuelSecurityIndia();
+    const { data: indiaCost } = useIndiaOilCost();
+    const { data: weekly } = useWeeklyBalance();
+    const crudeStocks = useMemo(() => (weekly ? latestVsBand(weekly.crude) : null), [weekly]);
+
+    const brentFrontStatus: FreshnessStatus = regime.brentPrice === null
+        ? 'no_data'
+        : regime.isAnyStale ? 'lagged' : 'fresh';
 
     const feedHealth = useMemo(() => [
-        { label: 'Oil', status: regime.isAnyStale ? 'lagged' as const : 'fresh' as const, lastUpdated: regime.lastUpdated ?? undefined },
-        { label: 'Brent', status: metricFreshnessStatus(brentMetric), lastUpdated: brentMetric?.lastUpdated },
-        { label: 'SPR', status: metricFreshnessStatus(sprMetric), lastUpdated: sprMetric?.lastUpdated },
-        { label: 'Copper', status: metricFreshnessStatus(copperMetric), lastUpdated: copperMetric?.lastUpdated },
-        { label: 'Nickel', status: metricFreshnessStatus(nickelMetric), lastUpdated: nickelMetric?.lastUpdated },
-    ], [brentMetric, copperMetric, nickelMetric, regime.isAnyStale, regime.lastUpdated, sprMetric]);
+        { label: 'EIA Weekly', status: crudeStocks ? getStaleness(crudeStocks.date, 'weekly').state : 'no_data' as const, lastUpdated: crudeStocks?.date },
+        { label: 'WTI Spread', status: regime.wtiSpread === null ? 'no_data' as const : regime.isAnyStale ? 'lagged' as const : 'fresh' as const, lastUpdated: regime.lastUpdated ?? undefined },
+        { label: 'Brent Front', status: brentFrontStatus, lastUpdated: regime.lastUpdated ?? undefined },
+        { label: 'Brent Spot', status: metricFreshnessStatus(brentSpotMetric), lastUpdated: brentSpotMetric?.lastUpdated },
+        { label: 'India ₹/bbl', status: indiaCost ? getStaleness(indiaCost.asOfDate, 'daily').state : 'no_data' as const, lastUpdated: indiaCost?.asOfDate },
+    ], [brentFrontStatus, brentSpotMetric, crudeStocks, indiaCost, regime.isAnyStale, regime.lastUpdated, regime.wtiSpread]);
 
-    const stressTone = regime.wtiRegime === 'EXTREME' || regime.wtiRegime === 'STRESSED'
-        ? 'bad'
-        : regime.wtiRegime === 'TIGHTENING'
-            ? 'warn'
-            : 'good';
+    const stressTone = regime.wtiRegime === null
+        ? 'neutral'
+        : regime.wtiRegime === 'EXTREME' || regime.wtiRegime === 'STRESSED'
+            ? 'bad'
+            : regime.wtiRegime === 'TIGHTENING'
+                ? 'warn'
+                : 'good';
 
     const sprTone = sprMetric?.status === 'danger' ? 'bad' : sprMetric?.status === 'warning' ? 'warn' : 'neutral';
-    const indiaTone = fuelSecurity?.reserves_days_coverage != null && fuelSecurity.reserves_days_coverage < 10 ? 'warn' : 'neutral';
+    const stocksTone = crudeStocks?.deviationPct == null ? 'neutral' : crudeStocks.deviationPct < -3 ? 'warn' : 'neutral';
 
     return (
         <>
             <SEOManager
-                title="Energy Security Lab — WTI, SPR & Refining"
-                description="Live WTI calendar spread, US SPR depletion tracker, global refining imbalance monitor, and India fuel security clock. Institutional-grade energy flow"
+                title="Energy Lab — US Weekly Balance, WTI Curve & India Oil Cost"
+                description="EIA weekly crude and product stocks against the 5-year range, WTI calendar spread, Dated Brent, US SPR, and India rupee cost of crude, each with source and observation date."
                 keywords={[
+                    'EIA crude inventories vs 5 year average',
                     'WTI contango backwardation',
                     'US strategic petroleum reserve SPR depletion',
-                    'global refining capacity utilization',
                     'India oil import dependency',
-                    'sovereign energy security score',
-                    'Asia commodity flow dynamics',
                     'Brent crude India current account deficit',
                     'OPEC production cut impact',
                     'chokepoint risk Hormuz Malacca',
                     'energy market regime indicator',
                     'refinery utilization rate EIA',
                     'EU natural gas storage level',
-                    'India fuel security coverage days',
+                    'India crude import cost rupee per barrel',
                     'shadow fleet crude oil flows',
                     'refining margin arbitrage',
                 ]}
@@ -238,8 +234,8 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         '@context': 'https://schema.org',
                         '@type': 'Dataset',
                         'name': 'Global Energy Security Data',
-                        'description': 'Institutional energy security telemetry including WTI calendar spread regime classification, US SPR capacity utilization (EIA/FRED), global refinery utilization rates, Asia crude import origin flows (UN Comtrade), India fuel security coverage estimates (PPAC/EIA), and sovereign energy vulnerability scoring. Updated weekly via automated ingestion pipelines.',
-                        'keywords': ['WTI calendar spread', 'SPR depletion', 'refining capacity', 'India energy security', 'Asia commodity flows', 'chokepoint risk', 'energy market regime'],
+                        'description': 'EIA weekly petroleum status report stocks against the 5-year range, WTI calendar spread regime classification (CL1 minus CL2), Brent front-month futures and Dated Brent spot, US Strategic Petroleum Reserve level and US refinery utilization (EIA), and the rupee cost of a barrel of Brent. Each series is stored with its source and observation date and updated by automated ingestion pipelines.',
+                        'keywords': ['WTI calendar spread', 'Brent front-month', 'Dated Brent', 'SPR level', 'refinery utilization', 'India crude import cost', 'energy market regime'],
                         'url': 'https://graphiquestor.com/labs/energy-commodities',
                         'isAccessibleForFree': true,
                         'license': 'https://creativecommons.org/licenses/by/4.0/',
@@ -257,50 +253,56 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     badgeIcon={<Fuel size={12} />}
                     title={<>Energy & <span className=" text-blue-400">Commodities</span></>}
                     status={<FreshnessChip
-                            status={regime.isAnyStale ? 'lagged' : 'fresh'}
+                            status={regime.lastUpdated === null ? 'no_data' : regime.isAnyStale ? 'lagged' : 'fresh'}
                             lastUpdated={regime.lastUpdated ?? undefined}
-                            label={regime.isAnyStale ? 'MIXED FEEDS' : 'FRESH'}
+                            label={regime.lastUpdated === null ? 'NO DATA' : regime.isAnyStale ? 'MIXED FEEDS' : 'FRESH'}
                         />}
-                    thesis="Physical energy stress, sovereign buffers, and inflation transmission."
+                    thesis="US weekly stocks against their 5-year range, oil curve structure, and the rupee cost of imported crude."
                 >
                     <div className="mt-6 space-y-4 rounded-xl border border-border bg-card p-4 md:p-6 shadow-sm">
                         <FeedHealthStrip feeds={feedHealth} />
                         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-6">
                             <SignalTile
-                                label="Regime"
-                                value={regime.wtiRegime}
-                                context="Composite oil structure"
-                                tone={stressTone}
-                            />
-                            <SignalTile
-                                label="WTI Spread"
-                                value={<>{regime.wtiSpread >= 0 ? '+' : ''}{regime.wtiSpread.toFixed(2)} <span className="text-xs text-muted-foreground">USD</span></>}
-                                context="CL1 minus CL2"
-                                tone={stressTone}
-                            />
-                            <SignalTile
-                                label="Brent"
-                                value={formatCurrency(regime.brentPrice)}
-                                context={`${regime.brentChangePct >= 0 ? '+' : ''}${regime.brentChangePct.toFixed(2)}% last print`}
-                                tone="neutral"
-                            />
-                            <SignalTile
-                                label="Refining"
-                                value={formatPercent(regime.refineryUtil)}
-                                context={regime.refineryUtil > 90 ? 'Capacity ceiling risk' : 'Operating range'}
-                                tone={regime.refineryUtil > 90 ? 'warn' : 'neutral'}
+                                label="Crude Stocks"
+                                value={crudeStocks ? <>{crudeStocks.value.toFixed(1)} <span className="text-xs text-muted-foreground">Mb</span></> : '—'}
+                                context={crudeStocks
+                                    ? crudeStocks.deviationPct === null
+                                        ? 'Ex-SPR · 5-yr range needs more history'
+                                        : `${crudeStocks.deviationPct >= 0 ? '+' : ''}${crudeStocks.deviationPct.toFixed(1)}% vs 5-yr avg`
+                                    : 'Feed unavailable'}
+                                tone={stocksTone}
                             />
                             <SignalTile
                                 label="US SPR"
                                 value={sprMetric ? `${sprMetric.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}` : '—'}
-                                context={sprMetric ? 'Million barrels' : 'Feed unavailable'}
+                                context={sprMetric ? 'Million barrels · weekly' : 'Feed unavailable'}
                                 tone={sprTone}
                             />
                             <SignalTile
-                                label="India Cover"
-                                value={fuelSecurity?.reserves_days_coverage != null ? `${fuelSecurity.reserves_days_coverage.toFixed(1)}d` : '—'}
-                                context="Fuel security clock"
-                                tone={indiaTone}
+                                label="Refinery Util"
+                                value={regime.refineryUtil === null ? '—' : `${regime.refineryUtil.toFixed(1)}%`}
+                                context={regime.refineryUtil === null ? 'Feed unavailable' : 'US operable capacity · weekly'}
+                                tone={regime.refineryUtil !== null && regime.refineryUtil > 93 ? 'warn' : 'neutral'}
+                            />
+                            <SignalTile
+                                label="Brent Spot (Dated)"
+                                value={formatCurrency(brentSpotMetric?.value)}
+                                context={brentSpotMetric ? 'EIA via FRED · 1–2 day lag' : 'Feed unavailable'}
+                                tone="neutral"
+                            />
+                            <SignalTile
+                                label="WTI Spread"
+                                value={regime.wtiSpread === null
+                                    ? '—'
+                                    : <>{regime.wtiSpread >= 0 ? '+' : ''}{regime.wtiSpread.toFixed(2)} <span className="text-xs text-muted-foreground">USD</span></>}
+                                context={regime.wtiRegime ? `CL1 minus CL2 · ${regime.wtiRegime}` : 'CL1 minus CL2'}
+                                tone={stressTone}
+                            />
+                            <SignalTile
+                                label="India ₹ / bbl"
+                                value={indiaCost ? `₹${indiaCost.inrPerBarrel.toLocaleString('en-IN')}` : '—'}
+                                context={indiaCost ? 'Brent × USD/INR proxy' : 'Feed unavailable'}
+                                tone="neutral"
                             />
                         </div>
                         <div className="rounded-xl border border-border bg-muted/20 p-4">
@@ -308,7 +310,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                 <Gauge size={14} /> Current Read
                             </div>
                             <p className="text-sm font-semibold uppercase leading-relaxed tracking-wider text-foreground">
-                                {regime.overallNarrative} SPR freshness and India reserve coverage remain the first credibility checks before using the downstream sovereign-risk panels.
+                                {regime.overallNarrative} Every figure on this page carries its source and observation date.
                             </p>
                         </div>
                     </div>
@@ -321,7 +323,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                     </SectionErrorBoundary>
                 </div>
 
-                <div className="mb-6 grid grid-cols-2 gap-2 md:grid-cols-5">
+                <div className="mb-6 grid grid-cols-1 gap-2 md:grid-cols-3">
                     {TAB_CONFIG.map(tab => (
                         <TabButton
                             key={tab.id}
@@ -333,6 +335,27 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 </div>
 
                 <div className="rounded-xl border border-border bg-card p-4 md:p-6 shadow-sm">
+                    {activeTab === 'balance' && (
+                        <section id="weekly-balance" className="space-y-6">
+                            <div className="flex items-start gap-3">
+                                <Layers className="mt-1 text-amber-500" size={22} />
+                                <div>
+                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">US Weekly Balance</h2>
+                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+                                        Crude and product stocks against the 5-year range, demand, supply and refinery runs.
+                                    </p>
+                                </div>
+                            </div>
+                            <SectionErrorBoundary name="US Weekly Balance">
+                                <LazyRender minHeight="400px" fallback={<SectionLoadingFallback minHeight={400} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={400} label="Loading module" />}>
+                                        <WeeklyBalanceDesk />
+                                    </Suspense>
+                                </LazyRender>
+                            </SectionErrorBoundary>
+                        </section>
+                    )}
+
                     {activeTab === 'oil' && (
                         <section id="oil-market" className="space-y-6">
                             <div className="flex items-start gap-3">
@@ -361,57 +384,6 @@ export const EnergyCommoditiesLab: React.FC = () => {
                         </section>
                     )}
 
-                    {activeTab === 'refining' && (
-                        <section id="refining-imbalance" className="space-y-6">
-                            <div className="flex items-start gap-3">
-                                <Factory className="mt-1 text-blue-500" size={22} />
-                                <div>
-                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Global Refining Imbalance</h2>
-                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Capacity elasticity, utilization ceiling, and regional bottlenecks.
-                                    </p>
-                                </div>
-                            </div>
-                            <div className="flex items-center justify-between p-4 rounded-xl bg-cyan-500/10 border border-cyan-500/25">
-                                <div className="flex items-center gap-2.5">
-                                    <Factory size={16} className=" text-cyan-400" />
-                                    <span className="text-xs font-semibold uppercase tracking-wider text-cyan-300">Live 3:2:1 Crack Spread Tool</span>
-                                </div>
-                                <TrailLink to="/tools/refinery-crack-spread" className="text-xs font-semibold uppercase tracking-wider text-foreground hover:text-cyan-300 transition-colors flex items-center gap-1">
-                                    Open Interactive Tool <ChevronRight size={14} />
-                                </TrailLink>
-                            </div>
-                            <SectionErrorBoundary name="Global Refining Monitor">
-                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                        <GlobalRefiningMonitorSection />
-                                    </Suspense>
-                                </LazyRender>
-                            </SectionErrorBoundary>
-                        </section>
-                    )}
-
-                    {activeTab === 'buffers' && (
-                        <section id="sovereign-security" className="space-y-6">
-                            <div className="flex items-start gap-3">
-                                <Globe className="mt-1 text-blue-500" size={22} />
-                                <div>
-                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Sovereign Energy Buffers</h2>
-                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Reserve depletion, national stockpiles, and power-mix resilience.
-                                    </p>
-                                </div>
-                            </div>
-                            <SectionErrorBoundary name="Sovereign Energy Security">
-                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                        <SovereignEnergySecuritySection />
-                                    </Suspense>
-                                </LazyRender>
-                            </SectionErrorBoundary>
-                        </section>
-                    )}
-
                     {activeTab === 'india' && (
                         <section id="india-transmission" className="space-y-6">
                             <div className="flex items-start gap-3">
@@ -419,42 +391,14 @@ export const EnergyCommoditiesLab: React.FC = () => {
                                 <div>
                                     <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">India Transmission</h2>
                                     <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Import cost pressure, corridor concentration, and fuel-cover sensitivity.
+                                        Rupee cost of imported crude, from live prints only.
                                     </p>
                                 </div>
                             </div>
-                            <SectionErrorBoundary name="Fuel Security Clock India">
-                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                        <FuelSecurityClockIndia />
-                                    </Suspense>
-                                </LazyRender>
-                            </SectionErrorBoundary>
-                            <SectionErrorBoundary name="Asia Commodity Flows">
-                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                        <AsiaCommodityFlowsSection />
-                                    </Suspense>
-                                </LazyRender>
-                            </SectionErrorBoundary>
-                        </section>
-                    )}
-
-                    {activeTab === 'metals' && (
-                        <section id="flows-terminal" className="space-y-6">
-                            <div className="flex items-start gap-3">
-                                <Droplets className="mt-1 text-emerald-500" size={22} />
-                                <div>
-                                    <h2 className="text-xl font-bold uppercase tracking-heading text-foreground">Metals & Industrial Inputs</h2>
-                                    <p className="mt-1 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-                                        Gold, silver, rare earth, and physical commodity corridor pressure.
-                                    </p>
-                                </div>
-                            </div>
-                            <SectionErrorBoundary name="Commodity Terminal">
-                                <LazyRender minHeight="300px" fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                    <Suspense fallback={<SectionLoadingFallback minHeight={300} label="Loading module" />}>
-                                        <CommodityTerminalRow />
+                            <SectionErrorBoundary name="India Oil Import Cost">
+                                <LazyRender minHeight="200px" fallback={<SectionLoadingFallback minHeight={200} label="Loading module" />}>
+                                    <Suspense fallback={<SectionLoadingFallback minHeight={200} label="Loading module" />}>
+                                        <IndiaOilCostPanel />
                                     </Suspense>
                                 </LazyRender>
                             </SectionErrorBoundary>
@@ -465,7 +409,7 @@ export const EnergyCommoditiesLab: React.FC = () => {
                 <article className="mt-10 rounded-xl border border-border bg-card p-6 shadow-sm" aria-label="Structural Analysis of Global Energy Security">
                     <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider mb-3">Method Lens</h2>
                     <p className="max-w-5xl text-xs text-muted-foreground leading-relaxed font-medium uppercase tracking-wider">
-                        Energy stress transmits through prices, refining capacity, reserves, FX, and industrial inputs. This lab now prioritizes the stress board first, then lets desks inspect the relevant transmission channel.
+                        Only series with a live source are shown. A panel without data says so and names its pending source; no value is estimated or carried forward.
                     </p>
 
                     {/* Visible FAQ block */}

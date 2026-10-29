@@ -3,6 +3,20 @@
 import { createClient } from '@supabase/supabase-js';
 import { serveIngest, IngestResult } from '../_shared/handler.ts';
 
+/** Errors from this invocation; surfaced in the response meta so a failed write is never silent. */
+const feedErrors: string[] = [];
+
+async function upsertChecked(supabase: any, table: string, rows: any[], onConflict: string): Promise<number> {
+  if (rows.length === 0) return 0;
+  const { error } = await supabase.from(table).upsert(rows, { onConflict });
+  if (error) {
+    feedErrors.push(`${table}: ${error.message}`);
+    console.error(`[EnergyOil] upsert into ${table} failed: ${error.message}`);
+    return 0;
+  }
+  return rows.length;
+}
+
 const MONTH_CODES = 'FGHJKMNQUVXZ';
 const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 
@@ -62,7 +76,7 @@ async function fetchYahooHistory(ticker: string): Promise<Array<{ date: string; 
     .sort((a, b) => b.date.localeCompare(a.date));
 }
 
-async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<number> {
+async function ingestOilSpreads(supabase: any, fredKey?: string): Promise<number> {
   const cl1Url = `https://query1.finance.yahoo.com/v8/finance/chart/CL%3DF?interval=1d&range=3mo`;
   const cl1Res = await fetch(cl1Url, { headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' } });
   if (!cl1Res.ok) return 0;
@@ -91,17 +105,15 @@ async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<numbe
       cl2Series = await fetchYahooHistory(cl2Fallback);
       cl2TickerUsed = cl2Fallback;
     } catch {
-      cl2TickerUsed = 'synthetic';
+      feedErrors.push('oil_market_spread: CL2 unavailable, spread rows skipped');
     }
   }
 
-  let aligned: Array<{ date: string; cl1: number; cl2: number }>;
-  if (cl2Series.length > 0) {
-    const cl2Map = new Map(cl2Series.map((r) => [r.date, r.close]));
-    aligned = cl1Series.filter((r) => cl2Map.has(r.date)).map((r) => ({ date: r.date, cl1: r.close, cl2: cl2Map.get(r.date)! }));
-  } else {
-    aligned = cl1Series.map((r) => ({ date: r.date, cl1: r.close, cl2: r.close - 0.50 }));
-  }
+  // No second-month contract, no spread: never substitute a synthetic CL2.
+  const cl2Map = new Map(cl2Series.map((r) => [r.date, r.close]));
+  const aligned: Array<{ date: string; cl1: number; cl2: number }> = cl1Series
+    .filter((r) => cl2Map.has(r.date))
+    .map((r) => ({ date: r.date, cl1: r.close, cl2: cl2Map.get(r.date)! }));
 
   const now = new Date().toISOString();
   const rows = aligned.map((d, i) => {
@@ -121,9 +133,7 @@ async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<numbe
     };
   });
 
-  if (rows.length > 0) {
-    await supabase.from('oil_market_spread').upsert(rows.slice(0, 60), { onConflict: 'date' });
-  }
+  const spreadWritten = await upsertChecked(supabase, 'oil_market_spread', rows.slice(0, 60), 'date');
 
   // Spot prices
   const spotObs: any[] = [];
@@ -205,11 +215,37 @@ async function ingestOilSpreads(supabase: any, _fredKey?: string): Promise<numbe
     console.warn('[EnergyOil/CrackSpread] Error computing crack spread:', err.message);
   }
 
-  if (spotObs.length > 0) {
-    await supabase.from('metric_observations').upsert(spotObs, { onConflict: 'metric_id, as_of_date' });
+  // Dated Brent spot (EIA series, republished by FRED) is a different instrument from the BZ=F front-month
+  // above and is stored separately so the two are never compared or overwritten.
+  if (fredKey) {
+    try {
+      const fredUrl = `https://api.stlouisfed.org/fred/series/observations?series_id=DCOILBRENTEU&api_key=${fredKey}&file_type=json&sort_order=desc&limit=15`;
+      const fredRes = await fetch(fredUrl, { signal: AbortSignal.timeout(15000) });
+      if (!fredRes.ok) throw new Error(`FRED HTTP ${fredRes.status}`);
+      const fredJson = (await fredRes.json()) as any;
+      for (const o of fredJson?.observations ?? []) {
+        const v = parseFloat(o.value);
+        if (!Number.isFinite(v)) continue; // FRED encodes holidays as "."
+        spotObs.push({
+          metric_id: 'BRENT_SPOT_USD',
+          as_of_date: o.date,
+          value: v,
+          last_updated_at: now,
+          provenance: 'api_live',
+          source_ref: 'fred:DCOILBRENTEU',
+          metadata: { source: 'EIA via FRED', series: 'DCOILBRENTEU', unit: 'USD/bbl', instrument: 'Dated Brent spot' },
+        });
+      }
+    } catch (err: any) {
+      feedErrors.push(`BRENT_SPOT_USD: ${err.message}`);
+    }
+  } else {
+    feedErrors.push('BRENT_SPOT_USD: FRED_API_KEY not set');
   }
 
-  return rows.length + spotObs.length;
+  const spotWritten = await upsertChecked(supabase, 'metric_observations', spotObs, 'metric_id, as_of_date');
+
+  return spreadWritten + spotWritten;
 }
 
 async function ingestEIAWeekly(supabase: any, _eiaApiKey?: string): Promise<number> {
@@ -219,6 +255,7 @@ async function ingestEIAWeekly(supabase: any, _eiaApiKey?: string): Promise<numb
       headers: { 'User-Agent': 'Mozilla/5.0 (compatible)' },
       signal: AbortSignal.timeout(10000),
     });
+    if (!res.ok) feedErrors.push(`eia_weekly: table2.csv HTTP ${res.status}`);
     if (res.ok) {
       const text = await res.text();
       const lines = text.split('\n').map((l) => l.trim());
@@ -231,7 +268,6 @@ async function ingestEIAWeekly(supabase: any, _eiaApiKey?: string): Promise<numb
       }
 
       let utilizationPct: number | null = null;
-      let capacityKbpd: number | null = null;
 
       for (const line of lines) {
         if (!line) continue;
@@ -240,99 +276,64 @@ async function ingestEIAWeekly(supabase: any, _eiaApiKey?: string): Promise<numb
           const val = parseFloat(cols[2]);
           if (!isNaN(val)) utilizationPct = val;
         }
-        if (cols[1]?.toLowerCase().includes('operable capacity') && !cols[1].toLowerCase().includes('padd') && cols[2]) {
-          const val = parseFloat(cols[2].replace(/,/g, ''));
-          if (!isNaN(val) && val > 1000) capacityKbpd = val;
-        }
       }
 
       if (utilizationPct !== null && reportDate) {
         const now = new Date().toISOString();
-        const obs = [
-          { metric_id: 'US_REFINERY_UTILIZATION_PCT', as_of_date: reportDate, value: utilizationPct, last_updated_at: now },
-          { metric_id: 'US_REFINERY_CAPACITY_KBPD', as_of_date: reportDate, value: capacityKbpd ?? 18162, last_updated_at: now },
-        ];
-        await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
-        count += obs.length;
+        // Written to the registered OIL_REFINERY_UTILIZATION_US series; the capacity row is skipped
+        // until the Phase 1 EIA API ingest provides a sourced figure.
+        count += await upsertChecked(supabase, 'metric_observations', [
+          { metric_id: 'OIL_REFINERY_UTILIZATION_US', as_of_date: reportDate, value: utilizationPct, last_updated_at: now, source_ref: 'eia:wpsr_table2' },
+        ], 'metric_id, as_of_date');
+      } else {
+        feedErrors.push('eia_weekly: utilisation or report date not found in table2.csv');
       }
     }
   } catch (e: any) {
+    feedErrors.push(`eia_weekly: ${e.message}`);
     console.warn('[EnergyOil/EIA] CSV fetch error:', e.message);
   }
   return count;
 }
 
 async function ingestIndiaEnergyTransmission(supabase: any, _fredKey?: string): Promise<number> {
+  // Only the rupee cost of a barrel is computed here, from two live prints. Reserve days, tanker
+  // counts, risk scores and scenarios have no public daily source and are no longer written.
   const now = new Date().toISOString();
-  const today = now.slice(0, 10);
-  let upsertedCount = 0;
-
   try {
-    // 1. Fetch live Spot Brent and USD/INR exchange rate from Yahoo Finance
     const [brentSeries, inrSeries] = await Promise.all([
       fetchYahooHistory('BZ=F').catch(() => []),
       fetchYahooHistory('INR=X').catch(() => []),
     ]);
+    const brent = brentSeries[0];
+    const inr = inrSeries[0];
+    if (!brent || !inr) {
+      feedErrors.push('IN_OIL_IMPORT_COST_INR_BBL: Brent or USD/INR unavailable, nothing written');
+      return 0;
+    }
 
-    const latestBrent = brentSeries[0]?.close || 82.50;
-    const latestInr = inrSeries[0]?.close || 87.00;
-    const inrPerBarrel = Math.round(latestBrent * latestInr);
-
-    // 2. Upsert INR/barrel import pressure into metric_observations
-    const obs = [
+    return await upsertChecked(supabase, 'metric_observations', [
       {
         metric_id: 'IN_OIL_IMPORT_COST_INR_BBL',
-        as_of_date: brentSeries[0]?.date || today,
-        value: inrPerBarrel,
+        as_of_date: brent.date,
+        value: Math.round(brent.close * inr.close),
         last_updated_at: now,
-        source_ref: 'live_composite:yahoo_brent_inr',
+        source_ref: 'live_composite:yahoo_brent_front_month_x_usd_inr',
         provenance: 'api_live',
         metadata: {
-          brent_usd: latestBrent,
-          usd_inr: latestInr,
+          brent_usd: brent.close,
+          brent_date: brent.date,
+          usd_inr: inr.close,
+          usd_inr_date: inr.date,
           unit: 'INR/bbl',
-          formula: 'Brent_USD * USD_INR',
+          formula: 'Brent front-month (BZ=F) x USD/INR (INR=X)',
         },
       },
-    ];
-
-    await supabase.from('metric_observations').upsert(obs, { onConflict: 'metric_id, as_of_date' });
-    upsertedCount += obs.length;
-
-    // 3. Upsert daily real state into fuel_security_clock_india
-    // Official ISPRL crude SPR capacity: 5.33 MMT (~39.1M bbl = ~9.5 days crude run)
-    // Official PPAC total petroleum stock (OMC product + crude): ~64.5 days commercial + 9.5 days SPR = ~74 days
-    const clockRow = {
-      as_of_date: today,
-      reserves_days_coverage: 9.5,
-      reserves_days_official: 9.5,
-      reserves_days_actual: 74.0,
-      deviation_pct: -17.8,
-      daily_consumption_mbpd: 5.35,
-      brent_price_usd: Math.round(latestBrent * 100) / 100,
-      inr_per_barrel: inrPerBarrel,
-      active_tankers_count: 128,
-      geopolitical_risk_score: 48,
-      scenario_baseline_days: 9.5,
-      scenario_disruption_days: 12.4,
-      scenario_rationing_days: 15.2,
-      last_updated_at: now,
-      metadata: {
-        source: 'PPAC MoPNG · ISPRL · FRED · Yahoo Finance',
-        brent_usd: latestBrent,
-        usd_inr: latestInr,
-        spr_crude_days: 9.5,
-        total_buffer_days: 74.0,
-      },
-    };
-
-    await supabase.from('fuel_security_clock_india').upsert(clockRow, { onConflict: 'as_of_date' });
-    upsertedCount += 1;
+    ], 'metric_id, as_of_date');
   } catch (err: any) {
-    console.warn('[EnergyOil/IndiaTransmission] Error:', err.message);
+    feedErrors.push(`IN_OIL_IMPORT_COST_INR_BBL: ${err.message}`);
+    return 0;
   }
-
-  return upsertedCount;
 }
 
 serveIngest('ingest-energy-oil', async (req: Request): Promise<IngestResult> => {
@@ -343,6 +344,7 @@ serveIngest('ingest-energy-oil', async (req: Request): Promise<IngestResult> => 
   const fredKey = Deno.env.get('FRED_API_KEY') ?? '';
   const eiaKey = Deno.env.get('EIA_API_KEY') ?? '';
 
+  feedErrors.length = 0;
   const url = new URL(req.url);
   const feed = (url.searchParams.get('feed') ?? 'all').toLowerCase();
 
@@ -365,6 +367,6 @@ serveIngest('ingest-energy-oil', async (req: Request): Promise<IngestResult> => 
   return {
     ok: true,
     counts: { upserted: totalUpserted },
-    meta: { feed, processed },
+    meta: { feed, processed, errors: feedErrors.length ? [...feedErrors] : undefined },
   };
 });

@@ -7,7 +7,7 @@ import { FreshnessChip } from '@/components/FreshnessChip';
 import { DataStatePanel } from '@/components/DataStatePanel';
 import { getStaleness } from '@/hooks/useStaleness';
 
-const EXPECTED_SYMBOLS = ['WTI Crude', 'Brent Crude', 'Copper ($/t)', 'Nickel ($/t)'] as const;
+const EXPECTED_SYMBOLS = ['WTI Front-Month', 'Brent Front-Month', 'Brent Spot (Dated)'] as const;
 
 export const PriceTerminalCard: React.FC = () => {
     const { data: prices, isLoading, isError, refetch } = useCommodityPrices();
@@ -55,7 +55,7 @@ export const PriceTerminalCard: React.FC = () => {
             <DataStatePanel
                 variant="error"
                 title="Commodity prices unavailable"
-                description="Unable to load FRED commodity price telemetry."
+                description="Unable to load crude price telemetry."
                 onRetry={() => refetch()}
                 height={192}
             />
@@ -67,7 +67,7 @@ export const PriceTerminalCard: React.FC = () => {
             <DataStatePanel
                 variant="empty"
                 title="No commodity price data"
-                description="WTI, Brent, and metals price observations are pending ingestion."
+                description="WTI and Brent price observations are pending ingestion."
                 height={192}
             />
         );
@@ -78,18 +78,18 @@ export const PriceTerminalCard: React.FC = () => {
             <CardHeader className="pb-2 bg-white/[0.02] border-b border-border px-4 lg:px-6">
                 <div className="flex items-center justify-between gap-4">
                     <CardTitle className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">
-                        Commodity Price Terminal
+                        Crude Price Terminal
                     </CardTitle>
                     {headerFreshness && (
                         <FreshnessChip status={headerFreshness.state} lastUpdated={headerFreshness.lastUpdated} />
                     )}
                 </div>
                 <p className="text-[11px] text-terminal-dim uppercase tracking-wider mt-1">
-                    FRED daily · Updated via ingest-fred
+                    Front-month: NYMEX/ICE via Yahoo Finance · Dated Brent: EIA via FRED, 1–2 day lag
                 </p>
             </CardHeader>
             <CardContent className="p-4 lg:p-6">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                     {EXPECTED_SYMBOLS.map(symbol => {
                         const entry = priceBySymbol.get(symbol);
                         if (!entry) {
@@ -102,8 +102,7 @@ export const PriceTerminalCard: React.FC = () => {
                         }
 
                         const { latest, previous } = entry;
-                        const change = previous ? ((latest.price - previous.price) / previous.price) * 100 : 0;
-                        const zScore = latest.z_score || 0;
+                        const change = previous ? ((latest.price - previous.price) / previous.price) * 100 : null;
                         const symbolFreshness = {
                             ...getStaleness(latest.as_of_date, 'daily'),
                             lastUpdated: latest.as_of_date,
@@ -113,9 +112,9 @@ export const PriceTerminalCard: React.FC = () => {
                             <div key={symbol} className="p-3 rounded-xl bg-white/[0.02] border border-border space-y-2">
                                 <div className="flex justify-between items-start gap-2">
                                     <span className="text-xs font-bold text-muted-foreground">{symbol}</span>
-                                    {change > 0 ? (
+                                    {change !== null && change > 0 ? (
                                         <TrendingUp className="w-3 h-3 text-emerald-500 shrink-0" />
-                                    ) : change < 0 ? (
+                                    ) : change !== null && change < 0 ? (
                                         <TrendingDown className="w-3 h-3 text-rose-500 shrink-0" />
                                     ) : (
                                         <Minus className="w-3 h-3 text-muted-foreground shrink-0" />
@@ -128,12 +127,9 @@ export const PriceTerminalCard: React.FC = () => {
                                     <div className="flex items-center gap-2 flex-wrap">
                                         <span className={cn(
                                             'text-xs font-bold',
-                                            change >= 0 ? 'text-emerald-500' : 'text-rose-500',
+                                            change === null ? 'text-terminal-dim' : change >= 0 ? 'text-emerald-500' : 'text-rose-500',
                                         )}>
-                                            {change >= 0 ? '+' : ''}{change.toFixed(2)}%
-                                        </span>
-                                        <span className="text-xs font-medium text-terminal-dim">
-                                            Z: {zScore.toFixed(1)}
+                                            {change === null ? '—' : `${change >= 0 ? '+' : ''}${change.toFixed(2)}%`}
                                         </span>
                                     </div>
                                     <div className="mt-1">

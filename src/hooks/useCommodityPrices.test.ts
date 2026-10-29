@@ -15,8 +15,8 @@ vi.mock('@/lib/supabase', () => ({
                                 { metric_id: 'WTI_CRUDE_PRICE', as_of_date: '2026-05-30', value: '78.50' },
                                 { metric_id: 'WTI_CRUDE_PRICE', as_of_date: '2026-05-29', value: '77.80' },
                                 { metric_id: 'BRENT_CRUDE_PRICE', as_of_date: '2026-05-30', value: '82.10' },
+                                { metric_id: 'BRENT_SPOT_USD', as_of_date: '2026-05-29', value: '84.40' },
                                 { metric_id: 'COPPER_PRICE_USD', as_of_date: '2026-05-30', value: '9200.00' },
-                                { metric_id: 'NICKEL_PRICE_USD', as_of_date: '2026-05-30', value: '18500.00' },
                             ],
                             error: null,
                         }),
@@ -38,17 +38,17 @@ describe('useCommodityPrices', () => {
         await waitFor(() => expect(result.current.data).toBeDefined());
 
         const symbols = result.current.data!.map(p => p.symbol);
-        expect(symbols).toContain('WTI Crude');
-        expect(symbols).toContain('Brent Crude');
-        expect(symbols).toContain('Copper ($/t)');
-        expect(symbols).toContain('Nickel ($/t)');
+        expect(symbols).toContain('WTI Front-Month');
+        expect(symbols).toContain('Brent Front-Month');
+        expect(symbols).toContain('Brent Spot (Dated)');
+        expect(symbols).not.toContain('COPPER_PRICE_USD');
     });
 
     it('coerces value to number in price field', async () => {
         const { result } = renderHook(() => useCommodityPrices(), { wrapper });
         await waitFor(() => expect(result.current.data).toBeDefined());
 
-        const wti = result.current.data!.find(p => p.symbol === 'WTI Crude');
+        const wti = result.current.data!.find(p => p.symbol === 'WTI Front-Month');
         expect(typeof wti!.price).toBe('number');
         expect(wti!.price).toBe(78.50);
     });
@@ -57,7 +57,7 @@ describe('useCommodityPrices', () => {
         const { result } = renderHook(() => useCommodityPrices(), { wrapper });
         await waitFor(() => expect(result.current.data).toBeDefined());
 
-        const wtiRows = result.current.data!.filter(p => p.symbol === 'WTI Crude');
+        const wtiRows = result.current.data!.filter(p => p.symbol === 'WTI Front-Month');
         expect(wtiRows.length).toBeGreaterThanOrEqual(2);
     });
 });

@@ -99,3 +99,42 @@ jobs:
           SQL
           done
 
+      - name: Energy fabrication guard (fails on constant-restamped or seeded energy series)
+        env:
+          SUPABASE_PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+          SUPABASE_DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
+        run: |
+          set -euo pipefail
+          ENCODED_PW=$(python3 -c "import urllib.parse, os; print(urllib.parse.quote(os.environ['SUPABASE_DB_PASSWORD'], safe=''))")
+          export PGOPTIONS='-c default_transaction_read_only=on'
+          DB="postgresql://postgres.${SUPABASE_PROJECT_ID}:${ENCODED_PW}@aws-1-ap-south-1.pooler.supabase.com:5432/postgres"
+          # Energy series whose last 5 prints are identical across 5+ days are re-stamped constants, and any
+          # energy row carrying seed/fallback provenance is not an observation. Allow-list a series here only
+          # if it is a published constant (e.g. a stated capacity).
+          OFFENDERS=$(psql "$DB" -v ON_ERROR_STOP=1 -t -A -F ' | ' <<'SQL'
+            WITH recent AS (
+              SELECT o.metric_id, o.as_of_date, o.value,
+                     row_number() OVER (PARTITION BY o.metric_id ORDER BY o.as_of_date DESC) AS rn
+              FROM metric_observations o
+              JOIN metrics m ON m.id = o.metric_id AND m.category = 'energy'
+              WHERE o.as_of_date > current_date - 60
+            )
+            SELECT metric_id, 'constant_restamp', count(DISTINCT value)::text || ' distinct value over ' || (max(as_of_date) - min(as_of_date))::text || ' days'
+            FROM recent WHERE rn <= 5
+            GROUP BY metric_id
+            HAVING count(*) = 5 AND count(DISTINCT value) = 1 AND max(as_of_date) - min(as_of_date) >= 4
+            UNION ALL
+            SELECT o.metric_id, 'seed_or_fallback', o.provenance || ' / ' || coalesce(o.source_ref, '')
+            FROM metric_observations o
+            JOIN metrics m ON m.id = o.metric_id AND m.category = 'energy'
+            WHERE o.as_of_date > current_date - 60
+              AND (o.provenance ILIKE 'seed%' OR o.provenance ILIKE 'fallback%' OR o.source_ref ILIKE 'fallback:%')
+            GROUP BY o.metric_id, o.provenance, o.source_ref;
+          SQL
+          )
+          if [ -n "$OFFENDERS" ]; then
+            echo "::error::Fabricated or constant energy series found:"
+            echo "$OFFENDERS"
+            exit 1
+          fi
+          echo "No constant-restamped or seeded energy series in the last 60 days."

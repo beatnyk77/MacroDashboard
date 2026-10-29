@@ -13,15 +13,14 @@ export interface CommodityPrice {
 const COMMODITY_IDS = [
     MID.WTI_CRUDE_PRICE,
     MID.BRENT_CRUDE_PRICE,
-    MID.COPPER_PRICE_USD,
-    MID.NICKEL_PRICE_USD, // stub: 0 rows in DB until ingest-commodity-terminal backfill runs
+    MID.BRENT_SPOT_USD,
 ] as const;
 
+/** Front-month futures and Dated spot are different instruments; the label always says which. */
 const METRIC_LABELS: Record<string, string> = {
-    [MID.WTI_CRUDE_PRICE]: 'WTI Crude',
-    [MID.BRENT_CRUDE_PRICE]: 'Brent Crude',
-    [MID.COPPER_PRICE_USD]: 'Copper ($/t)',
-    [MID.NICKEL_PRICE_USD]: 'Nickel ($/t)',
+    [MID.WTI_CRUDE_PRICE]: 'WTI Front-Month',
+    [MID.BRENT_CRUDE_PRICE]: 'Brent Front-Month',
+    [MID.BRENT_SPOT_USD]: 'Brent Spot (Dated)',
 };
 
 /** Keep latest + previous print per metric so PriceTerminalCard can compute d/d %. */
@@ -51,7 +50,7 @@ export const useCommodityPrices = () => {
                     symbol: METRIC_LABELS[d.metric_id] ?? d.metric_id,
                     as_of_date: String(d.as_of_date),
                     price: Number(d.value),
-                    curve_type: 'spot',
+                    curve_type: d.metric_id === MID.BRENT_SPOT_USD ? 'spot' : 'front_month',
                 });
                 byMetric.set(d.metric_id, list);
             }

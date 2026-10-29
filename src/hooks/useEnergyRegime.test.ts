@@ -36,4 +36,14 @@ describe('buildNarrative', () => {
         const result = buildNarrative('TIGHTENING', 85);
         expect(result).toContain('tightening');
     });
+
+    it('asserts no regime when the spread is missing', () => {
+        expect(buildNarrative(null, 92)).toContain('Insufficient data');
+    });
+
+    it('does not invent a utilization claim when utilization is missing', () => {
+        const result = buildNarrative('NORMAL', null);
+        expect(result).toContain('unavailable');
+        expect(result).not.toContain('high refinery utilization');
+    });
 });

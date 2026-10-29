@@ -36,10 +36,14 @@ function Pillar({
 
 export const CurrentEnergyRegimeCard: React.FC = () => {
     const regime = useEnergyRegime();
-    const regimeColor = REGIME_COLORS[regime.wtiRegime] ?? REGIME_COLORS.NORMAL;
+    const regimeLabel = regime.wtiRegime ?? 'INSUFFICIENT DATA';
+    const regimeColor = regime.wtiRegime
+        ? (REGIME_COLORS[regime.wtiRegime] ?? REGIME_COLORS.NORMAL)
+        : 'text-muted-foreground border-border bg-muted/30';
 
-    const spreadSign = regime.wtiSpread > 0 ? '+' : '';
-    const brentChangeSign = regime.brentChangePct > 0 ? '+' : '';
+    const { wtiSpread, brentPrice, brentChangePct, refineryUtil, euGasStorage } = regime;
+    const spreadSign = wtiSpread !== null && wtiSpread > 0 ? '+' : '';
+    const brentChangeSign = brentChangePct !== null && brentChangePct > 0 ? '+' : '';
 
     return (
         <div className={cn(
@@ -54,7 +58,7 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
                         Energy Market Regime
                     </span>
                     <div className={cn('px-3 py-1 rounded-full border text-[11px] font-semibold uppercase tracking-wider', regimeColor)}>
-                        {regime.wtiRegime}
+                        {regimeLabel}
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
@@ -83,54 +87,62 @@ export const CurrentEnergyRegimeCard: React.FC = () => {
                     label="WTI Spread (CL1−CL2)"
                     accent="text-amber-500/60"
                     value={
-                        <span className={regime.wtiSpread >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
-                            {spreadSign}{regime.wtiSpread.toFixed(2)} <span className="text-sm not-italic">USD</span>
-                        </span>
+                        wtiSpread !== null
+                            ? (
+                                <span className={wtiSpread >= 0 ? 'text-emerald-400' : 'text-rose-400'}>
+                                    {spreadSign}{wtiSpread.toFixed(2)} <span className="text-sm not-italic">USD</span>
+                                </span>
+                            )
+                            : <span className="text-white/20">—</span>
                     }
-                    sub={regime.wtiRegime.replace('_', ' ')}
+                    sub={regime.wtiRegime ? regime.wtiRegime.replace('_', ' ') : 'Unavailable'}
                 />
                 <Pillar
-                    label="Brent Crude"
+                    label="Brent Crude (Front-Month)"
                     accent="text-blue-400/60"
                     value={
-                        regime.brentPrice > 0
-                            ? <>${regime.brentPrice.toFixed(2)}</>
+                        brentPrice !== null
+                            ? <>${brentPrice.toFixed(2)}</>
                             : <span className="text-white/20">—</span>
                     }
                     sub={
-                        regime.brentPrice > 0
-                            ? <span className={regime.brentChangePct >= 0 ? 'text-emerald-500' : 'text-rose-500'}>
-                                {brentChangeSign}{regime.brentChangePct.toFixed(2)}% chg
-                              </span>
-                            : 'Unavailable'
+                        brentPrice === null
+                            ? 'Unavailable'
+                            : brentChangePct !== null
+                                ? (
+                                    <span className={brentChangePct >= 0 ? 'text-emerald-500' : 'text-rose-500'}>
+                                        {brentChangeSign}{brentChangePct.toFixed(2)}% vs prior print
+                                    </span>
+                                )
+                                : 'ICE BZ=F'
                     }
                 />
                 <Pillar
                     label="US Refinery Util"
                     accent="text-rose-400/60"
                     value={
-                        regime.refineryUtil > 0
-                            ? <>{regime.refineryUtil.toFixed(1)}<span className="text-sm not-italic">%</span></>
+                        refineryUtil !== null
+                            ? <>{refineryUtil.toFixed(1)}<span className="text-sm not-italic">%</span></>
                             : <span className="text-white/20">—</span>
                     }
                     sub={
-                        regime.refineryUtil > 90 ? 'Near capacity ceiling' :
-                        regime.refineryUtil > 80 ? 'Normal operating range' :
-                        regime.refineryUtil > 0 ? 'Below average utilization' : 'Unavailable'
+                        refineryUtil === null ? 'Unavailable' :
+                        refineryUtil > 90 ? 'Near capacity ceiling' :
+                        refineryUtil > 80 ? 'Normal operating range' : 'Below average utilization'
                     }
                 />
                 <Pillar
                     label="EU Gas Storage"
                     accent="text-emerald-400/60"
                     value={
-                        regime.euGasStorage > 0
-                            ? <>{regime.euGasStorage.toFixed(1)}<span className="text-sm not-italic">%</span></>
+                        euGasStorage !== null
+                            ? <>{euGasStorage.toFixed(1)}<span className="text-sm not-italic">%</span></>
                             : <span className="text-white/20">—</span>
                     }
                     sub={
-                        regime.euGasStorage > 75 ? 'Well-stocked — low winter risk' :
-                        regime.euGasStorage > 50 ? 'Adequate — monitor drawdown pace' :
-                        regime.euGasStorage > 0 ? 'Low — elevated winter risk' : 'Unavailable'
+                        euGasStorage === null ? 'Unavailable' :
+                        euGasStorage > 75 ? 'Well-stocked — low winter risk' :
+                        euGasStorage > 50 ? 'Adequate — monitor drawdown pace' : 'Low — elevated winter risk'
                     }
                 />
             </div>
