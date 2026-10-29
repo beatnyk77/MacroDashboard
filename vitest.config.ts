@@ -20,6 +20,8 @@ export default defineConfig({
       'supabase/functions/**/index.test.ts',
       // gsc-sync's auth logic lives in a sibling module, not index.ts
       'supabase/functions/gsc-sync/*.test.ts',
+      // ingest-eia-weekly keeps its pure helpers beside index.ts so _shared stays untouched (a _shared change redeploys every function)
+      'supabase/functions/ingest-eia-weekly/*.test.ts',
       'scripts/__tests__/*.{test,spec}.{ts,tsx}',
       'scripts/__tests__/**/*.{test,spec}.{ts,tsx}',
     ],

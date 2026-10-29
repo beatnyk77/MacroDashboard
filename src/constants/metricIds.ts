@@ -195,8 +195,10 @@ export const OIL_METRICS = {
   OIL_BRENT_PRICE_USD:                     'OIL_BRENT_PRICE_USD',
   /** Written by ingest-commodity-terminal (DCOILWTICO series) */
   WTI_CRUDE_PRICE:                         'WTI_CRUDE_PRICE',
-  /** Written by ingest-commodity-terminal (DCOILBRENTEU series) */
+  /** Brent FRONT-MONTH futures (ICE BZ=F), written by ingest-energy-oil. Not Dated Brent spot. */
   BRENT_CRUDE_PRICE:                       'BRENT_CRUDE_PRICE',
+  /** Dated Brent spot (EIA via FRED DCOILBRENTEU), written by ingest-energy-oil. */
+  BRENT_SPOT_USD:                          'BRENT_SPOT_USD',
   OIL_SPR_LEVEL_US:                        'OIL_SPR_LEVEL_US',
   OIL_REFINERY_UTILIZATION_US:             'OIL_REFINERY_UTILIZATION_US',
   OIL_REFINING_CAPACITY_US:                'OIL_REFINING_CAPACITY_US',
